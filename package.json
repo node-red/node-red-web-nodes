@@ -1,0 +1,17 @@
+{
+    "name"          : "node-red-web-nodes",
+    "version"       : "0.0.1",
+    "description"   : "A collection of Node-RED nodes aimed at web services.",
+    "dependencies"  : {
+    },
+    "repository" : {
+        "type":"git",
+        "url":"https://github.com/node-red/node-red-web-nodes"
+    },
+    "license": "Apache-v2.0",
+    "keywords": [ "node-red" ],
+    "node-red"      : {
+        "nodes"     : {
+        }
+    }
+}
