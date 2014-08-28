@@ -1,0 +1,101 @@
+<!--
+  Copyright 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+
+<script type="text/x-red" data-template-name="pinboard-user">
+    <div class="form-row">
+        <label for="node-config-input-user"><i class="fa fa-user"></i> User</label>
+        <input type="text" id="node-config-input-user">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-token"><i class="fa fa-lock"></i> Token</label>
+        <input type="password" id="node-config-input-token">
+    </div>
+</script>
+
+<script type="text/x-red" data-template-name="pinboard out">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> User</label>
+        <input type="text" id="node-input-user">
+    </div>
+    <div class="form-row">
+        <label for="node-input-tags"><i class="fa fa-tags"></i> Tags</label>
+        <input type="text" id="node-input-tags" placeholder="space-separated tags to add">
+    </div>
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-private" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-private" style="width: 70%;">Mark as private?</label>
+    </div>
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-toread" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-toread" style="width: 70%;">Read later?</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="pinboard out">
+    <p>Saves bookmarks to <a href="http://http://pinboard.in">Pinboard.in</a>.</p>
+    <p>The incoming message can provide the following properties:
+        <ul>
+          <li><b>payload</b> - the url to save (required)</li>
+          <li><b>title</b> - the title for the bookmark (required)</li>
+          <li><b>description</b> - the description for the bookmark (optional)</li>
+        </ul>
+    </p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('pinboard-user',{
+        category: 'config',
+        defaults: {
+            user: { value:"" }
+        },
+        credentials: {
+            token: { type:"password" }
+        },
+        label: function() {
+            return this.user;
+        }
+    });
+
+    RED.nodes.registerType('pinboard out',{
+        category: 'social',
+        defaults: {
+            user: { type:"pinboard-user", required: true },
+            tags: { value:"" },
+            private: { value: false},
+            toread: { value: false},
+            name: { value:"" }
+        },
+        color:"#ff8888",
+        inputs:1,
+        outputs:0,
+        icon: "pinboard.png",
+        align: "right",
+        label: function() {
+            return this.name||"Pinboard";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+
+</script>

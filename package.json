@@ -12,6 +12,7 @@
     "keywords": [ "node-red" ],
     "node-red"      : {
         "nodes"     : {
+            "pinboard": "pinboard/pinboard.js"
         }
     }
 }
