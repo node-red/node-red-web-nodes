@@ -1,0 +1,95 @@
+<!--
+  Copyright 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+
+<script type="text/x-red" data-template-name="delicious-user">
+    <div class="form-row">
+        <label for="node-config-input-username"><i class="fa fa-user"></i> User</label>
+        <input type="text" id="node-config-input-username">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-password"><i class="fa fa-lock"></i> Password</label>
+        <input type="password" id="node-config-input-password">
+    </div>
+</script>
+
+<script type="text/x-red" data-template-name="delicious out">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-user"></i> User</label>
+        <input type="text" id="node-input-user">
+    </div>
+    <div class="form-row">
+        <label for="node-input-tags"><i class="fa fa-tags"></i> Tags</label>
+        <input type="text" id="node-input-tags" placeholder="comma-separated tags to add">
+    </div>
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-private" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-private" style="width: 70%;">Mark as private?</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="delicious out">
+    <p>Saves bookmarks to <a target="_blank" href="http://delicious.com">Delicious</a>.</p>
+    <p>The incoming message can provide the following properties:
+        <ul>
+          <li><b>payload</b> - the url to save (required)</li>
+          <li><b>title</b> - the title for the bookmark (required)</li>
+          <li><b>description</b> - the description for the bookmark (optional)</li>
+        </ul>
+    </p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('delicious-user',{
+        category: 'config',
+        defaults: {
+            username: {value:"", required:true},
+        },  
+        credentials: {
+            password: { type:"password"}
+        },
+        label: function() {
+            return this.username;
+        }
+    });
+
+    RED.nodes.registerType('delicious out',{
+        category: 'social',
+        defaults: {
+            user: { type:"delicious-user", required: true },
+            tags: { value:"" },
+            private: { value: false},
+            name: { value:"" }
+        },
+        color:"#C0DEED",
+        inputs:1,
+        outputs:0,
+        icon: "delicious.png",
+        align: "right",
+        label: function() {
+            return this.name||"Delicious";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+
+</script>
