@@ -58,7 +58,7 @@ module.exports = function(RED) {
                         "Accept":"application/json"
                     }
                 }
-                
+                // TODO: allow tags to be added by the message 
                 if (node.tags) {
                     options.path += "&tags="+encodeURIComponent(node.tags)
                 }

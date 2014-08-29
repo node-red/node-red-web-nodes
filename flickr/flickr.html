@@ -1,0 +1,155 @@
+<!--
+  Copyright 2013 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="flickr-credentials">
+    <div class="form-row" id="node-config-flickr-row"></div>
+    <input type="hidden" id="node-config-input-username">
+</script>
+
+<script type="text/javascript">
+(function() {
+    var flickrConfigNodeId = null;
+    var flickrConfigNodeIntervalId = null;
+
+    function showFlickrAuthStart() {
+        var pathname = document.location.pathname;
+        if (pathname.slice(-1) != "/") {
+            pathname += "/";
+        }
+        var callback = encodeURIComponent(location.protocol+"//"+location.hostname+":"+location.port+pathname+"flickr-credentials/"+flickrConfigNodeId+"/auth/callback");
+
+        $("#node-config-flickr-row").html('Click <a id="node-config-flickr-start" href="flickr-credentials/'+flickrConfigNodeId+'/auth?callback='+callback+'" target="_blank"><b>here</b></a> to authenticate with Flickr.');
+        $("#node-config-flickr-start").click(function() {
+            flickrConfigNodeIntervalId = window.setTimeout(pollFlickrCredentials,2000);
+        });
+    }
+    function updateFlickrScreenName(sn) {
+        $("#node-config-input-username").val(sn);
+        $("#node-config-flickr-row").html('<label><i class="icon-user"></i> Flickr ID</label><span class="input-xlarge uneditable-input">'+sn+'</span>');
+    }
+    function pollFlickrCredentials(e) {
+        $.getJSON('credentials/flickr-credentials/'+flickrConfigNodeId,function(data) {
+            if (data.username) {
+                updateFlickrScreenName(data.username);
+                flickrConfigNodeIntervalId = null;
+            } else {
+                flickrConfigNodeIntervalId = window.setTimeout(pollFlickrCredentials,2000);
+            }
+        })
+    }
+    RED.nodes.registerType('flickr-credentials',{
+        category: 'config',
+        defaults: {
+            username: {value:""}
+        },
+        credentials: {
+            username: {type:"text"},
+            user_nsid: { type:"text"},
+            access_token: {type: "password"},
+            access_token_secret: {type:"password"}
+        },
+            
+        label: function() {
+            return this.username;
+        },
+        exportable: false,
+        oneditprepare: function() {
+            flickrConfigNodeId = this.id;
+            if (!this.username || this.username == "") {
+                showFlickrAuthStart();
+            } else {
+                if (this.credentials.username) {
+                    updateFlickrScreenName(this.credentials.username);
+                } else {
+                    showFlickrAuthStart();
+                }
+            }
+        },
+        oneditsave: function() {
+            if (flickrConfigNodeIntervalId) {
+                window.clearTimeout(flickrConfigNodeIntervalId);
+            }
+        },
+        oneditcancel: function(adding) {
+            if (flickrConfigNodeIntervalId) {
+                window.clearTimeout(flickrConfigNodeIntervalId);
+            }
+        }
+    });
+})();
+</script>
+
+
+<script type="text/x-red" data-template-name="flickr out">
+    <div class="form-row">
+        <label for="node-input-flickr"><i class="fa fa-user"></i> Flickr</label>
+        <input type="text" id="node-input-flickr">
+    </div>
+    <div class="form-row">
+        <label for="node-input-tags"><i class="fa fa-tags"></i> Tags</label>
+        <input type="text" id="node-input-tags" placeholder="space-separated tags to add">
+    </div>
+    <div class="form-row">
+        <label for="node-input-privacy"><i class="fa fa-unlock-alt"></i> Privacy</label>
+        <select id="node-input-privacy">
+            <option value="">User default</option>
+            <option value="p">Public</option>
+            <option value="pr">Private</option>
+            <option value="fr">Friends</option>
+            <option value="fa">Family</option>
+            <option value="frfa">Friends &amp; Family</option>
+        </select>
+    </div>
+    
+    
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="flickr out">
+    <p>Saves photos to <a href="http://www.flickr.com">Flickr</a>.</p>
+    <p>The incoming message can provide the following properties:
+        <ul>
+          <li><b>payload</b> - a Buffer containing the image (required)</li>
+          <li><b>title</b> - the title for the photo (optional)</li>
+          <li><b>description</b> - the description for the photo (optional)</li>
+          <li><b>tags</b> - tags to be applied to the photo. Can be either a string
+                            containing space-separated tags, or an array of tags. (optional)</li>
+        </ul>
+    </p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('flickr out',{
+        category: 'social',
+        color:"#C0DEED",
+        defaults: {
+            flickr: {type:"flickr-credentials",required:true},
+            privacy: {value:""},
+            tags: {value:""},
+            name: {value:""}
+        },
+        inputs:1,
+        outputs:0,
+        icon: "output.png",
+        align: "right",
+        label: function() {
+            return this.name||"Flickr";
+        }
+    });
+</script>
