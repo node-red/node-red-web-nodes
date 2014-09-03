@@ -3,6 +3,7 @@
     "version"       : "0.0.1",
     "description"   : "A collection of Node-RED nodes aimed at web services.",
     "dependencies"  : {
+        "dropbox":"^0.10.3",
         "oauth":"~0.9.11",
         "request":"~2.40.0"
     },
@@ -15,7 +16,8 @@
     "node-red"      : {
         "nodes"     : {
             "pinboard": "pinboard/pinboard.js",
-            "flickr": "flickr/flickr.js"
+            "flickr": "flickr/flickr.js",
+            "dropbox": "dropbox/dropbox.js"
         }
     }
 }

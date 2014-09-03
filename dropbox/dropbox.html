@@ -1,0 +1,110 @@
+<!--
+  Copyright 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="dropbox">
+    <div class="form-row">
+        <label for="node-config-input-appkey"><i class="fa fa-bookmark"></i>App Key</label>
+        <input class="input-append-left" type="text" id="node-config-input-appkey" style="width: 40%;" >
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-appsecret"><i class="fa fa-bookmark"></i>App Secret</label>
+        <input class="input-append-left" type="password" id="node-config-input-appsecret" style="width: 40%;" >
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-accesstoken"><i class="fa fa-bookmark"></i>Access Token</label>
+        <input class="input-append-left" type="password" id="node-config-input-accesstoken" style="width: 40%;" >
+    </div>
+    <div class="form-tips">
+        To obtain these credentials, visit the <a
+        href="https://www.dropbox.com/developers">Dropbox developer home</a>.
+        Once signed up:
+        <ol>
+           <li>click "Create app",</li>
+           <li>select "Dropbox API app",</li>
+           <li>select "Files and datastores",</li>
+           <li>choose an appropriate answer as to whether your node should be
+               limited to its own folder or given full access. (This can be
+               changed later so choose "Yes" to restrict the application
+               while testing might be a good idea.)</li>
+           <li>choose an app name</li>
+           <li>click "Create app".</li>
+        </ol>
+        The subsequent app page will contain the App key, App secret and a
+        "Generate" button to produce a suitable "access token".
+    </div>
+</script>
+
+<script type="text/javascript">
+(function() {
+    RED.nodes.registerType('dropbox',{
+        category: 'config',
+        defaults: { },
+        credentials: {
+            appkey: {type:"text",required:true},
+            appsecret: {type: "password",required:true},
+            accesstoken: {type: "password",required:true},
+        },
+        label: function() {
+            return 'Dropbox'; // TODO: get display_name from account info?
+        },
+        exportable: false,
+    });
+})();
+</script>
+
+<script type="text/x-red" data-template-name="dropbox out">
+    <div class="form-row">
+        <label for="node-input-dropbox"><i class="fa fa-user"></i> Dropbox</label>
+        <input type="text" id="node-input-dropbox">
+    </div>
+    <div class="form-row node-input-filename">
+         <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
+         <input type="text" id="node-input-filename" placeholder="Filename">
+    </div>
+    <div class="form-row node-input-localFilename">
+         <label for="node-input-localFilename"><i class="fa fa-file"></i> Local Filename</label>
+         <input type="text" id="node-input-localFilename" placeholder="Local Filename">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="dropbox out">
+    <p>Dropbox out node. Uploads content to Dropbox. The filename on Dropbox is taken from the node <b>filename</b> property which may be overriden by the <b>msg.filename</b> property. The content is taken from either the node <b>localFilename</b> (which may be overriden by the <b>msg.localFilename</b> property) or the <b>msg.payload</b> property.</p>
+    <p>If a <b>msg.delete</b> property exists then the file will be removed from Dropbox instead.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('dropbox out',{
+        category: 'storage-output',
+        color:"#C0DEED",
+        defaults: {
+            dropbox: {type:"dropbox",required:true},
+            filename: {value:""},
+            localFilename: {value:""},
+            name: {value:"Dropbox"}
+        },
+        inputs:1,
+        outputs:0,
+        icon: "dropbox.png",
+        align: "right",
+        label: function() {
+            return this.name||this.filename||this.localFilename||'Dropbox';
+        }
+    });
+</script>
