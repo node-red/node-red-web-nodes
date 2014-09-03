@@ -38,7 +38,7 @@
     }
     function updateFlickrScreenName(sn) {
         $("#node-config-input-username").val(sn);
-        $("#node-config-flickr-row").html('<label><i class="icon-user"></i> Flickr ID</label><span class="input-xlarge uneditable-input">'+sn+'</span>');
+        $("#node-config-flickr-row").html('<label><i class="fa fa-user"></i> Flickr ID</label><span class="input-xlarge uneditable-input">'+sn+'</span>');
     }
     function pollFlickrCredentials(e) {
         $.getJSON('credentials/flickr-credentials/'+flickrConfigNodeId,function(data) {
@@ -116,7 +116,7 @@
     
     
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name">
     </div>
 </script>
