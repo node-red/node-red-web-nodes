@@ -1,0 +1,284 @@
+<!--
+  Copyright 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+
+<script type="text/x-red" data-template-name="instagram-credentials">
+    <div id="node-config-instagram-app-keys">
+        <div class="form-row">
+            <p style="margin-top: 10px;"><b>1.</b> Create your own app at <a href="http://instagram.com/developer/clients/register/" target="_blank" style="text-decoration:underline;">instagram.com</a></p>
+        </div>
+        <div class="form-tips" id="node-config-tooltip">
+            #
+        </div>
+        <div class="form-row">
+            <p style="margin-top: 10px;"><b>2.</b> Copy the app details here:</p>
+        </div>
+        <div class="form-row">
+          <label for="node-config-input-clientID"><i class="fa fa-user"></i> Client ID</label>
+          <input type="text" id="node-config-input-clientID">
+        </div>
+        <div class="form-row" id="node-config-clientSecret">
+            <label for="node-config-input-clientSecret"><i class="fa fa-lock"></i>Client Secret</label>
+            <input type="password" id="node-config-input-clientSecret">
+        </div>
+        <div class="form-row" id="node-config-redirectURI">
+            <label for="node-config-input-redirectURI"><i class="fa fa-user"></i>Redirect URI</label>
+            <input type="text" id="node-config-input-redirectURI">
+        </div>
+        <div class="form-row">
+           <label>&nbsp;</label>
+           <a class="btn" id="node-config-start-auth" href="#" target="_blank">Authenticate with Instagram</a>
+        </div>
+    </div>
+    <div id="node-config-instagram-user">
+        <div class="form-row">
+            <label><i class="fa fa-user"></i> Instagram User</label><span id="node-config-instagram-username" class="input-xlarge uneditable-input"></span>
+        </div>
+        <input type="hidden" id="node-config-input-username">
+    </div>
+</script>
+
+<script type="text/x-red" data-template-name="instagram">
+    <div class="form-row">
+        <label for="node-input-instagram"><i class="fa fa-user"></i> User</label>
+        <input type="text" id="node-input-instagram">
+    </div>
+    <div class="form-row">
+        <label for="node-input-inputType"><i class="icon-search"></i> Type</label>
+        <select type="text" id="node-input-inputType" style="display: inline-block; vertical-align: middle; width:60%;">
+            <option value="photo">User photos</option>
+            <option value="like">Liked photos</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputType"><i class="icon-search"></i> Output</label>
+        <select type="text" id="node-input-outputType" style="display: inline-block; vertical-align: middle; width:60%;">
+            <option value="file">The photo as a buffer</option>
+            <option value="link">The photo url</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="instagram">
+    <p>Get photos from Instagram.</p>
+    
+    <p>This node checks for new content in a user's account whenever it receives a
+    message.</p>
+    
+    <p>It can be configured to either retrieve new photos uploaded by the user, or
+    photos the user has liked. Each message sent by the node contains a single
+    photo in its payload, either as a Buffer containing the photo or its URL.</p>
+    
+    <p>Videos are currently not supported and are ignored.</p>
+</script>
+
+<script type="text/x-red" data-template-name="instagram in">
+    <div class="form-row">
+        <label for="node-input-instagram"><i class="fa fa-user"></i> User</label>
+        <input type="text" id="node-input-instagram">
+    </div>
+    <div class="form-row">
+        <label for="node-input-inputType"><i class="icon-search"></i> Type</label>
+        <select type="text" id="node-input-inputType" style="display: inline-block; vertical-align: middle; width:60%;">
+            <option value="photo">User photos</option>
+            <option value="like">Liked photos</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outputType"><i class="icon-search"></i> Output</label>
+        <select type="text" id="node-input-outputType" style="display: inline-block; vertical-align: middle; width:60%;">
+            <option value="file">The photo as a buffer</option>
+            <option value="link">The photo url</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="instagram in">
+    <p>Get photos from Instagram.</p>
+    
+    <p>This node automatically checks for new content in a user's account every 15 minutes.</p>
+    
+    <p>It can be configured to either retrieve new photos uploaded by the user, or
+    photos the user has liked. Each message sent by the node contains a single
+    photo in its payload, either as a Buffer containing the photo or its URL.</p>
+    
+    <p>Videos are currently not supported and are ignored.</p>
+</script>
+
+<script type="text/javascript">
+(function() {
+
+    RED.nodes.registerType('instagram-credentials',{
+        category: 'config',
+        defaults: {
+            username: {value:""}
+        },  
+        credentials: {
+            username: {type:"text"},
+            clientID: {type:"text"},
+            redirectURI: { type:"text"},
+            access_token: { type:"password"}
+        },
+        label: function() {
+            return this.username;
+        },
+        exportable: false,
+        oneditprepare: function() {
+            var id = this.id;
+                    
+            function updateInstagramAuthButton() {
+                var v1 = $("#node-config-input-clientID").val();
+                var v2 = $("#node-config-input-clientSecret").val();
+                
+                $("#node-config-start-auth").toggleClass("disabled",(v1.length === 0 || v2.length === 0));
+            }
+            $("#node-config-input-clientID").on('change keydown paste input',updateInstagramAuthButton);
+            $("#node-config-input-clientSecret").on('change keydown paste input',updateInstagramAuthButton);
+            
+            function updateInstagramScreenName(sn) {
+                $("#node-config-instagram-app-keys").hide();
+                $("#node-config-instagram-user").show();
+                $("#node-config-input-username").val(sn);
+                $("#node-config-instagram-username").html(sn);
+            }
+            
+            function pollInstagramCredentials() {
+                $.getJSON('credentials/instagram-credentials/'+id,function(data) {
+                    if (data.username) {
+                        $("#node-config-dialog-ok").button("enable");
+                        updateInstagramScreenName(data.username);
+                        delete window.instagramConfigNodeIntervalId;
+                    } else {
+                        window.instagramConfigNodeIntervalId = window.setTimeout(pollInstagramCredentials,2000);
+                    }
+                });
+            }
+            
+            updateInstagramAuthButton();
+            
+            if (this.username) {
+                updateInstagramScreenName(this.username);
+            } else {
+                $("#node-config-instagram-app-keys").show();
+                $("#node-config-instagram-user").hide();
+                $("#node-config-dialog-ok").button("disable");
+            }
+            
+            function updateRedirectURI() {
+               var protocol = location.protocol;
+                var separator = '//';
+                var host = location.hostname;
+                var port = location.port;
+                var callbackPath = 'instagram-credentials/auth/callback';
+                
+                var constructedURI = protocol + separator + host + ':' + port + '/' + callbackPath;
+                
+                $("#node-config-tooltip").html('<p>Please configure Instagram to accept the following <b>Redirect URL</b> for authentication of your application: </p>\n<code>' + constructedURI + '</code>');
+                $("#node-config-input-redirectURI").val(constructedURI);
+                $("#node-config-input-redirectURI").hide();
+                $("#node-config-redirectURI").hide();
+            }
+            
+            updateRedirectURI();
+            
+            $("#node-config-start-auth").mousedown(function() {
+                var clientID = $("#node-config-input-clientID").val();
+                var clientSecret = $("#node-config-input-clientSecret").val();
+                var redirectURI = $("#node-config-input-redirectURI").val();
+                
+                var query = "node_id=" + id + "&client_id=" + clientID + "&client_secret=" + clientSecret + "&redirect_uri=" + redirectURI;
+                var url = 'instagram-credentials/auth/?' + query;
+                $(this).attr("href",url);
+                window.instagramConfigNodeIntervalId = window.setTimeout(pollInstagramCredentials,2000);
+            });
+            
+            $("#node-config-start-auth").click(function(e) {
+                var clientID = $("#node-config-input-clientID").val();
+                var redirectURI = $("#node-config-input-redirectURI").val();
+                var clientSecret = $("#node-config-input-redirectURI").val();
+                if (clientID === "" || redirectURI === "" || clientSecret === "") {
+                    e.preventDefault();
+                }
+            });
+        },
+        oneditsave: function() {
+            if (window.instagramConfigNodeIntervalId) {
+                window.clearTimeout(window.instagramConfigNodeIntervalId);
+                delete window.instagramConfigNodeIntervalId;
+            }
+        },
+        oneditcancel: function() {
+            if (window.instagramConfigNodeIntervalId) {
+                window.clearTimeout(window.instagramConfigNodeIntervalId);
+                delete window.instagramConfigNodeIntervalId;
+            }
+        }
+    });
+})();
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('instagram in',{
+        category: 'social',
+        defaults: {
+            instagram: { type:"instagram-credentials", required: true },
+            inputType: { value: "photo"},
+            outputType: { value:"file" },
+            name: {value:""}
+        },
+        color:"#889FB3",
+        inputs:0,
+        outputs:1,
+        icon: "instagram.png",
+        label: function() {
+            return this.name||"Instagram";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('instagram',{
+        category: 'social',
+        defaults: {
+            instagram: { type:"instagram-credentials", required: true },
+            inputType: { value: "photo"},
+            outputType: { value:"file" },
+            name: {value:""}
+        },
+        color:"#889FB3",
+        inputs:1,
+        outputs:1,
+        icon: "instagram.png",
+        align: "right",
+        label: function() {
+            return this.name||"Instagram";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+</script>
