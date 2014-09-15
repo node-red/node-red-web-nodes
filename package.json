@@ -8,7 +8,8 @@
         "oauth":"~0.9.11",
         "request":"~2.40.0",
         "instagram-node":"0.5.1",
-        "clone": "0.1.11"
+        "clone": "0.1.11",
+        "time": "^0.11.0"
     },
     "repository" : {
         "type":"git",
@@ -25,7 +26,8 @@
             "flickr": "flickr/flickr.js",
             "dropbox": "dropbox/dropbox.js",
             "swarm":"swarm/swarm.js",
-            "instagram" : "instagram/instagram.js"
+            "instagram" : "instagram/instagram.js",
+            "eventbrite": "eventbrite/eventbrite.js"
         }
     },
     "devDependencies": {
