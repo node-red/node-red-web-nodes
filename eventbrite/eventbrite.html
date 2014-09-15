@@ -1,0 +1,79 @@
+<!--
+  Copyright 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="eventbrite-credentials">
+    <div class="form-row">
+        <label for="node-config-input-appKey"><i class="fa fa-bookmark"></i>App Key</label>
+        <input class="input-append-left" type="text" id="node-config-input-appKey" style="width: 40%;" >
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-apiUserKey"><i class="fa fa-bookmark"></i>API User Key</label>
+        <input class="input-append-left" type="password" id="node-config-input-apiUserKey" style="width: 40%;" >
+    </div>
+    <div class="form-tips">
+        To obtain these credentials, visit the <a href="https://www.eventbrite.com/myaccount/apps/">Eventbrite My Applications</a>, login or sign up, then click "Create a new app". After entering the necessary details copy the App Key from the application list and click "API User Key" to obtain that key.
+    </div>
+</script>
+
+<script type="text/javascript">
+(function() {
+    RED.nodes.registerType('eventbrite-credentials',{
+        category: 'config',
+        defaults: { },
+        credentials: {
+            appKey: {type:"text",required:true},
+            apiUserKey: {type: "password",required:true},
+        },
+        label: function() {
+            return 'Eventbrite' + (this.appKey ? ' '+this.appKey : '');
+        },
+        exportable: false,
+    });
+})();
+</script>
+
+<script type="text/x-red" data-template-name="eventbrite">
+    <div class="form-row">
+        <label for="node-input-eventbrite"><i class="fa fa-user"></i> Eventbrite</label>
+        <input type="text" id="node-input-eventbrite">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="eventbrite">
+    <p>Eventbrite query node. Generates a message containing the events for the user associated with the API User Key.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('eventbrite',{
+        category: 'social',
+        color:"#C0DEED",
+        defaults: {
+            eventbrite: {type:"eventbrite-credentials",required:true},
+            name: {value:"Eventbrite"}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "eventbrite.png",
+        align: "right",
+        label: function() {
+            return this.name||'Eventbrite';
+        }
+    });
+</script>
