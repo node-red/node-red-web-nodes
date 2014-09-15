@@ -35,7 +35,7 @@ module.exports = function(RED) {
         this.filename = n.filename || "";
         this.localFilename = n.localFilename || "";
         this.dropboxConfig = RED.nodes.getNode(n.dropbox);
-        var credentials = RED.nodes.getCredentials(n.dropbox);
+        var credentials = this.dropboxConfig.credentials;
         var node = this;
         if (credentials && credentials.appkey && credentials.appsecret &&
             credentials.accesstoken) {
