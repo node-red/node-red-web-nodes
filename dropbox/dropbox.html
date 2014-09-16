@@ -14,7 +14,7 @@
   limitations under the License.
 -->
 
-<script type="text/x-red" data-template-name="dropbox">
+<script type="text/x-red" data-template-name="dropbox-config">
     <div class="form-row">
         <label for="node-config-input-appkey"><i class="fa fa-bookmark"></i>App Key</label>
         <input class="input-append-left" type="text" id="node-config-input-appkey" style="width: 40%;" >
@@ -49,7 +49,7 @@
 
 <script type="text/javascript">
 (function() {
-    RED.nodes.registerType('dropbox',{
+    RED.nodes.registerType('dropbox-config',{
         category: 'config',
         defaults: { },
         credentials: {
@@ -94,7 +94,7 @@
         category: 'storage-output',
         color:"#C0DEED",
         defaults: {
-            dropbox: {type:"dropbox",required:true},
+            dropbox: {type:"dropbox-config",required:true},
             filename: {value:""},
             localFilename: {value:""},
             name: {value:"Dropbox"}

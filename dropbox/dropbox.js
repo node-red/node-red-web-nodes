@@ -22,7 +22,7 @@ module.exports = function(RED) {
     function DropboxNode(n) {
         RED.nodes.createNode(this,n);
     }
-    RED.nodes.registerType("dropbox",DropboxNode,{
+    RED.nodes.registerType("dropbox-config",DropboxNode,{
         credentials: {
             appkey: { type:"text" },
             appsecret: { type: "password" },
