@@ -15,41 +15,37 @@
 -->
 
 <script type="text/x-red" data-template-name="flickr-credentials">
-    <div class="form-row" id="node-config-flickr-row"></div>
-    <input type="hidden" id="node-config-input-username">
+    <div id="node-config-flickr-app-keys">
+        <div class="form-row">
+            <p style="margin-top: 10px;"><b>1.</b> Create your own app at <a href="https://www.flickr.com/services/apps/create/apply/" target="_blank" style="text-decoration:underline;">flickr.com</a></p>
+        </div>
+        <div class="form-row">
+            <p style="margin-top: 10px;"><b>2.</b> Copy the app details here:</p>
+        </div>
+        <div class="form-row">
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_key"><i class="fa fa-user"></i> Key</label>
+            <input type="password" id="node-config-input-client_key">
+        </div>
+        <div class="form-row">
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_secret"><i class="fa fa-key"></i> Secret</label>
+            <input type="password" id="node-config-input-client_secret">
+        </div>
+        <div class="form-row">
+           <label>&nbsp;</label> 
+           <a class="btn" id="node-config-start-auth" href="#" target="_blank">Authenticate with Flickr</a>
+        </div>
+    </div>
+    <div id="node-config-flickr-user">
+        <div class="form-row">
+            <label><i class="fa fa-user"></i> Flickr ID</label><span id="node-config-flickr-username" class="input-xlarge uneditable-input"></span>
+        </div>
+        <input type="hidden" id="node-config-input-username">
+    </div>
 </script>
 
 <script type="text/javascript">
 (function() {
-    var flickrConfigNodeId = null;
-    var flickrConfigNodeIntervalId = null;
 
-    function showFlickrAuthStart() {
-        var pathname = document.location.pathname;
-        if (pathname.slice(-1) != "/") {
-            pathname += "/";
-        }
-        var callback = encodeURIComponent(location.protocol+"//"+location.hostname+":"+location.port+pathname+"flickr-credentials/"+flickrConfigNodeId+"/auth/callback");
-
-        $("#node-config-flickr-row").html('Click <a id="node-config-flickr-start" href="flickr-credentials/'+flickrConfigNodeId+'/auth?callback='+callback+'" target="_blank"><b>here</b></a> to authenticate with Flickr.');
-        $("#node-config-flickr-start").click(function() {
-            flickrConfigNodeIntervalId = window.setTimeout(pollFlickrCredentials,2000);
-        });
-    }
-    function updateFlickrScreenName(sn) {
-        $("#node-config-input-username").val(sn);
-        $("#node-config-flickr-row").html('<label><i class="fa fa-user"></i> Flickr ID</label><span class="input-xlarge uneditable-input">'+sn+'</span>');
-    }
-    function pollFlickrCredentials(e) {
-        $.getJSON('credentials/flickr-credentials/'+flickrConfigNodeId,function(data) {
-            if (data.username) {
-                updateFlickrScreenName(data.username);
-                flickrConfigNodeIntervalId = null;
-            } else {
-                flickrConfigNodeIntervalId = window.setTimeout(pollFlickrCredentials,2000);
-            }
-        })
-    }
     RED.nodes.registerType('flickr-credentials',{
         category: 'config',
         defaults: {
@@ -58,6 +54,8 @@
         credentials: {
             username: {type:"text"},
             user_nsid: { type:"text"},
+            client_key: { type: "password"},
+            client_secret: { type: "password"},
             access_token: {type: "password"},
             access_token_secret: {type:"password"}
         },
@@ -67,25 +65,78 @@
         },
         exportable: false,
         oneditprepare: function() {
-            flickrConfigNodeId = this.id;
-            if (!this.username || this.username == "") {
-                showFlickrAuthStart();
-            } else {
-                if (this.credentials.username) {
-                    updateFlickrScreenName(this.credentials.username);
-                } else {
-                    showFlickrAuthStart();
-                }
+            var id = this.id;
+            
+            function updateFlickrAuthButton() {
+                var v1 = $("#node-config-input-client_key").val();
+                var v2 = $("#node-config-input-client_secret").val();
+                
+                $("#node-config-start-auth").toggleClass("disabled",(v1.length == 0 || v2.length == 0));
+                    
             }
+            $("#node-config-input-client_key").on('change keydown paste input',updateFlickrAuthButton);
+            $("#node-config-input-client_secret").on('change keydown paste input',updateFlickrAuthButton);
+            
+            function updateFlickrScreenName(sn) {
+                $("#node-config-flickr-app-keys").hide();
+                $("#node-config-flickr-user").show();
+                $("#node-config-input-username").val(sn);
+                $("#node-config-flickr-username").html(sn);
+            }
+            
+            function pollFlickrCredentials(e) {
+                $.getJSON('credentials/flickr-credentials/'+id,function(data) {
+                    if (data.username) {
+                        $("#node-config-dialog-ok").button("enable");
+                        updateFlickrScreenName(data.username);
+                        delete window.flickrConfigNodeIntervalId;
+                    } else {
+                        window.flickrConfigNodeIntervalId = window.setTimeout(pollFlickrCredentials,2000);
+                    }
+                })
+            }
+            
+            updateFlickrAuthButton();
+            
+            if (this.username) {
+                updateFlickrScreenName(this.username);
+            } else {
+                $("#node-config-flickr-app-keys").show();
+                $("#node-config-flickr-user").hide();
+                $("#node-config-dialog-ok").button("disable");
+            }
+            
+            $("#node-config-start-auth").mousedown(function(e) {
+                var key = $("#node-config-input-client_key").val();
+                var secret = $("#node-config-input-client_secret").val();
+                var pathname = document.location.pathname;
+                if (pathname.slice(-1) != "/") {
+                    pathname += "/";
+                }
+                var callback = encodeURIComponent(location.protocol+"//"+location.hostname+":"+location.port+pathname+"flickr-credentials/"+id+"/auth/callback");
+                var url = 'flickr-credentials/'+id+'/auth?callback='+callback+'&client_key='+key+"&client_secret="+secret;
+                $(this).attr("href",url);
+                window.flickrConfigNodeIntervalId = window.setTimeout(pollFlickrCredentials,2000);
+            });
+            $("#node-config-start-auth").click(function(e) {
+                var key = $("#node-config-input-client_key").val();
+                var secret = $("#node-config-input-client_secret").val();
+                if (key == "" || secret == "") {
+                    e.preventDefault();
+                }
+            });
+        
         },
         oneditsave: function() {
-            if (flickrConfigNodeIntervalId) {
-                window.clearTimeout(flickrConfigNodeIntervalId);
+            if (window.flickrConfigNodeIntervalId) {
+                window.clearTimeout(window.flickrConfigNodeIntervalId);
+                delete window.flickrConfigNodeIntervalId;
             }
         },
         oneditcancel: function(adding) {
-            if (flickrConfigNodeIntervalId) {
-                window.clearTimeout(flickrConfigNodeIntervalId);
+            if (window.flickrConfigNodeIntervalId) {
+                window.clearTimeout(window.flickrConfigNodeIntervalId);
+                delete window.flickrConfigNodeIntervalId;
             }
         }
     });

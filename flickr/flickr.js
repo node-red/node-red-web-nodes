@@ -21,6 +21,20 @@ module.exports = function(RED) {
     var querystring = require("querystring");
     var util = require("util");
     
+        
+    function getOAuth(client_key,client_secret) {
+        return new OAuth(
+            "https://www.flickr.com/services/oauth/request_token",
+            "https://www.flickr.com/services/oauth/access_token",
+            client_key,
+            client_secret,
+            1.0,
+            null,
+            "HMAC-SHA1"
+        );
+    }
+    
+    
     function FlickrNode(n) {
         RED.nodes.createNode(this,n);
         this.username = n.username;
@@ -29,6 +43,8 @@ module.exports = function(RED) {
         credentials: {
             username: {type:"text"},
             user_nsid: { type:"text"},
+            client_key: { type: "password"},
+            client_secret: { type: "password"},
             access_token: {type: "password"},
             access_token_secret: {type:"password"}
         }       
@@ -37,6 +53,10 @@ module.exports = function(RED) {
     function FlickrOutNode(n) {
         RED.nodes.createNode(this,n);
         this.flickrConfig = RED.nodes.getNode(n.flickr);
+        if (!this.flickrConfig) {
+            this.warn("Missing flickr credentials");
+            return;
+        }
         this.tags = n.tags;
         
         this.privacy = n.privacy;
@@ -47,6 +67,7 @@ module.exports = function(RED) {
         }
         
         if (this.flickrConfig.credentials.access_token && this.flickrConfig.credentials.access_token_secret) {
+            var oa = getOAuth(this.flickrConfig.credentials.client_key,this.flickrConfig.credentials.client_secret);
             var node = this;
             this.on('input', function(msg) {
                 if (Buffer.isBuffer(msg.payload)) {
@@ -112,35 +133,23 @@ module.exports = function(RED) {
     }
     RED.nodes.registerType("flickr out",FlickrOutNode);
 
-    
-    //oa.get(
-    //    'https://api.flickr.com/services/rest/?method=flickr.people.getPhotos&'+
-    //    'api_key=e99784b8ff80eaabc9c096b22e517c13&'+
-    //    'user_id='+this.flickrConfig.credentials.user_nsid+'&'+
-    //    'page=1&per_page=1&format=json&nojsoncallback=1'
-    //    ,
-    //    this.flickrConfig.credentials.access_token,
-    //    this.flickrConfig.credentials.access_token_secret,            
-    //    function (e, data, res){
-    //        if (e) console.error(e);        
-    //        console.log(require('util').inspect(data));
-    //    }
-    //);
 
     
-    
-    var oa = new OAuth(
-        "https://www.flickr.com/services/oauth/request_token",
-        "https://www.flickr.com/services/oauth/access_token",
-        "e99784b8ff80eaabc9c096b22e517c13",
-        "8f3d544d47835b9d",
-        1.0,
-        null,
-        "HMAC-SHA1"
-    );
-    
     RED.httpAdmin.get('/flickr-credentials/:id/auth', function(req, res){
-        var credentials = {};
+            
+        if (!req.query.client_key || !req.query.client_secret || !req.query.callback) {
+            res.send(400);
+            return;
+        }
+        
+        var credentials = {
+            client_key:req.query.client_key,
+            client_secret: req.query.client_secret
+        };
+        RED.nodes.addCredentials(req.params.id,credentials);
+        
+        var oa = getOAuth(credentials.client_key,credentials.client_secret);
+        
         oa.getOAuthRequestToken({
                 oauth_callback: req.query.callback
         },function(error, oauth_token, oauth_token_secret, results){
@@ -162,6 +171,9 @@ module.exports = function(RED) {
     RED.httpAdmin.get('/flickr-credentials/:id/auth/callback', function(req, res, next){
         var credentials = RED.nodes.getCredentials(req.params.id);
         credentials.oauth_verifier = req.query.oauth_verifier;
+        var client_key = credentials.client_key;
+        var client_secret = credentials.client_secret;
+        var oa = getOAuth(client_key,client_secret);
 
         oa.getOAuthAccessToken(
             credentials.oauth_token,
@@ -170,9 +182,11 @@ module.exports = function(RED) {
             function(error, oauth_access_token, oauth_access_token_secret, results){
                 if (error){
                     console.log(error);
-                    res.send("yeah something broke.");
+                    res.send("Something broke.");
                 } else {
                     credentials = {};
+                    credentials.client_key = client_key;
+                    credentials.client_secret = client_secret;
                     credentials.access_token = oauth_access_token;
                     credentials.access_token_secret = oauth_access_token_secret;
                     credentials.username = results.username;
