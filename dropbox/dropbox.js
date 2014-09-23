@@ -54,24 +54,12 @@ module.exports = function(RED) {
                 }
                 node.status({});
                 node.on("input", function(msg) {
-                    var filename = msg.filename || this.filename;
+                    var filename = this.filename || msg.filename;
                     if (filename === "") {
                         node.warn("No filename specified");
                         return;
                     }
-                    if (msg.hasOwnProperty("delete")) {
-                        node.status({fill:"blue",shape:"dot",text:"deleting"});
-                        dropbox.remove(filename, function(err) {
-                            if (err) {
-                                node.error(err.toString());
-                                node.status({fill:"red",shape:"ring",text:"failed"});
-                                return;
-                            }
-                            node.status({});
-                        });
-                        return;
-                    }
-                    var localFilename = msg.localFilename || this.localFilename;
+                    var localFilename = this.localFilename || msg.localFilename;
                     if (localFilename) {
                         // TODO: use chunked upload for files larger than 150M
                         node.status({fill:"blue",shape:"dot",text:"uploading"});
