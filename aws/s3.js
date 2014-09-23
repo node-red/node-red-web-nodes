@@ -38,33 +38,17 @@ module.exports = function(RED) {
                 }
                 node.status({});
                 node.on("input", function(msg) {
-                    var bucket = msg.bucket || this.bucket;
+                    var bucket = this.bucket || msg.bucket;
                     if (bucket === "") {
                         node.warn("No bucket specified");
                         return;
                     }
-                    var filename = msg.filename || this.filename;
+                    var filename = this.filename || msg.filename;
                     if (filename === "") {
                         node.warn("No filename specified");
                         return;
                     }
-                    if (msg.hasOwnProperty("delete")) {
-                        node.status({fill:"blue",shape:"dot",text:"deleting"});
-                        s3.deleteObject({
-                            Bucket: bucket,
-                            Key: filename,
-                        }, function(err) {
-                            if (err) {
-                                node.error(err.toString());
-                                node.status({fill:"red",shape:"ring",text:"failed"});
-                                return;
-                            }
-                            node.status({});
-                        });
-                        return;
-                    }
-
-                    var localFilename = msg.localFilename || this.localFilename;
+                    var localFilename = this.localFilename || msg.localFilename;
                     if (localFilename) {
                         // TODO: use chunked upload for large files
                         node.status({fill:"blue",shape:"dot",text:"uploading"});

@@ -85,8 +85,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="dropbox out">
-    <p>Dropbox out node. Uploads content to Dropbox. The filename on Dropbox is taken from the node <b>filename</b> property which may be overriden by the <b>msg.filename</b> property. The content is taken from either the node <b>localFilename</b> (which may be overriden by the <b>msg.localFilename</b> property) or the <b>msg.payload</b> property.</p>
-    <p>If a <b>msg.delete</b> property exists then the file will be removed from Dropbox instead.</p>
+    <p>Dropbox out node. Uploads content to Dropbox. The filename on Dropbox is taken from the node <b>filename</b> property or the <b>msg.filename</b> property. The content is taken from either the node <b>localFilename</b> property, the <b>msg.localFilename</b> property or the <b>msg.payload</b> property.</p>
 </script>
 
 <script type="text/javascript">
