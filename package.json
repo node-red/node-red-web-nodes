@@ -1,7 +1,7 @@
 {
-    "name"          : "node-red-web-nodes",
-    "version"       : "0.0.1",
-    "description"   : "A collection of Node-RED nodes aimed at web services.",
+    "name"          : "node-red-node-web-nodes",
+    "version"       : "0.1.0",
+    "description"   : "A collection of Node-RED nodes for popular web services.",
     "dependencies"  : {
         "aws-sdk": "^2.0.15",
         "dropbox":"^0.10.3",
@@ -13,7 +13,7 @@
         "url":"https://github.com/node-red/node-red-web-nodes"
     },
     "license": "Apache-v2.0",
-    "keywords": [ "node-red" ],
+    "keywords": [ "node-red", "flickr", "pinboard", "dropbox", "aws", "s3" ],
     "node-red"      : {
         "nodes"     : {
             "aws": "aws/aws.js",
