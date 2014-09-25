@@ -124,7 +124,9 @@ module.exports = function(RED) {
                     });
                     var form = r.form();
                     for (var p in signedUrlOptions.query) {
-                        form.append(p,signedUrlOptions.query[p]);
+                        if (signedUrlOptions.query.hasOwnProperty(p)) {
+                            form.append(p,signedUrlOptions.query[p]);
+                        }
                     }
                     form.append('photo',msg.payload,{filename:"image_upload"});
                 }
