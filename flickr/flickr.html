@@ -71,7 +71,7 @@
                 var v1 = $("#node-config-input-client_key").val();
                 var v2 = $("#node-config-input-client_secret").val();
                 
-                $("#node-config-start-auth").toggleClass("disabled",(v1.length == 0 || v2.length == 0));
+                $("#node-config-start-auth").toggleClass("disabled",(v1.length === 0 || v2.length === 0));
                     
             }
             $("#node-config-input-client_key").on('change keydown paste input',updateFlickrAuthButton);
@@ -93,7 +93,7 @@
                     } else {
                         window.flickrConfigNodeIntervalId = window.setTimeout(pollFlickrCredentials,2000);
                     }
-                })
+                });
             }
             
             updateFlickrAuthButton();
@@ -121,7 +121,7 @@
             $("#node-config-start-auth").click(function(e) {
                 var key = $("#node-config-input-client_key").val();
                 var secret = $("#node-config-input-client_secret").val();
-                if (key == "" || secret == "") {
+                if (key === "" || secret === "") {
                     e.preventDefault();
                 }
             });
