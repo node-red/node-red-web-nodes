@@ -1,0 +1,202 @@
+<!--
+  Copyright 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="foursquare-credentials">
+    <div id="node-config-foursquare-app-keys">
+        <div class="form-row">
+            <p style="margin-top: 10px;"><b>1.</b> Create your own app at <a href="https://foursquare.com/developers/apps" target="_blank" style="text-decoration:underline;">foursquare.com</a></p>
+        </div>
+        <div class="form-row">
+            <p style="margin-top: 10px;"><b>2.</b> Copy the app details here:</p>
+        </div>
+        <div class="form-row">
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_id"><i class="fa fa-user"></i> Client ID</label>
+            <input type="password" id="node-config-input-client_id">
+        </div>
+        <div class="form-row">
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_secret"><i class="fa fa-key"></i> Client Secret</label>
+            <input type="password" id="node-config-input-client_secret">
+        </div>
+        <div class="form-row">
+            <label>&nbsp;</label> 
+            <a class="btn" id="node-config-start-auth" href="#" target="_blank">Authenticate with Foursquare</a>
+        </div>
+        <div class="form-tips">
+            To obtain these credentials, visit the <a
+            href="https://developer.foursquare.com/">Foursquare developer home</a>.
+            Once signed up:
+            <ol>
+                <li>go to https://foursquare.com/developers/apps</li>
+                <li>click "Create a new app",</li>
+                <li>give your app an appropriate name,</li>
+                <li>enter a "Download/welcome page url",</li>
+                <li>enter a "Redirect URI" with host where Node-RED is running and path
+                    'foursquare-credentials', for example "http://localhost:1880/foursquare-credentials" </li>
+                <li>choose an appropriate answer as to whether your node should
+                    push api notifications. The current version of the Node-RED 
+                    Foursquare node doesn't support the Real-Time API so choosing to
+                    "Disable pushes to this app" is fine. It can always be modified
+                    at a later date.</li>
+                <li>give the app a short tagline,</li>
+                <li>click "Create app".</li>
+            </ol>
+            The subsequent app page will contain the Client ID and Client Secret.
+        </div>
+    </div>
+    <div id="node-config-foursquare-user">
+        <div class="form-row">
+            <label><i class="fa fa-user"></i> Foursquare User</label><span id="node-config-foursquare-displayname" class="input-xlarge uneditable-input"></span>
+        </div>
+        <input type="hidden" id="node-config-input-displayname">
+    </div>
+
+</script>
+
+<script type="text/javascript">
+(function() {
+    RED.nodes.registerType('foursquare-credentials',{
+        category: 'config',
+        defaults: {
+            displayname: {value:""}
+        },
+        credentials: {
+            displayname: {type:"text", required: true},
+            clientid: {type:"password",required:true},
+            clientsecret: {type: "password",required:true},
+            accesstoken: {type: "password", required:true}
+        },
+        label: function() {
+            return this.displayname;
+        },
+        exportable: false,
+        oneditprepare: function() {
+            var id = this.id;
+            function updateFoursquareAuthButton() {
+                var v1 = $("#node-config-input-client_id").val();
+                var v2 = $("#node-config-input-client_secret").val();
+
+                $("#node-config-start-auth").toggleClass("disabled",(v1.length == 0 || v2.length == 0));
+                    
+            }
+            $("#node-config-input-client_id").on('change keydown paste input',updateFoursquareAuthButton);
+            $("#node-config-input-client_secret").on('change keydown paste input',updateFoursquareAuthButton);
+            
+            function updateFoursquareScreenName(sn) {
+                $("#node-config-foursquare-app-keys").hide();
+                $("#node-config-foursquare-user").show();
+                $("#node-config-input-displayname").val(sn);
+                $("#node-config-foursquare-displayname").html(sn);
+            }
+            
+            function pollFoursquareCredentials(e) {
+                $.getJSON('credentials/foursquare-credentials/'+id,function(data) {
+                    if (data.displayname) {                     
+                        $("#node-config-dialog-ok").button("enable");
+                        updateFoursquareScreenName(data.displayname);
+                        delete window.foursquareConfigNodeIntervalId;
+                    } else {
+                        window.foursquareConfigNodeIntervalId = window.setTimeout(pollFoursquareCredentials,2000);
+                    }
+                })
+            }
+            
+            updateFoursquareAuthButton();
+            
+            if (this.displayname) {
+                updateFoursquareScreenName(this.displayname);
+            } else {
+                $("#node-config-foursquare-app-keys").show();
+                $("#node-config-foursquare-user").hide();
+                $("#node-config-dialog-ok").button("disable");
+            }
+            
+            $("#node-config-start-auth").mousedown(function(e) {
+                var client_id = $("#node-config-input-client_id").val();
+                var client_secret = $("#node-config-input-client_secret").val();
+                var pathname = document.location.pathname;
+                if (pathname.slice(-1) != "/") {
+                    pathname += "/";
+                }
+                var redirect_uri = encodeURIComponent(location.protocol+"//"+location.hostname+":"+location.port+pathname+"foursquare-credentials/auth/redirecturi");
+                var url = 'foursquare-credentials/auth?id='+id+'&redirecturi='+redirect_uri+'&clientid='+client_id+"&clientsecret="+client_secret;
+                $(this).attr("href",url);
+                window.foursquareConfigNodeIntervalId = window.setTimeout(pollFoursquareCredentials,2000);
+            });
+            $("#node-config-start-auth").click(function(e) {
+                var key = $("#node-config-input-client_id").val();
+                var secret = $("#node-config-input-client_secret").val();
+                if (key == "" || secret == "") {
+                    e.preventDefault();
+                }
+            });
+
+        },
+        
+        oneditsave: function() {
+            if (window.foursquareConfigNodeIntervalId) {
+                window.clearTimeout(window.foursquareConfigNodeIntervalId);
+                delete window.foursquareConfigNodeIntervalId;
+            }
+        },
+        oneditcancel: function(adding) {
+            if (window.foursquareConfigNodeIntervalId) {
+                window.clearTimeout(window.foursquareConfigNodeIntervalId);
+                delete window.foursquareConfigNodeIntervalId;
+            }
+        }
+        
+    });
+})();
+</script>
+
+<!-- Foursquare query node -->
+<script type="text/x-red" data-template-name="foursquare">
+    <div class="form-row">
+        <label for="node-input-foursquare"><i class="fa fa-user"></i> Log in as</label>
+        <input type="text" id="node-input-foursquare">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="foursquare">
+    <p>Foursquare query node.</p>
+    <p>Can be used to search
+    <ul>
+        <li>all check-ins by the authenticated user</li>
+    </ul></p>
+</script>
+
+<script type="text/javascript">
+(function() {
+    RED.nodes.registerType('foursquare',{
+        category: 'social',
+        color:"#C0DEED",
+        defaults: {
+            foursquare: {type:"foursquare-credentials",required:true},
+            name: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        align: "right",
+        label: function() {
+            return this.name||'Foursquare';
+        }
+    });
+})();
+</script>
