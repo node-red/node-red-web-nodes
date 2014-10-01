@@ -22,6 +22,7 @@
             "s3": "aws/s3.js",
             "delicious": "delicious/delicious.js",
             "pinboard": "pinboard/pinboard.js",
+            "fitbit": "fitbit/fitbit.js",
             "flickr": "flickr/flickr.js",
             "dropbox": "dropbox/dropbox.js",
             "swarm":"swarm/swarm.js",
@@ -36,6 +37,7 @@
         "grunt-contrib-jshint": "0.10.0",
         "mocha": "1.21.4",
         "should": "4.0.4",
+        "sinon": "1.10.3",
         "supertest": "^0.13.0"
     }
 }
