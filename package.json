@@ -18,6 +18,7 @@
         "nodes"     : {
             "aws": "aws/aws.js",
             "s3": "aws/s3.js",
+            "delicious": "delicious/delicious.js",
             "pinboard": "pinboard/pinboard.js",
             "flickr": "flickr/flickr.js",
             "dropbox": "dropbox/dropbox.js"
