@@ -59,13 +59,24 @@ module.exports = function(RED) {
                     node.status({fill:"red",shape:"ring",text:"invalid calendar"});
                     return;
                 }
-                node.google.request({
+                var request = {
                     method: 'POST',
-                    url: 'https://www.googleapis.com/calendar/v3/calendars/'+cal.id+'/events/quickAdd',
-                    form: {
-                        text: msg.payload,
-                    },
-                }, function(err, data) {
+                };
+                if (typeof msg.payload === 'object') {
+                    request.url = 'https://www.googleapis.com/calendar/v3/calendars/'+cal.id+'/events';
+                    request.body = msg.payload;
+                } else {
+                    request.url = 'https://www.googleapis.com/calendar/v3/calendars/'+cal.id+'/events/quickAdd';
+                    request.form = {
+                        text: RED.util.ensureString(msg.payload)
+                    };
+                }
+                if (node.sendNotifications || msg.sendNotifications) {
+                    request.query = {
+                        sendNotifications: true
+                    };
+                }
+                node.google.request(request, function(err, data) {
                     if (err) {
                         node.error(err.toString());
                         node.status({fill:"red",shape:"ring",text:"failed"});

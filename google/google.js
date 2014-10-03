@@ -87,7 +87,9 @@ module.exports = function(RED) {
             req = { url: req };
         }
         req.method = req.method || 'GET';
-        req.json = req.json || true;
+        if (!req.hasOwnProperty("json")) {
+            req.json = true;
+        }
         // always set access token to the latest ignoring any already present
         req.auth = { bearer: this.credentials.accessToken };
         //console.log(require('util').inspect(req));
@@ -110,6 +112,13 @@ module.exports = function(RED) {
         request(req, function(err, result, data) {
             if (err) {
                 // handled in callback
+            } else if (result.statusCode >= 400) {
+                data = {
+                    error: {
+                        code: result.statusCode,
+                        message: result.body,
+                    },
+                };
             } else if (data.error) {
                 if (data.error.code === 401 && retries > 0) {
                     retries--;
