@@ -21,7 +21,8 @@
             "delicious": "delicious/delicious.js",
             "pinboard": "pinboard/pinboard.js",
             "flickr": "flickr/flickr.js",
-            "dropbox": "dropbox/dropbox.js"
+            "dropbox": "dropbox/dropbox.js",
+            "swarm":"swarm/swarm.js"
         }
     },
     "devDependencies": {
