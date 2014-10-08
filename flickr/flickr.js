@@ -75,10 +75,10 @@ module.exports = function(RED) {
                         api_key:"e99784b8ff80eaabc9c096b22e517c13"
                     }
                     if (msg.title) {
-                        options.title = RED.utils.ensureString(msg.title);
+                        options.title = RED.util.ensureString(msg.title);
                     }
                     if (msg.description) {
-                        options.description = RED.utils.ensureString(msg.description);
+                        options.description = RED.util.ensureString(msg.description);
                     }
                     if (msg.tags || node.tags) {
                         var tags = "";
