@@ -42,9 +42,17 @@ module.exports = function(grunt) {
                 "loopfunc": true, // allow functions to be defined in loops
                 "sub": true       // don't warn that foo['bar'] should be written as foo.bar
             },
-            all: [
-                '*/*.js'
-            ],
+            all: {
+                src: ['*/*.js'],
+                filter: function(filepath) { // on some developer machines the test coverage HTML report utilities cause further failures
+                    if(filepath.indexOf("coverage/prettify.js") === -1) {
+                        return true;   
+                    } else {
+                        console.log("Filtered out " + filepath + " from the jshint checks");
+                        return false;
+                    }
+                }
+            },
         },
         inlinelint: {
             html: ['*/*.html']
