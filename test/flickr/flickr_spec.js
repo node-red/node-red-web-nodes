@@ -33,8 +33,8 @@ describe('flickr nodes', function() {
             helper.load(flickrNode,
                         [{id:"n1", type:"helper", wires:[["n2"]]},
                          {id:"n2", type:"flickr out"}], function() {
-                var n1 = helper.getNode("n1");
-                n1.should.have.property('id', 'n1');
+                var n2 = helper.getNode("n2");
+                n2.should.have.property('id', 'n2');
                 done();
             });
         });
