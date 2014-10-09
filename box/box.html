@@ -1,0 +1,184 @@
+<!--
+  Copyright 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="box-credentials">
+    <div id="node-config-box-client-keys">
+        <div class="form-row">
+            <p style="margin-top: 10px;"><b>1.</b> Create your own app at <a href="https://app.box.com/developers/" target="_blank" style="text-decoration:underline;">Box</a></p>
+        </div>
+        <div class="form-tips" id="node-config-box-tooltip">
+        </div>
+        <div class="form-row">
+            <p style="margin-top: 10px;"><b>2.</b> Copy the project credentials here:</p>
+        </div>
+        <div class="form-row">
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientId"><i class="fa fa-user"></i> Client Id</label>
+            <input type="password" id="node-config-input-clientId">
+        </div>
+        <div class="form-row">
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientSecret"><i class="fa fa-key"></i> Secret</label>
+            <input type="password" id="node-config-input-clientSecret">
+        </div>
+        <div class="form-row">
+           <label>&nbsp;</label>
+           <a class="btn" id="node-config-start-auth" href="#" target="_blank">Authenticate with Box</a>
+        </div>
+    </div>
+    <div id="node-config-box">
+        <div class="form-row">
+            <label><i class="fa fa-user"></i> Box User</label><span id="node-config-box-displayName" class="input-xlarge uneditable-input"></span>
+        </div>
+        <input type="hidden" id="node-config-input-displayName">
+    </div>
+</script>
+
+<script type="text/javascript">
+(function() {
+    RED.nodes.registerType('box-credentials',{
+        category: 'config',
+        defaults: {
+            displayName: {value:""}
+        },
+        credentials: {
+            displayName: {type:"text"},
+            clientId: { type: "password"},
+            clientSecret: { type: "password"}
+        },
+        label: function() {
+            return this.displayName || 'Box';
+        },
+        exportable: false,
+        oneditprepare: function() {
+            var id = this.id;
+            var pathname = document.location.pathname;
+            if (pathname.slice(-1) != "/") {
+                pathname += "/";
+            }
+            var callback = location.protocol + "//" +
+                           location.hostname + ":" + location.port +
+                           pathname + "box-credentials/auth/callback";
+            $("#node-config-box-tooltip").html("<p>Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>"+callback+"</code>");
+
+            function updateBoxAuthButton() {
+                var v1 = $("#node-config-input-clientId").val();
+                var v2 = $("#node-config-input-clientSecret").val();
+                $("#node-config-start-auth").toggleClass("disabled",(v1.length === 0 || v2.length === 0));
+            }
+            $("#node-config-input-clientId").on('change keydown paste input',updateBoxAuthButton);
+            $("#node-config-input-clientSecret").on('change keydown paste input',updateBoxAuthButton);
+
+            function updateBoxDisplayName(dn) {
+                $("#node-config-box-client-keys").hide();
+                $("#node-config-box").show();
+                $("#node-config-input-displayName").val(dn);
+                $("#node-config-box-displayName").html(dn);
+            }
+
+            function pollBoxCredentials() {
+                $.getJSON('credentials/box-credentials/'+id,function(data) {
+                    if (data.displayName) {
+                        $("#node-config-dialog-ok").button("enable");
+                        updateBoxDisplayName(data.displayName);
+                        delete window.boxConfigNodeIntervalId;
+                    } else {
+                        window.boxConfigNodeIntervalId = window.setTimeout(pollBoxCredentials,2000);
+                    }
+                });
+             }
+
+            updateBoxAuthButton();
+
+            if (this.displayName) {
+                updateBoxDisplayName(this.displayName);
+            } else {
+                $("#node-config-box-client-keys").show();
+                $("#node-config-box").hide();
+                $("#node-config-dialog-ok").button("disable");
+            }
+
+            $("#node-config-start-auth").mousedown(function() {
+                var clientId = $("#node-config-input-clientId").val();
+                var clientSecret = $("#node-config-input-clientSecret").val();
+                var url = 'box-credentials/auth?id='+id+'&clientId='+clientId+"&clientSecret="+clientSecret+"&callback="+encodeURIComponent(callback);
+                $(this).attr("href",url);
+                window.boxConfigNodeIntervalId = window.setTimeout(pollBoxCredentials,2000);
+            });
+            $("#node-config-start-auth").click(function(e) {
+                var clientId = $("#node-config-input-clientId").val();
+                var clientSecret = $("#node-config-input-clientSecret").val();
+                if (clientId === "" || clientSecret === "") {
+                    e.preventDefault();
+                }
+            });
+        },
+        oneditsave: function() {
+            if (window.boxConfigNodeIntervalId) {
+                window.clearTimeout(window.boxConfigNodeIntervalId);
+                delete window.boxConfigNodeIntervalId;
+            }
+        },
+        oneditcancel: function() {
+            if (window.boxConfigNodeIntervalId) {
+                window.clearTimeout(window.boxConfigNodeIntervalId);
+                delete window.boxConfigNodeIntervalId;
+            }
+        }
+    });
+})();
+</script>
+
+<script type="text/x-red" data-template-name="box out">
+    <div class="form-row">
+        <label for="node-input-box"><i class="fa fa-user"></i> Box</label>
+        <input type="text" id="node-input-box">
+    </div>
+    <div class="form-row node-input-filename">
+         <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
+         <input type="text" id="node-input-filename" placeholder="Filename">
+    </div>
+    <div class="form-row node-input-localFilename">
+         <label for="node-input-localFilename"><i class="fa fa-file"></i> Local Filename</label>
+         <input type="text" id="node-input-localFilename" placeholder="Local Filename">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="box out">
+    <p>Box out node. Uploads content to Box. The filename on Box is taken from the node <b>filename</b> property or the <b>msg.filename</b> property. The content is taken from either the node <b>localFilename</b> property, the <b>msg.localFilename</b> property or the <b>msg.payload</b> property.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('box out',{
+        category: 'storage-output',
+        color:"#C0DEED",
+        defaults: {
+            box: {type:"box-credentials",required:true},
+            filename: {value:""},
+            localFilename: {value:""},
+            name: {value:""}
+        },
+        inputs:1,
+        outputs:0,
+        icon: "box.png",
+        align: "right",
+        label: function() {
+            return this.name||this.filename||this.localFilename||'Box';
+        }
+    });
+</script>
