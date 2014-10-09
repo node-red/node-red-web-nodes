@@ -140,6 +140,43 @@
 })();
 </script>
 
+<script type="text/x-red" data-template-name="box">
+    <div class="form-row">
+        <label for="node-input-box"><i class="fa fa-user"></i> Box</label>
+        <input type="text" id="node-input-box">
+    </div>
+    <div class="form-row node-input-filename">
+         <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
+         <input type="text" id="node-input-filename" placeholder="Filename">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="box">
+    <p>Box input node. Downloads content from Box. The filename on Box is taken from the node <b>filename</b> property or the <b>msg.filename</b> property. The content is sent as <b>msg.payload</b> property.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('box',{
+        category: 'storage-input',
+        color:"#C0DEED",
+        defaults: {
+            box: {type:"box-credentials",required:true},
+            filename: {value:""},
+            name: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "box.png",
+        label: function() {
+            return this.name||this.filename||'Box';
+        }
+    });
+</script>
+
 <script type="text/x-red" data-template-name="box out">
     <div class="form-row">
         <label for="node-input-box"><i class="fa fa-user"></i> Box</label>

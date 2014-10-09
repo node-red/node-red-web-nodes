@@ -87,7 +87,9 @@ module.exports = function(RED) {
             req = { url: req };
         }
         req.method = req.method || 'GET';
-        req.json = req.json || true;
+        if (!req.hasOwnProperty("json")) {
+            req.json = true;
+        }
         // always set access token to the latest ignoring any already present
         req.auth = { bearer: this.credentials.accessToken };
         if (!this.credentials.expireTime ||
@@ -159,6 +161,44 @@ module.exports = function(RED) {
                 }
             }
             return cb("not found", -1);
+        });
+    };
+
+    BoxNode.prototype.resolveFile = function(path, parent_id, cb) {
+        var node = this;
+        if (typeof parent_id === 'function') {
+            cb = parent_id;
+            parent_id = 0;
+        }
+        if (typeof path === "string") {
+            // split path and remove empty string components
+            path = path.split("/").filter(function(e) { return e !== ""; });
+            // TODO: could also handle '/blah/../' and '/./' perhaps
+        } else {
+            path = path.filter(function(e) { return e !== ""; });
+        }
+        if (path.length === 0) {
+            return cb("missing filename?", -1);
+        }
+        var file = path.pop();
+        node.resolvePath(path, function(err, parent_id) {
+            if (err) {
+                return cb(err, parent_id);
+            }
+            node.request('https://api.box.com/2.0/folders/'+parent_id, function(err, data) {
+                if (err) {
+                    return cb(err, -1);
+                }
+                var entries = data.item_collection.entries;
+                for (var i = 0; i < entries.length; i++) {
+                    if (entries[i].type === 'file' &&
+                        entries[i].name === file) {
+                        // found
+                        return cb(null, entries[i].id);
+                    }
+                }
+                return cb("not found", -1);
+            });
         });
     };
 
@@ -263,6 +303,57 @@ module.exports = function(RED) {
         });
     });
 
+    function BoxQueryNode(n) {
+        RED.nodes.createNode(this,n);
+        this.filename = n.filename || "";
+        this.box = RED.nodes.getNode(n.box);
+        var node = this;
+        if (!this.box || !this.box.credentials.accessToken) {
+            this.warn("Missing box credentials");
+            return;
+        }
+
+        node.on("input", function(msg) {
+            var filename = node.filename || msg.filename;
+            if (filename === "") {
+                node.warn("No filename specified");
+                return;
+            }
+            msg.filename = filename;
+            node.status({fill:"blue",shape:"dot",text:"resolving path"});
+            node.box.resolveFile(filename, function(err, file_id) {
+                if (err) {
+                    node.warn("failed to resolve path: " + err.toString());
+                    node.status({});
+                    delete msg.payload;
+                    msg.error = err;
+                    node.send(msg);
+                    return;
+                }
+                node.status({fill:"blue",shape:"dot",text:"downloading"});
+                node.box.request({
+                    url: 'https://api.box.com/2.0/files/'+file_id+'/content',
+                    json: false,
+                    followRedirect: true,
+                    maxRedirects: 1,
+                    encoding: null,
+                }, function(err, data) {
+                    if (err) {
+                        node.warn("download failed: " + err.toString());
+                        delete msg.payload;
+                        msg.error = err;
+                    } else {
+                        msg.payload = data;
+                        delete msg.error;
+                    }
+                    node.status({});
+                    node.send(msg);
+                });
+            });
+        });
+    }
+    RED.nodes.registerType("box", BoxQueryNode);
+
     function BoxOutNode(n) {
         RED.nodes.createNode(this,n);
         this.filename = n.filename || "";
@@ -299,7 +390,6 @@ module.exports = function(RED) {
                     url: 'https://upload.box.com/api/2.0/files/content',
                 }, function(err, data) {
                     if (err) {
-                        console.log("data: " + require('util').inspect(data));
                         if (data && data.status === 409 &&
                             data.context_info && data.context_info.conflicts) {
                             // existing file, attempt to overwrite it
