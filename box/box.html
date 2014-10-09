@@ -140,6 +140,51 @@
 })();
 </script>
 
+<script type="text/x-red" data-template-name="box in">
+    <div class="form-row">
+        <label for="node-input-box"><i class="fa fa-user"></i> Box</label>
+        <input type="text" id="node-input-box">
+    </div>
+    <div class="form-row node-input-filepattern">
+         <label for="node-input-filepattern"><i class="fa fa-file"></i> Filename Pattern</label>
+         <input type="text" id="node-input-filepattern" placeholder="Filepattern">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="box in">
+    <p>Box watch node. Watches for file events on Box. By default all
+    file events are reported, but the filename pattern can be supplied
+    to limit the events to files which have full filenames that match
+    the glob pattern. The event messages consist of the full filename
+    in <b>msg.payload</b> property, the filename in <b>msg.file</b>,
+    the event type in <b>msg.event</b> and the full event entry as
+    returned by
+    the <a href="https://developers.box.com/docs/#events">event
+    API</a> in <b>msg.data</b>.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('box in',{
+        category: 'storage-input',
+        color:"#C0DEED",
+        defaults: {
+            box: {type:"box-credentials",required:true},
+            filepattern: {value:""},
+            name: {value:""}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "box.png",
+        label: function() {
+            return this.name||this.filepattern||'Box';
+        }
+    });
+</script>
+
 <script type="text/x-red" data-template-name="box">
     <div class="form-row">
         <label for="node-input-box"><i class="fa fa-user"></i> Box</label>

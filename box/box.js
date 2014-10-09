@@ -20,6 +20,7 @@ module.exports = function(RED) {
     var fs = require("fs");
     var request = require("request");
     var url = require("url");
+    var minimatch = require("minimatch");
 
     function BoxNode(n) {
         RED.nodes.createNode(this,n);
@@ -40,6 +41,9 @@ module.exports = function(RED) {
         var node = this;
         //console.log("refreshing token: " + credentials.refreshToken);
         if (!credentials.refreshToken) {
+            // TODO: add a timeout to make sure we make a request
+            // every so often (if no flows trigger one) to ensure the
+            // refresh token does not expire
             node.error("No refresh token to regain Box access");
             return cb('No refresh token to regain Box access');
         }
@@ -130,6 +134,10 @@ module.exports = function(RED) {
         });
     };
 
+    BoxNode.prototype.folderInfo = function(parent_id, cb) {
+        this.request('https://api.box.com/2.0/folders/'+parent_id, cb);
+    };
+
     BoxNode.prototype.resolvePath = function(path, parent_id, cb) {
         var node = this;
         if (typeof parent_id === 'function') {
@@ -147,8 +155,7 @@ module.exports = function(RED) {
             return cb(null, parent_id);
         }
         var folder = path.shift();
-        node.request('https://api.box.com/2.0/folders/'+parent_id,
-                     function(err, data) {
+        node.folderInfo(parent_id, function(err, data) {
             if (err) {
                 return cb(err, -1);
             }
@@ -185,7 +192,7 @@ module.exports = function(RED) {
             if (err) {
                 return cb(err, parent_id);
             }
-            node.request('https://api.box.com/2.0/folders/'+parent_id, function(err, data) {
+            node.folderInfo(parent_id, function(err, data) {
                 if (err) {
                     return cb(err, -1);
                 }
@@ -201,6 +208,13 @@ module.exports = function(RED) {
             });
         });
     };
+
+    function constructFullPath(entry) {
+        return entry.path_collection.entries
+            .filter(function (e) { return e.id !== "0"; })
+            .map(function (e) { return e.name; })
+            .join('/') + '/' + entry.name;
+    }
 
     RED.httpAdmin.get('/box-credentials/auth', function(req, res){
         if (!req.query.clientId || !req.query.clientSecret ||
@@ -302,6 +316,114 @@ module.exports = function(RED) {
             });
         });
     });
+
+    function BoxInNode(n) {
+        RED.nodes.createNode(this,n);
+        this.filepattern = n.filepattern || "";
+        this.box = RED.nodes.getNode(n.box);
+        var node = this;
+        if (!this.box || !this.box.credentials.accessToken) {
+            this.warn("Missing box credentials");
+            return;
+        }
+        node.status({fill:"blue",shape:"dot",text:"initializing"});
+        this.box.request({
+            url: 'https://api.box.com/2.0/events?stream_position=now&stream_type=changes',
+        }, function (err, data) {
+            if (err) {
+                node.error("failed to initialize event stream: " + err.toString());
+                node.status({fill:"red",shape:"ring",text:"failed"});
+                return;
+            }
+            node.state = data.next_stream_position;
+            node.status({});
+            node.on("input", function(msg) {
+                node.status({fill:"blue",shape:"dot",text:"checking for events"});
+                node.box.request({
+                    url: 'https://api.box.com/2.0/events?stream_position='+node.state+'&stream_type=changes',
+                }, function(err, data) {
+                    if (err) {
+                        node.warn("failed to fetch events: " + err.toString());
+                        node.status({});
+                        return;
+                    }
+                    node.status({});
+                    node.state = data.next_stream_position;
+                    for (var i = 0; i < data.entries.length; i++) {
+                        // TODO: support other event types
+                        // TODO: suppress duplicate events
+                        // for both of the above see:
+                        //    https://developers.box.com/docs/#events
+                        var event;
+                        if (data.entries[i].event_type === 'ITEM_CREATE') {
+                            event = 'add';
+                        } else if (data.entries[i].event_type === 'ITEM_UPLOAD') {
+                            event = 'add';
+                        } else if (data.entries[i].event_type === 'ITEM_RENAME') {
+                            event = 'add';
+                            // TODO: emit delete event?
+                        } else if (data.entries[i].event_type === 'ITEM_TRASH') {
+                            // need to find old path
+                            node.lookupOldPath({}, data.entries[i], 'delete');
+                            /* strictly speaking the {} argument above should
+                             * be clone(msg) but:
+                             *   - it must be {}
+                             *   - if there was any possibility of a different
+                             *     msg then it should be cloned using the
+                             *     node-red/red/nodes/Node.js cloning function
+                             */
+                            continue;
+                        } else {
+                            event = 'unknown';
+                        }
+                        //console.log(JSON.stringify(data.entries[i], null, 2));
+                        node.sendEvent(msg, data.entries[i], event);
+                    }
+                });
+            });
+            var interval = setInterval(function() {
+                node.emit("input", {});
+            }, 900000); // 15 minutes
+            node.on("close", function() {
+                if (interval !== null) {
+                    clearInterval(interval);
+                }
+            });
+        });
+    }
+    RED.nodes.registerType("box in", BoxInNode);
+
+    BoxInNode.prototype.sendEvent = function(msg, entry, event, path) {
+        var source = entry.source;
+        if (typeof path === "undefined") {
+            path = constructFullPath(source);
+        }
+        if (this.filepattern && !minimatch(path, this.filepattern)) {
+            return;
+        }
+        msg.file = source.name;
+        msg.payload = path;
+        msg.event = event;
+        msg.data = entry;
+        this.send(msg);
+    };
+
+    BoxInNode.prototype.lookupOldPath = function (msg, entry, event) {
+        var source = entry.source;
+        this.status({fill:"blue",shape:"dot",text:"resolving path"});
+        var node = this;
+        node.box.folderInfo(source.parent.id, function(err, folder) {
+            if (err) {
+                node.warn("failed to resolve old path: " + err.toString());
+                node.status({fill:"red",shape:"ring",text:"failed"});
+                return;
+            }
+            node.status({});
+            // TODO: add folder path_collection to entry.parent?
+            node.sendEvent(msg, entry, event,
+                           constructFullPath(folder) + '/' + source.name);
+        });
+    };
 
     function BoxQueryNode(n) {
         RED.nodes.createNode(this,n);
