@@ -6,7 +6,9 @@
         "aws-sdk": "^2.0.15",
         "dropbox":"^0.10.3",
         "oauth":"~0.9.11",
-        "request":"~2.40.0"
+        "request":"~2.40.0",
+        "instagram-node":"0.5.1",
+        "clone": "0.1.11"
     },
     "repository" : {
         "type":"git",
@@ -22,7 +24,8 @@
             "pinboard": "pinboard/pinboard.js",
             "flickr": "flickr/flickr.js",
             "dropbox": "dropbox/dropbox.js",
-            "swarm":"swarm/swarm.js"
+            "swarm":"swarm/swarm.js",
+            "instagram" : "instagram/instagram.js"
         }
     },
     "devDependencies": {
