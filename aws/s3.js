@@ -18,6 +18,52 @@ module.exports = function(RED) {
     "use strict";
     var fs = require('fs');
 
+    function AmazonS3QueryNode(n) {
+        RED.nodes.createNode(this,n);
+        this.awsConfig = RED.nodes.getNode(n.aws);
+        this.region = n.region;
+        this.bucket = n.bucket;
+        this.filename = n.filename || "";
+        var node = this;
+        var AWS = this.awsConfig ? this.awsConfig.AWS : null;
+        if (!AWS) {
+            node.warn("Missing AWS credentials");
+            return;
+        }
+        var s3 = new AWS.S3();
+        node.on("input", function(msg) {
+            msg.filename = filename;
+            var bucket = node.bucket || msg.bucket;
+            if (bucket === "") {
+                node.warn("No bucket specified");
+                return;
+            }
+            var filename = node.filename || msg.filename;
+            if (filename === "") {
+                node.warn("No filename specified");
+                return;
+            }
+            msg.filename = filename;
+            node.status({fill:"blue",shape:"dot",text:"downloading"});
+            s3.getObject({
+                Bucket: bucket,
+                Key: filename,
+            }, function(err, data) {
+                if (err) {
+                    node.warn("download failed " + err.toString());
+                    delete msg.payload;
+                    msg.error = err;
+                } else {
+                    msg.payload = data.Body;
+                    delete msg.error;
+                }
+                node.status({});
+                node.send(msg);
+            });
+        });
+    }
+    RED.nodes.registerType("amazon s3", AmazonS3QueryNode);
+
     function AmazonS3OutNode(n) {
         RED.nodes.createNode(this,n);
         this.awsConfig = RED.nodes.getNode(n.aws);
@@ -34,7 +80,7 @@ module.exports = function(RED) {
         if (AWS) {
             var s3 = new AWS.S3();
             node.status({fill:"blue",shape:"dot",text:"checking credentials"});
-            s3.listObjects({ Bucket: this.bucket }, function(err) {
+            s3.listObjects({ Bucket: node.bucket }, function(err) {
                 if (err) {
                     node.error("AWS S3 error: " + err);
                     node.status({fill:"red",shape:"ring",text:"error"});
@@ -42,17 +88,17 @@ module.exports = function(RED) {
                 }
                 node.status({});
                 node.on("input", function(msg) {
-                    var bucket = this.bucket || msg.bucket;
+                    var bucket = node.bucket || msg.bucket;
                     if (bucket === "") {
                         node.warn("No bucket specified");
                         return;
                     }
-                    var filename = this.filename || msg.filename;
+                    var filename = node.filename || msg.filename;
                     if (filename === "") {
                         node.warn("No filename specified");
                         return;
                     }
-                    var localFilename = this.localFilename || msg.localFilename;
+                    var localFilename = node.localFilename || msg.localFilename;
                     if (localFilename) {
                         // TODO: use chunked upload for large files
                         node.status({fill:"blue",shape:"dot",text:"uploading"});
