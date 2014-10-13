@@ -17,6 +17,86 @@
 module.exports = function(RED) {
     "use strict";
     var fs = require('fs');
+    var minimatch = require("minimatch");
+
+    function AmazonS3InNode(n) {
+        RED.nodes.createNode(this,n);
+        this.awsConfig = RED.nodes.getNode(n.aws);
+        this.region = n.region;
+        this.bucket = n.bucket;
+        this.filepattern = n.filepattern || "";
+        var node = this;
+        var AWS = this.awsConfig ? this.awsConfig.AWS : null;
+        if (!AWS) {
+            node.warn("Missing AWS credentials");
+            return;
+        }
+        var s3 = new AWS.S3();
+        node.status({fill:"blue",shape:"dot",text:"initializing"});
+        s3.listObjects({ Bucket: node.bucket }, function(err, data) {
+            if (err) {
+                node.error("failed to fetch S3 state: " + err);
+                node.status({fill:"red",shape:"ring",text:"error"});
+                return;
+            }
+            node.state = data.Contents.filter(function (e) {
+                return !node.filepattern || minimatch(e, node.filepattern);
+            }).map(function (e) {
+                return e.Key;
+            });
+            node.status({});
+            node.on("input", function(msg) {
+                node.status({fill:"blue",shape:"dot",text:"checking for changes"});
+                s3.listObjects({ Bucket: node.bucket }, function(err, data) {
+                    if (err) {
+                        node.warn("failed to fetch S3 state: " + err);
+                        node.status({});
+                        return;
+                    }
+                    node.status({});
+                    var newState = data.Contents.filter(function (e) {
+                        return !node.filepattern ||
+                            minimatch(e, node.filepattern);
+                    }).map(function (e) {
+                        return e.Key;
+                    });
+                    var seen = {};
+                    var i;
+                    for (i = 0; i < node.state.length; i++) {
+                        seen[node.state[i]] = true;
+                    }
+                    for (i = 0; i < newState.length; i++) {
+                        if (seen[newState[i]]) {
+                            delete seen[newState[i]];
+                        } else {
+                            msg.payload = newState[i];
+                            msg.file = newState[i].substring(newState[i].lastIndexOf('/') + 1);
+                            msg.event = 'add';
+                            node.send(msg);
+                        }
+                    }
+                    for (var k in seen) {
+                        if (seen.hasOwnProperty(k)) {
+                            msg.payload = k;
+                            msg.file = k.substring(k.lastIndexOf('/') + 1);
+                            msg.event = 'delete';
+                            node.send(msg);
+                        }
+                    }
+                    node.state = newState;
+                });
+            });
+            var interval = setInterval(function() {
+                node.emit("input", {});
+            }, 900000); // 15 minutes
+            node.on("close", function() {
+                if (interval !== null) {
+                    clearInterval(interval);
+                }
+            });
+        });
+    }
+    RED.nodes.registerType("amazon s3 in", AmazonS3InNode);
 
     function AmazonS3QueryNode(n) {
         RED.nodes.createNode(this,n);
@@ -32,7 +112,6 @@ module.exports = function(RED) {
         }
         var s3 = new AWS.S3();
         node.on("input", function(msg) {
-            msg.filename = filename;
             var bucket = node.bucket || msg.bucket;
             if (bucket === "") {
                 node.warn("No bucket specified");
@@ -43,6 +122,7 @@ module.exports = function(RED) {
                 node.warn("No filename specified");
                 return;
             }
+            msg.bucket = bucket;
             msg.filename = filename;
             node.status({fill:"blue",shape:"dot",text:"downloading"});
             s3.getObject({

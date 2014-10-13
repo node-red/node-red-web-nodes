@@ -14,6 +14,53 @@
   limitations under the License.
 -->
 
+<script type="text/x-red" data-template-name="amazon s3 in">
+    <div class="form-row">
+        <label for="node-input-aws"><i class="fa fa-user"></i> AWS</label>
+        <input type="text" id="node-input-aws">
+    </div>
+    <div class="form-row">
+        <label for="node-input-bucket"><i class="fa fa-folder"></i> Bucket</label>
+        <input type="text" id="node-input-bucket" placeholder="bucket name">
+    </div>
+    <div class="form-row node-input-filepattern">
+         <label for="node-input-filepattern"><i class="fa fa-file"></i> Filename Pattern</label>
+         <input type="text" id="node-input-filepattern" placeholder="Filepattern">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="amazon s3 in">
+    <p>Amazon S3 watch node. Watches for file events on Box. By default all
+    file events are reported, but the filename pattern can be supplied
+    to limit the events to files which have full filenames that match
+    the glob pattern. The event messages consist of the full filename
+    in <b>msg.payload</b> property, the filename in <b>msg.file</b>,
+    the event type in <b>msg.event</b>.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('amazon s3 in',{
+        category: 'storage-input',
+        color:"#C0DEED",
+        defaults: {
+            aws: {type:"aws-config",required:true},
+            bucket: {required:true},
+            filepattern: {value:""},
+            name: {value:""},
+        },
+        inputs:0,
+        outputs:1,
+        icon: "amazon.png",
+        label: function() {
+            return this.bucket ? "s3 "+this.bucket : "s3";
+        }
+    });
+</script>
+
 <script type="text/x-red" data-template-name="amazon s3">
     <div class="form-row">
         <label for="node-input-aws"><i class="fa fa-user"></i> AWS</label>
