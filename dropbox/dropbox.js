@@ -30,6 +30,48 @@ module.exports = function(RED) {
         }
     });
 
+    function DropboxQueryNode(n) {
+        RED.nodes.createNode(this,n);
+        this.filename = n.filename || "";
+        this.dropboxConfig = RED.nodes.getNode(n.dropbox);
+        var credentials = this.dropboxConfig ? this.dropboxConfig.credentials : {};
+        var node = this;
+        if (credentials.appkey && credentials.appsecret &&
+            credentials.accesstoken) {
+            var dropbox = new Dropbox.Client({
+                //uid: credentials.uid,
+                key: credentials.appkey,
+                secret: credentials.appsecret,
+                token: credentials.accesstoken,
+            });
+            node.on("input", function(msg) {
+                var filename = this.filename || msg.filename;
+                if (filename === "") {
+                    node.warn("No filename specified");
+                    return;
+                }
+                msg.filename = filename;
+                node.status({fill:"blue",shape:"dot",text:"downloading"});
+                dropbox.readFile(filename, function(err, data) {
+                    if (err) {
+                        node.warn("download failed " + err.toString());
+                        delete msg.payload;
+                        msg.error = err;
+                    } else {
+                        msg.payload = data;
+                        delete msg.error;
+                    }
+                    node.status({});
+                    node.send(msg);
+                });
+            });
+        } else {
+            node.warn("Missing dropbox credentials");
+        }
+    }
+    RED.nodes.registerType("dropbox",DropboxQueryNode);
+
+
     function DropboxOutNode(n) {
         RED.nodes.createNode(this,n);
         this.filename = n.filename || "";
@@ -93,6 +135,8 @@ module.exports = function(RED) {
                     }
                 });
             });
+        } else {
+            node.warn("Missing dropbox credentials");
         }
     }
     RED.nodes.registerType("dropbox out",DropboxOutNode);

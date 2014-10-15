@@ -65,6 +65,48 @@
 })();
 </script>
 
+<script type="text/x-red" data-template-name="dropbox">
+    <div class="form-row">
+        <label for="node-input-dropbox"><i class="fa fa-user"></i> Dropbox</label>
+        <input type="text" id="node-input-dropbox">
+    </div>
+    <div class="form-row node-input-filename">
+         <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
+         <input type="text" id="node-input-filename" placeholder="Filename">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="dropbox">
+    <p>Dropbox input node. Downloads content from Dropbox. The
+    filename on Dropbox is taken from the node <b>filename</b>
+    property or the <b>msg.filename</b> property. The downloaded
+    content is sent as <b>msg.payload</b> property. If the download
+    fails <b>msg.error</b> will contain an error object.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('dropbox',{
+        category: 'storage-input',
+        color:"#C0DEED",
+        defaults: {
+            dropbox: {type:"dropbox-config",required:true},
+            filename: {value:""},
+            name: {value:""}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "dropbox.png",
+        align: "right",
+        label: function() {
+            return this.name||this.filename||'Dropbox';
+        }
+    });
+</script>
+
 <script type="text/x-red" data-template-name="dropbox out">
     <div class="form-row">
         <label for="node-input-dropbox"><i class="fa fa-user"></i> Dropbox</label>
@@ -96,7 +138,7 @@
             dropbox: {type:"dropbox-config",required:true},
             filename: {value:""},
             localFilename: {value:""},
-            name: {value:"Dropbox"}
+            name: {value:""}
         },
         inputs:1,
         outputs:0,
