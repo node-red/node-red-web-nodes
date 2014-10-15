@@ -397,7 +397,7 @@ describe('instagram nodes', function() {
                .reply(200, replyText);
                 
                 helper.load(instagramNode, [{id:"instagramCredentials1", type:"instagram-credentials"},
-                                            {id:"instagramNode1", type:"instagram", instagram: "instagramCredentials1","inputType":"photo","outputType":"file", wires:[["helperNode1"]]},
+                                            {id:"instagramNode1", type:"instagram", instagram: "instagramCredentials1","inputType":"photo","outputType":"buffer", wires:[["helperNode1"]]},
                                             {id:"helperNode1", type:"helper"}],
                                             {
                                                 "instagramCredentials1" : { // pre-loaded credentials, no need to call OAuth

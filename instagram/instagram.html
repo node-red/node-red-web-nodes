@@ -66,8 +66,8 @@
     <div class="form-row">
         <label for="node-input-outputType"><i class="icon-search"></i> Output</label>
         <select type="text" id="node-input-outputType" style="display: inline-block; vertical-align: middle; width:60%;">
-            <option value="file">The photo as a buffer</option>
-            <option value="link">The photo url</option>
+            <option value="buffer">the photo as a buffer</option>
+            <option value="link">the photo url</option>
         </select>
     </div>
     <div class="form-row">
@@ -104,8 +104,8 @@
     <div class="form-row">
         <label for="node-input-outputType"><i class="icon-search"></i> Output</label>
         <select type="text" id="node-input-outputType" style="display: inline-block; vertical-align: middle; width:60%;">
-            <option value="file">The photo as a buffer</option>
-            <option value="link">The photo url</option>
+            <option value="buffer">the photo as a buffer</option>
+            <option value="link">the photo url</option>
         </select>
     </div>
     <div class="form-row">
@@ -244,7 +244,7 @@
         defaults: {
             instagram: { type:"instagram-credentials", required: true },
             inputType: { value: "photo"},
-            outputType: { value:"file" },
+            outputType: { value:"buffer" },
             name: {value:""}
         },
         color:"#889FB3",
@@ -266,14 +266,13 @@
         defaults: {
             instagram: { type:"instagram-credentials", required: true },
             inputType: { value: "photo"},
-            outputType: { value:"file" },
+            outputType: { value:"buffer" },
             name: {value:""}
         },
         color:"#889FB3",
         inputs:1,
         outputs:1,
         icon: "instagram.png",
-        align: "right",
         label: function() {
             return this.name||"Instagram";
         },
