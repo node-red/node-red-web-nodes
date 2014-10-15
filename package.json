@@ -35,7 +35,9 @@
         "grunt-simple-mocha": "0.4.0",
         "grunt-contrib-jshint": "0.10.0",
         "mocha": "1.21.4",
+        "nock": "^0.48.0",
         "should": "4.0.4",
+        "sinon": "1.10.3",
         "supertest": "^0.13.0"
     }
 }
