@@ -30,6 +30,66 @@ module.exports = function(RED) {
         }
     });
 
+    function DropboxInNode(n) {
+        RED.nodes.createNode(this,n);
+        this.filepattern = n.filepattern || "";
+        this.dropboxConfig = RED.nodes.getNode(n.dropbox);
+        var credentials = this.dropboxConfig ? this.dropboxConfig.credentials : {};
+        if (!credentials.appkey || !credentials.appsecret ||
+            !credentials.accesstoken) {
+            this.warn("Missing dropbox credentials");
+            return;
+        }
+
+        var node = this;
+        var dropbox = new Dropbox.Client({
+            //uid: credentials.uid,
+            key: credentials.appkey,
+            secret: credentials.appsecret,
+            token: credentials.accesstoken,
+        });
+        node.status({fill:"blue",shape:"dot",text:"initializing"});
+        dropbox.pullChanges(function(err, data) {
+            if (err) {
+                node.error("initialization failed " + err.toString());
+                node.status({fill:"red",shape:"ring",text:"failed"});
+                return;
+            }
+            node.status({});
+            node.state = data.cursor();
+            node.on("input", function(msg) {
+                node.status({fill:"blue",shape:"dot",text:"checking for changes"});
+                dropbox.pullChanges(node.state, function(err, data) {
+                    if (err) {
+                        node.warn("failed to fetch changes" + err.toString());
+                        node.status({}); // clear status since poll retries anyway
+                        return;
+                    }
+                    node.state = data.cursor();
+                    node.status({});
+                    var changes = data.changes;
+                    for (var i = 0; i < changes.length; i++) {
+                        var change = changes[i];
+                        msg.payload = change.path;
+                        msg.file = change.path.substring(change.path.lastIndexOf('/') + 1);
+                        msg.event = change.wasRemoved ? 'delete' : 'add';
+                        msg.data = change;
+                        node.send(msg);
+                    }
+                });
+            });
+            var interval = setInterval(function() {
+                node.emit("input", {});
+            }, 900000); // 15 minutes
+            node.on("close", function() {
+                if (interval !== null) {
+                    clearInterval(interval);
+                }
+            });
+        });
+    }
+    RED.nodes.registerType("dropbox in",DropboxInNode);
+
     function DropboxQueryNode(n) {
         RED.nodes.createNode(this,n);
         this.filename = n.filename || "";
@@ -70,7 +130,6 @@ module.exports = function(RED) {
         }
     }
     RED.nodes.registerType("dropbox",DropboxQueryNode);
-
 
     function DropboxOutNode(n) {
         RED.nodes.createNode(this,n);

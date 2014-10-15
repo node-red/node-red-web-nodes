@@ -65,6 +65,49 @@
 })();
 </script>
 
+<script type="text/x-red" data-template-name="dropbox in">
+    <div class="form-row">
+        <label for="node-input-dropbox"><i class="fa fa-user"></i> Dropbox</label>
+        <input type="text" id="node-input-dropbox">
+    </div>
+    <div class="form-row node-input-filepattern">
+         <label for="node-input-filepattern"><i class="fa fa-file"></i> Filename Pattern</label>
+         <input type="text" id="node-input-filepattern" placeholder="Filepattern">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="dropbox in">
+    <p>Dropbox watch node. Watches for file events on Dropbox. By default all
+    file events are reported, but the filename pattern can be supplied
+    to limit the events to files which have full filenames that match
+    the glob pattern. The event messages consist of the full filename
+    in <b>msg.payload</b> property, the filename in <b>msg.file</b>,
+    the event type in <b>msg.event</b> and the full change object
+    in <b>msg.data</b>.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('dropbox in',{
+        category: 'storage-input',
+        color:"#C0DEED",
+        defaults: {
+            dropbox: {type:"dropbox-config",required:true},
+            filepattern: {value:""},
+            name: {value:""}
+        },
+        inputs: 0,
+        outputs: 1,
+        icon: "dropbox.png",
+        label: function() {
+            return this.name||this.filepattern||'Dropbox';
+        }
+    });
+</script>
+
 <script type="text/x-red" data-template-name="dropbox">
     <div class="form-row">
         <label for="node-input-dropbox"><i class="fa fa-user"></i> Dropbox</label>
