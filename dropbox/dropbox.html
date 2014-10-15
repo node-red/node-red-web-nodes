@@ -81,13 +81,15 @@
 </script>
 
 <script type="text/x-red" data-help-name="dropbox in">
-    <p>Dropbox watch node. Watches for file events on Dropbox. By default all
-    file events are reported, but the filename pattern can be supplied
-    to limit the events to files which have full filenames that match
-    the glob pattern. The event messages consist of the full filename
-    in <b>msg.payload</b> property, the filename in <b>msg.file</b>,
-    the event type in <b>msg.event</b> and the full change object
-    in <b>msg.data</b>.</p>
+    <p>Dropbox watch node. Watches for file events on Dropbox. By
+    default all file events are reported, but the filename pattern can
+    be supplied to limit the events to files which have full filenames
+    that match the glob pattern. The event messages consist of the
+    full filename in <b>msg.payload</b> property, the filename
+    in <b>msg.file</b>, the event type in <b>msg.event</b> and
+    the <a href="https://github.com/dropbox/dropbox-js">dropbox.js</a>
+    API <a href="http://coffeedoc.info/github/dropbox/dropbox-js/master/classes/Dropbox/Http/PulledChange.html">PulledChange</a>
+    object in <b>msg.data</b>.</p>
 </script>
 
 <script type="text/javascript">
