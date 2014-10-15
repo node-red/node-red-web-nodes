@@ -26,7 +26,11 @@ module.exports = function(RED) {
         this.filename = n.filename || "";
         this.localFilename = n.localFilename || "";
         var node = this;
-        var AWS = this.awsConfig.AWS;
+        var AWS = this.awsConfig ? this.awsConfig.AWS : null;
+        if (!AWS) {
+            node.warn("Missing AWS credentials");
+            return;
+        }
         if (AWS) {
             var s3 = new AWS.S3();
             node.status({fill:"blue",shape:"dot",text:"checking credentials"});
