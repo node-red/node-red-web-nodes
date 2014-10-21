@@ -25,7 +25,9 @@
             "flickr": "flickr/flickr.js",
             "dropbox": "dropbox/dropbox.js",
             "swarm":"swarm/swarm.js",
-            "instagram" : "instagram/instagram.js"
+            "instagram" : "instagram/instagram.js",
+            "google": "google/google.js",
+            "googlecalendar": "google/calendar.js"
         }
     },
     "devDependencies": {

@@ -1,0 +1,141 @@
+<!--
+  Copyright 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="google-credentials">
+    <div id="node-config-google-client-keys">
+        <div class="form-row">
+            <p style="margin-top: 10px;"><b>1.</b> Create your own project by following these <a href="https://developers.google.com/api-client-library/javascript/start/start-js#Getkeysforyourapplication" target="_blank" style="text-decoration:underline;">instructions</a></p>
+        </div>
+        <div class="form-tips" id="node-config-google-tooltip">
+        </div>
+        <div class="form-row">
+            <p style="margin-top: 10px;"><b>2.</b> Copy the project credentials here:</p>
+        </div>
+        <div class="form-row">
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientId"><i class="fa fa-user"></i> Client Id</label>
+            <input type="password" id="node-config-input-clientId">
+        </div>
+        <div class="form-row">
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientSecret"><i class="fa fa-key"></i> Secret</label>
+            <input type="password" id="node-config-input-clientSecret">
+        </div>
+        <div class="form-row">
+           <label>&nbsp;</label>
+           <a class="btn" id="node-config-start-auth" href="#" target="_blank">Authenticate with Google</a>
+        </div>
+    </div>
+    <div id="node-config-google">
+        <div class="form-row">
+            <label><i class="fa fa-user"></i> Google User</label><span id="node-config-google-displayName" class="input-xlarge uneditable-input"></span>
+        </div>
+        <input type="hidden" id="node-config-input-displayName">
+    </div>
+</script>
+
+<script type="text/javascript">
+(function() {
+    RED.nodes.registerType('google-credentials',{
+        category: 'config',
+        defaults: {
+            displayName: {value:""}
+        },
+        credentials: {
+            displayName: {type:"text"},
+            clientId: { type: "password"},
+            clientSecret: { type: "password"}
+        },
+        label: function() {
+            return this.displayName || 'Google'; // TODO: fix this
+        },
+        exportable: false,
+        oneditprepare: function() {
+            var id = this.id;
+            var pathname = document.location.pathname;
+            if (pathname.slice(-1) != "/") {
+                pathname += "/";
+            }
+            var callback = location.protocol + "//" +
+                           location.hostname + ":" + location.port +
+                           pathname + "google-credentials/auth/callback";
+            $("#node-config-google-tooltip").html("<p>Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>"+callback+"</code>");
+
+            function updateGoogleAuthButton() {
+                var v1 = $("#node-config-input-clientId").val();
+                var v2 = $("#node-config-input-clientSecret").val();
+                $("#node-config-start-auth").toggleClass("disabled",(v1.length === 0 || v2.length === 0));
+            }
+            $("#node-config-input-clientId").on('change keydown paste input',updateGoogleAuthButton);
+            $("#node-config-input-clientSecret").on('change keydown paste input',updateGoogleAuthButton);
+
+            function updateGoogleDisplayName(dn) {
+                $("#node-config-google-client-keys").hide();
+                $("#node-config-google").show();
+                $("#node-config-input-displayName").val(dn);
+                $("#node-config-google-displayName").html(dn);
+            }
+
+            function pollGoogleCredentials() {
+                $.getJSON('credentials/google-credentials/'+id,function(data) {
+                    if (data.displayName) {
+                        $("#node-config-dialog-ok").button("enable");
+                        updateGoogleDisplayName(data.displayName);
+                        delete window.googleConfigNodeIntervalId;
+                    } else {
+                        window.googleConfigNodeIntervalId = window.setTimeout(pollGoogleCredentials,2000);
+                    }
+                });
+             }
+
+            updateGoogleAuthButton();
+
+            if (this.displayName) {
+                updateGoogleDisplayName(this.displayName);
+            } else {
+                $("#node-config-google-client-keys").show();
+                $("#node-config-google").hide();
+                $("#node-config-dialog-ok").button("disable");
+            }
+
+            $("#node-config-start-auth").mousedown(function() {
+                var clientId = $("#node-config-input-clientId").val();
+                var clientSecret = $("#node-config-input-clientSecret").val();
+                var url = 'google-credentials/auth?id='+id+'&clientId='+clientId+"&clientSecret="+clientSecret+"&callback="+encodeURIComponent(callback);
+                $(this).attr("href",url);
+                window.googleConfigNodeIntervalId = window.setTimeout(pollGoogleCredentials,2000);
+            });
+            $("#node-config-start-auth").click(function(e) {
+                var clientId = $("#node-config-input-clientId").val();
+                var clientSecret = $("#node-config-input-clientSecret").val();
+                if (clientId === "" || clientSecret === "") {
+                    e.preventDefault();
+                }
+            });
+        },
+        oneditsave: function() {
+            if (window.googleConfigNodeIntervalId) {
+                window.clearTimeout(window.googleConfigNodeIntervalId);
+                delete window.googleConfigNodeIntervalId;
+            }
+        },
+        oneditcancel: function() {
+            if (window.googleConfigNodeIntervalId) {
+                window.clearTimeout(window.googleConfigNodeIntervalId);
+                delete window.googleConfigNodeIntervalId;
+            }
+        }
+    });
+})();
+</script>
