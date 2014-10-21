@@ -23,14 +23,13 @@ module.exports = function(RED) {
     var Url = require('url');
     var request = require('request');
     
-    var DUMMY = null;
     var IMAGE = "image";// currently we're only considering images
     
     var repeat = 900000; // 15 minutes => the repeat frequency of the input node
     
     function InstagramCredentialsNode(n) {
         RED.nodes.createNode(this,n);
-        this.clientID = n.clientID;
+//        this.clientID = n.clientID;
     }
     
     function downloadImageAndSendAsBuffer(node, url, msg) {
@@ -55,7 +54,7 @@ module.exports = function(RED) {
 
         // Now grab initial state but only grab the ones we're concerned with
         
-        if (node.inputType === "photo") {
+        if (node.inputType === "photo") {            
             ig.user_media_recent('self', { count : 1, min_id : null, max_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
                    node.warn('Instagram node has failed to fetch latest user photo : '+err);
@@ -64,17 +63,18 @@ module.exports = function(RED) {
                 if(medias.length > 0) { // if the user has uploaded something to Instagram already
                     node.latestSelfContentID = medias[0].id;
                 }
-                
-                node.initialized = true;
+
+                node.on("input", function(msg) {
+                    handleNodeInput(node, msg);
+                });
+
                 if(isInputNode === true) {
                     node.interval = setInterval(function() { // self trigger
                         node.emit("input", {});
                     }, repeat);
                 }
             });
-        }
-        
-        if (node.inputType === "like") {
+        } else if (node.inputType === "like") {
             ig.user_self_liked({ count : 1, max_like_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
                     node.warn('Instagram node has failed to fetch latest liked photo : '+err);
@@ -83,7 +83,11 @@ module.exports = function(RED) {
                 if(medias.length > 0) { // if the user has liked something to Instagram already
                     node.latestLikedID = medias[0].id;
                 }
-                node.initialized = true;
+                
+                node.on("input", function(msg) {
+                    handleNodeInput(node, msg);
+                });
+                
                 if(isInputNode === true) {
                     node.interval = setInterval(function() { // self trigger
                         node.emit("input", {});
@@ -104,38 +108,43 @@ module.exports = function(RED) {
             var carryOnPaginating = true;
             
             if (err) {
-                node.warn('Instagram node has failed to fetch latest liked media : '+err);
+                node.warn('Instagram node has failed to fetch latest media : '+err);
             }
             
-            for(var i = 0; i < medias.length; i++) {
-                if (node.inputType === "like") { // like is a special case as per Instagram API behaviour
-                    if(areWeInPaginationRecursion === false) { // need to set the pointer of latest served liked image before pagination occurs
-                        idOfLikedReturned = medias[0].id;
+            if(medias) {
+                for(var i = 0; i < medias.length; i++) {                    
+                    if (node.inputType === "like") { // like is a special case as per Instagram API behaviour
+                        if(areWeInPaginationRecursion === false) { // need to set the pointer of latest served liked image before pagination occurs
+                            idOfLikedReturned = medias[0].id;
+                        }
+                        if (medias[i].id === node.latestLikedID || node.latestLikedID === null) { // we finally found the image we already returned or has been there at init
+                            node.latestLikedID = idOfLikedReturned; // we need to assign the latest liked to the one we returned first => can only do node at the end, otherwise we'd never match break condition and always return everything
+                            carryOnPaginating = false;
+                            break;
+                        }
                     }
-                    if (medias[i].id === node.latestLikedID || node.latestLikedID === DUMMY) { // we finally found the image we already returned or has been there at init
-                        node.latestLikedID = idOfLikedReturned; // we need to assign the latest liked to the one we returned first => can only do node at the end, otherwise we'd never match break condition and always return everything
-                        carryOnPaginating = false;
-                        break;
+                    
+                    if (node.inputType === "photo" && i === 0 && (areWeInPaginationRecursion === false) ) { // only set the served self content ID to equal the first media of the first pagination page and ignore on subsequent pages 
+                        idOfSelfReturned = medias[i].id;
                     }
-                }
-                
-                if (node.inputType === "photo" && i === 0 && (areWeInPaginationRecursion === false) ) { // only set the served self content ID to equal the first media of the first pagination page and ignore on subsequent pages 
-                    idOfSelfReturned = medias[0].id;
-                }
-                
-                if (node.inputType === "photo" && (medias[i].id === node.latestSelfContentID) ) { // if we say to the Insta API that we want images more recent than image id "blah", it returns image with that id too
-                 //deliberate no-op
-                } else if(medias[i].type === IMAGE) {
-                    var url = medias[i].images.standard_resolution.url;
-                    if (node.outputType === "link") {
-                        msg.payload = url;
-                        node.send(msg);
-                    } else if (node.outputType === "file") {
-                        downloadImageAndSendAsBuffer(node, url, msg);
+                    
+                    if (node.inputType === "photo" && (medias[i].id === node.latestSelfContentID) ) { // if we say to the Insta API that we want images more recent than image id "blah", it returns image with that id too
+                     //deliberate no-op
+                    } else if(medias[i].type === IMAGE) {
+                        var url = medias[i].images.standard_resolution.url;
+                        if (node.outputType === "link") {
+                            msg.payload = url;
+                            node.send(msg);
+                        } else if (node.outputType === "buffer") {
+                            downloadImageAndSendAsBuffer(node, url, msg);
+                        }
                     }
-                }
+                }   
+            } else if(areWeInPaginationRecursion === false) {
+                node.warn('Instagram node has failed to fetch any media');
+                return;
             }
-            if(pagination.next && carryOnPaginating) {
+            if(pagination && pagination.next && carryOnPaginating) {
                 areWeInPaginationRecursion = true;
                 pagination.next(returnPagefulsOfStuff);
             } else {
@@ -146,69 +155,67 @@ module.exports = function(RED) {
         // If we're processing user content
         if (node.inputType === "photo") {
             ig.user_media_recent('self', { count : null, min_id : node.latestSelfContentID, max_id : null}, returnPagefulsOfStuff);
-        }
-        
-        // If we're processing likes
-        if (node.inputType === "like") {
+        } else if (node.inputType === "like") { // If we're processing likes
             ig.user_self_liked({ count : null, max_like_id : null}, returnPagefulsOfStuff);
         }
     }
     
-    function InstagramInNode(n) {
-        this.latestSelfContentID = DUMMY; // use a dummy -1 value if the user has not liked/uploaded any content yet
-        this.latestLikedID = DUMMY;
-
-        this.inputType = n.inputType;
-        this.outputType = n.outputType;
-        
-        this.interval = null; // used to track individual refresh intervals
-        
+    function InstagramInNode(n) {   
         RED.nodes.createNode(this,n);
-        this.instagramConfig = RED.nodes.getNode(n.instagram);
-        if (!this.instagramConfig) {
-            this.warn("Missing Instagram credentials");
+        
+        var node = this;
+        
+        node.latestSelfContentID = null; // if the user has not liked/uploaded any content yet
+        node.latestLikedID = null;
+
+        node.inputType = n.inputType;
+        node.outputType = n.outputType;
+        
+        node.interval = null; // used to track individual refresh intervals
+        
+        node.instagramConfig = RED.nodes.getNode(n.instagram);
+        if (!node.instagramConfig) {
+            node.warn("Missing Instagram credentials");
             return;
         }
         
-        initializeNode(this, true); // the build in poll interval is getting set up at the end of init
+        initializeNode(node, true); // the build in poll interval is getting set up at the end of init
         
-        this.on("input", function(msg) {
-            handleNodeInput(this, msg);
-        });
-            
-        this.on("close", function() {
-            if (this.interval !== null) {
-                clearInterval(this.interval);
+        node.on("close", function() {
+            if (node.interval !== null) {
+                clearInterval(node.interval);
             }
+            node.latestSelfContentID = null;
+            node.latestLikedID = null;
+            node.inputType = null;
+            node.outputType = null;
         });
     }
 
     function InstagramNode(n) {
-        
-        this.initialized = false;
-        this.latestSelfContentID = DUMMY; // use a dummy -1 value if the user has not liked/uploaded any content yet
-        this.latestLikedID = DUMMY;
-        
-        this.inputType = n.inputType;
-        this.outputType = n.outputType;
-        
         RED.nodes.createNode(this,n);
-        this.instagramConfig = RED.nodes.getNode(n.instagram);
-        if (!this.instagramConfig) {
-            this.warn("Missing Instagram credentials");
+        
+        var node = this;
+
+        node.latestSelfContentID = null; // if the user has not liked/uploaded any content yet
+        node.latestLikedID = null;
+        
+        node.inputType = n.inputType;
+        node.outputType = n.outputType;
+        
+        node.instagramConfig = RED.nodes.getNode(n.instagram);
+        if (!node.instagramConfig) {
+            node.warn("Missing Instagram credentials");
             return;
         }
         
-        if(this.initialized !== true) {
-            initializeNode(this, false);
-        }
+        initializeNode(node, false);
         
-        this.on("input", function(msg) {
-            if(this.initialized === true) {
-                handleNodeInput(this, msg);
-            } else {
-                this.warn("Instagram node has received an input before it had initialized. Input dropped.");
-            }
+        node.on("close", function() {
+            node.latestSelfContentID = null;
+            node.latestLikedID = null;
+            node.inputType = null;
+            node.outputType = null;
         });
     }
     
@@ -299,25 +306,24 @@ module.exports = function(RED) {
                 return res.send("oauth error: " + data.error);
             }
             
-            credentials.access_token = data.access_token;
+            if(result.statusCode !== 200) {
+                return res.send("Instagram replied with the unexpected HTTP status code of " + result.statusCode + "\nDetails:\n" + data);
+            }
             
-            // figuring out the user's username for the UI:
-            ig.use({ access_token: credentials.access_token });
-            ig.user('self', function(err, result, remaining, limit) { // warning, this is not the same as the other result or res!
-                if (err) {
-                    return res.send('Error! Instagram node has failed to fetch the username : '+err);
-                }
-                if(!result) {
-                    return res.send('Error! Fetching the authenticated user\'s details has failed');
-                }
-                if(result.username) { // SUCCESS
-                    credentials.username = result.username;
-                    RED.nodes.addCredentials(node_id,credentials);
-                    res.send("<html><head></head><body>Successfully authorized with Instagram. You can close this window now.</body></html>");
-                } else {
-                    return res.send('Error! No username found for authenticated user.');
-                }
-            });
+            if(data.user.username) {
+                credentials.username = data.user.username;
+            } else {
+                return res.send('Error! Instagram node has failed to fetch the username.');
+            }
+            
+            if(data.access_token) {
+                credentials.access_token = data.access_token;   
+            } else {
+                return res.send('Error! Instagram node has failed to fetch a valid access token.');
+            }
+            
+            RED.nodes.addCredentials(node_id,credentials);
+            res.send("<html><head></head><body>Successfully authorized with Instagram. You can close this window now.</body></html>");
         });
     });
 };
