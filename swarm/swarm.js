@@ -86,6 +86,8 @@ module.exports = function(RED) {
 
         }
     } 
+    
+    RED.nodes.registerType("swarm in", SwarmInNode);
 
     /**
      * Swarm query node - will return the most recent check-in since
@@ -140,6 +142,7 @@ module.exports = function(RED) {
                 } else {
                     if (result.response.checkins.items.length !== 0) {
                       var latest = result.response.checkins.items[0];
+                      msg.payload = {};
                       msg.payload = latest;
                       callback(msg);
                   }                    
@@ -147,8 +150,6 @@ module.exports = function(RED) {
             }
         });              
     }
-    
-    RED.nodes.registerType("swarm in", SwarmInNode);
     
     RED.httpAdmin.get('/swarm-credentials/auth', function(req, res){
         if (!req.query.clientid || !req.query.clientsecret || !req.query.id || !req.query.callback) {
