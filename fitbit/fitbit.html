@@ -1,0 +1,268 @@
+<!--
+  Copyright 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="fitbit-credentials">
+    <div id="node-config-fitbit-app-keys">
+        <div class="form-row">
+            <p style="margin-top: 10px;"><b>1.</b> Create your own app at <a href="https://dev.fitbit.com/apps/new" target="_blank" style="text-decoration:underline;">fitbit.com</a></p>
+        </div>
+        <div class="form-row">
+            <p style="margin-top: 10px;"><b>2.</b> Copy the app details here:</p>
+        </div>
+        <div class="form-row">
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_key"><i class="fa fa-user"></i> Key</label>
+            <input type="password" id="node-config-input-client_key">
+        </div>
+        <div class="form-row">
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_secret"><i class="fa fa-key"></i> Secret</label>
+            <input type="password" id="node-config-input-client_secret">
+        </div>
+        <div class="form-row">
+           <label>&nbsp;</label>
+           <a class="btn" id="node-config-start-auth" href="#" target="_blank">Authenticate with Fitbit</a>
+        </div>
+    </div>
+    <div id="node-config-fitbit-user">
+        <div class="form-row">
+            <label><i class="fa fa-user"></i> Fitbit ID</label><span id="node-config-fitbit-username" class="input-xlarge uneditable-input"></span>
+        </div>
+        <input type="hidden" id="node-config-input-username">
+    </div>
+</script>
+
+<script type="text/javascript">
+(function() {
+
+    RED.nodes.registerType('fitbit-credentials',{
+        category: 'config',
+        defaults: {
+            username: {value:""}
+        },
+        credentials: {
+            username: {type:"text"},
+            client_key: { type: "password"},
+            client_secret: { type: "password"},
+            access_token: {type: "password"},
+            access_token_secret: {type:"password"}
+        },
+
+        label: function() {
+            return this.username;
+        },
+        exportable: false,
+        oneditprepare: function() {
+            var id = this.id;
+
+            function updateFitbitAuthButton() {
+                var v1 = $("#node-config-input-client_key").val();
+                var v2 = $("#node-config-input-client_secret").val();
+
+                $("#node-config-start-auth").toggleClass("disabled",(v1.length === 0 || v2.length === 0));
+
+            }
+            $("#node-config-input-client_key").on('change keydown paste input',updateFitbitAuthButton);
+            $("#node-config-input-client_secret").on('change keydown paste input',updateFitbitAuthButton);
+
+            function updateFitbitScreenName(sn) {
+                $("#node-config-fitbit-app-keys").hide();
+                $("#node-config-fitbit-user").show();
+                $("#node-config-input-username").val(sn);
+                $("#node-config-fitbit-username").html(sn);
+            }
+
+            function pollFitbitCredentials(e) {
+                $.getJSON('credentials/fitbit-credentials/'+id,function(data) {
+                    if (data.username) {
+                        $("#node-config-dialog-ok").button("enable");
+                        updateFitbitScreenName(data.username);
+                        delete window.fitbitConfigNodeIntervalId;
+                    } else {
+                        window.fitbitConfigNodeIntervalId = window.setTimeout(pollFitbitCredentials,2000);
+                    }
+                });
+            }
+
+            updateFitbitAuthButton();
+
+            if (this.username) {
+                updateFitbitScreenName(this.username);
+            } else {
+                $("#node-config-fitbit-app-keys").show();
+                $("#node-config-fitbit-user").hide();
+                $("#node-config-dialog-ok").button("disable");
+            }
+
+            $("#node-config-start-auth").mousedown(function(e) {
+                var key = $("#node-config-input-client_key").val();
+                var secret = $("#node-config-input-client_secret").val();
+                var pathname = document.location.pathname;
+                if (pathname.slice(-1) !== "/") {
+                    pathname += "/";
+                }
+                var callback = encodeURIComponent(location.protocol+"//"+location.hostname+":"+location.port+pathname+"fitbit-credentials/"+id+"/auth/callback");
+                var url = 'fitbit-credentials/'+id+'/auth?callback='+callback+'&client_key='+key+"&client_secret="+secret;
+                $(this).attr("href",url);
+                window.fitbitConfigNodeIntervalId = window.setTimeout(pollFitbitCredentials,2000);
+            });
+            $("#node-config-start-auth").click(function(e) {
+                var key = $("#node-config-input-client_key").val();
+                var secret = $("#node-config-input-client_secret").val();
+                if (key === "" || secret === "") {
+                    e.preventDefault();
+                }
+            });
+
+        },
+        oneditsave: function() {
+            if (window.fitbitConfigNodeIntervalId) {
+                window.clearTimeout(window.fitbitConfigNodeIntervalId);
+                delete window.fitbitConfigNodeIntervalId;
+            }
+        },
+        oneditcancel: function(adding) {
+            if (window.fitbitConfigNodeIntervalId) {
+                window.clearTimeout(window.fitbitConfigNodeIntervalId);
+                delete window.fitbitConfigNodeIntervalId;
+            }
+        }
+    });
+})();
+</script>
+
+<script type="text/x-red" data-template-name="fitbit in">
+    <div class="form-row">
+        <label for="node-input-fitbit"><i class="fa fa-user"></i> Fitbit</label>
+        <input type="text" id="node-input-fitbit">
+    </div>
+    <div class="form-row">
+        <label for="node-input-dataType"><i class="fa fa-tag"></i> Type</label>
+        <select id="node-input-dataType" style="width:125px !important">
+            <option value="goals">goals</option>
+            <option value="sleep">sleep</option>
+            <option value="badges">badges</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="fitbit in">
+    <p>Polls <a href="http://www.fitbit.com">Fitbit</a> for new data.</p>
+    <p>The generated messages are determined by the node <b>type</b> property
+       as follows:</p>
+      <dl>
+        <dt>goals<dt>
+        <dd>Messages are sent when a daily goal is reached.</dd>
+        <dt>sleep</dt>
+        <dd>Messages are sent when a new daily sleep record becomes available. The message payload contains <a
+            href="https://wiki.fitbit.com/display/API/API-Get-Sleep"
+            >sleep log</a> data.</dd>
+        <dt>badges</dt>
+        <dd>Messages are sent when a new badge is earned. The message payload contains a single badge entry from the list returned by the <a
+            href="https://wiki.fitbit.com/display/API/API-Get-Badges"
+            >badges API call</a>.</dd>
+      </dl>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('fitbit in',{
+        category: 'social',
+        color:"#C0DEED",
+        defaults: {
+            fitbit: {type:"fitbit-credentials",required:true},
+            name: {value:""},
+            dataType: {value:"goals"}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "fitbit.png",
+        label: function() {
+            return this.name || ("Fitbit " + this.dataType);
+        },
+        oneditprepare: function() {
+            $("#node-input-dataType").val(this.dataType);
+        },
+    });
+</script>
+
+<script type="text/x-red" data-template-name="fitbit">
+    <div class="form-row">
+        <label for="node-input-fitbit"><i class="fa fa-user"></i> Fitbit</label>
+        <input type="text" id="node-input-fitbit">
+    </div>
+    <div class="form-row">
+        <label for="node-input-dataType"><i class="fa fa-tag"></i> Type</label>
+        <select id="node-input-dataType" style="width:125px !important">
+            <option value="activities">activities</option>
+            <option value="sleep">sleep</option>
+            <option value="badges">badges</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="fitbit">
+    <p>Retrieves user data from <a href="http://www.fitbit.com">Fitbit</a>.</p>
+    <p>The message payload is determined by the node <b>type</b> property as
+       follows:</p>
+      <dl>
+        <dt>activities<dt>
+        <dd>the message payload contains <a
+            href="https://wiki.fitbit.com/display/API/API-Get-Activities"
+            >daily activities</a> data.</dd>
+        <dt>sleep</dt>
+        <dd>the message payload contains <a
+            href="https://wiki.fitbit.com/display/API/API-Get-Sleep"
+            >sleep log</a> data for the main sleep and the message
+            <b>data</b> property contains the complete sleep data result.</dd>
+        <dt>badges</dt>
+        <dd>the message payload contains data about <a
+            href="https://wiki.fitbit.com/display/API/API-Get-Badges"
+            >badges</a> awarded.</dd>
+      </dl>
+      <p>The <b>msg.date</b> property may be set to an ISO 8601 format
+      date (e.g. 2014-09-25) to retrieve historical data for
+      activities and sleep log. If no date is supplied, then data for
+      today will be retrieved. In the case of sleep, this is the data
+      for the preceding sleep.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('fitbit',{
+        category: 'social',
+        color:"#C0DEED",
+        defaults: {
+            fitbit: {type:"fitbit-credentials",required:true},
+            name: {value:""},
+            dataType: {value:"activities"}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "fitbit.png",
+        align: "right",
+        label: function() {
+            return this.name || ("Fitbit " + this.dataType);
+        },
+        oneditprepare: function() {
+            $("#node-input-dataType").val(this.dataType);
+        },
+    });
+</script>
