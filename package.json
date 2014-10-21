@@ -5,6 +5,7 @@
     "dependencies"  : {
         "aws-sdk": "^2.0.15",
         "dropbox":"^0.10.3",
+        "minimatch": "^1.0.0",
         "oauth":"~0.9.11",
         "request":"~2.40.0",
         "instagram-node":"0.5.1",
