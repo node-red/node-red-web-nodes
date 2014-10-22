@@ -26,7 +26,8 @@
             "fitbit": "fitbit/fitbit.js",
             "flickr": "flickr/flickr.js",
             "dropbox": "dropbox/dropbox.js",
-            "swarm":"swarm/swarm.js",
+            "foursquare":"foursquare/foursquare.js",
+            "swarm":"foursquare/swarm.js",
             "instagram" : "instagram/instagram.js",
             "google": "google/google.js",
             "googlecalendar": "google/calendar.js"
