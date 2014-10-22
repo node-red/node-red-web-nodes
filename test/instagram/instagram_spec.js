@@ -329,17 +329,23 @@ describe('instagram nodes', function() {
                 fetchUploadedPhotos(done, true, false);
             });
             
-            it('handles like with init', function(done) {
+            it('handles like with init and gets metadata', function(done) {
                 
                 var newPhotoURL = "http://new_liked_photo_standard.jpg";
                 var oldID = "MY_OLD_MEDIA_ID";
+                
+                var injectedLat = "51.025115599";
+                var injectedLon = "-1.396541077";
+                var injectedTime = "1411724651";
+                
+                var timeAsJSDate = new Date(injectedTime * 1000);
                 
                 // need to fake the HTTP requests of the init sequence, then straight away the sequence of getting a second photo
                 var scope = nock('https://api.instagram.com')
                .get('/v1/users/self/media/liked?count=1&access_token=AN_ACCESS_TOKEN')
                .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","user_has_liked":true,"id":oldID}]})
                .get('/v1/users/self/media/liked?access_token=AN_ACCESS_TOKEN')
-               .reply(200,{"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","images":{"standard_resolution":{"url":newPhotoURL}}}, {"attribution":null,"tags":[],"type":"image","id":oldID}]});
+               .reply(200,{"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","images":{"standard_resolution":{"url":newPhotoURL}}, "created_time":injectedTime, "location":{"latitude": injectedLat, "name": "IBM Hursley", "longitude": injectedLon}}, {"attribution":null,"tags":[],"type":"image","id":oldID}]});
 
                 helper.load(instagramNode, [{id:"instagramCredentials1", type:"instagram-credentials"},
                                             {id:"instagramNode1", type:"instagram", instagram: "instagramCredentials1","inputType":"like","outputType":"link", wires:[["helperNode1"]]},
@@ -363,6 +369,9 @@ describe('instagram nodes', function() {
                             if (testInterval !== null) {
                                 clearInterval(testInterval);
                             }
+                            msg.lat.should.equal(injectedLat);
+                            msg.lon.should.equal(injectedLon);
+                            msg.time.toString().should.equal(timeAsJSDate.toString());
                             msg.payload.should.equal(newPhotoURL);
                             done();
                         } catch(err) {
@@ -381,18 +390,24 @@ describe('instagram nodes', function() {
                 });
             });
             
-            it('manages to buffer an image', function(done) {
+            it('manages to buffer an image and handles metadata', function(done) {
                 var photo = '/photo.jpg';
                 var apiURI = 'https://api.instagram.com';
                 var photoURI = apiURI + photo;
                 
                 var replyText = "Hello World";
                 
+                var injectedLat = "51.025115599";
+                var injectedLon = "-1.396541077";
+                var injectedTime = "1411724651";
+                
+                var timeAsJSDate = new Date(injectedTime * 1000);
+                
                 var scope = nock('https://api.instagram.com')
                .get('/v1/users/self/media/recent?count=1&access_token=AN_ACCESS_TOKEN') // request to get the initial photos uploaded by the user
                .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","id":"MY_OLD_MEDIA_ID"}]})
                .get('/v1/users/self/media/recent?min_id=MY_OLD_MEDIA_ID&access_token=AN_ACCESS_TOKEN')
-               .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","images":{"standard_resolution":{"url":photoURI,"width":640,"height":640}},"id":"A_NEW_PHOTO_ID"}]})
+               .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","images":{"standard_resolution":{"url":photoURI,"width":640,"height":640}},"id":"A_NEW_PHOTO_ID", "created_time":injectedTime, "location":{"latitude": injectedLat, "name": "IBM Hursley", "longitude": injectedLon}}]})
                .get(photo)
                .reply(200, replyText);
                 
@@ -418,6 +433,11 @@ describe('instagram nodes', function() {
                             if (testInterval !== null) {
                                 clearInterval(testInterval);
                             }
+                            
+                            msg.lat.should.equal(injectedLat);
+                            msg.lon.should.equal(injectedLon);
+                            msg.time.toString().should.equal(timeAsJSDate.toString());
+                            
                             msg.payload.toString().should.equal(replyText);
                             done();
                         } catch(err) {

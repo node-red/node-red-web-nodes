@@ -29,7 +29,6 @@ module.exports = function(RED) {
     
     function InstagramCredentialsNode(n) {
         RED.nodes.createNode(this,n);
-//        this.clientID = n.clientID;
     }
     
     function downloadImageAndSendAsBuffer(node, url, msg) {
@@ -112,7 +111,7 @@ module.exports = function(RED) {
             }
             
             if(medias) {
-                for(var i = 0; i < medias.length; i++) {                    
+                for(var i = 0; i < medias.length; i++) {
                     if (node.inputType === "like") { // like is a special case as per Instagram API behaviour
                         if(areWeInPaginationRecursion === false) { // need to set the pointer of latest served liked image before pagination occurs
                             idOfLikedReturned = medias[0].id;
@@ -132,6 +131,20 @@ module.exports = function(RED) {
                      //deliberate no-op
                     } else if(medias[i].type === IMAGE) {
                         var url = medias[i].images.standard_resolution.url;
+
+                        if(medias[i].location) {
+                            if(medias[i].location.latitude) {
+                                msg.lat = medias[i].location.latitude;
+                            }
+                            if(medias[i].location.longitude) {
+                                msg.lon = medias[i].location.longitude;
+                            }
+                        }
+                        
+                        if(medias[i].created_time) {
+                            msg.time = new Date(medias[i].created_time * 1000);
+                        }
+                        
                         if (node.outputType === "link") {
                             msg.payload = url;
                             node.send(msg);
