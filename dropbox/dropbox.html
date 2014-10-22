@@ -65,6 +65,93 @@
 })();
 </script>
 
+<script type="text/x-red" data-template-name="dropbox in">
+    <div class="form-row">
+        <label for="node-input-dropbox"><i class="fa fa-user"></i> Dropbox</label>
+        <input type="text" id="node-input-dropbox">
+    </div>
+    <div class="form-row node-input-filepattern">
+         <label for="node-input-filepattern"><i class="fa fa-file"></i> Filename Pattern</label>
+         <input type="text" id="node-input-filepattern" placeholder="Filepattern">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="dropbox in">
+    <p>Dropbox watch node. Watches for file events on Dropbox. By
+    default all file events are reported, but the filename pattern can
+    be supplied to limit the events to files which have full filenames
+    that match the glob pattern. The event messages consist of the
+    full filename in <b>msg.payload</b> property, the filename
+    in <b>msg.file</b>, the event type in <b>msg.event</b> and
+    the <a href="https://github.com/dropbox/dropbox-js">dropbox.js</a>
+    API <a href="http://coffeedoc.info/github/dropbox/dropbox-js/master/classes/Dropbox/Http/PulledChange.html">PulledChange</a>
+    object in <b>msg.data</b>.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('dropbox in',{
+        category: 'storage-input',
+        color:"#C0DEED",
+        defaults: {
+            dropbox: {type:"dropbox-config",required:true},
+            filepattern: {value:""},
+            name: {value:""}
+        },
+        inputs: 0,
+        outputs: 1,
+        icon: "dropbox.png",
+        label: function() {
+            return this.name||this.filepattern||'Dropbox';
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="dropbox">
+    <div class="form-row">
+        <label for="node-input-dropbox"><i class="fa fa-user"></i> Dropbox</label>
+        <input type="text" id="node-input-dropbox">
+    </div>
+    <div class="form-row node-input-filename">
+         <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
+         <input type="text" id="node-input-filename" placeholder="Filename">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="dropbox">
+    <p>Dropbox input node. Downloads content from Dropbox. The
+    filename on Dropbox is taken from the node <b>filename</b>
+    property or the <b>msg.filename</b> property. The downloaded
+    content is sent as <b>msg.payload</b> property. If the download
+    fails <b>msg.error</b> will contain an error object.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('dropbox',{
+        category: 'storage-input',
+        color:"#C0DEED",
+        defaults: {
+            dropbox: {type:"dropbox-config",required:true},
+            filename: {value:""},
+            name: {value:""}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "dropbox.png",
+        align: "right",
+        label: function() {
+            return this.name||this.filename||'Dropbox';
+        }
+    });
+</script>
+
 <script type="text/x-red" data-template-name="dropbox out">
     <div class="form-row">
         <label for="node-input-dropbox"><i class="fa fa-user"></i> Dropbox</label>
@@ -96,7 +183,7 @@
             dropbox: {type:"dropbox-config",required:true},
             filename: {value:""},
             localFilename: {value:""},
-            name: {value:"Dropbox"}
+            name: {value:""}
         },
         inputs:1,
         outputs:0,
