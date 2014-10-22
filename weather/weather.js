@@ -9,10 +9,10 @@ module.exports = function(RED) {
         var city;
         var country;
         
-        if (n.city !== "" || n.country !== "") {
+        if (n.city || n.country) {
             city = n.city;
             country = n.country;
-        } else if (n.lat !== "" || n.lon !== "") {
+        } else if (n.lat || n.lon) {
             lat = n.lat;
             lon = n.lon;
         }
@@ -75,10 +75,14 @@ module.exports = function(RED) {
                         msg.payload.sunrise = jsun.sys.sunrise;
                         msg.payload.sunset = jsun.sys.sunset;
                         msg.payload.clouds = jsun.clouds.all;
+                        msg.lon = jsun.coord.lon;
+                        msg.lat = jsun.coord.lat;
+                        msg.time = new Date(jsun.dt*1000);
+                       
                         msg.payload.description = ("The weather in " + jsun.name + " at coordinates: " + jsun.coord.lat + ", " + jsun.coord.lon + " is " + jsun.weather[0].main + " (" + jsun.weather[0].description + ")." );
                         callback();
                     } else {
-                        if (jsun.message === "Not found city"){                       
+                        if (jsun.message === "Error: Not found city"){                       
                             if (n.city && n.country && country != n.country && city != n.city){
                                 node.warn("Invalid city/country in input payload, trying node city/country");
                                 msg.payload.country = n.country;
