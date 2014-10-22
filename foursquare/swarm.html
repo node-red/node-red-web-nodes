@@ -1,0 +1,107 @@
+<!--
+  Copyright 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!-- Swarm input node -->
+<script type="text/x-red" data-template-name="swarm in">
+    <div class="form-row">
+        <label for="node-input-foursquare"><i class="fa fa-user"></i> Log in as</label>
+        <input type="text" id="node-input-foursquare">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="swarm in">
+    <p>Swarm input node.</p>
+    <p>Polls every 15 minutes for the latest Swarm check-ins that have been registered by the authenticated 
+    user since the node was registered. If a new check-in has been made within the polling interval
+    then <b>msg.payload</b> is set to be the JSON of the most recent new check-in. 
+    The properties of the  <a href="https://foursquare.com/">Swarm</a> check-in are documented at  
+    <a href="https://developer.foursquare.com/docs/responses/checkin">Checkin Response</a>.</p>
+    <p>Data provided by <a href="https://foursquare.com/">Foursquare</a>.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('swarm in',{
+        category: 'social',
+        color:"#FFCC66",
+        defaults: {
+            foursquare: {type:"foursquare-credentials",required:true},
+            name: {value:""}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "swarm.png",
+        label: function() {
+            return this.name||'swarm';
+        }
+    });
+</script>
+
+<!-- swarm query node -->
+<script type="text/x-red" data-template-name="swarm">
+    <div class="form-row">
+        <label for="node-input-foursquare"><i class="fa fa-user"></i> Log in as</label>
+        <input type="text" id="node-input-foursquare">
+    </div>
+    <div class="form-row">
+        <label for="node-input-request">&nbsp;<i class="fa fa-filter"></i> Request</label>
+        <select id="node-input-request" style="width:73% !important">
+             <option value="get-most-recent-checkin">get most recent check in</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="swarm">
+    <p>Swarm query node.</p>
+    <p>Can be used to search
+    <ul>
+        <li>all Swarm check-ins by the authenticated user.</li>
+    </ul></p>
+    <p>The node sets <b>msg.payload</b> to be the JSON of the most recent check-in 
+    since the node was registered. The properties of the 
+    <a href="https://swarm.com/">Swarm</a> check-in are documented at  
+    <a href="https://developer.foursquare.com/docs/responses/checkin">Checkin Response</a>.</p>
+    <p>Data provided by <a href="https://foursquare.com/">Foursquare</a>.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('swarm',{
+        category: 'social',
+        color:"#FFCC66",
+        defaults: {
+            foursquare: {type:"foursquare-credentials",required:true},
+            request: {value:"get-most-recent-checkin"},
+            name: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "swarm.png",
+        label: function() {
+            return this.name||'swarm';
+        }
+    });
+</script>
+
+
+
+
