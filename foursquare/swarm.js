@@ -27,13 +27,13 @@ module.exports = function(RED) {
      */
     function SwarmInNode(n) {
         RED.nodes.createNode(this, n);
-        var credentials = RED.nodes.getCredentials(n.foursquare);
         var node = this;
+        var credentials = RED.nodes.getCredentials(n.foursquare);
         var credentialsOk = checkCredentials(node, credentials);
         if (credentialsOk) {
-            var repeat = 900000; // 15 mins
-            var now = Math.floor(((new Date()).getTime())/1000); // time now in seconds since epoch
-            var afterTimestamp = now;
+            var repeat = 900000; // 15 minutes
+            var now = Math.floor(((new Date()).getTime())/1000); // time now, in seconds, since epoch
+            var afterTimestamp = now; // means that only new check-ins (after initialization) are sent
             var lastcheckin = null;
             
             var interval = setInterval(function() {
@@ -43,18 +43,18 @@ module.exports = function(RED) {
             this.on("input", function(msg) {
                 getCheckinsAfterTimestamp(node, "self", afterTimestamp, credentials, msg, function(msg) {
                     var latestcheckin = JSON.stringify(msg);
-                    if (latestcheckin != lastcheckin) {
+                    if (latestcheckin !== lastcheckin) {
                         lastcheckin = latestcheckin;
-                        afterTimestamp = msg.payload.createdAt;
+                        afterTimestamp = msg.payload.createdAt; // createdAt is received via Swarm API's JSON
                         node.send(msg);
                     }
                 }); 
-            });                       
+            });
 
             this.on("close", function() {
-                if (interval != null) {
+                if (interval !== null) {
                     clearInterval(interval);
-                }          
+                }
             });
 
         }
@@ -63,36 +63,31 @@ module.exports = function(RED) {
     RED.nodes.registerType("swarm in", SwarmInNode);
 
     /**
-     * Swarm query node - will return the most recent check-in since
-     * the node has been initialized. If a check-in exists the node will always return 
+     * Swarm query node - will return the most recent check-in
+     * If a check-in exists the node will always return 
      * the most recent even if no new check-ins have happened since the previous query.
-     * The node only populates msg.payload when a check-in is found.  
+     * If no check-ins are found, a null msg.payload is returned.  
      */
     function SwarmQueryNode(n) {
         RED.nodes.createNode(this, n);
         var node = this;
         this.request = n.request || "get-most-recent-checkin";
         var credentials = RED.nodes.getCredentials(n.foursquare);
-        var c = RED.nodes.getCredentials(n.swarm);
         var credentialsOk = checkCredentials(node, credentials);
         if (credentialsOk) {
-          var now = Math.floor(((new Date()).getTime())/1000); // time now in seconds since epoch (rounded down)
-          var afterTimestamp = now;
-          
           this.on("input", function(msg) {
               if (node.request === "get-most-recent-checkin") {
-                  getCheckinsAfterTimestamp(node, "self", afterTimestamp, credentials, msg, function(msg) {
-                      afterTimestamp = msg.payload.createdAt - 2;
+                  getCheckinsAfterTimestamp(node, "self", null, credentials, msg, function(msg) {
                       node.send(msg);
-                  });                                  
+                  });
               }
-          });            
+          });
         }
     } 
     
     RED.nodes.registerType("swarm", SwarmQueryNode); 
     
-    function checkCredentials(node, credentials) {       
+    function checkCredentials(node, credentials) {
         if (credentials && credentials.clientid && credentials.clientsecret && credentials.accesstoken) {
            return true;
         } else {
@@ -103,7 +98,11 @@ module.exports = function(RED) {
     }
     
     function getCheckinsAfterTimestamp(node, userid, afterTimestamp, credentials, msg, callback) {
-        var apiUrl = "https://api.foursquare.com/v2/users/" + userid + "/checkins?oauth_token=" + credentials.accesstoken  + "&v=20141016&afterTimestamp=" + afterTimestamp+"&sort=newestfirst&m=swarm";
+        var version = "&v=20141016"; // Mandatory for Foursquare API!
+        var apiUrl = "https://api.foursquare.com/v2/users/" + userid + "/checkins?oauth_token=" + credentials.accesstoken  + "&sort=newestfirst&m=swarm" + version;
+        if(afterTimestamp !== null) {
+            apiUrl = apiUrl + "&afterTimestamp=" + afterTimestamp;
+        }
         request.get(apiUrl,function(err, httpResponse, body) {
             if (err) {
                 node.error(err.toString());
@@ -119,12 +118,14 @@ module.exports = function(RED) {
                       msg.payload = {};
                       msg.payload = latest;
                       callback(msg);
-                  }                    
+                  } else {
+                      if(afterTimestamp === null) { // if query node, always return something, when no check-ins, return empty payload
+                          msg.payload = null;
+                          callback(msg);
+                      }
+                  }
                 }
             }
-        });              
+        });
     }
-    
-
-        
 }

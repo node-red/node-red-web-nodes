@@ -77,8 +77,8 @@
     <ul>
         <li>all Swarm check-ins by the authenticated user.</li>
     </ul></p>
-    <p>The node sets <b>msg.payload</b> to be the JSON of the most recent check-in 
-    since the node was registered. The properties of the 
+    <p>The node sets <b>msg.payload</b> to be the JSON of the most recent check-in. If no check-ins
+    are found then the returned msg will have a null payload. The properties of the 
     <a href="https://swarm.com/">Swarm</a> check-in are documented at  
     <a href="https://developer.foursquare.com/docs/responses/checkin">Checkin Response</a>.</p>
     <p>Data provided by <a href="https://foursquare.com/">Foursquare</a>.</p>
