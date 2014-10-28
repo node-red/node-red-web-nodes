@@ -62,6 +62,7 @@ module.exports = function(RED) {
                     });
                     var seen = {};
                     var i;
+                    msg.bucket = node.bucket;
                     for (i = 0; i < node.state.length; i++) {
                         seen[node.state[i]] = true;
                     }
