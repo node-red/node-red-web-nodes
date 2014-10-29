@@ -18,6 +18,7 @@ module.exports = function(RED) {
     "use strict";
     var Dropbox = require("dropbox");
     var fs = require("fs");
+    var minimatch = require("minimatch");
 
     function DropboxNode(n) {
         RED.nodes.createNode(this,n);
@@ -70,6 +71,10 @@ module.exports = function(RED) {
                     var changes = data.changes;
                     for (var i = 0; i < changes.length; i++) {
                         var change = changes[i];
+                        if (node.filepattern &&
+                            !minimatch(change.path, node.filepattern)) {
+                            continue;
+                        }
                         msg.payload = change.path;
                         msg.file = change.path.substring(change.path.lastIndexOf('/') + 1);
                         msg.event = change.wasRemoved ? 'delete' : 'add';
