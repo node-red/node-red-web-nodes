@@ -14,17 +14,6 @@
  * limitations under the License.
  **/
 
-/*
-  var nock = require('nock');
-  nock.recorder.rec({
-  dont_print: false,
-  output_objects: true,
-  enable_reqheaders_recording: true
-  });
-  ...
-  console.log(require('util').inspect(nock.recorder.play()));
-  */
-
 module.exports = function(RED) {
     "use strict";
     var OAuth= require('oauth').OAuth;
