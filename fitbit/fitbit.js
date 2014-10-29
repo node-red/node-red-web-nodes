@@ -297,9 +297,12 @@ module.exports = function(RED) {
                         var sleep = mainSleep(data.sleep);
                         if (!sleep) {
                             node.warn("no main sleep recorded");
-                            return;
+                            delete msg.payload;
+                            msg.error = "no main sleep record found";
+                        } else {
+                            msg.payload = sleep;
+                            delete msg.error;
                         }
-                        msg.payload = sleep;
                     } else {
                         msg.payload = data;
                     }
