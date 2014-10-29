@@ -30,7 +30,8 @@
             "swarm":"foursquare/swarm.js",
             "instagram" : "instagram/instagram.js",
             "google": "google/google.js",
-            "googlecalendar": "google/calendar.js"
+            "googlecalendar": "google/calendar.js",
+            "weather": "weather/weather.js"
         }
     },
     "devDependencies": {
