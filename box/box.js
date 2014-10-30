@@ -210,10 +210,11 @@ module.exports = function(RED) {
     };
 
     function constructFullPath(entry) {
-        return entry.path_collection.entries
+        var parentPath = entry.path_collection.entries
             .filter(function (e) { return e.id !== "0"; })
             .map(function (e) { return e.name; })
-            .join('/') + '/' + entry.name;
+            .join('/');
+        return (parentPath !== "" ? parentPath+'/' : "") + entry.name;
     }
 
     RED.httpAdmin.get('/box-credentials/auth', function(req, res){
@@ -420,8 +421,9 @@ module.exports = function(RED) {
             }
             node.status({});
             // TODO: add folder path_collection to entry.parent?
+            var parentPath = constructFullPath(folder);
             node.sendEvent(msg, entry, event,
-                           constructFullPath(folder) + '/' + source.name);
+                (parentPath !== "" ? parentPath + '/' : '') + source.name);
         });
     };
 
