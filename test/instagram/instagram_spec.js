@@ -233,100 +233,6 @@ describe('instagram nodes', function() {
             
             it('reports failure if Instagram doesn\'t serve an access token', function(done) {
                 doOauthDance(done, true, true, true, false);
-            });  
-
-            function fetchUploadedPhotos(done, workingFirstRequest, workingSubsequentRequest) {
-                // need to fake the HTTP requests of the init sequence, then straight away the sequence of getting a second photo 
-                var photoURI = 'http://mytesturl.com/aPhotoStandard.jpg';
-                
-                var scope;
-                
-                if(workingFirstRequest === true && workingSubsequentRequest === true) {
-                    scope = nock('https://api.instagram.com')
-                    .get('/v1/users/self/media/recent?count=1&access_token=AN_ACCESS_TOKEN') // request to get the initial photos uploaded by the user
-                    .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","id":"MY_OLD_MEDIA_ID"}]})
-                    .get('/v1/users/self/media/recent?min_id=MY_OLD_MEDIA_ID&access_token=AN_ACCESS_TOKEN')
-                    .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","images":{"standard_resolution":{"url":photoURI,"width":640,"height":640}},"id":"A_NEW_PHOTO_ID"}]});
-                    
-                } else if(workingFirstRequest === true && workingSubsequentRequest === false) {
-                    scope = nock('https://api.instagram.com')
-                    .get('/v1/users/self/media/recent?count=1&access_token=AN_ACCESS_TOKEN') // request to get the initial photos uploaded by the user
-                    .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","id":"MY_OLD_MEDIA_ID"}]})
-                    .get('/v1/users/self/media/recent?min_id=MY_OLD_MEDIA_ID&access_token=AN_ACCESS_TOKEN')
-                    .reply(500, "The second call to the API doesn't work today, sorry!");
-                } else if(workingFirstRequest === false && workingSubsequentRequest === true) {
-                    scope = nock('https://api.instagram.com')
-                    .get('/v1/users/self/media/recent?count=1&access_token=AN_ACCESS_TOKEN') // request to get the initial photos uploaded by the user
-                    .reply(500, "Sorry, we're terribly broken!");
-                } else {
-                    // won't actually occur with current tests as the first failure breaks everything
-                }
-
-                helper.load(instagramNode, [{id:"instagramCredentials1", type:"instagram-credentials"},
-                                            {id:"instagramNode1", type:"instagram", instagram: "instagramCredentials1","inputType":"photo","outputType":"link", wires:[["helperNode1"]]},
-                                            {id:"helperNode1", type:"helper"}],
-                                            {
-                                                "instagramCredentials1" : { // pre-loaded credentials, no need to call OAuth
-                                                    username: "UserJohn",
-                                                    access_token: "AN_ACCESS_TOKEN",
-                                                    cliend_id: "A_CLIENT_ID",
-                                                    client_secret: "A_CLIENT_SECRET",
-                                                    redirect_uri: "AN_URI",
-                                                    code: "A_CODE"
-                                                }
-                                            }, function() {
-
-                    var instagramNode1 = helper.getNode("instagramNode1");
-                    var helperNode1 = helper.getNode("helperNode1");
-                    
-                    if(workingSubsequentRequest === false) {
-                        var sinon = require("sinon");
-                        var stub = sinon.stub(instagramNode1, 'warn', function() {
-                            stub.restore();
-                            stub = null;
-                            done();
-                        });
-                    }
-                    
-                    if(workingFirstRequest === true) {
-                        helperNode1.on("input", function(msg) {
-                            try {
-                                if (testInterval !== null) {
-                                    clearInterval(testInterval);
-                                }
-                                msg.payload.should.equal(photoURI);
-                                done();
-                            } catch(err) {
-                                if (testInterval !== null) {
-                                    clearInterval(testInterval);
-                                }
-                                done(err);
-                            }
-                        });
-                        
-                        var testInterval = setInterval(function() { // self trigger
-                            if(instagramNode1._events.input) {
-                                instagramNode1.receive({payload:""});
-                            }
-                        }, 100);
-                    }
-                });
-            }
-            
-            it('handles a photo upload and init', function(done) {
-                fetchUploadedPhotos(done, true, true);
-            });
-            
-            // TODO => Find out how to stub the first request, the problem is that it happens straight during init!
-//            it('reports a failure when it fails to get initial user photos', function(done) {
-//                fetchUploadedPhotos(done, false, true);
-//            });
-            
-            // TODO, stubbing the likes test doesn't make sense right now as the above TODO is to be solved
-            // furthermore the stubbing scoping is also to be solved
-            
-            it('reports a failure when it fails to get subsequent user photos', function(done) {
-                fetchUploadedPhotos(done, true, false);
             });
             
             it('handles like with init and gets metadata', function(done) {
@@ -343,8 +249,6 @@ describe('instagram nodes', function() {
                 // need to fake the HTTP requests of the init sequence, then straight away the sequence of getting a second photo
                 var scope = nock('https://api.instagram.com')
                .get('/v1/users/self/media/liked?count=1&access_token=AN_ACCESS_TOKEN')
-               .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","user_has_liked":true,"id":oldID}]})
-               .get('/v1/users/self/media/liked?access_token=AN_ACCESS_TOKEN')
                .reply(200,{"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","images":{"standard_resolution":{"url":newPhotoURL}}, "created_time":injectedTime, "location":{"latitude": injectedLat, "name": "IBM Hursley", "longitude": injectedLon}}, {"attribution":null,"tags":[],"type":"image","id":oldID}]});
 
                 helper.load(instagramNode, [{id:"instagramCredentials1", type:"instagram-credentials"},
@@ -405,8 +309,6 @@ describe('instagram nodes', function() {
                 
                 var scope = nock('https://api.instagram.com')
                .get('/v1/users/self/media/recent?count=1&access_token=AN_ACCESS_TOKEN') // request to get the initial photos uploaded by the user
-               .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","id":"MY_OLD_MEDIA_ID"}]})
-               .get('/v1/users/self/media/recent?min_id=MY_OLD_MEDIA_ID&access_token=AN_ACCESS_TOKEN')
                .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","images":{"standard_resolution":{"url":photoURI,"width":640,"height":640}},"id":"A_NEW_PHOTO_ID", "created_time":injectedTime, "location":{"latitude": injectedLat, "name": "IBM Hursley", "longitude": injectedLon}}]})
                .get(photo)
                .reply(200, replyText);
@@ -502,7 +404,226 @@ describe('instagram nodes', function() {
                     }, 100);
                 });
                 
-            });   
+            });
+            
+            function fetchUploadedPhotos(done, workingFirstRequest, workingSubsequentRequest) {
+            // need to fake the HTTP requests of the init sequence, then straight away the sequence of getting a second photo 
+            var photoURI = 'http://mytesturl.com/aPhotoStandard.jpg';
+            
+            var scope;
+            
+            if(workingFirstRequest === true && workingSubsequentRequest === true) {
+                scope = nock('https://api.instagram.com')
+                .get('/v1/users/self/media/recent?count=1&access_token=AN_ACCESS_TOKEN') // request to get the initial photos uploaded by the user
+                .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","id":"MY_OLD_MEDIA_ID"}]})
+                .get('/v1/users/self/media/recent?min_id=MY_OLD_MEDIA_ID&access_token=AN_ACCESS_TOKEN')
+                .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","images":{"standard_resolution":{"url":photoURI,"width":640,"height":640}},"id":"A_NEW_PHOTO_ID"}]});
+                
+            } else if(workingFirstRequest === true && workingSubsequentRequest === false) {
+                scope = nock('https://api.instagram.com')
+                .get('/v1/users/self/media/recent?count=1&access_token=AN_ACCESS_TOKEN') // request to get the initial photos uploaded by the user
+                .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","id":"MY_OLD_MEDIA_ID"}]})
+                .get('/v1/users/self/media/recent?min_id=MY_OLD_MEDIA_ID&access_token=AN_ACCESS_TOKEN')
+                .reply(500, "The second call to the API doesn't work today, sorry!");
+            } else if(workingFirstRequest === false && workingSubsequentRequest === true) {
+                scope = nock('https://api.instagram.com')
+                .get('/v1/users/self/media/recent?count=1&access_token=AN_ACCESS_TOKEN') // request to get the initial photos uploaded by the user
+                .reply(500, "Sorry, we're terribly broken!");
+            } else {
+                // won't actually occur with current tests as the first failure breaks everything
+            }
+                 helper.load(instagramNode, [{id:"instagramCredentials1", type:"instagram-credentials"},
+                                        {id:"instagramNode1", type:"instagram in", instagram: "instagramCredentials1","inputType":"photo","outputType":"link", wires:[["helperNode1"]]},
+                                        {id:"helperNode1", type:"helper"}],
+                                        {
+                                            "instagramCredentials1" : { // pre-loaded credentials, no need to call OAuth
+                                                username: "UserJohn",
+                                                access_token: "AN_ACCESS_TOKEN",
+                                                cliend_id: "A_CLIENT_ID",
+                                                client_secret: "A_CLIENT_SECRET",
+                                                redirect_uri: "AN_URI",
+                                                code: "A_CODE"
+                                            }
+                                        }, function() {
+                var instagramNode1 = helper.getNode("instagramNode1");
+                var helperNode1 = helper.getNode("helperNode1");
+                
+                if(workingSubsequentRequest === false) {
+                    var sinon = require("sinon");
+                    var stub = sinon.stub(instagramNode1, 'warn', function() {
+                        stub.restore();
+                        stub = null;
+                        done();
+                    });
+                }
+                 
+                if(workingFirstRequest === true) {
+                    helperNode1.on("input", function(msg) {
+                        try {
+                            if (testInterval !== null) {
+                                clearInterval(testInterval);
+                            }
+                            msg.payload.should.equal(photoURI);
+                            done();
+                        } catch(err) {
+                            if (testInterval !== null) {
+                                clearInterval(testInterval);
+                            }
+                            done(err);
+                        }
+                    });
+                    
+                    var testInterval = setInterval(function() { // self trigger
+                        if(instagramNode1._events.input) {
+                            instagramNode1.receive({payload:""});
+                        }
+                    }, 100);
+                }
+            });
         }
+          
+        it('handles a photo upload and init', function(done) {
+            fetchUploadedPhotos(done, true, true);
+        });
+          
+        // TODO => Find out how to stub the first request, the problem is that it happens straight during init!
+  //      it('reports a failure when it fails to get initial user photos', function(done) {
+  //          fetchUploadedPhotos(done, false, true);
+  //      });
+          
+        // TODO, stubbing the likes test doesn't make sense right now as the above TODO is to be solved
+        // furthermore the stubbing scoping is also to be solved
+          
+        it('reports a failure when it fails to get subsequent user photos', function(done) {
+            fetchUploadedPhotos(done, true, false);
+        });
+          
+        it('handles like with init and gets metadata', function(done) {
+            
+            var newPhotoURL = "http://new_liked_photo_standard.jpg";
+            var oldID = "MY_OLD_MEDIA_ID";
+            
+            var injectedLat = "51.025115599";
+            var injectedLon = "-1.396541077";
+            var injectedTime = "1411724651";
+            
+            var timeAsJSDate = new Date(injectedTime * 1000);
+            
+            // need to fake the HTTP requests of the init sequence, then straight away the sequence of getting a second photo
+            var scope = nock('https://api.instagram.com')
+           .get('/v1/users/self/media/liked?count=1&access_token=AN_ACCESS_TOKEN')
+           .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","user_has_liked":true,"id":oldID}]})
+           .get('/v1/users/self/media/liked?access_token=AN_ACCESS_TOKEN')
+           .reply(200,{"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","images":{"standard_resolution":{"url":newPhotoURL}}, "created_time":injectedTime, "location":{"latitude": injectedLat, "name": "IBM Hursley", "longitude": injectedLon}}, {"attribution":null,"tags":[],"type":"image","id":oldID}]});
+
+            helper.load(instagramNode, [{id:"instagramCredentials1", type:"instagram-credentials"},
+                                        {id:"instagramNode1", type:"instagram in", instagram: "instagramCredentials1","inputType":"like","outputType":"link", wires:[["helperNode1"]]},
+                                        {id:"helperNode1", type:"helper"}],
+                                        {
+                                            "instagramCredentials1" : { // pre-loaded credentials, no need to call OAuth
+                                                username: "UserJohn",
+                                                access_token: "AN_ACCESS_TOKEN",
+                                                cliend_id: "A_CLIENT_ID",
+                                                client_secret: "A_CLIENT_SECRET",
+                                                redirect_uri: "AN_URI",
+                                                code: "A_CODE"
+                                            }
+                                        }, function() {
+    
+                var instagramNode1 = helper.getNode("instagramNode1");
+                var helperNode1 = helper.getNode("helperNode1");
+                
+                helperNode1.on("input", function(msg) {
+                    try {
+                        if (testInterval !== null) {
+                            clearInterval(testInterval);
+                        }
+                        msg.lat.should.equal(injectedLat);
+                        msg.lon.should.equal(injectedLon);
+                        msg.time.toString().should.equal(timeAsJSDate.toString());
+                        msg.payload.should.equal(newPhotoURL);
+                        done();
+                    } catch(err) {
+                        if (testInterval !== null) {
+                            clearInterval(testInterval);
+                        }
+                        done(err);
+                    }
+                });
+                
+                testInterval = setInterval(function() { // self trigger
+                    if(instagramNode1._events.input) {
+                        instagramNode1.receive({payload:""});
+                    }
+                }, 100);
+            });
+        });
+          
+        it('manages to buffer an image and handles metadata', function(done) {
+            var photo = '/photo.jpg';
+            var apiURI = 'https://api.instagram.com';
+            var photoURI = apiURI + photo;
+            
+            var replyText = "Hello World";
+            
+            var injectedLat = "51.025115599";
+            var injectedLon = "-1.396541077";
+            var injectedTime = "1411724651";
+            
+            var timeAsJSDate = new Date(injectedTime * 1000);
+            
+            var scope = nock('https://api.instagram.com')
+           .get('/v1/users/self/media/recent?count=1&access_token=AN_ACCESS_TOKEN') // request to get the initial photos uploaded by the user
+           .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","id":"MY_OLD_MEDIA_ID"}]})
+           .get('/v1/users/self/media/recent?min_id=MY_OLD_MEDIA_ID&access_token=AN_ACCESS_TOKEN')
+           .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","images":{"standard_resolution":{"url":photoURI,"width":640,"height":640}},"id":"A_NEW_PHOTO_ID", "created_time":injectedTime, "location":{"latitude": injectedLat, "name": "IBM Hursley", "longitude": injectedLon}}]})
+           .get(photo)
+           .reply(200, replyText);
+            
+            helper.load(instagramNode, [{id:"instagramCredentials1", type:"instagram-credentials"},
+                                        {id:"instagramNode1", type:"instagram in", instagram: "instagramCredentials1","inputType":"photo","outputType":"buffer", wires:[["helperNode1"]]},
+                                        {id:"helperNode1", type:"helper"}],
+                                        {
+                                            "instagramCredentials1" : { // pre-loaded credentials, no need to call OAuth
+                                                username: "UserJohn",
+                                                access_token: "AN_ACCESS_TOKEN",
+                                                cliend_id: "A_CLIENT_ID",
+                                                client_secret: "A_CLIENT_SECRET",
+                                                redirect_uri: "AN_URI",
+                                                code: "A_CODE"
+                                            }
+                                        }, function() {
+    
+                var instagramNode1 = helper.getNode("instagramNode1");
+                var helperNode1 = helper.getNode("helperNode1");
+                
+                helperNode1.on("input", function(msg) {
+                    try {
+                        if (testInterval !== null) {
+                            clearInterval(testInterval);
+                        }
+                        
+                        msg.lat.should.equal(injectedLat);
+                        msg.lon.should.equal(injectedLon);
+                        msg.time.toString().should.equal(timeAsJSDate.toString());
+                        
+                        msg.payload.toString().should.equal(replyText);
+                        done();
+                    } catch(err) {
+                        if (testInterval !== null) {
+                            clearInterval(testInterval);
+                        }
+                        done(err);
+                    }
+                });
+                
+                testInterval = setInterval(function() { // self trigger
+                    if(instagramNode1._events.input) {
+                        instagramNode1.receive({payload:""});
+                    }
+                }, 100);
+            });
+        });
+      }
     });
 });

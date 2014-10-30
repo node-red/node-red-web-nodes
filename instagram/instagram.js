@@ -15,9 +15,6 @@
  **/
 module.exports = function(RED) {
     "use strict";
-    
-    var ig = require('instagram-node').instagram();
-    
     // needed for auth
     var crypto = require("crypto");
     var Url = require('url');
@@ -41,20 +38,35 @@ module.exports = function(RED) {
             }
         });
     }
-
-    // we initialize the node: load access token, obtain current state from Instagram
-    function initializeNode(node, isInputNode) {
+    
+    
+    // the query node doesn't require special initialization as it serves the latest photo anyway
+    function initializeQueryNode(node) {
         if(!node.instagramConfig.credentials.access_token) {
             node.warn("Missing Instagram access token. Authorization has not been completed before node initialization.");
             return;
         }
 
-        ig.use({ access_token: node.instagramConfig.credentials.access_token});
+        node.ig.use({ access_token: node.instagramConfig.credentials.access_token});
+
+        node.on("input", function(msg) {
+            handleQueryNodeInput(node, msg);
+        });
+    }
+
+    // we initialize the node: load access token, obtain current state from Instagram
+    function initializeInputNode(node) {
+        if(!node.instagramConfig.credentials.access_token) {
+            node.warn("Missing Instagram access token. Authorization has not been completed before node initialization.");
+            return;
+        }
+
+        node.ig.use({ access_token: node.instagramConfig.credentials.access_token});
 
         // Now grab initial state but only grab the ones we're concerned with
         
-        if (node.inputType === "photo") {            
-            ig.user_media_recent('self', { count : 1, min_id : null, max_id : null}, function(err, medias, pagination, remaining, limit) {
+        if (node.inputType === "photo") {
+            node.ig.user_media_recent('self', { count : 1, min_id : null, max_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
                    node.warn('Instagram node has failed to fetch latest user photo : '+err);
                 }
@@ -64,17 +76,15 @@ module.exports = function(RED) {
                 }
 
                 node.on("input", function(msg) {
-                    handleNodeInput(node, msg);
+                    msg = {};
+                    handleInputNodeInput(node, msg);
                 });
-
-                if(isInputNode === true) {
-                    node.interval = setInterval(function() { // self trigger
-                        node.emit("input", {});
-                    }, repeat);
-                }
+                node.interval = setInterval(function() { // self trigger
+                    node.emit("input", {});
+                }, repeat);
             });
         } else if (node.inputType === "like") {
-            ig.user_self_liked({ count : 1, max_like_id : null}, function(err, medias, pagination, remaining, limit) {
+            node.ig.user_self_liked({ count : 1, max_like_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
                     node.warn('Instagram node has failed to fetch latest liked photo : '+err);
                 }
@@ -84,19 +94,114 @@ module.exports = function(RED) {
                 }
                 
                 node.on("input", function(msg) {
-                    handleNodeInput(node, msg);
+                    msg = {};
+                    handleInputNodeInput(node, msg);
                 });
                 
-                if(isInputNode === true) {
-                    node.interval = setInterval(function() { // self trigger
-                        node.emit("input", {});
-                    }, repeat);
+                node.interval = setInterval(function() { // self trigger
+                    node.emit("input", {});
+                }, repeat);
+            });
+        }
+    }
+    
+    function handleQueryNodeInput(node, msg) {
+        if (node.inputType === "photo") {
+            node.ig.user_media_recent('self', { count : 1, min_id : null, max_id : null}, function(err, medias, pagination, remaining, limit) {
+                if (err) {
+                    node.warn('Instagram node has failed to fetch latest user photo : '+err);
+                }
+                if(medias.length > 0) { // if the user has uploaded something to Instagram already
+                    if(medias[0].type === IMAGE) {
+                        if(medias[0].location) {
+                            if(medias[0].location.latitude) {
+                                msg.lat = medias[0].location.latitude;
+                            }
+                            if(medias[0].location.longitude) {
+                                msg.lon = medias[0].location.longitude;
+                            }
+                        }
+                        
+                        if(medias[0].created_time) {
+                            msg.time = new Date(medias[0].created_time * 1000);
+                        }
+                        
+                        var url;
+                        
+                        if(medias[0].images && medias[0].images.standard_resolution && medias[0].images.standard_resolution.url) {
+                            url = medias[0].images.standard_resolution.url;   
+                        } else {
+                            node.warn("The Instagram API has not provided all the required data to establish the URL of the photo. Ignoring media.");
+                            return;
+                        }
+                        
+                        if (node.outputType === "link") {
+                            msg.payload = url;
+                            node.send(msg);
+                        } else if (node.outputType === "buffer") {
+                            downloadImageAndSendAsBuffer(node, url, msg);
+                        }
+                        
+                    } else {
+                        node.warn("The most recent media on Instagram is not a photo, therefore it has been ignored.");
+                        return;
+                    }
+                } else {
+                    msg.payload = null;
+                    node.send(msg);
+                    node.warn("The user has not uploaded any media to Instagram yet, null payload has been sent");
+                }
+            });
+        } else if (node.inputType === "like") {
+            node.ig.user_self_liked({ count : 1, max_like_id : null}, function(err, medias, pagination, remaining, limit) {
+                if (err) {
+                    node.warn('Instagram node has failed to fetch latest liked photo : '+err);
+                }
+                if(medias.length > 0) { // if the user has liked something to Instagram already
+                    if(medias[0].type === IMAGE) {
+                        if(medias[0].location) {
+                            if(medias[0].location.latitude) {
+                                msg.lat = medias[0].location.latitude;
+                            }
+                            if(medias[0].location.longitude) {
+                                msg.lon = medias[0].location.longitude;
+                            }
+                        }
+                        
+                        if(medias[0].created_time) {
+                            msg.time = new Date(medias[0].created_time * 1000);
+                        }
+                        
+                        var url;
+                        
+                        if(medias[0].images && medias[0].images.standard_resolution && medias[0].images.standard_resolution.url) {
+                            url = medias[0].images.standard_resolution.url;   
+                        } else {
+                            node.warn("The Instagram API has not provided all the required data to establish the URL of the photo. Ignoring media.");
+                            return;
+                        }
+                        
+                        if (node.outputType === "link") {
+                            msg.payload = url;
+                            node.send(msg);
+                        } else if (node.outputType === "buffer") {
+                            downloadImageAndSendAsBuffer(node, url, msg);
+                        }
+                        
+                    } else {
+                        node.warn("The most recently liked media on Instagram is not a photo, therefore it has been ignored.");
+                        return;
+                    }
+                } else {
+                    msg.payload = null;
+                    node.send(msg);
+                    node.warn("The user has not liked any media on Instagram yet, null payload has been sent");
                 }
             });
         }
     }
     
-    function handleNodeInput(node, msg) {
+    function handleInputNodeInput(node, msg) {
         var areWeInPaginationRecursion = false;
         
         var idOfLikedReturned;
@@ -167,9 +272,9 @@ module.exports = function(RED) {
         
         // If we're processing user content
         if (node.inputType === "photo") {
-            ig.user_media_recent('self', { count : null, min_id : node.latestSelfContentID, max_id : null}, returnPagefulsOfStuff);
+            node.ig.user_media_recent('self', { count : null, min_id : node.latestSelfContentID, max_id : null}, returnPagefulsOfStuff);
         } else if (node.inputType === "like") { // If we're processing likes
-            ig.user_self_liked({ count : null, max_like_id : null}, returnPagefulsOfStuff);
+            node.ig.user_self_liked({ count : null, max_like_id : null}, returnPagefulsOfStuff);
         }
     }
     
@@ -177,6 +282,8 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         
         var node = this;
+        
+        node.ig = require('instagram-node').instagram();
         
         node.latestSelfContentID = null; // if the user has not liked/uploaded any content yet
         node.latestLikedID = null;
@@ -192,7 +299,7 @@ module.exports = function(RED) {
             return;
         }
         
-        initializeNode(node, true); // the build in poll interval is getting set up at the end of init
+        initializeInputNode(node); // the build in poll interval is getting set up at the end of init
         
         node.on("close", function() {
             if (node.interval !== null) {
@@ -209,9 +316,8 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         
         var node = this;
-
-        node.latestSelfContentID = null; // if the user has not liked/uploaded any content yet
-        node.latestLikedID = null;
+        
+        node.ig = require('instagram-node').instagram();
         
         node.inputType = n.inputType;
         node.outputType = n.outputType;
@@ -222,11 +328,9 @@ module.exports = function(RED) {
             return;
         }
         
-        initializeNode(node, false);
+        initializeQueryNode(node);
         
         node.on("close", function() {
-            node.latestSelfContentID = null;
-            node.latestLikedID = null;
             node.inputType = null;
             node.outputType = null;
         });
