@@ -39,11 +39,8 @@ module.exports = function(RED) {
                 node.status({fill:"red",shape:"ring",text:"error"});
                 return;
             }
-            node.state = data.Contents.filter(function (e) {
-                return !node.filepattern || minimatch(e, node.filepattern);
-            }).map(function (e) {
-                return e.Key;
-            });
+            var contents = node.filterContents(data.Contents);
+            node.state = contents.map(function (e) { return e.Key; });
             node.status({});
             node.on("input", function(msg) {
                 node.status({fill:"blue",shape:"dot",text:"checking for changes"});
@@ -54,36 +51,35 @@ module.exports = function(RED) {
                         return;
                     }
                     node.status({});
-                    var newState = data.Contents.filter(function (e) {
-                        return !node.filepattern ||
-                            minimatch(e, node.filepattern);
-                    }).map(function (e) {
-                        return e.Key;
-                    });
+                    var newContents = node.filterContents(data.Contents);
                     var seen = {};
                     var i;
+                    msg.bucket = node.bucket;
                     for (i = 0; i < node.state.length; i++) {
                         seen[node.state[i]] = true;
                     }
-                    for (i = 0; i < newState.length; i++) {
-                        if (seen[newState[i]]) {
-                            delete seen[newState[i]];
+                    for (i = 0; i < newContents.length; i++) {
+                        var file = newContents[i].Key;
+                        if (seen[file]) {
+                            delete seen[file];
                         } else {
-                            msg.payload = newState[i];
-                            msg.file = newState[i].substring(newState[i].lastIndexOf('/') + 1);
+                            msg.payload = file;
+                            msg.file = file.substring(file.lastIndexOf('/')+1);
                             msg.event = 'add';
+                            msg.data = newContents[i];
                             node.send(msg);
                         }
                     }
-                    for (var k in seen) {
-                        if (seen.hasOwnProperty(k)) {
-                            msg.payload = k;
-                            msg.file = k.substring(k.lastIndexOf('/') + 1);
+                    for (var f in seen) {
+                        if (seen.hasOwnProperty(f)) {
+                            msg.payload = f;
+                            msg.file = f.substring(f.lastIndexOf('/')+1);
                             msg.event = 'delete';
+                            // msg.data intentionally null
                             node.send(msg);
                         }
                     }
-                    node.state = newState;
+                    node.state = newContents.map(function (e) {return e.Key;});
                 });
             });
             var interval = setInterval(function() {
@@ -97,6 +93,13 @@ module.exports = function(RED) {
         });
     }
     RED.nodes.registerType("amazon s3 in", AmazonS3InNode);
+
+    AmazonS3InNode.prototype.filterContents = function(contents) {
+        var node = this;
+        return node.filepattern ? contents.filter(function (e) {
+            return minimatch(e.Key, node.filepattern);
+        }) : contents;
+    };
 
     function AmazonS3QueryNode(n) {
         RED.nodes.createNode(this,n);
