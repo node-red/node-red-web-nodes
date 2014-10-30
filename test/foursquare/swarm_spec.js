@@ -52,7 +52,7 @@ describe('swarm nodes', function() {
                           function() {
                               var scope = nock('https://api.foursquare.com:443')
                                   .filteringPath(/afterTimestamp=[^&]*/g, 'afterTimestamp=foo')
-                                  .get('/v2/users/self/checkins?oauth_token=abcd1234&v=20141016&afterTimestamp=foo&sort=newestfirst&m=swarm')
+                                  .get('/v2/users/self/checkins?oauth_token=abcd1234&sort=newestfirst&m=swarm&v=20141016')
                                   .reply(200, {"meta":{"code":200},"response":{"checkins":{"count":1, "items":[{"id":"b695edf5ewc2","createdAt":1412861751,"type":"checkin","timeZoneOffset":60,"venue":{"id":"49a8b774","name":"Bobs House"}}]}}});
                               
                             var n1 = helper.getNode("n1");
@@ -85,7 +85,7 @@ describe('swarm nodes', function() {
                           function() {
                               var scope = nock('https://api.foursquare.com:443')
                                   .filteringPath(/afterTimestamp=[^&]*/g, 'afterTimestamp=foo')
-                                  .get('/v2/users/self/checkins?oauth_token=abcd1234&v=20141016&afterTimestamp=foo&sort=newestfirst&m=swarm')
+                                  .get('/v2/users/self/checkins?oauth_token=abcd1234&sort=newestfirst&m=swarm&v=20141016')
                                   .reply(200, {"meta":{"code":400, "errorDetail":'test forced failure'}});
                               
                               var n1 = helper.getNode("n1");
@@ -115,7 +115,7 @@ describe('swarm nodes', function() {
                 helper.load([foursquareNode, swarmNode], 
                         [ {id:"n1", type:"helper", wires:[["n2"]]},
                           {id:"n4", type:"foursquare-credentials"},
-                          {id:"n2", type:"swarm", foursquare: "n4", wires:[["n3"]]},
+                          {id:"n2", type:"swarm in", foursquare: "n4", wires:[["n3"]]},
                           {id:"n3", type:"helper"}], 
                           {
                             "n4": {
@@ -128,7 +128,7 @@ describe('swarm nodes', function() {
                           function() {
                               var scope = nock('https://api.foursquare.com:443')
                                   .filteringPath(/afterTimestamp=[^&]*/g, 'afterTimestamp=foo')
-                                  .get('/v2/users/self/checkins?oauth_token=abcd1234&v=20141016&afterTimestamp=foo&sort=newestfirst&m=swarm')
+                                  .get('/v2/users/self/checkins?oauth_token=abcd1234&sort=newestfirst&m=swarm&v=20141016&afterTimestamp=foo')
                                   .reply(200, {"meta":{"code":200},"response":{"checkins":{"count":1, "items":[{"id":"b695edf5ewc2","createdAt":1412861751,"type":"checkin","timeZoneOffset":60,"venue":{"id":"49a8b774","name":"Bobs House"}}]}}});
                               
                               var n1 = helper.getNode("n1");
