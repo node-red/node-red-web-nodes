@@ -67,10 +67,22 @@
             if (pathname.slice(-1) != "/") {
                 pathname += "/";
             }
-            var callback = location.protocol + "//" +
+            
+            var privateIPRegex = /(^10\.)|(^172\.1[6-9]\.)|(^172\.2[0-9]\.)|(^172\.3[0-1]\.)|(^192\.168\.)/;
+            var callback;
+            if(privateIPRegex.test(location.hostname)) { // if private IP has been detected
+                var dummyDomain = "node-red.example.com";
+                var actualIP = location.hostname;
+                callback = location.protocol + "//" +
+                           dummyDomain + ":" + location.port +
+                           pathname + "google-credentials/auth/callback";
+                $("#node-config-google-tooltip").html("<p>It appears you are running on a private IP address that the Google service cannot reach. Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>"+callback+"</code><p></p><p>You will need to edit your <u><a href=\"http://en.wikipedia.org/wiki/Hosts_(file)\">hosts file</a></u> and add an entry for "+dummyDomain +" that points to " +actualIP +" .</p><p>You also need to enable the Google+ API for your new project in the Google Developers Console.</p>");
+            } else {
+                callback = location.protocol + "//" +
                            location.hostname + ":" + location.port +
                            pathname + "google-credentials/auth/callback";
-            $("#node-config-google-tooltip").html("<p>Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>"+callback+"</code>");
+                $("#node-config-google-tooltip").html("<p>Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>"+callback+"</code><p></p><p>You also need to enable the Google+ API for your new project in the Google Developers Console.</p>");
+            }
 
             function updateGoogleAuthButton() {
                 var v1 = $("#node-config-input-clientId").val();
