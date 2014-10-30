@@ -20,6 +20,25 @@ var fitbitNode = require("../../fitbit/fitbit.js");
 var helper = require('../helper.js');
 var nock = helper.nock;
 
+function today() {
+    var d = new Date();
+    var month = d.getMonth() + 1;
+    var day = d.getDate();
+    return d.getFullYear() + "-" +
+        (month < 10 ? "0" : "") + month + "-" +
+            (day < 10 ? "0" : "") + day;
+}
+
+function yesterday() {
+    var d = new Date();
+    d.setDate(d.getDate() - 1);
+    var month = d.getMonth() + 1;
+    var day = d.getDate();
+    return d.getFullYear() + "-" +
+        (month < 10 ? "0" : "") + month + "-" +
+            (day < 10 ? "0" : "") + day;
+}
+
 describe('fitbit nodes', function() {
 
     before(function(done) {
@@ -30,12 +49,409 @@ describe('fitbit nodes', function() {
         helper.unload();
     });
 
+    describe('in node', function() {
+        if (!nock) { return; }
+        it("should send new badge achievement message", function(done) {
+            nock('https://api.fitbit.com:443')
+                .get('/1/user/-/badges.json')
+                .reply(200, {"badges":[{
+                    "badgeType":"DAILY_FLOORS",
+                    "dateTime":"2014-10-28",
+                    "earnedMessage":"Congrats on earning your first daily 50 floors badge!",
+                    "marketingDescription":"Whoa! You've climbed 50 floors today! That's like taking the stairs to the top floor of a skyscraper! Can you make it to 75 for the next badge?",
+                    "name":"daily 50 floor",
+                    "timesAchieved":2,
+                    "value":50
+                }]}, {
+                    'content-type': 'application/json;charset=UTF-8',
+                    'content-language': 'en'
+                })
+                .get('/1/user/-/badges.json')
+                .reply(200, {"badges":[{
+                    "badgeType":"DAILY_FLOORS",
+                    "dateTime":"2014-10-28",
+                    "earnedMessage":"Congrats on earning your first daily 50 floors badge!",
+                    "marketingDescription":"Whoa! You've climbed 50 floors today! That's like taking the stairs to the top floor of a skyscraper! Can you make it to 75 for the next badge?",
+                    "name":"daily 50 floor",
+                    "timesAchieved":2,
+                    "value":50
+                }, {
+                    "badgeType":"LIFETIME_DISTANCE",
+                    "dateTime": today(),
+                    "earnedMessage":"Whoa! You've earned the 50 lifetime miles badge!",
+                    "marketingDescription":"Excellent! You've walked 50 miles! Congrats on earning your first lifetime distance badge! Keep it up to earn another.",
+                    "name":"50 lifetime miles",
+                    "timesAchieved":1,
+                    "unit":"MILES",
+                    "value":50
+                }]}, {
+                    'content-type': 'application/json;charset=UTF-8',
+                    'content-language': 'en'
+                });
+
+            helper.load(fitbitNode,
+                [{id:"fitbit-config", type:"fitbit-credentials",
+                  username: "Bob"},
+                 {id:"fitbit", type:"fitbit in", fitbit: "fitbit-config",
+                  wires:[["output"]], dataType:"badges"},
+                 {id:"output", type:"helper"}],
+                {
+                    "fitbit-config": {
+                        client_key: "fade",
+                        client_secret: "face",
+                        access_token: "beef",
+                        access_token_secret: "feed",
+                        username: "Bob"
+                    },
+                }, function() {
+                    var fitbit = helper.getNode("fitbit");
+                    fitbit.should.have.property('id', 'fitbit');
+                    var output = helper.getNode("output");
+                    output.should.have.property('id', 'output');
+                    output.on("input", function(msg) {
+                        msg.should.have.property('payload',
+                            'Whoa! You\'ve earned the 50 lifetime miles badge!');
+                        msg.should.have.property('type', 'new');
+                        done();
+                    });
+
+                    // wait for fitbit.on("input", ...) to be called
+                    var onFunction = fitbit.on;
+                    var onStub = sinon.stub(fitbit, 'on', function() {
+                        var res = onFunction.apply(fitbit, arguments);
+                        onStub.restore();
+                        fitbit.emit('input', {}); // trigger poll
+                        return res;
+                });
+            });
+        });
+
+        it("should send repeat badge achievement message", function(done) {
+            nock('https://api.fitbit.com:443')
+                .get('/1/user/-/badges.json')
+                .reply(200, {"badges":[{
+                    "badgeType":"DAILY_FLOORS",
+                    "dateTime":"2014-10-28",
+                    "earnedMessage":"Congrats on earning your first daily 50 floors badge!",
+                    "marketingDescription":"Whoa! You've climbed 50 floors today! That's like taking the stairs to the top floor of a skyscraper! Can you make it to 75 for the next badge?",
+                    "name":"daily 50 floor",
+                    "timesAchieved":2,
+                    "value":50
+                }]}, {
+                    'content-type': 'application/json;charset=UTF-8',
+                    'content-language': 'en'
+                })
+                .get('/1/user/-/badges.json')
+                .reply(200, {"badges":[{
+                    "badgeType":"DAILY_FLOORS",
+                    "dateTime":"2014-10-28",
+                    "earnedMessage":"Congrats on earning your first daily 50 floors badge!",
+                    "marketingDescription":"Whoa! You've climbed 50 floors today! That's like taking the stairs to the top floor of a skyscraper! Can you make it to 75 for the next badge?",
+                    "name":"daily 50 floor",
+                    "timesAchieved":3,
+                    "value":50
+                }]}, {
+                    'content-type': 'application/json;charset=UTF-8',
+                    'content-language': 'en'
+                });
+
+            helper.load(fitbitNode,
+                [{id:"fitbit-config", type:"fitbit-credentials",
+                  username: "Bob"},
+                 {id:"fitbit", type:"fitbit in", fitbit: "fitbit-config",
+                  wires:[["output"]], dataType:"badges"},
+                 {id:"output", type:"helper"}],
+                {
+                    "fitbit-config": {
+                        client_key: "fade",
+                        client_secret: "face",
+                        access_token: "beef",
+                        access_token_secret: "feed",
+                        username: "Bob"
+                    },
+                }, function() {
+                    var fitbit = helper.getNode("fitbit");
+                    fitbit.should.have.property('id', 'fitbit');
+                    var output = helper.getNode("output");
+                    output.should.have.property('id', 'output');
+                    output.on("input", function(msg) {
+                        msg.should.have.property('payload',
+                            'Congrats on earning your first daily 50 floors badge!');
+                        msg.should.have.property('type', 'repeat');
+                        done();
+                    });
+
+                    // wait for fitbit.on("input", ...) to be called
+                    var onFunction = fitbit.on;
+                    var onStub = sinon.stub(fitbit, 'on', function() {
+                        var res = onFunction.apply(fitbit, arguments);
+                        onStub.restore();
+                        fitbit.emit('input', {}); // trigger poll
+                        return res;
+                });
+            });
+        });
+
+        it("should send sleep record message", function(done) {
+            nock('https://api.fitbit.com:443')
+                .get('/1/user/-/sleep/date/'+today()+'.json')
+                .reply(200, {
+                    "sleep": [],
+                    "summary": {
+                        "totalMinutesAsleep":0,
+                        "totalSleepRecords":0,
+                        "totalTimeInBed":0,
+                    }}, {
+                    'content-type': 'application/json;charset=UTF-8',
+                    'content-language': 'en'
+                })
+                .get('/1/user/-/sleep/date/'+today()+'.json')
+                .reply(200, {
+                    "sleep": [
+                        {
+                            "awakeCount":1,
+                            "awakeDuration":7,
+                            "awakeningsCount":6,
+                            "duration":23040000,
+                            "efficiency":97,
+                            "isMainSleep":true,
+                            "logId":2,
+                            "minuteData":[],
+                            "minutesAfterWakeup":4,
+                            "minutesAsleep":361,
+                            "minutesAwake":12,
+                            "minutesToFallAsleep":7,
+                            "restlessCount":7,
+                            "restlessDuration":16,
+                            "startTime":"2014-10-28T22:57:00.000",
+                            "timeInBed":384
+                        }
+                    ], "summary": {
+                        "totalMinutesAsleep":361,
+                        "totalSleepRecords":1,
+                        "totalTimeInBed":384,
+                    }}, {
+                    'content-type': 'application/json;charset=UTF-8',
+                    'content-language': 'en'
+                });
+
+            helper.load(fitbitNode,
+                [{id:"fitbit-config", type:"fitbit-credentials",
+                  username: "Bob"},
+                 {id:"fitbit", type:"fitbit in", fitbit: "fitbit-config",
+                  wires:[["output"]], dataType:"sleep"},
+                 {id:"output", type:"helper"}],
+                {
+                    "fitbit-config": {
+                        client_key: "fade",
+                        client_secret: "face",
+                        access_token: "beef",
+                        access_token_secret: "feed",
+                        username: "Bob"
+                    },
+                }, function() {
+                    var fitbit = helper.getNode("fitbit");
+                    fitbit.should.have.property('id', 'fitbit');
+                    var output = helper.getNode("output");
+                    output.should.have.property('id', 'output');
+                    output.on("input", function(msg) {
+                        msg.payload.should.have.property('timeInBed', 384);
+                        done();
+                    });
+
+                    // wait for fitbit.on("input", ...) to be called
+                    var onFunction = fitbit.on;
+                    var onStub = sinon.stub(fitbit, 'on', function() {
+                        var res = onFunction.apply(fitbit, arguments);
+                        onStub.restore();
+                        fitbit.emit('input', {}); // trigger poll
+                        return res;
+                });
+            });
+        });
+
+        it("should send steps goal message", function(done) {
+            nock('https://api.fitbit.com:443')
+                .get('/1/user/-/activities/date/'+today()+'.json')
+                .reply(200, {"activities":[],"goals":{"activeMinutes":30,"caloriesOut":2184,"distance":8.05,"floors":10,"steps":10000},"summary":{"activeScore":-1,"activityCalories":43,"caloriesBMR":414,"caloriesOut":441,"distances":[{"activity":"total","distance":0.04},{"activity":"tracker","distance":0.04},{"activity":"loggedActivities","distance":0},{"activity":"veryActive","distance":0},{"activity":"moderatelyActive","distance":0},{"activity":"lightlyActive","distance":0.04},{"activity":"sedentaryActive","distance":0}],"elevation":0,"fairlyActiveMinutes":1,"floors":0,"lightlyActiveMinutes":13,"marginalCalories":15,"sedentaryMinutes":33,"steps":57,"veryActiveMinutes":0}}, {
+                    'content-type': 'application/json;charset=UTF-8',
+                    'content-language': 'en',
+                    'content-length': '654',
+                    date: 'Wed, 29 Oct 2014 06:08:10 GMT',
+                    connection: 'close'
+                })
+                .get('/1/user/-/activities/date/'+today()+'.json')
+                .reply(200, {"activities":[],"goals":{"activeMinutes":30,"caloriesOut":2184,"distance":8.05,"floors":10,"steps":10000},"summary":{"activeScore":-1,"activityCalories":43,"caloriesBMR":414,"caloriesOut":441,"distances":[{"activity":"total","distance":0.04},{"activity":"tracker","distance":0.04},{"activity":"loggedActivities","distance":0},{"activity":"veryActive","distance":0},{"activity":"moderatelyActive","distance":0},{"activity":"lightlyActive","distance":0.04},{"activity":"sedentaryActive","distance":0}],"elevation":0,"fairlyActiveMinutes":1,"floors":0,"lightlyActiveMinutes":13,"marginalCalories":15,"sedentaryMinutes":33,"steps":10001,"veryActiveMinutes":0}}, {
+                    'content-type': 'application/json;charset=UTF-8',
+                    'content-language': 'en',
+                    'content-length': '654',
+                    date: 'Wed, 29 Oct 2014 06:08:10 GMT',
+                    connection: 'close'
+                });
+
+            helper.load(fitbitNode,
+                [{id:"fitbit-config", type:"fitbit-credentials",
+                  username: "Bob"},
+                 {id:"fitbit", type:"fitbit in", fitbit: "fitbit-config",
+                  wires:[["output"]], dataType:"goals"},
+                 {id:"output", type:"helper"}],
+                {
+                    "fitbit-config": {
+                        client_key: "fade",
+                        client_secret: "face",
+                        access_token: "beef",
+                        access_token_secret: "feed",
+                        username: "Bob"
+                    },
+                }, function() {
+                    var fitbit = helper.getNode("fitbit");
+                    fitbit.should.have.property('id', 'fitbit');
+                    var output = helper.getNode("output");
+                    output.should.have.property('id', 'output');
+                    output.on("input", function(msg) {
+                        msg.should.have.property('payload',
+                            '10000 steps goal achieved');
+                        done();
+                    });
+
+                    // wait for fitbit.on("input", ...) to be called
+                    var onFunction = fitbit.on;
+                    var onStub = sinon.stub(fitbit, 'on', function() {
+                        var res = onFunction.apply(fitbit, arguments);
+                        onStub.restore();
+                        fitbit.emit('input', {}); // trigger poll
+                        return res;
+                });
+            });
+        });
+
+        it("should send floors goal message", function(done) {
+            nock('https://api.fitbit.com:443')
+                .get('/1/user/-/activities/date/'+today()+'.json')
+                .reply(200, {"activities":[],"goals":{"activeMinutes":30,"caloriesOut":2184,"distance":8.05,"floors":10,"steps":10000},"summary":{"activeScore":-1,"activityCalories":43,"caloriesBMR":414,"caloriesOut":441,"distances":[{"activity":"total","distance":0.04},{"activity":"tracker","distance":0.04},{"activity":"loggedActivities","distance":0},{"activity":"veryActive","distance":0},{"activity":"moderatelyActive","distance":0},{"activity":"lightlyActive","distance":0.04},{"activity":"sedentaryActive","distance":0}],"elevation":0,"fairlyActiveMinutes":1,"floors":0,"lightlyActiveMinutes":13,"marginalCalories":15,"sedentaryMinutes":33,"steps":57,"veryActiveMinutes":0}}, {
+                    'content-type': 'application/json;charset=UTF-8',
+                    'content-language': 'en',
+                    'content-length': '654',
+                    date: 'Wed, 29 Oct 2014 06:08:10 GMT',
+                    connection: 'close'
+                })
+                .get('/1/user/-/activities/date/'+today()+'.json')
+                .reply(200, {"activities":[],"goals":{"activeMinutes":30,"caloriesOut":2184,"distance":8.05,"floors":10,"steps":10000},"summary":{"activeScore":-1,"activityCalories":43,"caloriesBMR":414,"caloriesOut":441,"distances":[{"activity":"total","distance":0.04},{"activity":"tracker","distance":0.04},{"activity":"loggedActivities","distance":0},{"activity":"veryActive","distance":0},{"activity":"moderatelyActive","distance":0},{"activity":"lightlyActive","distance":0.04},{"activity":"sedentaryActive","distance":0}],"elevation":0,"fairlyActiveMinutes":1,"floors":11,"lightlyActiveMinutes":13,"marginalCalories":15,"sedentaryMinutes":33,"steps":57,"veryActiveMinutes":0}}, {
+                    'content-type': 'application/json;charset=UTF-8',
+                    'content-language': 'en',
+                    'content-length': '654',
+                    date: 'Wed, 29 Oct 2014 06:08:10 GMT',
+                    connection: 'close'
+                });
+
+            helper.load(fitbitNode,
+                [{id:"fitbit-config", type:"fitbit-credentials",
+                  username: "Bob"},
+                 {id:"fitbit", type:"fitbit in", fitbit: "fitbit-config",
+                  wires:[["output"]], dataType:"goals"},
+                 {id:"output", type:"helper"}],
+                {
+                    "fitbit-config": {
+                        client_key: "fade",
+                        client_secret: "face",
+                        access_token: "beef",
+                        access_token_secret: "feed",
+                        username: "Bob"
+                    },
+                }, function() {
+                    var fitbit = helper.getNode("fitbit");
+                    fitbit.should.have.property('id', 'fitbit');
+                    var output = helper.getNode("output");
+                    output.should.have.property('id', 'output');
+                    output.on("input", function(msg) {
+                        msg.should.have.property('payload',
+                            '10 floors goal achieved');
+                        done();
+                    });
+
+                    // wait for fitbit.on("input", ...) to be called
+                    var onFunction = fitbit.on;
+                    var onStub = sinon.stub(fitbit, 'on', function() {
+                        var res = onFunction.apply(fitbit, arguments);
+                        onStub.restore();
+                        fitbit.emit('input', {}); // trigger poll
+                        return res;
+                });
+            });
+        });
+
+        it("should send active minutes goal message", function(done) {
+            nock('https://api.fitbit.com:443')
+                .get('/1/user/-/activities/date/'+today()+'.json')
+                .reply(200, {"activities":[],"goals":{"activeMinutes":30,"caloriesOut":2184,"distance":8.05,"floors":10,"steps":10000},"summary":{"activeScore":-1,"activityCalories":43,"caloriesBMR":414,"caloriesOut":441,"distances":[{"activity":"total","distance":0.04},{"activity":"tracker","distance":0.04},{"activity":"loggedActivities","distance":0},{"activity":"veryActive","distance":0},{"activity":"moderatelyActive","distance":0},{"activity":"lightlyActive","distance":0.04},{"activity":"sedentaryActive","distance":0}],"elevation":0,"fairlyActiveMinutes":1,"floors":0,"lightlyActiveMinutes":13,"marginalCalories":15,"sedentaryMinutes":33,"steps":57,"veryActiveMinutes":0}}, {
+                    'content-type': 'application/json;charset=UTF-8',
+                    'content-language': 'en',
+                    'content-length': '654',
+                    date: 'Wed, 29 Oct 2014 06:08:10 GMT',
+                    connection: 'close'
+                })
+                .get('/1/user/-/activities/date/'+yesterday()+'.json')
+                .reply(200, {"activities":[],"goals":{"activeMinutes":30,"caloriesOut":2184,"distance":8.05,"floors":10,"steps":10000},"summary":{"activeScore":-1,"activityCalories":43,"caloriesBMR":414,"caloriesOut":441,"distances":[{"activity":"total","distance":0.04},{"activity":"tracker","distance":0.04},{"activity":"loggedActivities","distance":0},{"activity":"veryActive","distance":0},{"activity":"moderatelyActive","distance":0},{"activity":"lightlyActive","distance":0.04},{"activity":"sedentaryActive","distance":0}],"elevation":0,"fairlyActiveMinutes":1,"floors":0,"lightlyActiveMinutes":13,"marginalCalories":15,"sedentaryMinutes":33,"steps":57,"veryActiveMinutes":31}}, {
+                    'content-type': 'application/json;charset=UTF-8',
+                    'content-language': 'en',
+                    'content-length': '654',
+                    date: 'Wed, 29 Oct 2014 06:08:10 GMT',
+                    connection: 'close'
+                });
+
+            helper.load(fitbitNode,
+                [{id:"fitbit-config", type:"fitbit-credentials",
+                  username: "Bob"},
+                 {id:"fitbit", type:"fitbit in", fitbit: "fitbit-config",
+                  wires:[["output"]], dataType:"goals"},
+                 {id:"output", type:"helper"}],
+                {
+                    "fitbit-config": {
+                        client_key: "fade",
+                        client_secret: "face",
+                        access_token: "beef",
+                        access_token_secret: "feed",
+                        username: "Bob"
+                    },
+                }, function() {
+                    var fitbit = helper.getNode("fitbit");
+                    fitbit.should.have.property('id', 'fitbit');
+                    var output = helper.getNode("output");
+                    output.should.have.property('id', 'output');
+                    output.on("input", function(msg) {
+                        msg.should.have.property('payload',
+                            '30 active minutes goal achieved');
+                        done();
+                    });
+
+                    // wait for fitbit.on("input", ...) to be called
+                    var onFunction = fitbit.on;
+                    var onStub = sinon.stub(fitbit, 'on', function() {
+                        var res = onFunction.apply(fitbit, arguments);
+                        onStub.restore();
+                        /* hack state so it thinks it was yesterdays data
+                         * to test that we catch goals achieved in the last
+                         * poll interval of the day
+                         */
+                        fitbit.state.day = yesterday();
+                        fitbit.emit('input', {}); // trigger poll
+                        return res;
+                });
+            });
+        });
+    });
+
     describe('out node', function() {
 
         if (nock) {
 
             it('can do oauth dance', function(done) {
-                helper.load(fitbitNode, [{id:"n1", type:"helper", wires:[["n2"]]},{id:"n4", type:"fitbit-credentials"},{id:"n2", type:"fitbit", fitbit: "n4", wires:[["n3"]],dataType:"sleep"},{id:"n3", type:"helper"}], function() {
+                helper.load(fitbitNode, [
+                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"fitbit-config", type:"fitbit-credentials"},
+                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                     wires:[["output"]], dataType:"sleep"},
+                    {id:"output", type:"helper"}], function() {
                     var scope = nock('https://api.fitbit.com:443')
                         .post('/oauth/request_token')
                         // TODO check request headers
@@ -73,17 +489,17 @@ describe('fitbit nodes', function() {
                             'date': 'Mon, 29 Sep 2014 21:23:03 GMT',
                             'connection': 'close' });
                     helper.request()
-                        .get('/fitbit-credentials/n4/auth?client_key=0123&client_secret=4567&callback=http://localhost:1880/fitbit-credentials/n4/auth/callback')
+                        .get('/fitbit-credentials/fitbit-config/auth?client_key=0123&client_secret=4567&callback=http://localhost:1880/fitbit-credentials/fitbit-config/auth/callback')
                         .expect(302)
                         .expect('Location', 'https://www.fitbit.com/oauth/authorize?oauth_token=0123')
                         .end(function(err, res) {
                             if (err) return done(err);
                             helper.request()
-                                .get('/fitbit-credentials/n4/auth/callback?oauth_verifier=abcdef')
+                                .get('/fitbit-credentials/fitbit-config/auth/callback?oauth_verifier=abcdef')
                                 .expect(200)
                                 .end(function(err, res) {
                                     if (err) return done(err);
-                                    helper.credentials.get("n4")
+                                    helper.credentials.get("fitbit-config")
                                         .should.have.property('username',
                                                               'Foo Bar');
                                     done();
@@ -93,20 +509,21 @@ describe('fitbit nodes', function() {
             });
 
             it('can fetch sleep data', function(done) {
-                helper.load(fitbitNode,
-                            [{id:"n1", type:"helper", wires:[["n2"]]},
-                             {id:"n4", type:"fitbit-credentials", username: "Bob"},
-                             {id:"n2", type:"fitbit", fitbit: "n4", wires:[["n3"]],
-                              dataType:"sleep"},
-                             {id:"n3", type:"helper"}],
-                            {
-                                "n4": { client_key: "fade",
-                                        client_secret: "face",
-                                        access_token: "beef",
-                                        access_token_secret: "feed",
-                                        username: "Bob",
-                                      },
-                            }, function() {
+                helper.load(fitbitNode, [
+                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"fitbit-config", type:"fitbit-credentials", username: "Bob"},
+                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config", wires:[["output"]],
+                     dataType:"sleep"},
+                    {id:"output", type:"helper"}],
+                    {
+                        "fitbit-config": {
+                            client_key: "fade",
+                            client_secret: "face",
+                            access_token: "beef",
+                            access_token_secret: "feed",
+                            username: "Bob",
+                        },
+                    }, function() {
                     var scope = nock('https://api.fitbit.com:443')
                         .get('/1/user/-/sleep/date/2014-09-29.json')
                         .reply(200, {
@@ -130,12 +547,12 @@ describe('fitbit nodes', function() {
                         'content-language': 'en',
                         'date': 'Mon, 29 Sep 2014 21:23:03 GMT',
                         'connection': 'close' });
-                    var n1 = helper.getNode("n1");
-                    var n2 = helper.getNode("n2");
-                    var n3 = helper.getNode("n3");
-                    n2.should.have.property('id', 'n2');
-                    n1.send({ date: "2014-09-29" });
-                    n3.on('input', function(msg) {
+                    var input = helper.getNode("input");
+                    var fitbit = helper.getNode("fitbit");
+                    var output = helper.getNode("output");
+                    fitbit.should.have.property('id', 'fitbit');
+                    input.send({ date: "2014-09-29" });
+                    output.on('input', function(msg) {
                         var sleep = msg.payload;
                         sleep.should.have.property("duration", 25560000);
                         sleep.should.have.property("efficiency", 96);
@@ -146,21 +563,66 @@ describe('fitbit nodes', function() {
                });
             });
 
+            it('can fetch sleep data', function(done) {
+                helper.load(fitbitNode, [
+                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"fitbit-config", type:"fitbit-credentials",
+                     username: "Bob"},
+                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                     wires:[["output"]], dataType:"sleep"},
+                    {id:"output", type:"helper"}],
+                    {
+                        "fitbit-config": {
+                            client_key: "fade",
+                            client_secret: "face",
+                            access_token: "beef",
+                            access_token_secret: "feed",
+                            username: "Bob",
+                        },
+                    }, function() {
+                    var scope = nock('https://api.fitbit.com:443')
+                        .get('/1/user/-/sleep/date/2014-09-29.json')
+                        .reply(200, {
+                            "sleep": [], "summary": {
+                                "totalMinutesAsleep": 0,
+                                "totalSleepRecords": 0,
+                                "totalTimeInBed": 0
+                            }
+                        }, {
+                            'content-type': 'application/json;charset=UTF-8',
+                            'content-language': 'en',
+                        });
+                    var input = helper.getNode("input");
+                    var fitbit = helper.getNode("fitbit");
+                    var output = helper.getNode("output");
+                    fitbit.should.have.property('id', 'fitbit');
+                    input.send({ date: "2014-09-29" });
+                    output.on('input', function(msg) {
+                        msg.should.not.have.property('payload');
+                        msg.should.have.property('error',
+                            'no main sleep record found');
+                        done();
+                    });
+               });
+            });
+
             it('can fetch badge data', function(done) {
-                helper.load(fitbitNode,
-                            [{id:"n1", type:"helper", wires:[["n2"]]},
-                             {id:"n4", type:"fitbit-credentials", username: "Bob"},
-                             {id:"n2", type:"fitbit", fitbit: "n4", wires:[["n3"]],
-                              dataType:"badges"},
-                             {id:"n3", type:"helper"}],
-                            {
-                                "n4": { client_key: "fade",
-                                        client_secret: "face",
-                                        access_token: "beef",
-                                        access_token_secret: "feed",
-                                        username: "Bob",
-                                      },
-                            }, function() {
+                helper.load(fitbitNode, [
+                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"fitbit-config", type:"fitbit-credentials",
+                     username: "Bob"},
+                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                     wires:[["output"]], dataType:"badges"},
+                    {id:"output", type:"helper"}],
+                    {
+                        "fitbit-config": {
+                            client_key: "fade",
+                            client_secret: "face",
+                            access_token: "beef",
+                            access_token_secret: "feed",
+                            username: "Bob",
+                        },
+                    }, function() {
                 var scope = nock('https://api.fitbit.com:443')
                     .get('/1/user/-/badges.json')
                     .reply(200, {
@@ -184,11 +646,6 @@ describe('fitbit nodes', function() {
                                 "earnedMessage" : "Congrats on earning your first daily 10,000 steps badge!",
                             }
                         ],
-                        "summary": {
-                            "totalMinutesAsleep": 399,
-                            "totalSleepRecords": 1,
-                            "totalTimeInBed": 426
-                        }
                     }, {
                         'fitbit-rate-limit-limit': '150',
                         'fitbit-rate-limit-remaining': '148',
@@ -198,12 +655,12 @@ describe('fitbit nodes', function() {
                         'date': 'Mon, 29 Sep 2014 21:23:03 GMT',
                         'connection': 'close',
                     });
-                    var n1 = helper.getNode("n1");
-                    var n2 = helper.getNode("n2");
-                    var n3 = helper.getNode("n3");
-                    n2.should.have.property('id', 'n2');
-                    n1.send({ date: "2014-09-29" });
-                    n3.on('input', function(msg) {
+                    var input = helper.getNode("input");
+                    var fitbit = helper.getNode("fitbit");
+                    var output = helper.getNode("output");
+                    fitbit.should.have.property('id', 'fitbit');
+                    input.send({ date: "2014-09-29" });
+                    output.on('input', function(msg) {
                         var badge = msg.payload.badges[0];
                         badge.should.have.property("value", 5000);
                         badge.should.have.property("name", "daily 5,000 step");
@@ -215,47 +672,54 @@ describe('fitbit nodes', function() {
             });
 
             it('sets appropriate status on error', function(done) {
-                helper.load(fitbitNode,
-                            [{id:"n1", type:"helper", wires:[["n2"]]},
-                             {id:"n4", type:"fitbit-credentials", username: "Bob"},
-                             {id:"n2", type:"fitbit", fitbit: "n4", wires:[["n3"]],
-                              dataType:"badges"},
-                             {id:"n3", type:"helper"}],
-                            {
-                                "n4": { client_key: "fade",
-                                    client_secret: "face",
-                                        access_token: "beef",
-                                        access_token_secret: "feed",
-                                        username: "Bob",
-                                      },
-                            }, function() {
-                var scope = nock('https://api.fitbit.com:443')
-                    .get('/1/user/-/badges.json')
-                    .reply(404);
-                    var n1 = helper.getNode("n1");
-                    var n2 = helper.getNode("n2");
-                    var n3 = helper.getNode("n3");
-                    var expected = [
-                        {"fill":"blue","shape":"dot","text":"querying"},
-                        {"fill":"red","shape":"ring","text":"failed"},
-                    ];
-                    sinon.stub(n2, 'status', function(status) {
-                        should.deepEqual(status, expected.shift());
-                        if (expected.length === 0) {
-                            done();
-                        }
+                helper.load(fitbitNode, [
+                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"fitbit-config", type:"fitbit-credentials",
+                     username: "Bob"},
+                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                     wires:[["output"]], dataType:"badges"},
+                    {id:"output", type:"helper"}],
+                    {
+                        "fitbit-config": {
+                            client_key: "fade",
+                            client_secret: "face",
+                            access_token: "beef",
+                            access_token_secret: "feed",
+                            username: "Bob",
+                        },
+                    }, function() {
+                        var scope = nock('https://api.fitbit.com:443')
+                            .get('/1/user/-/badges.json')
+                            .reply(404);
+                        var input = helper.getNode("input");
+                        var fitbit = helper.getNode("fitbit");
+                        var output = helper.getNode("output");
+                        var expected = [
+                            {"fill":"blue","shape":"dot","text":"querying"},
+                            {"fill":"red","shape":"ring","text":"failed"},
+                        ];
+                        sinon.stub(fitbit, 'status', function(status) {
+                            should.deepEqual(status, expected.shift());
+                            if (expected.length === 0) {
+                                done();
+                            }
+                        });
+                        input.send({ date: "2014-09-29" });
                     });
-                    n1.send({ date: "2014-09-29" });
-                });
             });
-
+            
             it('fails oauth dance if client key is invalid', function(done) {
-                helper.load(fitbitNode, [{id:"n1", type:"helper", wires:[["n2"]]},{id:"n4", type:"fitbit-credentials"},{id:"n2", type:"fitbit", fitbit: "n4", wires:[["n3"]],dataType:"sleep"},{id:"n3", type:"helper"}], function() {
+                helper.load(fitbitNode, [
+                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"fitbit-config", type:"fitbit-credentials"},
+                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                     wires:[["output"]],dataType:"sleep"},
+                    {id:"output", type:"helper"}], function() {
                     var scope = nock('https://api.fitbit.com:443')
                         .post('/oauth/request_token')
                         .reply(401, '{"errors":[{"errorType":"oauth","fieldName":"oauth_consumer_key","message":"Invalid consumer key: sadsa"}],"success":false}');
                     helper.request()
-                        .get('/fitbit-credentials/n4/auth?client_key=0123&client_secret=4567&callback=http://localhost:1880/fitbit-credentials/n4/auth/callback')
+                        .get('/fitbit-credentials/fitbit-config/auth?client_key=0123&client_secret=4567&callback=http://localhost:1880/fitbit-credentials/fitbit-config/auth/callback')
                         .expect(200)
                         .end(function(err, res) {
                             if (err) return done(err);
@@ -266,7 +730,12 @@ describe('fitbit nodes', function() {
             });
 
             it('fails if access token request fails', function(done) {
-                helper.load(fitbitNode, [{id:"n1", type:"helper", wires:[["n2"]]},{id:"n4", type:"fitbit-credentials"},{id:"n2", type:"fitbit", fitbit: "n4", wires:[["n3"]],dataType:"sleep"},{id:"n3", type:"helper"}], function() {
+                helper.load(fitbitNode, [
+                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"fitbit-config", type:"fitbit-credentials"},
+                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                     wires:[["output"]],dataType:"sleep"},
+                    {id:"output", type:"helper"}], function() {
                     var scope = nock('https://api.fitbit.com:443')
                         .post('/oauth/request_token')
                         // TODO check request headers
@@ -289,13 +758,13 @@ describe('fitbit nodes', function() {
                                    'connection': 'close',
                                });
                     helper.request()
-                        .get('/fitbit-credentials/n4/auth?client_key=0123&client_secret=4567&callback=http://localhost:1880/fitbit-credentials/n4/auth/callback')
+                        .get('/fitbit-credentials/fitbit-config/auth?client_key=0123&client_secret=4567&callback=http://localhost:1880/fitbit-credentials/fitbit-config/auth/callback')
                         .expect(302)
                         .expect('Location', 'https://www.fitbit.com/oauth/authorize?oauth_token=0123')
                         .end(function(err, res) {
                             if (err) return done(err);
                             helper.request()
-                                .get('/fitbit-credentials/n4/auth/callback?oauth_verifier=abcdef')
+                                .get('/fitbit-credentials/fitbit-config/auth/callback?oauth_verifier=abcdef')
                                 .expect(200)
                                 .end(function(err, res) {
                                     if (err) return done(err);
@@ -308,7 +777,12 @@ describe('fitbit nodes', function() {
             });
 
             it('fails if profile can\'t be retrieved', function(done) {
-                helper.load(fitbitNode, [{id:"n1", type:"helper", wires:[["n2"]]},{id:"n4", type:"fitbit-credentials"},{id:"n2", type:"fitbit", fitbit: "n4", wires:[["n3"]],dataType:"sleep"},{id:"n3", type:"helper"}], function() {
+                helper.load(fitbitNode, [
+                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"fitbit-config", type:"fitbit-credentials"},
+                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                     wires:[["output"]],dataType:"sleep"},
+                    {id:"output", type:"helper"}], function() {
                     var scope = nock('https://api.fitbit.com:443')
                         .post('/oauth/request_token')
                         // TODO check request headers
@@ -340,13 +814,13 @@ describe('fitbit nodes', function() {
                             'date': 'Mon, 29 Sep 2014 21:23:03 GMT',
                             'connection': 'close' });
                     helper.request()
-                        .get('/fitbit-credentials/n4/auth?client_key=0123&client_secret=4567&callback=http://localhost:1880/fitbit-credentials/n4/auth/callback')
+                        .get('/fitbit-credentials/fitbit-config/auth?client_key=0123&client_secret=4567&callback=http://localhost:1880/fitbit-credentials/fitbit-config/auth/callback')
                         .expect(302)
                         .expect('Location', 'https://www.fitbit.com/oauth/authorize?oauth_token=0123')
                         .end(function(err, res) {
                             if (err) return done(err);
                             helper.request()
-                                .get('/fitbit-credentials/n4/auth/callback?oauth_verifier=abcdef')
+                                .get('/fitbit-credentials/fitbit-config/auth/callback?oauth_verifier=abcdef')
                                 .expect(200)
                                 .end(function(err, res) {
                                     if (err) return done(err);
@@ -371,40 +845,45 @@ describe('fitbit nodes', function() {
 
         it('fails to fetch invalid data type', function(done) {
             helper.load(fitbitNode,
-                        [{id:"n1", type:"helper", wires:[["n2"]]},
-                         {id:"n4", type:"fitbit-credentials", username: "Bob"},
-                         {id:"n2", type:"fitbit", fitbit: "n4", wires:[["n3"]],
+                        [{id:"input", type:"helper", wires:[["fitbit"]]},
+                         {id:"fitbit-config", type:"fitbit-credentials", username: "Bob"},
+                         {id:"fitbit", type:"fitbit", fitbit: "fitbit-config", wires:[["output"]],
                           dataType:"foobar"},
-                         {id:"n3", type:"helper"}],
+                         {id:"output", type:"helper"}],
                         {
-                            "n4": { client_key: "fade",
+                            "fitbit-config": { client_key: "fade",
                                     client_secret: "face",
                                     access_token: "beef",
                                     access_token_secret: "feed",
                                     username: "Bob",
                                   },
                         }, function() {
-                var n1 = helper.getNode("n1");
-                var n2 = helper.getNode("n2");
-                var n3 = helper.getNode("n3");
+                var input = helper.getNode("input");
+                var fitbit = helper.getNode("fitbit");
+                var output = helper.getNode("output");
                 var expected = [
                     {"fill":"blue","shape":"dot","text":"querying"},
                     {"fill":"red","shape":"ring","text":"invalid type"},
                 ];
-                sinon.stub(n2, 'status', function(status) {
+                sinon.stub(fitbit, 'status', function(status) {
                     should.deepEqual(status, expected.shift());
                     if (expected.length === 0) {
                         done();
                     }
                 });
-                n1.send({ date: "2014-09-29" });
+                input.send({ date: "2014-09-29" });
             });
         });
 
         it('fails oauth dance if no client secret is supplied', function(done) {
-            helper.load(fitbitNode, [{id:"n1", type:"helper", wires:[["n2"]]},{id:"n4", type:"fitbit-credentials"},{id:"n2", type:"fitbit", fitbit: "n4", wires:[["n3"]],dataType:"sleep"},{id:"n3", type:"helper"}], function() {
+            helper.load(fitbitNode, [
+                {id:"input", type:"helper", wires:[["fitbit"]]},
+                {id:"fitbit-config", type:"fitbit-credentials"},
+                {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                 wires:[["output"]],dataType:"sleep"},
+                {id:"output", type:"helper"}], function() {
                 helper.request()
-                    .get('/fitbit-credentials/n4/auth?client_key=0123')
+                    .get('/fitbit-credentials/fitbit-config/auth?client_key=0123')
                     .expect(400)
                     .end(function(err, res) {
                         if (err) return done(err);

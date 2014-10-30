@@ -14,17 +14,6 @@
  * limitations under the License.
  **/
 
-/*
-  var nock = require('nock');
-  nock.recorder.rec({
-  dont_print: false,
-  output_objects: true,
-  enable_reqheaders_recording: true
-  });
-  ...
-  console.log(require('util').inspect(nock.recorder.play()));
-  */
-
 module.exports = function(RED) {
     "use strict";
     var OAuth= require('oauth').OAuth;
@@ -119,14 +108,13 @@ module.exports = function(RED) {
                                         // already have this badge
                                         if (badge.timesAchieved > node.state[j].timesAchieved) {
                                             // achieved it again
-                                            node.send({ type: "repeat",
-                                                        payload: badge });
+                                            node.sendBadge(badge, "repeat");
                                         }
                                         continue outerLoop;
                                     }
                                 }
                                 // achieved new badge
-                                node.send({ type: "new", payload: badge });
+                                node.sendBadge(badge, "new");
                             }
                             node.state = badges;
                             node.status({});
@@ -240,6 +228,15 @@ module.exports = function(RED) {
         }
     }
     RED.nodes.registerType("fitbit in",FitbitInNode);
+    FitbitInNode.prototype.sendBadge = function(badge, type) {
+        this.send({
+            type: type,
+            payload: badge.earnedMessage,
+            title: badge.name,
+            description: badge.marketingDescription,
+            data: badge,
+        });
+    };
 
     FitbitInNode.prototype.setInterval = function(repeat) {
         repeat = repeat || 900000; // 15 minutes
@@ -297,9 +294,12 @@ module.exports = function(RED) {
                         var sleep = mainSleep(data.sleep);
                         if (!sleep) {
                             node.warn("no main sleep recorded");
-                            return;
+                            delete msg.payload;
+                            msg.error = "no main sleep record found";
+                        } else {
+                            msg.payload = sleep;
+                            delete msg.error;
                         }
-                        msg.payload = sleep;
                     } else {
                         msg.payload = data;
                     }
