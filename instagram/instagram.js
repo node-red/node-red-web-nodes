@@ -42,8 +42,13 @@ module.exports = function(RED) {
     
     // the query node doesn't require special initialization as it serves the latest photo anyway
     function initializeQueryNode(node) {
-        if(!node.instagramConfig.credentials.access_token) {
-            node.warn("Missing Instagram access token. Authorization has not been completed before node initialization.");
+        if(node.instagramConfig && node.instagramConfig.credentials) {
+            if(!node.instagramConfig.credentials.access_token) {
+                node.warn("Missing Instagram access token. Authorization has not been completed before node initialization.");
+                return;
+            }   
+        } else {
+            node.warn("Missing Instagram configuration or credentials. Authorization has not been completed before node initialization.");
             return;
         }
 
@@ -56,8 +61,13 @@ module.exports = function(RED) {
 
     // we initialize the node: load access token, obtain current state from Instagram
     function initializeInputNode(node) {
-        if(!node.instagramConfig.credentials.access_token) {
-            node.warn("Missing Instagram access token. Authorization has not been completed before node initialization.");
+        if(node.instagramConfig && node.instagramConfig.credentials) {
+            if(!node.instagramConfig.credentials.access_token) {
+                node.warn("Missing Instagram access token. Authorization has not been completed before node initialization.");
+                return;
+            }   
+        } else {
+            node.warn("Missing Instagram configuration or credentials. Authorization has not been completed before node initialization.");
             return;
         }
 
