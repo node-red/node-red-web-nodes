@@ -79,8 +79,8 @@
     </ul>
     <p>These can be passed in as settings on the node, or as the:</p>
     <ul>
-       <li> <b>msg.payload.lat</b> and <b>msg.payload.lon</b>, or </li>
-       <li> <b>msg.payload.city</b> and <b>msg.payload.country</b> </li>
+       <li> <b>msg.location.lat</b> and <b>msg.location.lon</b>, or </li>
+       <li> <b>msg.location.city</b> and <b>msg.location.country</b> </li>
     </ul>
     <p>of the message input. </p>
     <p>The node will always prioritise the parameters passed in when both of <b>lat/lon</b> or <b>country/city</b> are present.</p>
@@ -97,11 +97,15 @@
         <li><b>windspeed</b> - the current wind speed at the location in Metres per second.</li><br>
         <li><b>winddirection</b> - the current wind direction at the location in meteorological degrees.</li><br>
         <li><b>town</b> - the name of the location from which the data was sourced.</li><br>
-        <li><b>lon</b> - the longitude of the location from which the data was sourced.</li><br>
-        <li><b>lat</b> - to the latitude of the location from which the data was sourced.</li><br>
         <li><b>sunrise</b> - the time at which the sun rose in Unix UTC format.</li><br>
         <li><b>sunset</b> - the time at which the sun will set in Unix UTC format.</li><br>
         <li><b>clouds</b> - the current cloud coverage of the location in percent.</li><br>
+    </ul>
+
+    <p>The node also sets:</p>
+    <ul>
+        <li><b>msg.location.lat</b> - the longitude of the location from which the data was sourced.</li><br>
+        <li><b>msg.location.lon</b> - the latitude of the location from which the data was sourced.</li><br>
     </ul>
     <p>Weather data provided by <a href="http://openweathermap.org/" target="_blank">openweathermap.org/</a></p>
 </script>
@@ -202,11 +206,14 @@
         <li><b>windspeed</b> - the current wind speed at the location in Metres per second.</li><br>
         <li><b>winddirection</b> - the current wind direction at the location in meteorological degrees.</li><br>
         <li><b>town</b> - the name of the location from which the data was sourced.</li><br>
-        <li><b>lon</b> - the longitude of the location from which the data was sourced.</li><br>
-        <li><b>lat</b> - to the latitude of the location from which the data was sourced.</li><br>
         <li><b>sunrise</b> - the time at which the sun rose in Unix UTC format.</li><br>
         <li><b>sunset</b> - the time at which the sun will set in Unix UTC format.</li><br>
         <li><b>clouds</b> - the current cloud coverage of the location in percent.</li><br>
+    </ul>
+    <p>The node also sets:</p>
+    <ul>
+        <li><b>msg.location.lat</b> - the longitude of the location from which the data was sourced.</li><br>
+        <li><b>msg.location.lon</b> - the latitude of the location from which the data was sourced.</li><br>
     </ul>
     <p>Weather data provided by <a href="http://openweathermap.org/" target="_blank">openweathermap.org/</a></p>
 </script>

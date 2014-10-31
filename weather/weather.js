@@ -20,26 +20,30 @@ module.exports = function(RED) {
         //if there is data in the message input, it overwrites the node setting values.
         //If the data is erroneous or not there, the values remain the node settings.
         if(msg.payload){
+            
+        }
+        if(msg.location){
             //query node code to check the input for information.
-            if (msg.payload.city && msg.payload.country) {
-                city = msg.payload.city;
-                country = msg.payload.country;
+            if (msg.location.city && msg.location.country) {
+                city = msg.location.city;
+                country = msg.location.country;
                 lat = "";
                 lon = "";
             }
-            if (msg.payload.lat && msg.payload.lon){
-                if(90 >= msg.payload.lat && 180 >= msg.payload.lon && msg.payload.lat >= -90 && msg.payload.lon >= -180){
-                    lat = msg.payload.lat;
-                    lon = msg.payload.lon;
+            if (msg.location.lat && msg.location.lon){
+                if(90 >= msg.location.lat && 180 >= msg.location.lon && msg.location.lat >= -90 && msg.location.lon >= -180){
+                    lat = msg.location.lat;
+                    lon = msg.location.lon;
                     city = "";
                     country = "";
                 } else {
                     node.warn("Invalid lat/lon in input payload");
                 }
-            } 
+            }
         }
         //wipe clear the payload if it exists, or create it if it doesn't
         msg.payload = {};
+        msg.location = {};
         
         //If there is a value missing, the URL is not initialised.
         if (lat && lon){
@@ -70,13 +74,11 @@ module.exports = function(RED) {
                         msg.payload.windspeed = jsun.wind.speed;
                         msg.payload.winddirection = jsun.wind.deg;
                         msg.payload.location = jsun.name;
-                        msg.payload.lon = jsun.coord.lon;
-                        msg.payload.lat = jsun.coord.lat;
                         msg.payload.sunrise = jsun.sys.sunrise;
                         msg.payload.sunset = jsun.sys.sunset;
                         msg.payload.clouds = jsun.clouds.all;
-                        msg.lon = jsun.coord.lon;
-                        msg.lat = jsun.coord.lat;
+                        msg.location.lon = jsun.coord.lon;
+                        msg.location.lat = jsun.coord.lat;
                         msg.time = new Date(jsun.dt*1000);
                        
                         msg.payload.description = ("The weather in " + jsun.name + " at coordinates: " + jsun.coord.lat + ", " + jsun.coord.lon + " is " + jsun.weather[0].main + " (" + jsun.weather[0].description + ")." );
@@ -85,15 +87,15 @@ module.exports = function(RED) {
                         if (jsun.message === "Error: Not found city"){                       
                             if (n.city && n.country && country != n.country && city != n.city){
                                 node.warn("Invalid city/country in input payload, trying node city/country");
-                                msg.payload.country = n.country;
-                                msg.payload.city = n.city;
+                                msg.location.country = n.country;
+                                msg.location.city = n.city;
                                 weatherPoll(node, n, msg, function(){
                                     node.send(msg);
                                 });
                             } else if (n.lat && n.lon) {
                                 node.warn("Invalid city/country in input payload, trying node lat/lon");
-                                msg.payload.lat = n.lat;
-                                msg.payload.lon = n.lon;
+                                msg.location.lat = n.lat;
+                                msg.location.lon = n.lon;
                                 weatherPoll(node, n, msg, function(){
                                     node.send(msg);
                                 });
