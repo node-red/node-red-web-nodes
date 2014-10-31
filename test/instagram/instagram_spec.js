@@ -273,8 +273,8 @@ describe('instagram nodes', function() {
                             if (testInterval !== null) {
                                 clearInterval(testInterval);
                             }
-                            msg.lat.should.equal(injectedLat);
-                            msg.lon.should.equal(injectedLon);
+                            msg.location.lat.should.equal(injectedLat);
+                            msg.location.lon.should.equal(injectedLon);
                             msg.time.toString().should.equal(timeAsJSDate.toString());
                             msg.payload.should.equal(newPhotoURL);
                             done();
@@ -336,8 +336,8 @@ describe('instagram nodes', function() {
                                 clearInterval(testInterval);
                             }
                             
-                            msg.lat.should.equal(injectedLat);
-                            msg.lon.should.equal(injectedLon);
+                            msg.location.lat.should.equal(injectedLat);
+                            msg.location.lon.should.equal(injectedLon);
                             msg.time.toString().should.equal(timeAsJSDate.toString());
                             
                             msg.payload.toString().should.equal(replyText);
@@ -538,8 +538,8 @@ describe('instagram nodes', function() {
                         if (testInterval !== null) {
                             clearInterval(testInterval);
                         }
-                        msg.lat.should.equal(injectedLat);
-                        msg.lon.should.equal(injectedLon);
+                        msg.location.lat.should.equal(injectedLat);
+                        msg.location.lon.should.equal(injectedLon);
                         msg.time.toString().should.equal(timeAsJSDate.toString());
                         msg.payload.should.equal(newPhotoURL);
                         done();
@@ -603,8 +603,8 @@ describe('instagram nodes', function() {
                             clearInterval(testInterval);
                         }
                         
-                        msg.lat.should.equal(injectedLat);
-                        msg.lon.should.equal(injectedLon);
+                        msg.location.lat.should.equal(injectedLat);
+                        msg.location.lon.should.equal(injectedLon);
                         msg.time.toString().should.equal(timeAsJSDate.toString());
                         
                         msg.payload.toString().should.equal(replyText);

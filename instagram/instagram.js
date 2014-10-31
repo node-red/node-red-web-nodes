@@ -115,10 +115,16 @@ module.exports = function(RED) {
                     if(medias[0].type === IMAGE) {
                         if(medias[0].location) {
                             if(medias[0].location.latitude) {
-                                msg.lat = medias[0].location.latitude;
+                                if(!msg.location) {
+                                    msg.location = {};
+                                }
+                                msg.location.lat = medias[0].location.latitude;
                             }
                             if(medias[0].location.longitude) {
-                                msg.lon = medias[0].location.longitude;
+                                if(!msg.location) {
+                                    msg.location = {};
+                                }
+                                msg.location.lon = medias[0].location.longitude;
                             }
                         }
                         
@@ -161,10 +167,16 @@ module.exports = function(RED) {
                     if(medias[0].type === IMAGE) {
                         if(medias[0].location) {
                             if(medias[0].location.latitude) {
-                                msg.lat = medias[0].location.latitude;
+                                if(!msg.location) {
+                                    msg.location = {};
+                                }
+                                msg.location.lat = medias[0].location.latitude;
                             }
                             if(medias[0].location.longitude) {
-                                msg.lon = medias[0].location.longitude;
+                                if(!msg.location) {
+                                    msg.location = {};
+                                }
+                                msg.location.lon = medias[0].location.longitude;
                             }
                         }
                         
@@ -239,10 +251,16 @@ module.exports = function(RED) {
 
                         if(medias[i].location) {
                             if(medias[i].location.latitude) {
-                                msg.lat = medias[i].location.latitude;
+                                if(!msg.location) {
+                                    msg.location = {};
+                                }
+                                msg.location.lat = medias[i].location.latitude;
                             }
                             if(medias[i].location.longitude) {
-                                msg.lon = medias[i].location.longitude;
+                                if(!msg.location) {
+                                    msg.location = {};
+                                }
+                                msg.location.lon = medias[i].location.longitude;
                             }
                         }
                         
