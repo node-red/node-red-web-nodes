@@ -42,8 +42,13 @@ module.exports = function(RED) {
     
     // the query node doesn't require special initialization as it serves the latest photo anyway
     function initializeQueryNode(node) {
-        if(!node.instagramConfig.credentials.access_token) {
-            node.warn("Missing Instagram access token. Authorization has not been completed before node initialization.");
+        if(node.instagramConfig && node.instagramConfig.credentials) {
+            if(!node.instagramConfig.credentials.access_token) {
+                node.warn("Missing Instagram access token. Authorization has not been completed before node initialization.");
+                return;
+            }   
+        } else {
+            node.warn("Missing Instagram configuration or credentials. Authorization has not been completed before node initialization.");
             return;
         }
 
@@ -56,8 +61,13 @@ module.exports = function(RED) {
 
     // we initialize the node: load access token, obtain current state from Instagram
     function initializeInputNode(node) {
-        if(!node.instagramConfig.credentials.access_token) {
-            node.warn("Missing Instagram access token. Authorization has not been completed before node initialization.");
+        if(node.instagramConfig && node.instagramConfig.credentials) {
+            if(!node.instagramConfig.credentials.access_token) {
+                node.warn("Missing Instagram access token. Authorization has not been completed before node initialization.");
+                return;
+            }   
+        } else {
+            node.warn("Missing Instagram configuration or credentials. Authorization has not been completed before node initialization.");
             return;
         }
 
@@ -115,10 +125,16 @@ module.exports = function(RED) {
                     if(medias[0].type === IMAGE) {
                         if(medias[0].location) {
                             if(medias[0].location.latitude) {
-                                msg.lat = medias[0].location.latitude;
+                                if(!msg.location) {
+                                    msg.location = {};
+                                }
+                                msg.location.lat = medias[0].location.latitude;
                             }
                             if(medias[0].location.longitude) {
-                                msg.lon = medias[0].location.longitude;
+                                if(!msg.location) {
+                                    msg.location = {};
+                                }
+                                msg.location.lon = medias[0].location.longitude;
                             }
                         }
                         
@@ -161,10 +177,16 @@ module.exports = function(RED) {
                     if(medias[0].type === IMAGE) {
                         if(medias[0].location) {
                             if(medias[0].location.latitude) {
-                                msg.lat = medias[0].location.latitude;
+                                if(!msg.location) {
+                                    msg.location = {};
+                                }
+                                msg.location.lat = medias[0].location.latitude;
                             }
                             if(medias[0].location.longitude) {
-                                msg.lon = medias[0].location.longitude;
+                                if(!msg.location) {
+                                    msg.location = {};
+                                }
+                                msg.location.lon = medias[0].location.longitude;
                             }
                         }
                         
@@ -239,10 +261,16 @@ module.exports = function(RED) {
 
                         if(medias[i].location) {
                             if(medias[i].location.latitude) {
-                                msg.lat = medias[i].location.latitude;
+                                if(!msg.location) {
+                                    msg.location = {};
+                                }
+                                msg.location.lat = medias[i].location.latitude;
                             }
                             if(medias[i].location.longitude) {
-                                msg.lon = medias[i].location.longitude;
+                                if(!msg.location) {
+                                    msg.location = {};
+                                }
+                                msg.location.lon = medias[i].location.longitude;
                             }
                         }
                         
