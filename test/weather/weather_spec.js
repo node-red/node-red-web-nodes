@@ -16,11 +16,14 @@ describe('weather nodes', function() {
         weatherdata.should.have.property("windspeed", "8.7");
         weatherdata.should.have.property("winddirection", "220");
         weatherdata.should.have.property("location", "London");
-        weatherdata.should.have.property("lon", "-0.13");
-        weatherdata.should.have.property("lat", "51.51");
         weatherdata.should.have.property("sunrise", "1412748812");
         weatherdata.should.have.property("sunset", "1412788938");
         weatherdata.should.have.property("clouds", "40");
+    }
+    
+    var locationDataTest = function(locationdata){
+        locationdata.should.have.property("lon", "-0.13");
+        locationdata.should.have.property("lat", "51.51");
     }
     
     before(function(done) {
@@ -85,6 +88,7 @@ describe('weather nodes', function() {
                     //A trigger automatically happens when the node is deployed, so a single trigger here to receive different data is all that is neccessary.
                     n3.on('input', function(msg) {
                         var weatherdata = msg.payload;
+                        var locationdata = msg.location;
                         //Ensuring that two different outputs are received in N3 before finishing.
                         if (changeTime === false){
                             weatherdata.should.have.property("weather", "Clouds");
@@ -94,9 +98,10 @@ describe('weather nodes', function() {
                             done();
                         }
                         weatherDataTest(weatherdata);
+                        locationDataTest(locationdata);
                     });
                     
-                    n1.send({payload:{city:"test", country:"test"}});
+                    n1.send({location:{city:"test", country:"test"}});
                 });
             });
         
@@ -121,7 +126,9 @@ describe('weather nodes', function() {
                         //this ensures that the input function is only called once
                         calledAlready = true;
                         var weatherdata = msg.payload;
+                        var locationdata = msg.location;
                         weatherDataTest(weatherdata);
+                        locationDataTest(locationdata);
                         done();
                     });
                     //the node autotriggers for the first send, these triggers should all be ignored.
@@ -157,7 +164,7 @@ describe('weather nodes', function() {
                     done();
                 });
                 weatherNode1.should.have.property('id', 'weatherNode1');
-                n1.send({payload:{lat: "fail", lon: "fail"}});
+                n1.send({location:{lat: "fail", lon: "fail"}});
             });
         });
         
@@ -176,7 +183,9 @@ describe('weather nodes', function() {
                                 weatherNode1.should.have.property('id', 'weatherNode1');
                                 n3.on('input', function(msg) {
                                     var weatherdata = msg.payload;
+                                    var locationdata = msg.location;
                                     weatherDataTest(weatherdata);
+                                    locationDataTest(locationdata);
                                     done();
                                 });
                                 
@@ -198,7 +207,9 @@ describe('weather nodes', function() {
                                 weatherNode1.should.have.property('id', 'weatherNode1');
                                 n3.on('input', function(msg) {
                                     var weatherdata = msg.payload;
+                                    var locationdata = msg.location;
                                     weatherDataTest(weatherdata);
+                                    locationDataTest(locationdata);
                                     done();
                                 });         
                                 
@@ -219,11 +230,13 @@ describe('weather nodes', function() {
                                 weatherNode1.should.have.property('id', 'weatherNode1');
                                 n3.on('input', function(msg) {
                                     var weatherdata = msg.payload;
+                                    var locationdata = msg.location;
                                     weatherDataTest(weatherdata);
+                                    locationDataTest(locationdata);
                                     done();
                                 });
                                 
-                                n1.send({payload:{lon:"-0.13", lat:"51.51"}});                                
+                                n1.send({location:{lon:"-0.13", lat:"51.51"}});                                
                             });
             });
             
@@ -240,11 +253,13 @@ describe('weather nodes', function() {
                                 weatherNode1.should.have.property('id', 'weatherNode1');
                                 n3.on('input', function(msg) {
                                     var weatherdata = msg.payload;
+                                    var locationdata = msg.location;
                                     weatherDataTest(weatherdata);
+                                    locationDataTest(locationdata);
                                     done();
                                 });
                                 
-                                n1.send({payload:{city:"london", country:"england"}});                                
+                                n1.send({location:{city:"london", country:"england"}});                                
                             });
             });
             
@@ -263,12 +278,14 @@ describe('weather nodes', function() {
                     weatherNode1.should.have.property('id', 'weatherNode1');
                     n3.on('input', function(msg) {
                         var weatherdata = msg.payload;
+                        var locationdata = msg.location;
                         weatherDataTest(weatherdata);
+                        locationDataTest(locationdata);
                         stub.restore();
                         done();
                     });
                     
-                    n1.send({payload:{lat: "fail", lon: "fail", city:"london", country:"england"}});                    
+                    n1.send({location:{lat: "fail", lon: "fail", city:"london", country:"england"}});                    
                 });
             });
             
@@ -293,12 +310,14 @@ describe('weather nodes', function() {
                     weatherNode1.should.have.property('id', 'weatherNode1');
                     n3.on('input', function(msg) {
                         var weatherdata = msg.payload;
+                        var locationdata = msg.location;
                         weatherDataTest(weatherdata);
+                        locationDataTest(locationdata);
                         stub.restore();
                         done();
                     });
                     
-                    n1.send({payload:{lat: "fail", lon: "fail", city:"fail", country:"fail"}});                    
+                    n1.send({location:{city:"fail", country:"fail", lat: "fail", lon: "fail",}});                    
                 });
             });
             
@@ -323,12 +342,14 @@ describe('weather nodes', function() {
                     weatherNode1.should.have.property('id', 'weatherNode1');
                     n3.on('input', function(msg) {
                         var weatherdata = msg.payload;
+                        var locationdata = msg.location;
                         weatherDataTest(weatherdata);
+                        locationDataTest(locationdata);
                         stub.restore();
                         done();
                     });
                     
-                    n1.send({payload:{lat: "fail", lon: "fail", city:"fail", country:"fail"}});
+                    n1.send({location:{city:"fail", country:"fail", lat: "fail", lon: "fail"}});
                 });
             });
             
@@ -348,7 +369,7 @@ describe('weather nodes', function() {
                     });
                     weatherNode1.should.have.property('id', 'weatherNode1');
                     
-                    n1.send({payload:{city:"fail", country:"fail"}});
+                    n1.send({location:{city:"fail", country:"fail"}});
                 });
             });
             
