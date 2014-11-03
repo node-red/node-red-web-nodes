@@ -150,6 +150,83 @@
 })();
 </script>
 
+<!-- foursquare query node -->
+<script type="text/x-red" data-template-name="foursquare">
+    <div class="form-row">
+        <label for="node-input-foursquare"><i class="fa fa-user"></i> Log in as</label>
+        <input type="text" id="node-input-foursquare">
+    </div>
+    <div class="form-row">
+        <label for="node-input-section">&nbsp;<i class="fa fa-filter"></i> Get recommended</label>
+        <select id="node-input-section" style="width:50% !important">
+             <option value="empty"></option>             
+             <option value="food">restaurants</option>
+             <option value="outdoors">outdoor venues</option>
+             <option value="sights">sights</option>
+        </select>&nbsp;nearby
+    </div>
+    <div class="form-row">
+        <label for="node-input--output">&nbsp;<i class="fa fa-filter"></i> Output</label>
+        <select id="node-input--output" style="width:50%">
+             <option value="output">1</option>
+        </select>&nbsp;result(s)
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="foursquare">
+    <p>Foursquare query node.</p>
+    <p>Can be used to
+    <ul>
+        <li>explore recommended venues of a particular type near a given latitude and longitude </li>
+    </ul></p>
+    <p>The type of venue to explore can be passed in as settings on the node or as the 
+    <b>msg.payload.section</b> of the message input. Valid entries are:
+    <ul>
+       <li>food</li>
+       <li>outdoors</li>
+       <li>sights</li>
+    </ul>
+    The value set on the node will take precedence over the contents of <b>msg.payload.section</b>.
+    </p>
+    <p>The node sets <b>msg.payload</b> to be the JSON of the first in an ordered list 
+    of recommended venues near the provided latitude and longitude. The properties of the 
+    <a href="https://foursquare.com/">Foursquare</a> venues explore API are documented at  
+    <a href="https://developer.foursquare.com/docs/venues/explore">Explore Recommended and Popular Venues</a>.</p>
+    <p>
+    The node also sets the following properties:
+    <ul>
+       <li><b>msg.title</b> - the name of the recommended venue</li>
+       <li><b>msg.location.lat</b> - the latitude of the recommended venue</li>
+       <li><b>msg.location.lon</b> - the longitude of the recommended venue</li>
+    </ul>
+    </p>
+    <p>Data provided by <a href="https://foursquare.com/">Foursquare</a>.</p>
+</script>
+
+<script type="text/javascript">
+(function() {
+    RED.nodes.registerType('foursquare',{
+        category: 'social',
+        color:"#C0DEED",
+        defaults: {
+            foursquare: {type:"foursquare-credentials",required:true},
+            section: {value:""},
+            output:{value:"1"},
+            name: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "foursquare.png",
+        label: function() {
+            return this.name||'foursquare';
+        }
+    });
+})();
+</script>
 
 
 

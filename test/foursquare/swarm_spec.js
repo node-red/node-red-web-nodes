@@ -115,7 +115,7 @@ describe('swarm nodes', function() {
                 helper.load([foursquareNode, swarmNode], 
                         [ {id:"n1", type:"helper", wires:[["n2"]]},
                           {id:"n4", type:"foursquare-credentials"},
-                          {id:"n2", type:"swarm", foursquare: "n4", wires:[["n3"]]},
+                          {id:"n2", type:"swarm in", foursquare: "n4", wires:[["n3"]]},
                           {id:"n3", type:"helper"}], 
                           {
                             "n4": {
