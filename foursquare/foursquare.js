@@ -44,6 +44,86 @@ module.exports = function(RED) {
             accesstoken: {type: "password"}
         }
     });
+
+    /**
+     * Foursquare query node
+     */
+    function FoursquareQueryNode(n) {
+        RED.nodes.createNode(this, n);
+        var node = this;
+
+        node.section = n.section;
+        node.output = n.output || "1";
+        
+        var credentials = RED.nodes.getCredentials(n.foursquare);
+        var credentialsOk = checkCredentials(node, credentials);
+        
+        if (credentialsOk) {              
+            this.on("input", function(msg) {
+                if (msg.location.lat && msg.location.lon) {
+                    // data in the node settings overwrites that in the msg
+                    if ((!node.section || (node.section === "empty")) && 
+                            (msg.section && 
+                                (msg.section === "food" || msg.section ==="outdoors" || msg.section === "sights"))) {
+                            node.section = msg.section;
+                    }
+                    if (node.section && (node.section !== "empty")) {
+                        getRecommendedVenuesNearLocation(node, credentials, msg, function(msg) {
+                            node.send(msg);
+                        });  
+                    } else {
+                        node.error("problem with node input: section is not defined correctly");
+                        node.status({fill:"red",shape:"ring",text:"failed"});   
+                    }
+                                
+                } else {
+                    node.error("problem with node input: latitude and/or longitude not set");
+                    node.status({fill:"red",shape:"ring",text:"failed"});                          
+                }
+            });            
+        }
+     } 
+    
+    RED.nodes.registerType("foursquare", FoursquareQueryNode); 
+    
+    function checkCredentials(node, credentials) {       
+        if (credentials && credentials.clientid && credentials.clientsecret && credentials.accesstoken) {
+           return true;
+        } else {
+            node.error("problem with credentials being set: " + credentials + ", ");
+            node.status({fill:"red",shape:"ring",text:"failed"});      
+            return false;
+        }
+    }
+    
+    function getRecommendedVenuesNearLocation(node, credentials, msg, callback) {
+        var apiUrl = "https://api.foursquare.com/v2/venues/explore?oauth_token=" + credentials.accesstoken  + "&section=" + node.section + "&ll=" + msg.location.lat + "," + msg.location.lon + "&v=20141016&m=foursquare";
+        request.get(apiUrl,function(err, httpResponse, body) {
+            if (err) {
+                node.error(err.toString());
+                node.status({fill:"red",shape:"ring",text:"failed"});
+            } else {
+                var result = JSON.parse(body);
+                if (result.meta.code != 200) {
+                    node.error("Error code: " + result.meta.code + ", errorDetail: " + result.meta.errorDetail);
+                    node.status({fill:"red",shape:"ring",text:"failed"});
+                } else {
+                    if (result.response.groups[0].items.length !== 0) {
+                        var firstVenue = result.response.groups[0].items[0];
+                        msg.payload = {};
+                        msg.payload = firstVenue;
+                        msg.location.lat = firstVenue.venue.location.lat;
+                        msg.location.lon = firstVenue.venue.location.lng;
+                        msg.title = firstVenue.venue.name;
+                        callback(msg);
+                  } else {
+                      msg.payload = null; 
+                      callback(msg);
+                  }                    
+                }
+            }
+        });              
+    }
     
     RED.httpAdmin.get('/foursquare-credentials/auth', function(req, res){
         if (!req.query.clientid || !req.query.clientsecret || !req.query.id || !req.query.callback) {

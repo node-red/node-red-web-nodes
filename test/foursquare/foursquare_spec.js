@@ -14,8 +14,10 @@
  * limitations under the License.
  **/
 
+var should = require("should");
 var foursquareNode = require("../../foursquare/foursquare.js");
 var helper = require('../helper.js');
+var sinon = require('sinon');
 var nock = helper.nock;
 
 describe('foursquare nodes', function() {
@@ -172,4 +174,220 @@ describe('foursquare nodes', function() {
        
     });
     
+    describe('query node', function() {
+        
+        it(' fails if latitude is not set', function(done) {
+            helper.load(foursquareNode, 
+                    [ {id:"n1", type:"helper", wires:[["n2"]]},
+                      {id:"n4", type:"foursquare-credentials"},
+                      {id:"n2", type:"foursquare", foursquare: "n4", wires:[["n3"]]},
+                      {id:"n3", type:"helper"}], 
+                      {
+                        "n4": {
+                            displayname : "John",
+                            clientid: "987654321",
+                            clientsecret:"123456789",
+                            accesstoken:"abcd1234",
+                        },
+                      },
+                      function() {
+                          var n1 = helper.getNode("n1");
+                          var n2 = helper.getNode("n2");
+                          var n3 = helper.getNode("n3");
+                          n2.should.have.property('id','n2');
+                          
+                          sinon.stub(n2, 'status', function(status){
+                              var expected = {fill:"red",shape:"ring",text:"failed"};
+                              should.deepEqual(status, expected);
+                              done();
+                          });
+                          
+                          n1.send({payload:"foo", location:{lon:"123456"}});
+                      });
+        });
+
+        it(' fails if longitude is not set', function(done) {
+            helper.load(foursquareNode, 
+                    [ {id:"n1", type:"helper", wires:[["n2"]]},
+                      {id:"n4", type:"foursquare-credentials"},
+                      {id:"n2", type:"foursquare", foursquare: "n4", wires:[["n3"]]},
+                      {id:"n3", type:"helper"}], 
+                      {
+                        "n4": {
+                            displayname : "John",
+                            clientid: "987654321",
+                            clientsecret:"123456789",
+                            accesstoken:"abcd1234",
+                        },
+                      },
+                      function() {
+                          var n1 = helper.getNode("n1");
+                          var n2 = helper.getNode("n2");
+                          var n3 = helper.getNode("n3");
+                          n2.should.have.property('id','n2');
+                          
+                          sinon.stub(n2, 'status', function(status){
+                              var expected = {fill:"red",shape:"ring",text:"failed"};
+                              should.deepEqual(status, expected);
+                              done();
+                          });
+                          
+                          n1.send({payload:"foo", location:{lat:"123456"}});
+                      });
+        });
+
+        it(' fails if msg.section is invalid', function(done) {
+            helper.load(foursquareNode, 
+                    [ {id:"n1", type:"helper", wires:[["n2"]]},
+                      {id:"n4", type:"foursquare-credentials"},
+                      {id:"n2", type:"foursquare", foursquare: "n4", wires:[["n3"]]},
+                      {id:"n3", type:"helper"}], 
+                      {
+                        "n4": {
+                            displayname : "John",
+                            clientid: "987654321",
+                            clientsecret:"123456789",
+                            accesstoken:"abcd1234",
+                        },
+                      },
+                      function() {
+                          var n1 = helper.getNode("n1");
+                          var n2 = helper.getNode("n2");
+                          var n3 = helper.getNode("n3");
+                          n2.should.have.property('id','n2');
+                          
+                          sinon.stub(n2, 'status', function(status){
+                              var expected = {fill:"red",shape:"ring",text:"failed"};
+                              should.deepEqual(status, expected);
+                              done();
+                          });
+                          
+                          n1.send({payload:"foo", location:{lat:"123456", lon:"231123"}, section:"rubbish"});
+                      });
+        });
+        
+        if (nock) {
+
+            it('fails if error fetching recommended venue information', function(done) {
+                helper.load(foursquareNode, 
+                        [ {id:"n1", type:"helper", wires:[["n2"]]},
+                          {id:"n4", type:"foursquare-credentials"},
+                          {id:"n2", type:"foursquare", foursquare: "n4", wires:[["n3"]]},
+                          {id:"n3", type:"helper"}], 
+                          {
+                            "n4": {
+                                displayname : "John",
+                                clientid: "987654321",
+                                clientsecret:"123456789",
+                                accesstoken:"abcd1234",
+                            },
+                          },
+                          function() {
+                              var scope = nock('https://api.foursquare.com:443')
+                                  .get('/v2/venues/explore?oauth_token=abcd1234&section=food&ll=51.03,-1.4&v=20141016&m=foursquare')
+                                  .reply(200, {"meta":{"code":400, "errorDetail":'test forced failure'}});
+                              
+                              var n1 = helper.getNode("n1");
+                              var n2 = helper.getNode("n2");
+                              var n3 = helper.getNode("n3");
+                              n2.should.have.property('id','n2');
+                              
+                              sinon.stub(n2, 'status', function(status){
+                                  var expected = {fill:"red",shape:"ring",text:"failed"};
+                                  should.deepEqual(status, expected);
+                                  done();
+                              });
+                              
+                              n1.send({payload:"foo", location:{lat:"51.03", lon:"-1.4"}, section:"food"});
+                          });
+            });
+            
+            it('can fetch the first recommended venue information', function(done) {
+                helper.load(foursquareNode, 
+                        [ {id:"n1", type:"helper", wires:[["n2"]]},
+                          {id:"n4", type:"foursquare-credentials"},
+                          {id:"n2", type:"foursquare", foursquare: "n4", wires:[["n3"]], output:"1"},
+                          {id:"n3", type:"helper"}], 
+                          {
+                            "n4": {
+                                displayname : "John",
+                                clientid: "987654321",
+                                clientsecret:"123456789",
+                                accesstoken:"abcd1234",
+                            },
+                          },
+                          function() {
+                              var scope = nock('https://api.foursquare.com:443')
+                                  .get('/v2/venues/explore?oauth_token=abcd1234&section=food&ll=51.03,-1.4&v=20141016&m=foursquare')
+                                  .reply(200, {"meta":{"code":200},"response":{"groups":
+                                      [{"count":1, "items":
+                                          [{"reasons": { "count": 1, "items": [ { "summary": "You've been here 5 times", "type": "social", "reasonName": "friendAndSelfCheckinReason", "count": 0 } ] }, 
+                                              "venue": { "id": "4da429a8b", "name": "Bobs Restaurant", "location": { "lat": 51.03, "lng": -1.42}}},
+                                           {"reasons": { "count": 1, "items": [ { "summary": "Very popular", "type": "social", "reasonName": "friendAndSelfCheckinReason", "count": 0 } ] }, 
+                                              "venue": { "id": "5is0fe9fd", "name": "Sues Restaurant", "location": { "lat": 51.03, "lng": -1.45}}}]
+                                      }]}});
+                              
+                              var n1 = helper.getNode("n1");
+                              var n2 = helper.getNode("n2");
+                              var n3 = helper.getNode("n3");
+                              n2.should.have.property('id','n2');
+                              n1.send({payload:"foo", location:{lat:"51.03", lon:"-1.4"}, section:"food"});
+                              n3.on('input', function(msg){
+                                  var bobs = msg;
+                                  bobs.should.have.property('title', "Bobs Restaurant");
+                                  bobs.should.have.property('location');                                  
+                                  bobs.location.should.have.property('lat', "51.03");
+                                  bobs.location.should.have.property('lon', "-1.42");
+                                  bobs.payload.reasons.items[0].should.have.property('summary', "You've been here 5 times");
+                                  done();
+                              });
+                          
+                          });
+            });
+            
+            it('can fetch the first recommended local sight', function(done) {
+                helper.load(foursquareNode, 
+                        [ {id:"n1", type:"helper", wires:[["n2"]]},
+                          {id:"n4", type:"foursquare-credentials"},
+                          {id:"n2", type:"foursquare", foursquare: "n4", wires:[["n3"]], output:"1"},
+                          {id:"n3", type:"helper"}], 
+                          {
+                            "n4": {
+                                displayname : "John",
+                                clientid: "987654321",
+                                clientsecret:"123456789",
+                                accesstoken:"abcd1234",
+                            },
+                          },
+                          function() {
+                              var scope = nock('https://api.foursquare.com:443')
+                                  .get('/v2/venues/explore?oauth_token=abcd1234&section=sights&ll=51.03,-1.4&v=20141016&m=foursquare')
+                                  .reply(200, {"meta":{"code":200},"response":{"groups":
+                                      [{"count":1, "items":
+                                          [{"reasons": { "count": 1, "items": [ { "summary": "You've been here 3 times", "type": "social", "reasonName": "friendAndSelfCheckinReason", "count": 0 } ] }, 
+                                              "venue": { "id": "4da429a8b", "name": "Zoo", "location": { "lat": 51.03, "lng": -1.42}}},
+                                           {"reasons": { "count": 1, "items": [ { "summary": "Very popular", "type": "social", "reasonName": "friendAndSelfCheckinReason", "count": 0 } ] }, 
+                                              "venue": { "id": "5is0fe9fd", "name": "Playground", "location": { "lat": 51.03, "lng": -1.45}}}]
+                                      }]}});
+                              
+                              var n1 = helper.getNode("n1");
+                              var n2 = helper.getNode("n2");
+                              var n3 = helper.getNode("n3");
+                              n2.should.have.property('id','n2');
+                              n1.send({payload:"foo", location:{lat:"51.03", lon:"-1.4"}, section:"sights"});
+                              n3.on('input', function(msg){
+                                  var zoo = msg;
+                                  zoo.should.have.property('title', "Zoo");
+                                  zoo.should.have.property('location'); 
+                                  zoo.location.should.have.property('lat', "51.03");
+                                  zoo.location.should.have.property('lon', "-1.42");
+                                  zoo.payload.reasons.items[0].should.have.property('summary', "You've been here 3 times");
+                                  done();
+                              });
+                          
+                          });
+            });
+            
+        }}
+    );
 });
