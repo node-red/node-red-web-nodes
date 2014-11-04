@@ -83,7 +83,7 @@
        <li> <b>msg.location.city</b> and <b>msg.location.country</b> </li>
     </ul>
     <p>of the message input. </p>
-    <p>The node will always prioritise the parameters passed in when both of <b>lat/lon</b> or <b>country/city</b> are present.</p>
+    <p>The node will always prioritise its settings over the msg properties.</p>
 
     <p>The node sets the following properties of <b>msg.payload</b>:</p>
     <ul>
@@ -102,11 +102,19 @@
         <li><b>clouds</b> - the current cloud coverage of the location in percent.</li><br>
     </ul>
 
-    <p>The node also sets:</p>
+    <p>The node also sets the following properties of <b>msg.location</b>.</p>
     <ul>
-        <li><b>msg.location.lat</b> - the longitude of the location from which the data was sourced.</li><br>
-        <li><b>msg.location.lon</b> - the latitude of the location from which the data was sourced.</li><br>
+        <li><b>lat</b> - the longitude of the location from which the data was sourced.</li><br>
+        <li><b>lon</b> - the latitude of the location from which the data was sourced.</li><br>
+        <li><b>city</b> - the city from which the data was sourced.</li><br>
+        <li><b>country</b> - the country from which the data was sourced.</li><br>
     </ul>
+
+    <p>Finally, the node sets:</p>
+    <ul>
+        <li><b>msg.time</b> - the time at which the weather data was received by openweathermap.org.</li><br>
+    </ul>
+
     <p>Weather data provided by <a href="http://openweathermap.org/" target="_blank">openweathermap.org/</a></p>
 </script>
 
@@ -210,11 +218,19 @@
         <li><b>sunset</b> - the time at which the sun will set in Unix UTC format.</li><br>
         <li><b>clouds</b> - the current cloud coverage of the location in percent.</li><br>
     </ul>
-    <p>The node also sets:</p>
+    <p>The node also sets the following properties of <b>msg.location</b>.</p>
     <ul>
-        <li><b>msg.location.lat</b> - the longitude of the location from which the data was sourced.</li><br>
-        <li><b>msg.location.lon</b> - the latitude of the location from which the data was sourced.</li><br>
+        <li><b>lat</b> - the longitude of the location from which the data was sourced.</li><br>
+        <li><b>lon</b> - the latitude of the location from which the data was sourced.</li><br>
+        <li><b>city</b> - the city from which the data was sourced.</li><br>
+        <li><b>country</b> - the country from which the data was sourced.</li><br>
     </ul>
+
+    <p>Finally, the node sets:</p>
+    <ul>
+        <li><b>msg.time</b> - the time at which the weather data was received by openweathermap.org.</li><br>
+    </ul>
+
     <p>Weather data provided by <a href="http://openweathermap.org/" target="_blank">openweathermap.org/</a></p>
 </script>
 
