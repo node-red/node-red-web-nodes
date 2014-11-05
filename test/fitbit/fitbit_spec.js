@@ -690,7 +690,7 @@ describe('fitbit nodes', function() {
                     }, function() {
                         var scope = nock('https://api.fitbit.com:443')
                             .get('/1/user/-/badges.json')
-                            .reply(404);
+                            .reply(404, '{"errors":[ { "errorType":"foo", "fieldName":"bar", "message":"oops" } ] }');
                         var input = helper.getNode("input");
                         var fitbit = helper.getNode("fitbit");
                         var output = helper.getNode("output");

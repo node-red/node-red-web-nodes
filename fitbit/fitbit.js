@@ -61,6 +61,24 @@ module.exports = function(RED) {
         }
     }
 
+    function displayError(node, err) {
+        var errors = [];
+        if (err.statusCode === 503) {
+             errors = JSON.parse(err.data).restrictions.map(function(e) {
+                 return e.type + " \"" + e.message + "\"";
+             });
+        } else {
+            errors = JSON.parse(err.data).errors.map(function(e) {
+                 return e.errorType +
+                    (e.fieldName ? " (" + e.fieldName + ")" : "") +
+                    " \"" + e.message + "\"";
+             });
+        }
+        node.error("Error "+ err.statusCode + ": " + errors.join(", "));
+        node.status({fill:"red",shape:"ring",text:"failed"});
+        return;
+    }
+
     function FitbitInNode(n) {
         RED.nodes.createNode(this,n);
         this.fitbitConfig = RED.nodes.getNode(n.fitbit);
@@ -82,9 +100,7 @@ module.exports = function(RED) {
                        credentials.access_token_secret,
                        function(err, body, response) {
                     if (err) {
-                        node.error("Error: " + err);
-                        node.status({fill:"red",shape:"ring",text:"failed"});
-                        return;
+                        return displayError(node, err);
                     }
                     node.state = JSON.parse(body).badges;
                     node.status({});
@@ -95,9 +111,7 @@ module.exports = function(RED) {
                                credentials.access_token_secret,
                                function(err, body, response) {
                             if (err) {
-                                node.error("Error: " + err);
-                                node.status({fill:"red",shape:"ring",text:"failed"});
-                                return;
+                                return displayError(node, err);
                             }
                             var badges = JSON.parse(body).badges;
                             outerLoop:
@@ -128,9 +142,7 @@ module.exports = function(RED) {
                        credentials.access_token_secret,
                        function(err, body, response) {
                     if (err) {
-                        node.error("Error: " + err);
-                        node.status({fill:"red",shape:"ring",text:"failed"});
-                        return;
+                        return displayError(node, err);
                     }
                     var data = JSON.parse(body);
                     node.state = {
@@ -146,9 +158,7 @@ module.exports = function(RED) {
                                credentials.access_token_secret,
                                function(err, body, response) {
                             if (err) {
-                                node.error("Error: " + err);
-                                node.status({fill:"red",shape:"ring",text:"failed"});
-                                return;
+                                return displayError(node, err);
                             }
                             var data = JSON.parse(body);
                             var sleep = mainSleep(data.sleep);
@@ -170,9 +180,7 @@ module.exports = function(RED) {
                        credentials.access_token_secret,
                        function(err, body, response) {
                     if (err) {
-                        node.error("Error: " + err);
-                        node.status({fill:"red",shape:"ring",text:"failed"});
-                        return;
+                        return displayError(node, err);
                     }
                     var data = JSON.parse(body);
                     node.state = {
@@ -194,9 +202,7 @@ module.exports = function(RED) {
                                credentials.access_token_secret,
                                function(err, body, response) {
                             if (err) {
-                                node.error("Error: " + err);
-                                node.status({fill:"red",shape:"ring",text:"failed"});
-                                return;
+                                return displayError(node, err);
                             }
                             var data = JSON.parse(body);
                             if (data.summary.steps >= data.goals.steps &&
@@ -283,10 +289,7 @@ module.exports = function(RED) {
                        credentials.access_token_secret,
                        function(err, body, response) {
                     if (err) {
-                        console.log(util.inspect(err));
-                        node.error("Error: " + err);
-                        node.status({fill:"red",shape:"ring",text:"failed"});
-                        return;
+                        return displayError(node, err);
                     }
                     var data = JSON.parse(body);
                     msg.data = data;
