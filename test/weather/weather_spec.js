@@ -7,7 +7,8 @@ var sinon = require("sinon");
 
 describe('weather nodes', function() {
     
-    var weatherDataTest = function(weatherdata){
+    var weatherDataTest = function(weatherdata, locationdata, timedata){
+        timedata.toUTCString().should.be.exactly("Wed, 08 Oct 2014 14:00:48 GMT");
         weatherdata.should.have.property("detail", "scattered clouds");
         weatherdata.should.have.property("tempk", "290.12");
         weatherdata.should.have.property("humidity", "63");
@@ -19,11 +20,10 @@ describe('weather nodes', function() {
         weatherdata.should.have.property("sunrise", "1412748812");
         weatherdata.should.have.property("sunset", "1412788938");
         weatherdata.should.have.property("clouds", "40");
-    }
-    
-    var locationDataTest = function(locationdata){
         locationdata.should.have.property("lon", "-0.13");
         locationdata.should.have.property("lat", "51.51");
+        locationdata.should.have.property("city", "London");
+        locationdata.should.have.property("country", "GB");
     }
     
     before(function(done) {
@@ -72,7 +72,7 @@ describe('weather nodes', function() {
             var scope;
             it('should output the new data when a change is detected in its received data', function(done) {
                 helper.load(weatherNode,
-                            [{id:"weatherNode1", type:"openweathermap in", city:"london", country:"england", wires:[["n3"]]},
+                            [{id:"weatherNode1", type:"openweathermap in", wires:[["n3"]]},
                             {id:"n1", type:"helper", wires:[["weatherNode1"]]},
                             {id:"n3", type:"helper"}], 
                             function() {
@@ -85,10 +85,10 @@ describe('weather nodes', function() {
                     var changeTime = false;
                     weatherNode1.should.have.property('id', 'weatherNode1');
                     //This code forces the node to receive different weather info. In reality this will only happen when a different weather is returned from the same URL in the API.
-                    //A trigger automatically happens when the node is deployed, so a single trigger here to receive different data is all that is neccessary.
                     n3.on('input', function(msg) {
                         var weatherdata = msg.payload;
                         var locationdata = msg.location;
+                        var timedata = msg.time;
                         //Ensuring that two different outputs are received in N3 before finishing.
                         if (changeTime === false){
                             weatherdata.should.have.property("weather", "Clouds");
@@ -97,10 +97,9 @@ describe('weather nodes', function() {
                             weatherdata.should.have.property("weather", "Different");
                             done();
                         }
-                        weatherDataTest(weatherdata);
-                        locationDataTest(locationdata);
+                        weatherDataTest(weatherdata, locationdata, timedata);
                     });
-                    
+                    n1.send({location:{city:"london", country:"england"}});
                     n1.send({location:{city:"test", country:"test"}});
                 });
             });
@@ -127,8 +126,8 @@ describe('weather nodes', function() {
                         calledAlready = true;
                         var weatherdata = msg.payload;
                         var locationdata = msg.location;
-                        weatherDataTest(weatherdata);
-                        locationDataTest(locationdata);
+                        var timedata = msg.time;
+                        weatherDataTest(weatherdata, locationdata, timedata);
                         done();
                     });
                     //the node autotriggers for the first send, these triggers should all be ignored.
@@ -144,8 +143,8 @@ describe('weather nodes', function() {
     
     describe('query node and polling function', function() {
         var scope;
-     
-        it('should refuse and node.error when the input payload has invalid lat or lon values', function(done) {
+        //all local fails, no nock required.
+        it('should refuse and node.error when the input payload has an invalid lat value', function(done) {
             helper.load(weatherNode,
                     [{id:"n1", type:"helper", wires:[["weatherNode1"]]},
                      {id:"weatherNode1", type:"openweathermap", wires:[["n3"]]},
@@ -154,17 +153,32 @@ describe('weather nodes', function() {
                 var n1 = helper.getNode("n1");
                 var weatherNode1 = helper.getNode("weatherNode1");
                 var n3 = helper.getNode("n3");
-                var stub = sinon.stub(weatherNode1, 'warn', function(msg) {
-                    msg.should.equal("Invalid lat/lon in input payload"); 
-                });
-                var stub2 = sinon.stub(weatherNode1, 'error', function(msg) {
-                    msg.should.equal("Invalid location information provided");
+                var stub = sinon.stub(weatherNode1, 'error', function(msg) {
+                    msg.should.equal("Invalid lat in msg.location");
                     stub.restore();
-                    stub2.restore();
                     done();
                 });
                 weatherNode1.should.have.property('id', 'weatherNode1');
-                n1.send({location:{lat: "fail", lon: "fail"}});
+                n1.send({location:{lat: "fail", lon: "55"}});
+            });
+        });
+        
+        it('should refuse and node.error when the input payload has an invalid lon value', function(done) {
+            helper.load(weatherNode,
+                    [{id:"n1", type:"helper", wires:[["weatherNode1"]]},
+                     {id:"weatherNode1", type:"openweathermap", wires:[["n3"]]},
+                     {id:"n3", type:"helper"}],
+                     function() {
+                var n1 = helper.getNode("n1");
+                var weatherNode1 = helper.getNode("weatherNode1");
+                var n3 = helper.getNode("n3");
+                var stub = sinon.stub(weatherNode1, 'error', function(msg) {
+                    msg.should.equal("Invalid lon in msg.location");
+                    stub.restore();
+                    done();
+                });
+                weatherNode1.should.have.property('id', 'weatherNode1');
+                n1.send({location:{lat: "55", lon: "fail"}});
             });
         });
         
@@ -184,8 +198,8 @@ describe('weather nodes', function() {
                                 n3.on('input', function(msg) {
                                     var weatherdata = msg.payload;
                                     var locationdata = msg.location;
-                                    weatherDataTest(weatherdata);
-                                    locationDataTest(locationdata);
+                                    var timedata = msg.time;
+                                    weatherDataTest(weatherdata, locationdata, timedata);
                                     done();
                                 });
                                 
@@ -208,8 +222,8 @@ describe('weather nodes', function() {
                                 n3.on('input', function(msg) {
                                     var weatherdata = msg.payload;
                                     var locationdata = msg.location;
-                                    weatherDataTest(weatherdata);
-                                    locationDataTest(locationdata);
+                                    var timedata = msg.time;
+                                    weatherDataTest(weatherdata, locationdata, timedata);
                                     done();
                                 });         
                                 
@@ -231,8 +245,8 @@ describe('weather nodes', function() {
                                 n3.on('input', function(msg) {
                                     var weatherdata = msg.payload;
                                     var locationdata = msg.location;
-                                    weatherDataTest(weatherdata);
-                                    locationDataTest(locationdata);
+                                    var timedata = msg.time;
+                                    weatherDataTest(weatherdata, locationdata, timedata);
                                     done();
                                 });
                                 
@@ -254,8 +268,8 @@ describe('weather nodes', function() {
                                 n3.on('input', function(msg) {
                                     var weatherdata = msg.payload;
                                     var locationdata = msg.location;
-                                    weatherDataTest(weatherdata);
-                                    locationDataTest(locationdata);
+                                    var timedata = msg.time;
+                                    weatherDataTest(weatherdata, locationdata, timedata);
                                     done();
                                 });
                                 
@@ -263,97 +277,30 @@ describe('weather nodes', function() {
                             });
             });
             
-            it('should default to input payload city/country when input payload lat/lon is incorrect', function(done) {
+            it('should prioritise node city/country when input msg.location data is present', function(done) {
                 helper.load(weatherNode,
                         [{id:"n1", type:"helper", wires:[["weatherNode1"]]},
-                         {id:"weatherNode1", type:"openweathermap", wires:[["n3"]]},
+                         {id:"weatherNode1", type:"openweathermap", city:"london", country:"england", wires:[["n3"]]},
                          {id:"n3", type:"helper"}],
                          function() {
                     var n1 = helper.getNode("n1");
                     var weatherNode1 = helper.getNode("weatherNode1");
                     var n3 = helper.getNode("n3");
-                    var stub = sinon.stub(weatherNode1, 'warn', function(msg) {
-                        msg.should.equal("Invalid lat/lon in input payload");
-                    });
+                    
                     weatherNode1.should.have.property('id', 'weatherNode1');
                     n3.on('input', function(msg) {
                         var weatherdata = msg.payload;
                         var locationdata = msg.location;
-                        weatherDataTest(weatherdata);
-                        locationDataTest(locationdata);
-                        stub.restore();
+                        var timedata = msg.time;
+                        weatherDataTest(weatherdata, locationdata, timedata);
                         done();
                     });
                     
-                    n1.send({location:{lat: "fail", lon: "fail", city:"london", country:"england"}});                    
+                    n1.send({location:{lat: "fail", lon: "fail"}});                    
                 });
             });
             
-            it('should default to node lat/lon when input payload information is incorrect', function(done) {
-                helper.load(weatherNode,
-                        [{id:"n1", type:"helper", wires:[["weatherNode1"]]},
-                         {id:"weatherNode1", type:"openweathermap", lat:"51.51", lon:"-0.13", wires:[["n3"]]},
-                         {id:"n3", type:"helper"}],
-                         function() {
-                    var n1 = helper.getNode("n1");
-                    var weatherNode1 = helper.getNode("weatherNode1");
-                    var n3 = helper.getNode("n3");
-                    var warningNo = 0;
-                    var stub = sinon.stub(weatherNode1, 'warn', function(msg) {
-                        if (warningNo == 0){
-                            msg.should.equal("Invalid lat/lon in input payload");
-                        } else if (warningNo == 1) {
-                            msg.should.equal("Invalid city/country in input payload, trying node lat/lon");
-                        }
-                        warningNo++;
-                    });
-                    weatherNode1.should.have.property('id', 'weatherNode1');
-                    n3.on('input', function(msg) {
-                        var weatherdata = msg.payload;
-                        var locationdata = msg.location;
-                        weatherDataTest(weatherdata);
-                        locationDataTest(locationdata);
-                        stub.restore();
-                        done();
-                    });
-                    
-                    n1.send({location:{city:"fail", country:"fail", lat: "fail", lon: "fail",}});                    
-                });
-            });
-            
-            it('should default to node city/country when input payload information is incorrect', function(done) {
-                helper.load(weatherNode,
-                        [{id:"n1", type:"helper", wires:[["weatherNode1"]]},
-                         {id:"weatherNode1", type:"openweathermap", city:"london", country: "england", wires:[["n3"]]},
-                         {id:"n3", type:"helper"}],
-                         function() {
-                    var n1 = helper.getNode("n1");
-                    var weatherNode1 = helper.getNode("weatherNode1");
-                    var n3 = helper.getNode("n3");
-                    var warningNo = 0;
-                    var stub = sinon.stub(weatherNode1, 'warn', function(msg) {
-                        if (warningNo == 0){
-                            msg.should.equal("Invalid lat/lon in input payload");
-                        } else if (warningNo == 1) {
-                            msg.should.equal("Invalid city/country in input payload, trying node city/country");
-                        }
-                        warningNo++;
-                    });
-                    weatherNode1.should.have.property('id', 'weatherNode1');
-                    n3.on('input', function(msg) {
-                        var weatherdata = msg.payload;
-                        var locationdata = msg.location;
-                        weatherDataTest(weatherdata);
-                        locationDataTest(locationdata);
-                        stub.restore();
-                        done();
-                    });
-                    
-                    n1.send({location:{city:"fail", country:"fail", lat: "fail", lon: "fail"}});
-                });
-            });
-            
-            it('should error when payload city/country is incorrect and no alternative is present', function(done) {
+            it('should error when payload city/country is incorrect', function(done) {
                 helper.load(weatherNode,
                         [{id:"n1", type:"helper", wires:[["weatherNode1"]]},
                          {id:"weatherNode1", type:"openweathermap", wires:[["n3"]]},
@@ -363,7 +310,7 @@ describe('weather nodes', function() {
                     var weatherNode1 = helper.getNode("weatherNode1");
                     var n3 = helper.getNode("n3");
                     var stub = sinon.stub(weatherNode1, 'error', function(msg) {
-                            msg.should.equal("Invalid city/country in input payload");
+                            msg.should.equal("Invalid city/country");
                             stub.restore();
                             done();
                     });
@@ -383,7 +330,7 @@ describe('weather nodes', function() {
                     var weatherNode1 = helper.getNode("weatherNode1");
                     var n3 = helper.getNode("n3");
                     var stub = sinon.stub(weatherNode1, 'error', function(msg) {
-                            msg.should.equal("Invalid city/country in node settings");
+                            msg.should.equal("Invalid city/country");
                             stub.restore();
                             done();
                     });
