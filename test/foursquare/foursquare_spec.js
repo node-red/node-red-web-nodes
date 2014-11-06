@@ -306,7 +306,7 @@ describe('foursquare nodes', function() {
                 helper.load(foursquareNode, 
                         [ {id:"n1", type:"helper", wires:[["n2"]]},
                           {id:"n4", type:"foursquare-credentials"},
-                          {id:"n2", type:"foursquare", foursquare: "n4", wires:[["n3"]], output:"1"},
+                          {id:"n2", type:"foursquare", foursquare: "n4", wires:[["n3"]], outputnumber:"1", outputas:"single"},
                           {id:"n3", type:"helper"}], 
                           {
                             "n4": {
@@ -338,6 +338,9 @@ describe('foursquare nodes', function() {
                                   bobs.should.have.property('location');                                  
                                   bobs.location.should.have.property('lat', "51.03");
                                   bobs.location.should.have.property('lon', "-1.42");
+                                  bobs.location.should.have.property('city', undefined);
+                                  bobs.location.should.have.property('country', undefined);
+                                  bobs.location.should.have.property('name', "Bobs Restaurant");
                                   bobs.payload.reasons.items[0].should.have.property('summary', "You've been here 5 times");
                                   done();
                               });
@@ -349,7 +352,53 @@ describe('foursquare nodes', function() {
                 helper.load(foursquareNode, 
                         [ {id:"n1", type:"helper", wires:[["n2"]]},
                           {id:"n4", type:"foursquare-credentials"},
-                          {id:"n2", type:"foursquare", foursquare: "n4", wires:[["n3"]], output:"1"},
+                          {id:"n2", type:"foursquare", foursquare: "n4", wires:[["n3"]], outputnumber:"1",outputas:"single"},
+                          {id:"n3", type:"helper"}], 
+                          {
+                            "n4": {
+                                displayname : "John",
+                                clientid: "987654321",
+                                clientsecret:"123456789",
+                                accesstoken:"abcd1234",
+                            },
+                          },
+                          function() {
+                              var scope = nock('https://api.foursquare.com:443')
+                                  .get('/v2/venues/explore?oauth_token=abcd1234&section=sights&ll=51.03,-1.4&v=20141016&m=foursquare')
+                                  .reply(200, {"meta":{"code":200},"response":{"groups":
+                                      [{"count":1, "items":
+                                          [{"reasons": { "count": 1, "items": [ { "summary": "You've been here 3 times", "type": "social", "reasonName": "friendAndSelfCheckinReason", "count": 0 } ] }, 
+                                              "venue": { "id": "4da429a8b", "name": "Zoo", "location": { "lat": 51.03, "lng": -1.42, "city":"Winchester", "country":"England", "name":"Zoo"}}},
+                                           {"reasons": { "count": 1, "items": [ { "summary": "Very popular", "type": "social", "reasonName": "friendAndSelfCheckinReason", "count": 0 } ] }, 
+                                              "venue": { "id": "5is0fe9fd", "name": "Playground", "location": { "lat": 51.03, "lng": -1.45}}}]
+                                      }]}});
+                              
+                              var n1 = helper.getNode("n1");
+                              var n2 = helper.getNode("n2");
+                              var n3 = helper.getNode("n3");
+                              n2.should.have.property('id','n2');
+                              n1.send({payload:"foo", location:{lat:"51.03", lon:"-1.4"}, section:"sights"});
+                              n3.on('input', function(msg){
+                                  var zoo = msg;
+                                  zoo.should.have.property('title', "Zoo");
+                                  zoo.should.have.property('location'); 
+                                  zoo.location.should.have.property('lat', "51.03");
+                                  zoo.location.should.have.property('lon', "-1.42");
+                                  zoo.location.should.have.property('city', "Winchester");
+                                  zoo.location.should.have.property('country', "England");
+                                  zoo.location.should.have.property('name', "Zoo");
+                                  zoo.payload.reasons.items[0].should.have.property('summary', "You've been here 3 times");
+                                  done();
+                              });
+                          
+                          });
+            });
+            
+            it('can fetch multiple recommended sights and return as a single msg', function(done) {
+                helper.load(foursquareNode, 
+                        [ {id:"n1", type:"helper", wires:[["n2"]]},
+                          {id:"n4", type:"foursquare-credentials"},
+                          {id:"n2", type:"foursquare", foursquare: "n4", wires:[["n3"]], outputnumber:"10",outputas:"single"},
                           {id:"n3", type:"helper"}], 
                           {
                             "n4": {
@@ -367,21 +416,167 @@ describe('foursquare nodes', function() {
                                           [{"reasons": { "count": 1, "items": [ { "summary": "You've been here 3 times", "type": "social", "reasonName": "friendAndSelfCheckinReason", "count": 0 } ] }, 
                                               "venue": { "id": "4da429a8b", "name": "Zoo", "location": { "lat": 51.03, "lng": -1.42}}},
                                            {"reasons": { "count": 1, "items": [ { "summary": "Very popular", "type": "social", "reasonName": "friendAndSelfCheckinReason", "count": 0 } ] }, 
-                                              "venue": { "id": "5is0fe9fd", "name": "Playground", "location": { "lat": 51.03, "lng": -1.45}}}]
+                                              "venue": { "id": "5is0fe9fd", "name": "Playground", "location": { "lat": 52.12, "lng": -1.62}}}]
                                       }]}});
                               
                               var n1 = helper.getNode("n1");
                               var n2 = helper.getNode("n2");
                               var n3 = helper.getNode("n3");
                               n2.should.have.property('id','n2');
-                              n1.send({payload:"foo", location:{lat:"51.03", lon:"-1.4"}, section:"sights"});
+                              n1.send({payload:"nothing", location:{lat:"51.03", lon:"-1.4"}, section:"sights", foo:"bar"});
                               n3.on('input', function(msg){
-                                  var zoo = msg;
+                                  msg.should.have.property('foo', "bar");
+                                  // returning multiple results as a single msg means msg.payload is an array
+                                  msg.payload.should.be.an.instanceOf(Array);
+                                  var zoo = msg.payload[0];
                                   zoo.should.have.property('title', "Zoo");
                                   zoo.should.have.property('location'); 
                                   zoo.location.should.have.property('lat', "51.03");
                                   zoo.location.should.have.property('lon', "-1.42");
                                   zoo.payload.reasons.items[0].should.have.property('summary', "You've been here 3 times");
+                                  
+                                  var playground = msg.payload[1];
+                                  playground.should.have.property('title', "Playground");
+                                  playground.should.have.property('location'); 
+                                  playground.location.should.have.property('lat', "52.12");
+                                  playground.location.should.have.property('lon', "-1.62");
+                                  playground.payload.reasons.items[0].should.have.property('summary', "Very popular");
+                                  
+                                  done();
+                              });
+                          
+                          });
+            });
+            
+            it('passes on null msg.payload if no results from query', function(done) {
+                helper.load(foursquareNode, 
+                        [ {id:"n1", type:"helper", wires:[["n2"]]},
+                          {id:"n4", type:"foursquare-credentials"},
+                          {id:"n2", type:"foursquare", foursquare: "n4", wires:[["n3"]], outputnumber:"1", outputas:"single"},
+                          {id:"n3", type:"helper"}], 
+                          {
+                            "n4": {
+                                displayname : "John",
+                                clientid: "987654321",
+                                clientsecret:"123456789",
+                                accesstoken:"abcd1234",
+                            },
+                          },
+                          function() {
+                              var scope = nock('https://api.foursquare.com:443')
+                                  .get('/v2/venues/explore?oauth_token=abcd1234&section=food&ll=51.03,-1.4&v=20141016&m=foursquare')
+                                  .reply(200, {"meta":{"code":200},"response":{"groups":
+                                      [{"count":1, "items":[]}]}});
+                              
+                              var n1 = helper.getNode("n1");
+                              var n2 = helper.getNode("n2");
+                              var n3 = helper.getNode("n3");
+                              n2.should.have.property('id','n2');
+                              n1.send({payload:"foo", location:{lat:"51.03", lon:"-1.4"}, section:"food", foo:"bar"});
+                              n3.on('input', function(msg){
+                                  var bobs = msg;
+                                  msg.should.have.property('payload', null);
+                                  msg.should.have.property('foo', "bar");
+                                  done();
+                              });
+                          
+                          });
+            });
+            
+            it('can fetch multiple recommended sights and return as a multiple msgs', function(done) {
+                helper.load(foursquareNode, 
+                        [ {id:"n1", type:"helper", wires:[["n2"]]},
+                          {id:"n4", type:"foursquare-credentials"},
+                          {id:"n2", type:"foursquare", foursquare: "n4", wires:[["n3"]], outputnumber:"10",outputas:"multiple"},
+                          {id:"n3", type:"helper"}], 
+                          {
+                            "n4": {
+                                displayname : "John",
+                                clientid: "987654321",
+                                clientsecret:"123456789",
+                                accesstoken:"abcd1234",
+                            },
+                          },
+                          function() {
+                              var scope = nock('https://api.foursquare.com:443')
+                                  .get('/v2/venues/explore?oauth_token=abcd1234&section=sights&ll=51.03,-1.4&v=20141016&m=foursquare')
+                                  .reply(200, {"meta":{"code":200},"response":{"groups":
+                                      [{"count":1, "items":
+                                          [{"reasons": { "count": 1, "items": [ { "summary": "You've been here 3 times", "type": "social", "reasonName": "friendAndSelfCheckinReason", "count": 0 } ] }, 
+                                              "venue": { "id": "4da429a8b", "name": "Zoo", "location": { "lat": 51.03, "lng": -1.42}}},
+                                           {"reasons": { "count": 1, "items": [ { "summary": "Very popular", "type": "social", "reasonName": "friendAndSelfCheckinReason", "count": 0 } ] }, 
+                                              "venue": { "id": "5is0fe9fd", "name": "Playground", "location": { "lat": 52.12, "lng": -1.62}}}]
+                                      }]}});
+                              
+                              var n1 = helper.getNode("n1");
+                              var n2 = helper.getNode("n2");
+                              var n3 = helper.getNode("n3");
+                              n2.should.have.property('id','n2');
+                              n1.send({payload:"nothing", location:{lat:"51.03", lon:"-1.4"}, section:"sights", foo:"bar"});
+                              
+                              var count = 0;
+                              n3.on('input', function(msg){
+                                  msg.should.have.property('foo', "bar");
+                                  msg.should.have.property('location');
+                                  msg.should.have.property('title');
+                                  msg.should.not.have.property('payload', "nothing");
+                                  
+                                  count += 1;
+                                  if (count === 2) {
+                                      done();
+                                  }
+                              });
+                          
+                          });
+            });
+ 
+            it('can explore all recommended venues', function(done) {
+                helper.load(foursquareNode, 
+                        [ {id:"n1", type:"helper", wires:[["n2"]]},
+                          {id:"n4", type:"foursquare-credentials"},
+                          {id:"n2", type:"foursquare", foursquare: "n4", wires:[["n3"]], outputnumber:"10",outputas:"single"},
+                          {id:"n3", type:"helper"}], 
+                          {
+                            "n4": {
+                                displayname : "John",
+                                clientid: "987654321",
+                                clientsecret:"123456789",
+                                accesstoken:"abcd1234",
+                            },
+                          },
+                          function() {
+                              var scope = nock('https://api.foursquare.com:443')
+                                  .get('/v2/venues/explore?oauth_token=abcd1234&ll=51.03,-1.4&v=20141016&m=foursquare')
+                                  .reply(200, {"meta":{"code":200},"response":{"groups":
+                                      [{"count":1, "items":
+                                          [{"reasons": { "count": 1, "items": [ { "summary": "You've been here 3 times", "type": "social", "reasonName": "friendAndSelfCheckinReason", "count": 0 } ] }, 
+                                              "venue": { "id": "4da429a8b", "name": "Zoo", "location": { "lat": 51.03, "lng": -1.42}}},
+                                           {"reasons": { "count": 1, "items": [ { "summary": "Very popular", "type": "social", "reasonName": "friendAndSelfCheckinReason", "count": 0 } ] }, 
+                                              "venue": { "id": "5is0fe9fd", "name": "Playground", "location": { "lat": 52.12, "lng": -1.62}}}]
+                                      }]}});
+                              
+                              var n1 = helper.getNode("n1");
+                              var n2 = helper.getNode("n2");
+                              var n3 = helper.getNode("n3");
+                              n2.should.have.property('id','n2');
+                              n1.send({payload:"nothing", location:{lat:"51.03", lon:"-1.4"}, section:"all", foo:"bar"});
+                              n3.on('input', function(msg){
+                                  msg.should.have.property('foo', "bar");
+                                  msg.payload.should.be.an.instanceOf(Array);
+                                  var zoo = msg.payload[0];
+                                  zoo.should.have.property('title', "Zoo");
+                                  zoo.should.have.property('location'); 
+                                  zoo.location.should.have.property('lat', "51.03");
+                                  zoo.location.should.have.property('lon', "-1.42");
+                                  zoo.payload.reasons.items[0].should.have.property('summary', "You've been here 3 times");
+                                  
+                                  var playground = msg.payload[1];
+                                  playground.should.have.property('title', "Playground");
+                                  playground.should.have.property('location'); 
+                                  playground.location.should.have.property('lat', "52.12");
+                                  playground.location.should.have.property('lon', "-1.62");
+                                  playground.payload.reasons.items[0].should.have.property('summary', "Very popular");
+                                  
                                   done();
                               });
                           
