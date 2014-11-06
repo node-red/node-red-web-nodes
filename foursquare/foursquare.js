@@ -53,7 +53,8 @@ module.exports = function(RED) {
         var node = this;
 
         node.section = n.section;
-        node.output = n.output || "1";
+        node.outputNumber = parseInt(n.outputnumber) || 50;
+        node.outputAs = n.outputas || "multiple";
         
         var credentials = RED.nodes.getCredentials(n.foursquare);
         var credentialsOk = checkCredentials(node, credentials);
@@ -64,7 +65,10 @@ module.exports = function(RED) {
                     // data in the node settings overwrites that in the msg
                     if ((!node.section || (node.section === "empty")) && 
                             (msg.section && 
-                                (msg.section === "food" || msg.section ==="outdoors" || msg.section === "sights"))) {
+                                (msg.section === "food" || msg.section ==="drinks" || 
+                                    msg.section === "coffee" || msg.section === "shops" || 
+                                        msg.section === "arts" || msg.section === "outdoors" ||
+                                            msg.section === "sights" || msg.section === "all"))) {
                             node.section = msg.section;
                     }
                     if (node.section && (node.section !== "empty")) {
@@ -97,7 +101,13 @@ module.exports = function(RED) {
     }
     
     function getRecommendedVenuesNearLocation(node, credentials, msg, callback) {
-        var apiUrl = "https://api.foursquare.com/v2/venues/explore?oauth_token=" + credentials.accesstoken  + "&section=" + node.section + "&ll=" + msg.location.lat + "," + msg.location.lon + "&v=20141016&m=foursquare";
+        var apiUrl;
+        if (node.section === "all") {
+            apiUrl = "https://api.foursquare.com/v2/venues/explore?oauth_token=" + credentials.accesstoken  + "&ll=" + msg.location.lat + "," + msg.location.lon + "&v=20141016&m=foursquare";
+        } else {
+            apiUrl = "https://api.foursquare.com/v2/venues/explore?oauth_token=" + credentials.accesstoken  + "&section=" + node.section + "&ll=" + msg.location.lat + "," + msg.location.lon + "&v=20141016&m=foursquare";
+        }
+
         request.get(apiUrl,function(err, httpResponse, body) {
             if (err) {
                 node.error(err.toString());
@@ -109,13 +119,41 @@ module.exports = function(RED) {
                     node.status({fill:"red",shape:"ring",text:"failed"});
                 } else {
                     if (result.response.groups[0].items.length !== 0) {
-                        var firstVenue = result.response.groups[0].items[0];
-                        msg.payload = {};
-                        msg.payload = firstVenue;
-                        msg.location.lat = firstVenue.venue.location.lat;
-                        msg.location.lon = firstVenue.venue.location.lng;
-                        msg.title = firstVenue.venue.name;
-                        callback(msg);
+                        if (node.outputNumber === 1) {
+                            var firstVenue = result.response.groups[0].items[0];
+                            msg.payload = {};
+                            msg.payload = firstVenue;
+                            msg.location.lat = firstVenue.venue.location.lat;
+                            msg.location.lon = firstVenue.venue.location.lng;
+                            msg.location.name = firstVenue.venue.name;
+                            msg.location.city = firstVenue.venue.location.city;
+                            msg.location.country = firstVenue.venue.location.country;
+                            msg.title = firstVenue.venue.name;
+                            callback(msg);  
+                        } else if (node.outputAs === "single") {
+                            // reset the location/title information as they make no sense here
+                            msg.location = null;
+                            msg.title = null;
+                            // returning as a single msg sets msg.payload to be an array of venues found
+                            msg.payload = collateVenuesFound(node, result.response.groups[0].items);
+                            callback(msg);
+                        } else if (node.outputAs === "multiple") {
+                            var venues = collateVenuesFound(node, result.response.groups[0].items);
+                            var msgs = [];
+                            for (var i = 0; i < venues.length; i++) {
+                                var clone = RED.util.cloneMessage(msg);
+                                clone.payload = venues[i].payload;
+                                clone.location = venues[i].location;
+                                clone.title = venues[i].title;
+                                msgs[i] = clone;
+                            }
+                            callback([msgs]);
+                        } else {
+                            // shouldn't ever get here
+                            node.error("Incorrect number of messages to output or incorrect choice of how to output them");
+                            node.status({fill:"red",shape:"ring",text:"failed"});
+                        }
+                    
                   } else {
                       msg.payload = null; 
                       callback(msg);
@@ -124,6 +162,25 @@ module.exports = function(RED) {
             }
         });              
     }
+    
+    function collateVenuesFound(node, venuesFound) {
+        var venues = [];
+        var numberToReturn = Math.min(node.outputNumber,venuesFound.length);
+        for (var i = 0; i < numberToReturn; i++) {
+            var venue = venuesFound[i];
+            venues[i] = {};
+            venues[i].payload = venue;
+            venues[i].location = {};
+            venues[i].location.lat = venue.venue.location.lat;
+            venues[i].location.lon = venue.venue.location.lng;
+            venues[i].location.name = venue.venue.name;
+            venues[i].location.city = venue.venue.location.city;
+            venues[i].location.country = venue.venue.location.country;
+            venues[i].title = venue.venue.name;
+        }        
+        return venues;
+    } 
+    
     
     RED.httpAdmin.get('/foursquare-credentials/auth', function(req, res){
         if (!req.query.clientid || !req.query.clientsecret || !req.query.id || !req.query.callback) {

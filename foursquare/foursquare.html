@@ -157,19 +157,34 @@
         <input type="text" id="node-input-foursquare">
     </div>
     <div class="form-row">
-        <label for="node-input-section">&nbsp;<i class="fa fa-filter"></i> Get recommended</label>
-        <select id="node-input-section" style="width:50% !important">
+        <label for="node-input-section">&nbsp;<i class="fa fa-filter"></i> Explore</label>
+        recommended <select id="node-input-section" style="width:30% !important">
              <option value="empty"></option>             
-             <option value="food">restaurants</option>
+             <option value="food">food venues</option>
+             <option value="drinks">drink venues</option>
+             <option value="coffee">coffee shops</option>
+             <option value="shops">shops</option>
+             <option value="arts">cultural venues</option>
              <option value="outdoors">outdoor venues</option>
              <option value="sights">sights</option>
+             <option value="all">venues</option>
         </select>&nbsp;nearby
     </div>
     <div class="form-row">
-        <label for="node-input--output">&nbsp;<i class="fa fa-filter"></i> Output</label>
-        <select id="node-input--output" style="width:50%">
-             <option value="output">1</option>
-        </select>&nbsp;result(s)
+        <label for="node-input-outputnumber"><i class="fa fa-sign-out"></i> Output</label>
+        <select id="node-input-outputnumber" style="width:15% !important">
+             <option value="1">1</option>             
+             <option value="10">10</option>
+             <option value="20">20</option>
+             <option value="30">30</option>
+             <option value="40">40</option>
+             <option value="50">50</option>
+        </select>
+        result<span id="node-input-outputnumber-plural">s</span>
+        as <select id="node-input-outputas" style='width:40% !important'>
+          <option value="multiple">multiple messages</option>
+          <option value="single">a single message</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
@@ -187,23 +202,48 @@
     <b>msg.payload.section</b> of the message input. Valid entries are:
     <ul>
        <li>food</li>
+       <li>drinks</li>
+       <li>coffee</li>
+       <li>shops</li>
+       <li>arts</li>
        <li>outdoors</li>
        <li>sights</li>
+       <li>all</li>
     </ul>
     The value set on the node will take precedence over the contents of <b>msg.payload.section</b>.
     </p>
-    <p>The node sets <b>msg.payload</b> to be the JSON of the first in an ordered list 
-    of recommended venues near the provided latitude and longitude. The properties of the 
-    <a href="https://foursquare.com/">Foursquare</a> venues explore API are documented at  
-    <a href="https://developer.foursquare.com/docs/venues/explore">Explore Recommended and Popular Venues</a>.</p>
-    <p>
-    The node also sets the following properties:
-    <ul>
-       <li><b>msg.title</b> - the name of the recommended venue</li>
-       <li><b>msg.location.lat</b> - the latitude of the recommended venue</li>
-       <li><b>msg.location.lon</b> - the longitude of the recommended venue</li>
+    <p>The number of results to return from the query and how to return them (either as a single message
+    or as multiple messages) are settings on the node.</p>
+   <p>The node sets the following properties
+     <ul>
+       <li><b>payload</b> - the JSON of the recommended venue</li>
+       <li><b>title</b> - the name of the recommended venue</li>
+       <li><b>location.lat</b> - the latitude of the recommended venue</li>
+       <li><b>location.lon</b> - the longitude of the recommended venue</li>
+       <li><b>location.city</b> - the city where the recommended venue is</li>
+       <li><b>location.country</b> - the country where the recommended venue is</li>
+       <li><b>location.name</b> - the name of the recommended venue</li>
     </ul>
-    </p>
+    The exact location of these properties depends on the number of results chosen to be returned along 
+    with how to return them:
+    <ul>
+    <li>If the node output value is set to one then for both returning as a single message and as multiple
+    messages, the node returns a msg for the first in an ordered list of recommended venues near the provided 
+    latitude and longitude. The returned msg has the payload, location and name properties.
+    </li>
+    <li>If the node output value is set to more than one to be returned as a single message
+    the node sets <b>msg.payload</b> 
+    to be an array of <b>msg</b>'s, each one corresponding to a recommended venue and ordered according to the 
+    <a href="https://foursquare.com/">Foursquare</a> venues explore API.  The first element in the array is  
+    the most highly recommended venue and the length of the array is the output value set on the node or the 
+    number of venues found, whichever is smaller. Each element in this array has the payload, 
+   title, location and name properties.
+    </li>
+    <li>If the node output value is set to more than one but to be returned as a multiple then the node sends
+    multiple msgs, each one representing a recommended venue.
+    </ul>
+    For further information about the Foursquare API see  
+    <a href="https://developer.foursquare.com/docs/venues/explore">Explore Recommended and Popular Venues</a>.</p>
     <p>Data provided by <a href="https://foursquare.com/">Foursquare</a>.</p>
 </script>
 
@@ -215,7 +255,8 @@
         defaults: {
             foursquare: {type:"foursquare-credentials",required:true},
             section: {value:""},
-            output:{value:"1"},
+            outputnumber:{value:"1"},
+            outputas:{value:"single"},
             name: {value:""}
         },
         inputs:1,
@@ -223,6 +264,18 @@
         icon: "foursquare.png",
         label: function() {
             return this.name||'foursquare';
+        },
+        oneditprepare: function() {
+            var updateOptions = function() {
+                var outputnumber = $("#node-input-outputnumber option:selected").val();
+                if (outputnumber == "1") {
+                    $("#node-input-outputnumber-plural").hide();
+                } else {
+                    $("#node-input-outputnumber-plural").show();
+                }
+            };
+            updateOptions();
+            $("#node-input-outputnumber").change(updateOptions);
         }
     });
 })();
