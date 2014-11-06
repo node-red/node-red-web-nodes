@@ -61,42 +61,49 @@ module.exports = function(RED) {
                 var request = {
                     url: 'https://www.googleapis.com/calendar/v3/calendars/'+cal.id+'/events',
                 };
-                if (typeof msg.payload === 'object') {
-                    request.qs = msg.payload;
-                } else {
-                    request.qs = {
-                        maxResults: 1,
-                        orderBy: 'startTime',
-                        singleEvents: true,
-                    };
-                    if (msg.after instanceof Date) {
-                        request.qs.timeMin = msg.after.toISOString();
-                    } else if (typeof msg.after === 'string') {
-                        request.qs.timeMin = msg.timeMin;
-                    } else {
-                        request.qs.timeMin = (new Date()).toISOString();
-                    }
-                    if (msg.payload) {
-                        request.qs.q = RED.util.ensureString(msg.payload);
-                    }
+                var now = new Date();
+                request.qs = {
+                    maxResults: 10,
+                    orderBy: 'startTime',
+                    singleEvents: true,
+                    timeMin: now.toISOString()
+                };
+                if (msg.payload) {
+                    request.qs.q = RED.util.ensureString(msg.payload);
                 }
                 node.google.request(request, function(err, data) {
                     if (err) {
                         node.error("Error: " + err.toString());
                         node.status({fill:"red",shape:"ring",text:"failed"});
                     } else if (data.error) {
-                        node.error("Error: " + data.error.message);
+                        node.error("Error " + data.error.code + ": " +
+                                JSON.stringify(data.error.message));
                         node.status({fill:"red",shape:"ring",text:"failed"});
                     } else {
-                        var ev = data.items[0];
+                        var payload = msg.payload = {};
+                        var ev;
+                        /* 0 - 10 events ending after now ordered by startTime
+                         * so we find the first that starts after now to
+                         * give us the "next" event
+                         */
+                        for (var i = 0; i<data.items.length; i++) {
+                            ev = data.items[i];
+                            var start = getEventDate(ev);
+                            if (start && start.getTime() > now.getTime()) {
+                                payload.start = start;
+                                break;
+                            }
+                            ev = undefined;
+                        }
                         if (!ev) {
                             delete msg.data;
                             node.send(msg);
                             node.status({fill:"red",shape:"ring",text:"no event"});
                             return;
                         }
-                        var payload = msg.payload = {};
-                        payload.title = msg.title = ev.summary;
+                        if (ev.summary) {
+                            payload.title = msg.title = ev.summary;
+                        }
                         if (ev.description) {
                             payload.description = msg.description = ev.description;
                         } else {
@@ -116,27 +123,19 @@ module.exports = function(RED) {
                         } else {
                             delete msg.location;
                         }
-                        if (ev.start.dateTime) {
-                            payload.start = new Date(ev.start.dateTime);
-                            delete payload.allDayEvent;
-                        } else if (ev.start.date) {
-                            payload.start = new Date(ev.start.date);
+                        if (ev.start && ev.start.date) {
                             payload.allDayEvent = true;
-                        } else {
-                            delete payload.start;
-                            delete payload.allDayEvent;
                         }
-                        if (ev.end.dateTime) {
-                            payload.end = new Date(ev.end.dateTime);
-                        } else if (ev.end.date) {
-                            payload.end = new Date(ev.end.date);
-                        } else {
-                            delete payload.end;
+                        var end = getEventDate(ev, 'end');
+                        if (end) {
+                            payload.end = end;
                         }
-                        payload.creator = {
-                            name: ev.creator.displayName,
-                            email: ev.creator.email,
-                        };
+                        if (ev.creator) {
+                            payload.creator = {
+                                name: ev.creator.displayName,
+                                email: ev.creator.email,
+                            };
+                        }
                         if (ev.attendees) {
                             payload.attendees = [];
                             ev.attendees.forEach(function (a) {
@@ -155,6 +154,19 @@ module.exports = function(RED) {
         });
     }
     RED.nodes.registerType("google calendar", GoogleCalendarQueryNode);
+
+    function getEventDate(ev, type) {
+        if (typeof type === 'undefined') {
+            type = 'start';
+        }
+        if (ev[type] && ev[type].dateTime) {
+            return new Date(ev[type].dateTime);
+        } else if (ev.start && ev.start.date) {
+            return new Date(ev[type].date);
+        } else {
+            return null;
+        }
+    }
 
     GoogleCalendarQueryNode.prototype.calendarByName = function(name) {
         for (var cal in this.calendars) {
