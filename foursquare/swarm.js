@@ -117,6 +117,24 @@ module.exports = function(RED) {
                       var latest = result.response.checkins.items[0];
                       msg.payload = {};
                       msg.payload = latest;
+                      msg.location = {};
+ 
+                      if (latest.location && (latest.location !== 'undefined')) {
+                          msg.location.lat = latest.location.lat;
+                          msg.location.lon = latest.location.lng;
+                          msg.location.name = latest.location.name;
+                          msg.name = latest.location.name;
+                      }
+                      if (latest.venue && (latest.venue !== 'undefined')) {
+                          // this is ok to overwrite anything set before because the location property
+                          // may or may not be there, and the same with the venue property
+                         msg.location.lat = latest.venue.location.lat;
+                         msg.location.lon = latest.venue.location.lng;
+                         msg.location.city = latest.venue.location.city;
+                         msg.location.country = latest.venue.location.country;
+                         msg.location.name = latest.venue.name;
+                         msg.name = latest.venue.name;
+                      }
                       callback(msg);
                   } else {
                       if(afterTimestamp === null) { // if query node, always return something, when no check-ins, return empty payload
