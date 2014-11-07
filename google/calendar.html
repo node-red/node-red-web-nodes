@@ -14,6 +14,50 @@
   limitations under the License.
 -->
 
+<script type="text/x-red" data-template-name="google calendar">
+    <div class="form-row">
+        <label for="node-input-google"><i class="fa fa-user"></i> Google</label>
+        <input type="text" id="node-input-google">
+    </div>
+    <div class="form-row">
+        <label for="node-input-calendar"><i class="fa fa-tag"></i> Calendar</label>
+        <input type="text" id="node-input-calendar">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="google calendar">
+  <p>Create an entry in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
+  <p>The incoming message can provide the following properties:
+    <ul>
+      <li><b>payload</b> - an object containing the query parameters described in <a href="https://developers.google.com/google-apps/calendar/v3/reference/events/list">event list API documentation</a></li>
+      <li><b>calendar</b> - the calendar to add the event to (optional, defaults to the node calendar property or the users primary calendar)</li>
+    </ul>
+  </p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google calendar',{
+        category: 'social',
+        color:"#C0DEED",
+        defaults: {
+            google: {type:"google-credentials",required:true},
+            name: {value:""},
+            calendar: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "google-calendar.png",
+        align: "right",
+        label: function() {
+            return this.name||"Google Calendar";
+        }
+    });
+</script>
+
 <script type="text/x-red" data-template-name="google calendar out">
     <div class="form-row">
         <label for="node-input-google"><i class="fa fa-user"></i> Google</label>
