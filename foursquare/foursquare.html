@@ -168,8 +168,22 @@
              <option value="outdoors">outdoor venues</option>
              <option value="sights">sights</option>
              <option value="all">venues</option>
-        </select>&nbsp;nearby
+        </select>&nbsp;nearby 
+     </div>
+    <div class="form-row">
+        <label>&nbsp;</label>which are open
+        <select id="node-input-openday" style='width:50% !important'>
+          <option value="today">today</option>
+          <option value="any">on any day of the week</option></select>
     </div>
+    <div class="form-row">
+        <label>&nbsp;</label>at
+          <select id="node-input-opentime" style='width:50% !important'>
+          <option value="currenttime">the current time of day</option>
+          <option value="any">any time of day</option>
+        </select>
+    </div>
+
     <div class="form-row">
         <label for="node-input-outputnumber"><i class="fa fa-sign-out"></i> Output</label>
         <select id="node-input-outputnumber" style="width:15% !important">
@@ -257,6 +271,8 @@
             section: {value:""},
             outputnumber:{value:"1"},
             outputas:{value:"single"},
+            openday:{value:"today"},
+            opentime:{value:"currenttime"},
             name: {value:""}
         },
         inputs:1,
