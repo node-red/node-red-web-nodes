@@ -150,6 +150,7 @@ module.exports = function(RED) {
 
         var csrfToken = crypto.randomBytes(18).toString('base64').replace(/\//g, '-').replace(/\+/g, '_');
         credentials.csrfToken = csrfToken;
+        credentials.callback = callback;
         res.cookie('csrf', csrfToken);
         res.redirect(url.format({
             protocol: 'https',
@@ -194,11 +195,7 @@ module.exports = function(RED) {
                 code: req.query.code,
                 client_id: credentials.clientId,
                 client_secret: credentials.clientSecret,
-                redirect_uri: url.format({
-                    protocol: req.protocol,
-                    host: req.headers.host,
-                    pathname: RED.httpAdmin.path() + 'google-credentials/auth/callback'
-                }),
+                redirect_uri: credentials.callback
             },
         }, function(err, result, data) {
             if (err) {
@@ -216,6 +213,7 @@ module.exports = function(RED) {
                 data.expires_in + (new Date().getTime()/1000);
             credentials.tokenType = data.token_type;
             delete credentials.csrfToken;
+            delete credentials.callback;
             RED.nodes.addCredentials(node_id, credentials);
             request.get({
                 url: 'https://www.googleapis.com/plus/v1/people/me',
