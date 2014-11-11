@@ -55,6 +55,8 @@ module.exports = function(RED) {
         node.section = n.section;
         node.outputNumber = parseInt(n.outputnumber) || 50;
         node.outputAs = n.outputas || "multiple";
+        node.openday = n.openday || "today";
+        node.opentime = n.opentime || "currenttime";
         
         var credentials = RED.nodes.getCredentials(n.foursquare);
         var credentialsOk = checkCredentials(node, credentials);
@@ -101,13 +103,18 @@ module.exports = function(RED) {
     }
     
     function getRecommendedVenuesNearLocation(node, credentials, msg, callback) {
-        var apiUrl;
-        if (node.section === "all") {
-            apiUrl = "https://api.foursquare.com/v2/venues/explore?oauth_token=" + credentials.accesstoken  + "&ll=" + msg.location.lat + "," + msg.location.lon + "&v=20141016&m=foursquare";
-        } else {
-            apiUrl = "https://api.foursquare.com/v2/venues/explore?oauth_token=" + credentials.accesstoken  + "&section=" + node.section + "&ll=" + msg.location.lat + "," + msg.location.lon + "&v=20141016&m=foursquare";
+        var apiUrl = "https://api.foursquare.com/v2/venues/explore?oauth_token=" + credentials.accesstoken;   
+        if (node.section !== "all") {
+            apiUrl = apiUrl  + "&section=" + node.section;
         }
-
+        if (node.openday === "any") {
+            apiUrl = apiUrl  + "&day=any";
+        }
+        if (node.opentime === "any") {
+            apiUrl = apiUrl  + "&time=any";
+        }
+        apiUrl = apiUrl + "&ll=" + msg.location.lat + "," + msg.location.lon + "&v=20141016&m=foursquare";
+        
         request.get(apiUrl,function(err, httpResponse, body) {
             if (err) {
                 node.error(err.toString());
