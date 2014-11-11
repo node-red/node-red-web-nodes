@@ -66,6 +66,7 @@ module.exports = function(RED) {
                     maxResults: 10,
                     orderBy: 'startTime',
                     singleEvents: true,
+                    showDeleted: false,
                     timeMin: now.toISOString()
                 };
                 if (msg.payload) {
