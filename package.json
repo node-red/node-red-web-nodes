@@ -1,6 +1,6 @@
 {
     "name"          : "node-red-node-web-nodes",
-    "version"       : "0.1.1",
+    "version"       : "0.2.0",
     "description"   : "A collection of Node-RED nodes for popular web services.",
     "dependencies"  : {
         "aws-sdk": "^2.0.15",
