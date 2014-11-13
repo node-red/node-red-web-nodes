@@ -235,4 +235,42 @@ module.exports = function(RED) {
             });
         });
     });
+
+    function GoogleAPINode(n) {
+        RED.nodes.createNode(this,n);
+    }
+    RED.nodes.registerType("google-api-config",GoogleAPINode,{
+        credentials: {
+            key: { type:"password" }
+        }
+    });
+    GoogleAPINode.prototype.request = function(req, cb) {
+        if (typeof req !== 'object') {
+            req = { url: req };
+        }
+        req.method = req.method || 'GET';
+        if (!req.hasOwnProperty("json")) {
+            req.json = true;
+        }
+        if (!req.qs) {
+            req.qs = {};
+        }
+        req.qs.key = this.credentials.key;
+        return request(req, function(err, result, data) {
+            if (err) {
+                return cb(err.toString(), null);
+            }
+            if (result.statusCode >= 400) {
+                return cb("HTTP Error " + result.statusCode, data);
+            }
+            if (data && data.status !== 'OK') {
+                var error = "API error, " + data.status;
+                if (data.error_message) {
+                    error += ": " + data.error_message;
+                }
+                return cb(error, data);
+            }
+            return cb(null, data);
+        });
+    };
 }

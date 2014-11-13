@@ -33,6 +33,7 @@
             "instagram" : "instagram/instagram.js",
             "google": "google/google.js",
             "googlecalendar": "google/calendar.js",
+            "googleplaces": "google/places.js",
             "weather": "weather/weather.js",
             "transport": "transport/tfl-underground.js",
             "forecastio": "forecast/forecastio.js"
