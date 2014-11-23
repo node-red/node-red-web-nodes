@@ -50,6 +50,7 @@ module.exports = function(RED) {
                         lat = msg.location.lat;
                     } else {
                         node.error("Invalid lat in msg.location");
+                        callback();
                     }
                 }
             }
@@ -62,6 +63,7 @@ module.exports = function(RED) {
                         lon = msg.location.lon;
                     } else {
                         node.error("Invalid lon in msg.location");
+                        callback();
                     }
                 } 
             }
@@ -112,14 +114,18 @@ module.exports = function(RED) {
                         msg.location.city = jsun.name;
                         msg.location.country = jsun.sys.country;
                         msg.time = new Date(jsun.dt*1000);
+                        msg.title = "Current Weather Information"
+                        msg.description = "Current weather information at coordinates: " + msg.location.lat + ", " + msg.location.lon;
                        
                         msg.payload.description = ("The weather in " + jsun.name + " at coordinates: " + jsun.coord.lat + ", " + jsun.coord.lon + " is " + jsun.weather[0].main + " (" + jsun.weather[0].description + ")." );
                         callback();
                     } else {
                         if (jsun.message === "Error: Not found city"){                       
                             node.error("Invalid city/country")
+                            callback();
                         } else {
                             node.error(jsun.cod + " " + jsun.message);
+                            callback();
                         }
                     }
                 });
@@ -128,6 +134,7 @@ module.exports = function(RED) {
             });
         } else {
             node.error("Invalid location information provided");
+            callback();
         }
     }
     
