@@ -14,6 +14,63 @@
   limitations under the License.
 -->
 
+<script type="text/x-red" data-template-name="google calendar in">
+    <div class="form-row">
+        <label for="node-input-google"><i class="fa fa-user"></i> Google</label>
+        <input type="text" id="node-input-google">
+    </div>
+    <div class="form-row">
+        <label for="node-input-calendar"><i class="fa fa-tag"></i> Calendar</label>
+        <input type="text" id="node-input-calendar">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="google calendar in">
+  <p>Send a message every time an event occurs in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
+  <p>The message sent from the node will have properties:
+    <ul>
+      <li><b>title</b> - the summary string from the calendar entry</li>
+      <li><b>description</b> - the description from the calendar entry</li>
+      <li><b>location.description</b> - the location string from the calendar entry</li>
+      <li><b>data</b> - the raw event from the google calendar query as described in the <a href="https://developers.google.com/google-apps/calendar/v3/reference/events/list">event list API documentation</a></li>
+      <li><b>payload</b> - an object containing:
+        <ul>
+          <li><b>title</b> - the summary string from the calendar entry</li>
+          <li><b>description</b> - the description from the calendar entry</li>
+          <li><b>location.description</b> - the location string from the calendar entry</li>
+          <li><b>start</b> - Javascript Date of start time - midnight for all day event</li>
+          <li><b>end</b> - Javascript Date of end time - midnight for all day event</li>
+          <li><b>allDayEvent</b> - true if event is an all day event</li>
+          <li><b>creator</b> - object containing name and email properties</li>
+          <li><b>attendees</b> - list of objects containing name and email properties</li>
+        </ul>
+      </li>
+    </ul>
+  </p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google calendar in',{
+        category: 'social',
+        color:"#C0DEED",
+        defaults: {
+            google: {type:"google-credentials",required:true},
+            name: {value:""},
+            calendar: {value:""}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "google-calendar.png",
+        label: function() {
+            return this.name||"Google Calendar";
+        }
+    });
+</script>
+
 <script type="text/x-red" data-template-name="google calendar">
     <div class="form-row">
         <label for="node-input-google"><i class="fa fa-user"></i> Google</label>

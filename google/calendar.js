@@ -17,6 +17,81 @@
 module.exports = function(RED) {
     "use strict";
 
+    function GoogleCalendarInputNode(n) {
+        RED.nodes.createNode(this,n);
+        this.google = RED.nodes.getNode(n.google);
+        this.calendar = n.calendar || 'primary';
+        if (!this.google || !this.google.credentials.accessToken) {
+            this.warn("Missing google credentials");
+            return;
+        }
+
+        var node = this;
+        node.status({fill:"blue",shape:"dot",text:"querying"});
+        calendarList(node, function(err) {
+            if (err) {
+                node.error(err);
+                node.status({fill:"red",shape:"ring",text:"failed"});
+                return;
+            }
+            var cal = calendarByNameOrId(node, node.calendar);
+            if (!cal) {
+                node.status({fill:"red",shape:"ring",text:"invalid calendar"});
+                return;
+            }
+            node.status({});
+            node.on('input', function(msg) {
+                node.status({fill:"blue",shape:"dot",text:"querying"});
+                var now = new Date();
+                eventsBetween(node, cal, {}, node.last, now, function(err,events) {
+                    setNextTimeout(node, cal, now, function() {
+                        node.emit('input', {});
+                    });
+                    if (err) {
+                        node.warn(err);
+                        node.status({fill:"blue",shape:"dot",text:"failed"});
+                    } else {
+                        node.status({});
+                        events.forEach(function (ev) {
+                            sendEvent(node, ev, {});
+                        });
+                    }
+                });
+            });
+            node.timeout = setNextTimeout(node, cal, new Date(), function() {
+                node.emit('input', {});
+            });
+            node.on("close", function() {
+                if (node.timeout !== null) {
+                    clearTimeout(node.timeout);
+                    delete node.timeout;
+                }
+            });
+        });
+    }
+    RED.nodes.registerType("google calendar in", GoogleCalendarInputNode);
+
+    function setNextTimeout(node, cal, after, cb) {
+        node.status({fill:"blue",shape:"dot",text:"querying next event"});
+        node.last = new Date(after.getTime());
+        nextEvent(node, cal, {}, after, function(err, ev) {
+            var timeout = 900000; // 15 minutes
+            node.status({});
+            if (!err && ev) {
+                var start = getEventDate(ev);
+                if (start) {
+                    timeout =
+                        Math.min(timeout, start.getTime() - after.getTime());
+                }
+            }
+            if (timeout >= 0) {
+                node.timeout = setTimeout(cb, timeout);
+            } else {
+                console.log("timeout invalid");
+            }
+        });
+    }
+
     function GoogleCalendarQueryNode(n) {
         RED.nodes.createNode(this,n);
         this.google = RED.nodes.getNode(n.google);
@@ -49,20 +124,14 @@ module.exports = function(RED) {
                     if (err) {
                         node.error("Error: " + err.toString());
                         node.status({fill:"red",shape:"ring",text:"failed"});
-                        delete msg.payload;
-                        delete msg.data;
-                        msg.error = "event lookup failed";
-                        node.send(msg);
+                        sendError(node, "event lookup failed", msg);
                         return;
                     }
                     if (!ev) {
-                        delete msg.payload;
-                        delete msg.data;
-                        msg.error = "no event found";
-                        node.send(msg);
+                        sendError(node, "no event found", msg);
                         node.status({fill:"red",shape:"ring",text:"no event"});
                     } else {
-                        sendEvent(node, ev);
+                        sendEvent(node, ev, msg);
                         node.status({});
                     }
                 });
@@ -157,10 +226,80 @@ module.exports = function(RED) {
         });
     }
 
+    function eventsBetween(node, cal, msg, start, end, results, cb) {
+        if (typeof results === 'function') {
+            cb = results;
+            results = {
+                events: []
+            };
+        }
+        var request = {
+            url: 'https://www.googleapis.com/calendar/v3/calendars/'+cal.id+'/events'
+        };
+        request.qs = {
+            maxResults: 10,
+            orderBy: 'startTime',
+            singleEvents: true,
+            showDeleted: false,
+            timeMin: start.toISOString(),
+            timeMax: (new Date(end.getTime() + 60*1000)).toISOString()
+        };
+        if (msg.payload) {
+            request.qs.q = RED.util.ensureString(msg.payload);
+        }
+        if (results.nextPageToken) {
+            request.qs.pageToken = results.nextPageToken;
+        }
+        node.google.request(request, function(err, data) {
+            if (err) {
+                cb("Error: " + err.toString(), null);
+            } else if (data.error) {
+                cb("Error " + data.error.code + ": " +
+                        JSON.stringify(data.error.message), null);
+            } else {
+                var ev;
+                /* 0 - 10 events ending after now ordered by startTime
+                 * so we find the first that starts after now to
+                 * give us the "next" event
+                 */
+                for (var i = 0; i < data.items.length; i++) {
+                    ev = data.items[i];
+                    var evStart = getEventDate(ev);
+                    if (evStart) {
+                         if (evStart.getTime() > end.getTime()) {
+                             // timeMax should catch these
+                             break;
+                         } else if (evStart.getTime() > start.getTime()) {
+                             results.events.push(ev);
+                         }
+                    }
+                    ev = undefined;
+                }
+                if (!ev && data.nextPageToken) {
+                    results.nextPageToken = data.nextPageToken;
+                    eventsBetween(node, cal, msg, start, end, results, cb);
+                } else {
+                    cb(null, results.events);
+                }
+            }
+        });
+    }
+
+    function sendError(node, error, msg) {
+        if (typeof msg === 'undefined') {
+            msg = {};
+        }
+        delete msg.payload;
+        delete msg.data;
+        msg.error = error;
+        node.send(msg);
+    }
+
     function sendEvent(node, ev, msg) {
         if (typeof msg === 'undefined') {
             msg = {};
         }
+        delete msg.error;
         var payload = msg.payload = {};
         if (ev.summary) {
             payload.title = msg.title = ev.summary;
