@@ -1,0 +1,109 @@
+<!--
+  Copyright 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="tfl underground">
+    <div id="node-input-underground">
+        <div class="form-row">
+            <label>&nbsp;<i class="fa fa-filter"></i> Get</label>
+            the status information for the
+        </div>
+        <div class="form-row">
+            <label>&nbsp;</label>
+            <select id="node-input-line" style="width:50% !important">
+                <option value="Bakerloo">Bakerloo</option>             
+                <option value="Central">Central</option>
+                <option value="Circle">Circle</option>
+                <option value="District">District</option>
+                <option value="Hammersmith and City">Hammersmith and City</option>
+                <option value="Jubilee">Jubilee</option>
+                <option value="Metropolitan">Metropolitan</option>
+                <option value="Northern">Northern</option>
+                <option value="Piccadilly">Piccadilly</option>
+                <option value="Victoria">Victoria</option>
+                <option value="Waterloo and City">Waterloo and City</option>
+            </select>&nbsp;line 
+        </div>
+
+        <div class="form-row">
+            <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+            <input type="text" id="node-input-name">
+        </div>
+
+        <div class="form-row"">
+            <label>&nbsp;</label>
+            <input type="checkbox" id="node-input-acceptedtcs" style="display: inline-block; width: auto; vertical-align: top;">
+            <label for="node-input-acceptedtcs" style="width: 70%;">I have registered with <a href=https://api-portal.tfl.gov.uk/login target="_blank" style="text-decoration:underline;\">Transport for London</a> to gain access to the live feeds.</label>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="tfl underground">
+    <p>Transport for London Underground query node</p>
+    <p>This node enables the user to get the <a href="https://www.tfl.gov.uk/">Transport for London</a>
+    status information for the selected London underground line. The node then sets the following properties:
+     <ul>
+       <li><b>msg.description</b> - text stating which line the status information is about</li>
+       <li><b>msg.payload.status</b> - the TfL CssClass, for example "GoodService", "DisruptedService" </li>
+       <li><b>msg.payload.goodservice</b> - a boolean, true if msg.payload.status is "GoodService", false otherwise</li>
+       <li><b>msg.payload.description</b> - the description of the status, for example "Good Service", "Part Suspended"</li>
+       <li><b>msg.payload.details</b> - the status details if they exist (they are only present when msg.payload.description is not "Good Service")</li>
+       <li><b>msg.payload.branchdisruptions</b> - an array of information about the disruptions if any exist</li>
+       <li><b>msg.data</b> - object containing the full information about the requested line</li>
+    </ul>
+
+    </p>
+    <p>Powered by TfL Open Data.</p>
+</script>
+
+<script type="text/javascript">
+(function() {
+    RED.nodes.registerType('tfl underground',{
+        category: 'transport',
+        color:"#C0DEED",
+        defaults: {
+            line: {value:"Bakerloo",required:true},
+            name: {value:""},
+            acceptedtcs:{value:false}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "train.png",
+        label: function() {
+            return this.name||'TFL Underground';
+        },
+        oneditprepare: function() {
+            if(this.acceptedtcs) {
+                $('#node-dialog-ok').button("enable");               
+            } else {
+                $('#node-dialog-ok').button("disable");
+            }
+            
+           $('#node-input-acceptedtcs').click(function() {
+               if ($(this).is(':checked')) {
+                   this.acceptedtcs = true;
+                   $('#node-dialog-ok').button("enable");
+                } else {
+                    this.acceptedtcs = false;
+                    $('#node-dialog-ok').button("disable");
+                }
+           });
+        }
+    });
+})();
+</script>
+
+
+
