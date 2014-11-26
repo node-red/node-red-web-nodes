@@ -1,0 +1,147 @@
+<ArrayOfLineStatus xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://webservices.lul.co.uk/">
+	<LineStatus ID="0" StatusDetails="">
+		<BranchDisruptions />
+		<Line ID="1" Name="Bakerloo" />
+		<Status ID="GS" CssClass="GoodService" Description="Good Service"
+			IsActive="true">
+			<StatusType ID="1" Description="Line" />
+		</Status>
+	</LineStatus>
+	<LineStatus ID="1" StatusDetails="">
+		<BranchDisruptions />
+		<Line ID="2" Name="Central" />
+		<Status ID="GS" CssClass="GoodService" Description="Good Service"
+			IsActive="true">
+			<StatusType ID="1" Description="Line" />
+		</Status>
+	</LineStatus>
+	<LineStatus ID="10" StatusDetails="">
+		<BranchDisruptions />
+		<Line ID="7" Name="Circle" />
+		<Status ID="GS" CssClass="GoodService" Description="Good Service"
+			IsActive="true">
+			<StatusType ID="1" Description="Line" />
+		</Status>
+	</LineStatus>
+	<LineStatus ID="2"
+		StatusDetails="Minor delays between Barking and Upminster while we respond to a fire alert at Barking. GOOD SERVICE on the rest of the line.">
+		<BranchDisruptions>
+			<BranchDisruption>
+				<StationTo ID="240" Name="Upminster" />
+				<StationFrom ID="14" Name="Barking" />
+				<Status ID="MD" CssClass="GoodService" Description="Minor Delays"
+					IsActive="true">
+					<StatusType ID="1" Description="Line" />
+				</Status>
+			</BranchDisruption>
+		</BranchDisruptions>
+		<Line ID="9" Name="District" />
+		<Status ID="MD" CssClass="GoodService" Description="Minor Delays"
+			IsActive="true">
+			<StatusType ID="1" Description="Line" />
+		</Status>
+	</LineStatus>
+	<LineStatus ID="8" StatusDetails="">
+		<BranchDisruptions />
+		<Line ID="8" Name="Hammersmith and City" />
+		<Status ID="GS" CssClass="GoodService" Description="Good Service"
+			IsActive="true">
+			<StatusType ID="1" Description="Line" />
+		</Status>
+	</LineStatus>
+	<LineStatus ID="4"
+		StatusDetails="Due to an obstruction on the track in the Westminster area. Valid tickets will be accepted on London Busses via any reasonable route. Customers should avoid the line where possible.">
+		<BranchDisruptions />
+		<Line ID="4" Name="Jubilee" />
+		<Status ID="SD" CssClass="DisruptedService" Description="Severe Delays"
+			IsActive="true">
+			<StatusType ID="1" Description="Line" />
+		</Status>
+	</LineStatus>
+	<LineStatus ID="9" StatusDetails="">
+		<BranchDisruptions />
+		<Line ID="11" Name="Metropolitan" />
+		<Status ID="GS" CssClass="GoodService" Description="Good Service"
+			IsActive="true">
+			<StatusType ID="1" Description="Line" />
+		</Status>
+	</LineStatus>
+	<LineStatus ID="5"
+		StatusDetails="Between Kennington and Camden Town via Bank only, due to a person ill on a train earlier at Angel. GOOD SERVICE on the rest of the line.">
+		<BranchDisruptions />
+		<Line ID="5" Name="Northern" />
+		<Status ID="MS" CssClass="GoodService" Description="Minor Delays"
+			IsActive="true">
+			<StatusType ID="1" Description="Line" />
+		</Status>
+	</LineStatus>
+	<LineStatus ID="6"
+		StatusDetails="No service Acton Town to Uxbridge. SEVERE DELAYS on the rest of the line while we fix a signal failure in the Acton Town area. Tickets will be accepted on London Buses and Great Northern via any reasonable route.">
+		<BranchDisruptions>
+			<BranchDisruption>
+				<StationTo ID="244" Name="Uxbridge" />
+				<StationFrom ID="1" Name="Acton Town" />
+				<Status ID="PS" CssClass="DisruptedService" Description="Part Suspended"
+					IsActive="true">
+					<StatusType ID="1" Description="Line" />
+				</Status>
+			</BranchDisruption>
+		</BranchDisruptions>
+		<Line ID="6" Name="Piccadilly" />
+		<Status ID="PS" CssClass="DisruptedService" Description="Part Suspended"
+			IsActive="true">
+			<StatusType ID="1" Description="Line" />
+		</Status>
+	</LineStatus>
+	<LineStatus ID="7" StatusDetails="">
+		<BranchDisruptions />
+		<Line ID="3" Name="Victoria" />
+		<Status ID="GS" CssClass="GoodService" Description="Good Service"
+			IsActive="true">
+			<StatusType ID="1" Description="Line" />
+		</Status>
+	</LineStatus>
+	<LineStatus ID="11" StatusDetails="">
+		<BranchDisruptions />
+		<Line ID="12" Name="Waterloo and City" />
+		<Status ID="GS" CssClass="GoodService" Description="Good Service"
+			IsActive="true">
+			<StatusType ID="1" Description="Line" />
+		</Status>
+	</LineStatus>
+	<LineStatus ID="82"
+		StatusDetails="Severe delays between New Cross Gate and Crystal Palace / West Croydon only, due to a faulty National Rail train at Brockley. Tickets will be accepted on London Underground services via any reasonable route. GOOD SERVICE on all other routes.">
+		<BranchDisruptions>
+			<BranchDisruption>
+				<StationTo ID="366" Name="West Croydon" />
+				<StationFrom ID="155" Name="New Cross Gate" />
+				<Status ID="SD" CssClass="DisruptedService" Description="Severe Delays"
+					IsActive="true">
+					<StatusType ID="1" Description="Line" />
+				</Status>
+			</BranchDisruption>
+			<BranchDisruption>
+				<StationTo ID="305" Name="Crystal Palace" />
+				<StationFrom ID="155" Name="New Cross Gate" />
+				<Status ID="SD" CssClass="DisruptedService" Description="Severe Delays"
+					IsActive="true">
+					<StatusType ID="1" Description="Line" />
+				</Status>
+			</BranchDisruption>
+		</BranchDisruptions>
+		<Line ID="82" Name="Overground" />
+		<Status ID="SD" CssClass="DisruptedService" Description="Severe Delays"
+			IsActive="true">
+			<StatusType ID="1" Description="Line" />
+		</Status>
+	</LineStatus>
+	<LineStatus ID="81" StatusDetails="">
+		<BranchDisruptions />
+		<Line ID="81" Name="DLR" />
+		<Status ID="GS" CssClass="GoodService" Description="Good Service"
+			IsActive="true">
+			<StatusType ID="1" Description="Line" />
+		</Status>
+	</LineStatus>
+</ArrayOfLineStatus>

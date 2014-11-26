@@ -9,7 +9,8 @@
         "oauth":"~0.9.11",
         "request":"~2.40.0",
         "instagram-node":"0.5.1",
-        "clone": "0.1.11"
+        "clone": "0.1.11",
+        "xml2js":"0.4.4"
     },
     "repository" : {
         "type":"git",
@@ -32,10 +33,12 @@
             "instagram" : "instagram/instagram.js",
             "google": "google/google.js",
             "googlecalendar": "google/calendar.js",
-            "weather": "weather/weather.js"
+            "weather": "weather/weather.js",
+            "transport": "transport/tfl-underground.js"
         }
     },
     "devDependencies": {
+        "fs-extra": "0.11.1",
         "grunt": "0.4.5",
         "grunt-cli": "0.1.13",
         "grunt-lint-inline": "0.4.3",
