@@ -21,11 +21,15 @@ var googleNode = require("../../google/google.js");
 var helper = require('../helper.js');
 var nock = helper.nock;
 
-function ISOTimeString(offsetSeconds) {
+function TimeOffset(offsetSeconds) {
     if (!offsetSeconds) {
      offsetSeconds = 0;
     }
-    return (new Date((new Date()).getTime()+offsetSeconds*1000)).toISOString();
+    return (new Date((new Date()).getTime()+offsetSeconds*1000));
+}
+
+function ISOTimeString(offsetSeconds) {
+    return TimeOffset(offsetSeconds).toISOString();
 }
 
 describe('google calendar nodes', function() {
@@ -41,13 +45,40 @@ describe('google calendar nodes', function() {
         helper.unload();
     });
 
-    describe('query node', function() {
+    describe('input node', function() {
         if (!nock) { return; }
-        it('returns calendar entry', function(done) {
-            var oneHourAgo = ISOTimeString(-3600);
-            var oneHourFromNow = ISOTimeString(3600);
-            var twoHoursFromNow = ISOTimeString(7200);
-            nock('https://www.googleapis.com:443')
+        it('injects message for calendar entry', function(done) {
+            var oneMinuteAgo = TimeOffset(-60); // definitely passed
+            var now = TimeOffset();
+            var oneSecondFromNow = TimeOffset(1);
+            var oneMinuteFromNow = TimeOffset(60);
+            var oneMinuteOneSecondFromNow = TimeOffset(61);
+            var twoMinutesFromNow = TimeOffset(120);
+            var scope = nock('https://www.googleapis.com:443')
+                .filteringPath(function(path) {
+                    path = path.replace(/\.\d\d\dZ$/g, '.000Z');
+                    path =
+                        path.replace(
+                            'timeMin='
+                              +encodeURIComponent(oneMinuteAgo.toISOString()),
+                            'timeMin=oneMinuteAgo');
+                    [now, oneSecondFromNow].forEach(function(t) {
+                        path =
+                            path.replace(
+                                'timeMin='+
+                                    encodeURIComponent(t.toISOString())
+                                        .replace(/\.\d\d\dZ$/, '.000Z'),
+                                'timeMin=now');
+                    });
+                    [oneMinuteFromNow, oneMinuteOneSecondFromNow].forEach(function(t) {
+                        path =
+                            path.replace(
+                                'timeMax='+encodeURIComponent(t.toISOString())
+                                    .replace(/\.\d\d\dZ$/, '.000Z'),
+                                'timeMax=oneMinuteFromNow');
+                    });
+                    return path;
+                })
                 .get('/calendar/v3/users/me/calendarList')
                 .reply(200, {
                     kind : "calendar#calendarList",
@@ -60,7 +91,6 @@ describe('google calendar nodes', function() {
                     date: 'Tue, 11 Nov 2014 10:53:24 GMT',
                     'content-type': 'application/json; charset=UTF-8'
                 })
-                .filteringPath(/timeMin=[^&]*/g, 'timeMin=now')
                 .get('/calendar/v3/calendars/bob/events?maxResults=10&orderBy=startTime&singleEvents=true&showDeleted=false&timeMin=now')
                 .reply(200, {
                     kind: "calendar#events",
@@ -84,10 +114,150 @@ describe('google calendar nodes', function() {
                                 }
                             ],
                             start: {
-                                dateTime: oneHourAgo
+                                dateTime: oneMinuteFromNow.toISOString()
                             },
                             end: {
-                                dateTime: oneHourFromNow
+                                dateTime: twoMinutesFromNow.toISOString()
+                            }
+                        }
+                    ]
+                }, {
+                    date: 'Tue, 11 Nov 2014 10:53:24 GMT',
+                    'content-type': 'application/json; charset=UTF-8'
+                })
+                .get('/calendar/v3/calendars/bob/events?maxResults=10&orderBy=startTime&singleEvents=true&showDeleted=false&timeMin=oneMinuteAgo&timeMax=oneMinuteFromNow')
+                .reply(200, {
+                    kind: "calendar#events",
+                    items: [
+                        {
+                            creator: {
+                                email: "foo@example.com",
+                                self: true,
+                                displayName: "Bob Foo"
+                            },
+                            status: "confirmed",
+                            kind: "calendar#event",
+                            summary: "Meeting",
+                            attendees: [
+                                {
+                                    email: "foo@example.com",
+                                    responseStatus: "needsAction",
+                                    organizer: true,
+                                    self: true,
+                                    displayName: "Bob Foo"
+                                }
+                            ],
+                            start: {
+                                dateTime: now.toISOString()
+                            },
+                            end: {
+                                dateTime: oneMinuteFromNow.toISOString()
+                            }
+                        }
+                    ]
+                }, {
+                    date: 'Tue, 11 Nov 2014 10:53:24 GMT',
+                    'content-type': 'application/json; charset=UTF-8'
+                })
+                .get('/calendar/v3/calendars/bob/events?maxResults=10&orderBy=startTime&singleEvents=true&showDeleted=false&timeMin=now')
+                .reply(200, {
+                    kind: "calendar#events",
+                    items: []
+                }, {
+                    date: 'Tue, 11 Nov 2014 10:53:24 GMT',
+                    'content-type': 'application/json; charset=UTF-8'
+                });
+            helper.load([googleNode, calendarNode], [
+                {id:"google-config", type:"google-credentials",
+                    displayName: "Bob"},
+                {id:"calendar", type:"google calendar in",
+                    google: "google-config", wires:[["output"]]},
+                {id:"output", type:"helper"}
+            ], {
+                "google-config": {
+                    clientId: "id",
+                    clientSecret: "secret",
+                    accessToken: "access",
+                    refreshToken: "refresh",
+                    expireTime: 1000+(new Date().getTime()/1000),
+                    displayName: "Bob"
+                },
+            }, function() {
+                var calendar = helper.getNode("calendar");
+                calendar.should.have.property('id', 'calendar');
+                var output = helper.getNode("output");
+                output.should.have.property('id', 'output');
+                output.on("input", function(msg) {
+                    msg.should.have.property('title', 'Meeting');
+                    scope.isDone();
+                    done();
+                });
+
+                // wait for calendar.status({}) to be called twice
+                var count = 0;
+                var stub = sinon.stub(calendar, 'status', function(status) {
+                    if (Object.getOwnPropertyNames(status).length === 0) {
+                        count++;
+                        if (count == 2) {
+                            stub.restore();
+                            // hack last check time back a minute
+                            calendar.last = oneMinuteAgo;
+                            calendar.should.have.property('timeout');
+                            calendar.emit('input',{});
+                        }
+                    }
+                });
+            });
+        });
+    });
+
+    describe('query node', function() {
+        if (!nock) { return; }
+        it('returns calendar entry', function(done) {
+            var oneHourAgo = TimeOffset(-3600);
+            var oneHourFromNow = TimeOffset(3600);
+            var twoHoursFromNow = TimeOffset(7200);
+            nock('https://www.googleapis.com:443')
+                .get('/calendar/v3/users/me/calendarList')
+                .reply(200, {
+                    kind : "calendar#calendarList",
+                    items : [
+                        { id: "bob", summary: "Bob", primary: true },
+                        { id: "work", summary: "Work" },
+                        { id: "home", summary: "Home" }
+                    ]
+                }, {
+                    date: 'Tue, 11 Nov 2014 10:53:24 GMT',
+                    'content-type': 'application/json; charset=UTF-8'
+                })
+                .filteringPath(/timeMin=\d[^&]*/g, 'timeMin=now')
+                .get('/calendar/v3/calendars/bob/events?maxResults=10&orderBy=startTime&singleEvents=true&showDeleted=false&timeMin=now')
+                .reply(200, {
+                    kind: "calendar#events",
+                    items: [
+                        {
+                            creator: {
+                                email: "foo@example.com",
+                                self: true,
+                                displayName: "Bob Foo"
+                            },
+                            status: "confirmed",
+                            kind: "calendar#event",
+                            summary: "Coffee",
+                            attendees: [
+                                {
+                                    email: "foo@example.com",
+                                    responseStatus: "needsAction",
+                                    organizer: true,
+                                    self: true,
+                                    displayName: "Bob Foo"
+                                }
+                            ],
+                            start: {
+                                dateTime: oneHourAgo.toISOString()
+                            },
+                            end: {
+                                dateTime: oneHourFromNow.toISOString()
                             }
                         },
                         {
@@ -109,10 +279,10 @@ describe('google calendar nodes', function() {
                                 }
                             ],
                             start: {
-                                dateTime: oneHourFromNow
+                                dateTime: oneHourFromNow.toISOString()
                             },
                             end: {
-                                dateTime: twoHoursFromNow
+                                dateTime: twoHoursFromNow.toISOString()
                             }
                         }
                     ]
