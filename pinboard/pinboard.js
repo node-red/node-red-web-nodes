@@ -44,6 +44,7 @@ module.exports = function(RED) {
                 }
                 if (!msg.title) {
                     node.warn("msg.title must be provided");
+                    return;
                 }
                 var options = {
                     hostname: "api.pinboard.in",
