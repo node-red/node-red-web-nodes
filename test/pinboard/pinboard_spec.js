@@ -29,13 +29,50 @@ describe('pinboard nodes', function() {
     });
 
     describe('out node', function() {
-        it('can be loaded', function(done) {
-            helper.load(pinboardNode,
-                        [{id:"pinboard", type:"pinboard out"}], function() {
-                var pinboard = helper.getNode("pinboard");
-                pinboard.should.have.property('id', 'pinboard');
-                done();
-            });
-        });
+        it(' logs a warning if msg.payload is not set', function(done) {
+            helper.load(pinboardNode, 
+                [ {id:"inject", type:"helper", wires:[["pinboard"]]},
+                  {id:"del-user", type:"pinboard-user", username:"Bob Jones"},
+                  {id:"pinboard", type:"pinboard out", user:"del-user", private:true, tags:"testtag"}], 
+                  {
+                    "del-user": {
+                        password:"abcd1234"
+                    },
+                  },
+                  function() {
+                      var inject = helper.getNode("inject");
+                      var pinboard = helper.getNode("pinboard");
+                      pinboard.should.have.property('id','pinboard');
+                      pinboard.on('log',function(obj) {
+                          should.deepEqual({level:"warn", id:pinboard.id,
+                                            type:pinboard.type, msg:"url must be provided in msg.payload"}, obj);
+                          done();
+                      });
+                      inject.send({title:"test",description:"testdesc"});
+                  });
+    })
+        
+        it(' logs a warning if msg.title is not set', function(done) {
+            helper.load(pinboardNode, 
+                [ {id:"inject", type:"helper", wires:[["pinboard"]]},
+                  {id:"del-user", type:"pinboard-user", username:"Bob Jones"},
+                  {id:"pinboard", type:"pinboard out", user:"del-user", private:true, tags:"testtag"}], 
+                  {
+                    "del-user": {
+                        password:"abcd1234"
+                    },
+                  },
+                  function() {
+                      var inject = helper.getNode("inject");
+                      var pinboard = helper.getNode("pinboard");
+                      pinboard.should.have.property('id','pinboard');
+                      pinboard.on('log',function(obj) {
+                          should.deepEqual({level:"warn", id:pinboard.id,
+                                            type:pinboard.type, msg:"msg.title must be provided"}, obj);
+                          done();
+                      });
+                      inject.send({payload:"foobar",description:"testdesc"});
+                  });
+        })
     });
 });
