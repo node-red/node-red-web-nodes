@@ -45,6 +45,7 @@ module.exports = function(RED) {
                 }
                 if (!msg.title) {
                     node.warn("msg.title must be provided");
+                    return;
                 }
                 var options = {
                     url: "https://api.delicious.com/v1/posts/add?"+
