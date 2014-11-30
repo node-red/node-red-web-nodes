@@ -28,6 +28,9 @@ describe('google nodes', function() {
     });
 
     afterEach(function() {
+        if(nock) {
+            nock.cleanAll();
+        }
         helper.unload();
     });
 

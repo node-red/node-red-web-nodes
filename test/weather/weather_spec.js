@@ -58,6 +58,10 @@ describe('weather nodes', function() {
     afterEach(function(done) {
         
         try {
+            // TODO @Raminios => Ensure that each test is completely standalone and doesn't rely on execution order so that nock reset could be enabled
+            //            if(nock) {
+            //                nock.cleanAll();
+            //            }
             helper.unload();
             helper.stopServer(done);
         } catch (e) {
