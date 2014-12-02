@@ -20,10 +20,22 @@ module.exports = function(RED) {
     function GoogleCalendarInputNode(n) {
         RED.nodes.createNode(this,n);
         this.google = RED.nodes.getNode(n.google);
-        this.calendar = n.calendar || 'primary';
         if (!this.google || !this.google.credentials.accessToken) {
             this.warn("Missing google credentials");
             return;
+        }
+        this.calendar = n.calendar || 'primary';
+        if (!n.offsetType || n.offsetType === 'at') {
+            this.offset = 0;
+        } else {
+            var plusOrMinus = n.offsetType === 'before' ? 1 : -1;
+            var multiplier = {
+                seconds: 1000,
+                minutes: 60*1000,
+                hours: 60*60*1000,
+                days: 24*60*60*1000
+            }[n.offsetUnits];
+            this.offset = plusOrMinus * n.offset * multiplier;
         }
 
         var node = this;
@@ -74,6 +86,7 @@ module.exports = function(RED) {
     function setNextTimeout(node, cal, after, cb) {
         node.status({fill:"blue",shape:"dot",text:"querying next event"});
         node.last = new Date(after.getTime());
+        after = new Date(after.getTime()+node.offset); // apply offset
         nextEvent(node, cal, {}, after, function(err, ev) {
             var timeout = 900000; // 15 minutes
             node.status({});
@@ -233,6 +246,8 @@ module.exports = function(RED) {
                 events: []
             };
         }
+        start = new Date(start.getTime()+node.offset); // apply offset
+        end = new Date(end.getTime()+node.offset); // apply offset
         var request = {
             url: 'https://www.googleapis.com/calendar/v3/calendars/'+cal.id+'/events'
         };
