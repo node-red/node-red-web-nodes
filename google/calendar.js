@@ -38,6 +38,15 @@ module.exports = function(RED) {
             this.offset = plusOrMinus * n.offset * multiplier;
         }
 
+        var setNextTimeout;
+        var eventsBetween;
+        if (!n.offsetFrom || n.offsetFrom === 'start') {
+            setNextTimeout = setNextStartingTimeout;
+            eventsBetween = eventsStartingBetween;
+        } else {
+            setNextTimeout = setNextEndingTimeout;
+            eventsBetween = eventsEndingBetween;
+        }
         var node = this;
         node.status({fill:"blue",shape:"dot",text:"querying"});
         calendarList(node, function(err) {
@@ -83,11 +92,11 @@ module.exports = function(RED) {
     }
     RED.nodes.registerType("google calendar in", GoogleCalendarInputNode);
 
-    function setNextTimeout(node, cal, after, cb) {
+    function setNextStartingTimeout(node, cal, after, cb) {
         node.status({fill:"blue",shape:"dot",text:"querying next event"});
         node.last = new Date(after.getTime());
         after = new Date(after.getTime()+node.offset); // apply offset
-        nextEvent(node, cal, {}, after, function(err, ev) {
+        nextStartingEvent(node, cal, {}, after, function(err, ev) {
             var timeout = 900000; // 15 minutes
             node.status({});
             if (!err && ev) {
@@ -95,6 +104,28 @@ module.exports = function(RED) {
                 if (start) {
                     timeout =
                         Math.min(timeout, start.getTime() - after.getTime());
+                }
+            }
+            if (timeout >= 0) {
+                node.timeout = setTimeout(cb, timeout);
+            } else {
+                console.log("timeout invalid");
+            }
+        });
+    }
+
+    function setNextEndingTimeout(node, cal, after, cb) {
+        node.status({fill:"blue",shape:"dot",text:"querying next event"});
+        node.last = new Date(after.getTime());
+        after = new Date(after.getTime()+node.offset); // apply offset
+        nextEndingEvent(node, cal, {}, after, function(err, ev) {
+            var timeout = 900000; // 15 minutes
+            node.status({});
+            if (!err && ev) {
+                var end = getEventDate(ev, 'end');
+                if (end) {
+                    timeout =
+                        Math.min(timeout, end.getTime() - after.getTime());
                 }
             }
             if (timeout >= 0) {
@@ -133,7 +164,7 @@ module.exports = function(RED) {
                     node.status({fill:"red",shape:"ring",text:"invalid calendar"});
                     return;
                 }
-                nextEvent(node, cal, msg, function(err, ev) {
+                nextStartingEvent(node, cal, msg, function(err, ev) {
                     if (err) {
                         node.error("Error: " + err.toString());
                         node.status({fill:"red",shape:"ring",text:"failed"});
@@ -195,7 +226,7 @@ module.exports = function(RED) {
         });
     }
 
-    function nextEvent(node, cal, msg, after, cb) {
+    function nextStartingEvent(node, cal, msg, after, cb) {
         if (typeof after === 'function') {
             cb = after;
             after = new Date();
@@ -239,7 +270,51 @@ module.exports = function(RED) {
         });
     }
 
-    function eventsBetween(node, cal, msg, start, end, results, cb) {
+    function nextEndingEvent(node, cal, msg, after, cb) {
+        if (typeof after === 'function') {
+            cb = after;
+            after = new Date();
+        }
+
+        var request = {
+            url: 'https://www.googleapis.com/calendar/v3/calendars/'+cal.id+'/events'
+        };
+        request.qs = {
+            maxResults: 10,
+            orderBy: 'startTime', // endTime is not permitted by API
+            singleEvents: true,
+            showDeleted: false,
+            timeMin: after.toISOString()
+        };
+        if (msg.payload) {
+            request.qs.q = RED.util.ensureString(msg.payload);
+        }
+        node.google.request(request, function(err, data) {
+            if (err) {
+                cb("Error: " + err.toString(), null);
+            } else if (data.error) {
+                cb("Error " + data.error.code + ": " +
+                        JSON.stringify(data.error.message), null);
+            } else {
+                var ev;
+                /* 0 - 10 events ending after now ordered by startTime
+                 * so we find the first that starts after now to
+                 * give us the "next" event
+                 */
+                for (var i = 0; i<data.items.length; i++) {
+                    ev = data.items[i];
+                    var end = getEventDate(ev, 'end');
+                    if (end && end.getTime() > after.getTime()) {
+                        break;
+                    }
+                    ev = undefined;
+                }
+                cb(null, ev);
+            }
+        });
+    }
+
+    function eventsStartingBetween(node, cal, msg, start, end, results, cb) {
         if (typeof results === 'function') {
             cb = results;
             results = {
@@ -292,7 +367,67 @@ module.exports = function(RED) {
                 }
                 if (!ev && data.nextPageToken) {
                     results.nextPageToken = data.nextPageToken;
-                    eventsBetween(node, cal, msg, start, end, results, cb);
+                    eventsStartingBetween(node, cal, msg, start, end, results, cb);
+                } else {
+                    cb(null, results.events);
+                }
+            }
+        });
+    }
+
+    function eventsEndingBetween(node, cal, msg, start, end, results, cb) {
+        if (typeof results === 'function') {
+            cb = results;
+            results = {
+                events: []
+            };
+        }
+        start = new Date(start.getTime()+node.offset); // apply offset
+        end = new Date(end.getTime()+node.offset); // apply offset
+        var request = {
+            url: 'https://www.googleapis.com/calendar/v3/calendars/'+cal.id+'/events'
+        };
+        request.qs = {
+            maxResults: 10,
+            orderBy: 'startTime', // endTime is not permitted by API
+            singleEvents: true,
+            showDeleted: false,
+            timeMin: start.toISOString(),
+            timeMax: (new Date(end.getTime() + 60*1000)).toISOString()
+        };
+        if (msg.payload) {
+            request.qs.q = RED.util.ensureString(msg.payload);
+        }
+        if (results.nextPageToken) {
+            request.qs.pageToken = results.nextPageToken;
+        }
+        node.google.request(request, function(err, data) {
+            if (err) {
+                cb("Error: " + err.toString(), null);
+            } else if (data.error) {
+                cb("Error " + data.error.code + ": " +
+                        JSON.stringify(data.error.message), null);
+            } else {
+                var ev;
+                /* 0 - 10 events ending after now ordered by startTime
+                 * so we find the first that starts after now to
+                 * give us the "next" event
+                 */
+                for (var i = 0; i < data.items.length; i++) {
+                    ev = data.items[i];
+                    var evEnd = getEventDate(ev, 'end');
+                    if (evEnd) {
+                         if (evEnd.getTime() > end.getTime()) {
+                             break;
+                         } else if (evEnd.getTime() > start.getTime()) {
+                             results.events.push(ev);
+                         }
+                    }
+                    ev = undefined;
+                }
+                if (!ev && data.nextPageToken) {
+                    results.nextPageToken = data.nextPageToken;
+                    eventsEndingBetween(node, cal, msg, start, end, results, cb);
                 } else {
                     cb(null, results.events);
                 }
