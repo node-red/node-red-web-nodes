@@ -582,7 +582,7 @@ describe('google calendar nodes', function() {
                     date: 'Tue, 11 Nov 2014 10:53:24 GMT',
                     'content-type': 'application/json; charset=UTF-8'
                 })
-                .post('/calendar/v3/calendars/bob/events', {
+                .post('/calendar/v3/calendars/work/events', {
                     start: { dateTime: "2014-11-12T11:00:00Z" },
                     end: { dateTime: "2014-11-12T12:00:00Z" },
                     location: "Starbucks",
@@ -611,7 +611,7 @@ describe('google calendar nodes', function() {
             helper.load([googleNode, calendarNode], [
                 {id:"google-config", type:"google-credentials",
                     displayName: "Bob"},
-                {id:"calendar", type:"google calendar out",
+                {id:"calendar", type:"google calendar out", calendar: "Work",
                     google: "google-config"}
             ], {
                 "google-config": {
