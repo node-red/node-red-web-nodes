@@ -245,7 +245,7 @@ module.exports = function(RED) {
         if (msg.payload) {
             request.qs.q = RED.util.ensureString(msg.payload);
         }
-        node.google.request(request, function(err, data) {
+        var handle_response = function(err, data) {
             if (err) {
                 cb("Error: " + err.toString(), null);
             } else if (data.error) {
@@ -265,9 +265,15 @@ module.exports = function(RED) {
                     }
                     ev = undefined;
                 }
-                cb(null, ev);
+                if (!ev && data.hasOwnProperty('nextPageToken')) {
+                    request.qs.pageToken = data.nextPageToken;
+                    node.google.request(request, handle_response);
+                } else {
+                    cb(null, ev);
+                }
             }
-        });
+        };
+        node.google.request(request, handle_response);
     }
 
     function nextEndingEvent(node, cal, msg, after, cb) {
@@ -289,7 +295,7 @@ module.exports = function(RED) {
         if (msg.payload) {
             request.qs.q = RED.util.ensureString(msg.payload);
         }
-        node.google.request(request, function(err, data) {
+        var handle_response = function(err, data) {
             if (err) {
                 cb("Error: " + err.toString(), null);
             } else if (data.error) {
@@ -309,9 +315,15 @@ module.exports = function(RED) {
                     }
                     ev = undefined;
                 }
-                cb(null, ev);
+                if (!ev && data.hasOwnProperty('nextPageToken')) {
+                    request.qs.pageToken = data.nextPageToken;
+                    node.google.request(request, handle_response);
+                } else {
+                    cb(null, ev);
+                }
             }
-        });
+        };
+        node.google.request(request, handle_response);
     }
 
     function eventsStartingBetween(node, cal, msg, start, end, results, cb) {
@@ -337,7 +349,7 @@ module.exports = function(RED) {
         if (msg.payload) {
             request.qs.q = RED.util.ensureString(msg.payload);
         }
-        if (results.nextPageToken) {
+        if (results.hasOwnProperty('nextPageToken')) {
             request.qs.pageToken = results.nextPageToken;
         }
         node.google.request(request, function(err, data) {
@@ -347,13 +359,12 @@ module.exports = function(RED) {
                 cb("Error " + data.error.code + ": " +
                         JSON.stringify(data.error.message), null);
             } else {
-                var ev;
                 /* 0 - 10 events ending after now ordered by startTime
                  * so we find the first that starts after now to
                  * give us the "next" event
                  */
                 for (var i = 0; i < data.items.length; i++) {
-                    ev = data.items[i];
+                    var ev = data.items[i];
                     var evStart = getEventDate(ev);
                     if (evStart) {
                          if (evStart.getTime() > end.getTime()) {
@@ -363,9 +374,8 @@ module.exports = function(RED) {
                              results.events.push(ev);
                          }
                     }
-                    ev = undefined;
                 }
-                if (!ev && data.nextPageToken) {
+                if (data.hasOwnProperty('nextPageToken')) {
                     results.nextPageToken = data.nextPageToken;
                     eventsStartingBetween(node, cal, msg, start, end, results, cb);
                 } else {
@@ -398,7 +408,7 @@ module.exports = function(RED) {
         if (msg.payload) {
             request.qs.q = RED.util.ensureString(msg.payload);
         }
-        if (results.nextPageToken) {
+        if (results.hasOwnProperty('nextPageToken')) {
             request.qs.pageToken = results.nextPageToken;
         }
         node.google.request(request, function(err, data) {
@@ -408,13 +418,12 @@ module.exports = function(RED) {
                 cb("Error " + data.error.code + ": " +
                         JSON.stringify(data.error.message), null);
             } else {
-                var ev;
                 /* 0 - 10 events ending after now ordered by startTime
                  * so we find the first that starts after now to
                  * give us the "next" event
                  */
                 for (var i = 0; i < data.items.length; i++) {
-                    ev = data.items[i];
+                    var ev = data.items[i];
                     var evEnd = getEventDate(ev, 'end');
                     if (evEnd) {
                          if (evEnd.getTime() > end.getTime()) {
@@ -423,9 +432,8 @@ module.exports = function(RED) {
                              results.events.push(ev);
                          }
                     }
-                    ev = undefined;
                 }
-                if (!ev && data.nextPageToken) {
+                if (data.hasOwnProperty('nextPageToken')) {
                     results.nextPageToken = data.nextPageToken;
                     eventsEndingBetween(node, cal, msg, start, end, results, cb);
                 } else {
