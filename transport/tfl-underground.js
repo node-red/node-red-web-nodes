@@ -25,56 +25,51 @@ module.exports = function(RED) {
         RED.nodes.createNode(this, n);
         var node = this;
         node.line = n.line;
-        node.acceptedtcs = n.acceptedtcs;
-        
-        if (node.acceptedtcs) {              
-            this.on("input", function(msg) {
-                var apiUrl = "http://cloud.tfl.gov.uk/TrackerNet/LineStatus";   
-                request.get(apiUrl,function(err, httpResponse, body) {
-                    if (err) {
-                        node.error(err.toString());
-                        node.status({fill:"red",shape:"ring",text:"failed"});
-                    } else {
-                        parseString(body, {strict:true,async:true}, function (err, result) {
-                            if (err) { node.error(err); }
-                            else {
-                                var linestatus = result.ArrayOfLineStatus.LineStatus;
-                                for (var i = 0; i < linestatus.length; i++) {
-                                    var linename = linestatus[i].Line[0].$.Name;
-                                    if (linename === node.line) {
-                                        msg.description = "Status of the " + linename + " line";
-                                        msg.payload = {};
-                                        msg.payload.status = linestatus[i].Status[0].$.CssClass;
-                                        if (msg.payload.status === "GoodService") {
-                                            msg.payload.goodservice = true;
-                                        } else {
-                                            msg.payload.goodservice = false;
-                                        }
-                                        msg.payload.description = linestatus[i].Status[0].$.Description;
-                                        msg.payload.details = linestatus[i].$.StatusDetails;
-                                        msg.payload.branchdisruptions = [];
-                                        var disruptions = linestatus[i].BranchDisruptions;
-                                        for (var j = 0; j < disruptions.length; j++) {
-                                            if (disruptions[j].BranchDisruption) {
-                                                msg.payload.branchdisruptions[j] = disruptions[j].BranchDisruption[0];
-                                            }
-                                        }
+                   
+        this.on("input", function(msg) {
+            var apiUrl = "http://cloud.tfl.gov.uk/TrackerNet/LineStatus";   
+            request.get(apiUrl,function(err, httpResponse, body) {
+                if (err) {
+                    node.error(err.toString());
+                    node.status({fill:"red",shape:"ring",text:"failed"});
+                } else {
+                    parseString(body, {strict:true,async:true}, function (err, result) {
+                        if (err) { node.error(err); }
+                        else {
+                            var linestatus = result.ArrayOfLineStatus.LineStatus;
+                            for (var i = 0; i < linestatus.length; i++) {
+                                var linename = linestatus[i].Line[0].$.Name;
+                                if (linename === node.line) {
+                                    msg.description = "Status of the " + linename + " line";
+                                    msg.payload = {};
+                                    msg.payload.status = linestatus[i].Status[0].$.CssClass;
+                                    if (msg.payload.status === "GoodService") {
+                                        msg.payload.goodservice = true;
+                                     } else {
+                                        msg.payload.goodservice = false;
+                                     }
+                                     msg.payload.description = linestatus[i].Status[0].$.Description;
+                                     msg.payload.details = linestatus[i].$.StatusDetails;
+                                     msg.payload.branchdisruptions = [];
+                                     var disruptions = linestatus[i].BranchDisruptions;
+
+                                     for (var j = 0; j < disruptions.length; j++) {
+                                        if (disruptions[j].BranchDisruption) {
+                                            msg.payload.branchdisruptions[j] = disruptions[j].BranchDisruption[0];
+                                         }
+                                     }
                                         
-                                        msg.data = linestatus[i];
-                                        break;
-                                    }
+                                     msg.data = linestatus[i];
+                                     break;
                                 }
-                                node.send(msg);
                             }
-                        });
-                    }
-                });
-            });            
-        } else {
-            // shouldn't get here as UI disables OK button if the user hasn't said they've registered
-            node.error("You need to register with Transport For London to to gain access to the live feeds.");
-            node.status({fill:"red",shape:"ring",text:"failed"});   
-        }
+                            node.send(msg);
+                        }
+                    });
+                }
+            });
+        });            
+
      } 
     
     RED.nodes.registerType("tfl underground", TFLUndergroundQueryNode); 

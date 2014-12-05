@@ -15,12 +15,13 @@
 -->
 
 <script type="text/x-red" data-template-name="tfl underground">
-    <div id="node-input-underground">
-        <div class="form-row">
-            <label>&nbsp;<i class="fa fa-filter"></i> Get</label>
-            the status information for the
-        </div>
-        <div class="form-row">
+
+
+    <div class="form-row">
+        <label>&nbsp;<i class="fa fa-filter"></i> Get</label>
+        the status information for the
+    </div>
+    <div class="form-row">
             <label>&nbsp;</label>
             <select id="node-input-line" style="width:50% !important">
                 <option value="Bakerloo">Bakerloo</option>             
@@ -35,23 +36,19 @@
                 <option value="Victoria">Victoria</option>
                 <option value="Waterloo and City">Waterloo and City</option>
             </select>&nbsp;line 
-        </div>
-
-        <div class="form-row">
-            <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-            <input type="text" id="node-input-name">
-        </div>
-
-        <div class="form-row"">
-            <label>&nbsp;</label>
-            <input type="checkbox" id="node-input-acceptedtcs" style="display: inline-block; width: auto; vertical-align: top;">
-            <label for="node-input-acceptedtcs" style="width: 70%;">I have registered with <a href=https://api-portal.tfl.gov.uk/login target="_blank" style="text-decoration:underline;\">Transport for London</a> to gain access to the live feeds.</label>
-        </div>
     </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+
+    <div class="form-tips" id="node-config-tfl-tooltip"/>
+
 </script>
 
 <script type="text/x-red" data-help-name="tfl underground">
-    <p>Transport for London Underground query node</p>
+    <p>Transport for London Underground query node.</p>
     <p>This node enables the user to get the <a href="https://www.tfl.gov.uk/">Transport for London</a>
     status information for the selected London underground line. The node then sets the following properties:
      <ul>
@@ -63,8 +60,12 @@
        <li><b>msg.payload.branchdisruptions</b> - an array of information about the disruptions if any exist</li>
        <li><b>msg.data</b> - object containing the full information about the requested line</li>
     </ul>
-
     </p>
+    <p>Before using this node, please sign up to  
+    <a href=https://api-portal.tfl.gov.uk/login target="_blank" style="text-decoration:underline;\">Transport for London</a> 
+    and accept the terms and conditions to gain access to the live feeds.
+    </p>
+
     <p>Powered by TfL Open Data.</p>
 </script>
 
@@ -75,8 +76,7 @@
         color:"#C0DEED",
         defaults: {
             line: {value:"Bakerloo",required:true},
-            name: {value:""},
-            acceptedtcs:{value:false}
+            name: {value:""}
         },
         inputs:1,
         outputs:1,
@@ -85,21 +85,7 @@
             return this.name||'TFL Underground';
         },
         oneditprepare: function() {
-            if(this.acceptedtcs) {
-                $('#node-dialog-ok').button("enable");               
-            } else {
-                $('#node-dialog-ok').button("disable");
-            }
-            
-           $('#node-input-acceptedtcs').click(function() {
-               if ($(this).is(':checked')) {
-                   this.acceptedtcs = true;
-                   $('#node-dialog-ok').button("enable");
-                } else {
-                    this.acceptedtcs = false;
-                    $('#node-dialog-ok').button("disable");
-                }
-           });
+            $("#node-config-tfl-tooltip").html("<p>Before using this node please sign up to <code><a href=https://api-portal.tfl.gov.uk/login target=\"_blank\" style=\"text-decoration:underline;\">Transport for London</a></code>\n and accept the terms and conditions to gain access to the live feeds.</p>");
         }
     });
 })();
