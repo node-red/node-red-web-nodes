@@ -285,9 +285,14 @@ module.exports = function(RED) {
         var request = {
             url: 'https://www.googleapis.com/calendar/v3/calendars/'+cal.id+'/events'
         };
+        /* orderby: endTime is not permitted by API so for now this assumes
+         * that events are not nested.
+         * TODO: support nested events - at least simple, common cases
+         * such as an event overlapping an all day event
+         */
         request.qs = {
             maxResults: 10,
-            orderBy: 'startTime', // endTime is not permitted by API
+            orderBy: 'startTime',
             singleEvents: true,
             showDeleted: false,
             timeMin: after.toISOString()
@@ -397,6 +402,11 @@ module.exports = function(RED) {
         var request = {
             url: 'https://www.googleapis.com/calendar/v3/calendars/'+cal.id+'/events'
         };
+        /* orderby: endTime is not permitted by API so for now events are
+         * returned in startTime order rather than end time order which
+         * would be more natural. This is probably okay for most cases.
+         * TODO: post-process events list to order them by end time
+         */
         request.qs = {
             maxResults: 10,
             orderBy: 'startTime', // endTime is not permitted by API
