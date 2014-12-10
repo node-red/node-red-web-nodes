@@ -58,12 +58,19 @@ describe('instagram nodes', function() {
             
             var querystring = require("querystring");
             var redirectURIQueryString = querystring.escape(redirectURI);
-            
-            var flow = [{id:"n1", type:"helper", wires:[["n2"]]},
-                        {id:"n4", type:"instagram-credentials"},
-                        {id:"n2", type:"instagram", instagram: "n4", wires:[["n3"]],"inputType":"like","outputType":"link"},
-                        {id:"n3", type:"helper"}];
-            helper.load(instagramNode, flow, function() {
+            helper.load(instagramNode, [{id:"instagramCredentials1", type:"instagram-credentials"},
+                                        {id:"instagramNode1", type:"instagram", instagram: "instagramCredentials1","inputType":"like","outputType":"link", wires:[["helperNode1"]]},
+                                        {id:"helperNode1", type:"helper"}],
+                                        {
+                                            "instagramCredentials1" : { // pre-loaded credentials, no need to call OAuth
+                                                username: "UserJohn",
+                                                access_token: "AN_ACCESS_TOKEN",
+                                                cliend_id: "A_CLIENT_ID",
+                                                client_secret: "A_CLIENT_SECRET",
+                                                redirect_uri: "AN_URI",
+                                                code: "A_CODE"
+                                            }
+                                        }, function() {
                 helper.request()
                 .get('/instagram-credentials/auth?node_id=n2&client_id=' + clientID + '&client_secret=' + clientSecret + '&redirect_uri=' + redirectURI)
                 .expect(302) // expect redirect
@@ -84,11 +91,19 @@ describe('instagram nodes', function() {
         });
         
         it('reports an error when the UI doesn\'t supply all credentials', function(done) {
-            var flow = [{id:"n1", type:"helper", wires:[["n2"]]},
-                        {id:"n4", type:"instagram-credentials"},
-                        {id:"n2", type:"instagram", instagram: "n4", wires:[["n3"]],"inputType":"like","outputType":"link"},
-                        {id:"n3", type:"helper"}];
-            helper.load(instagramNode, flow, function() {
+            helper.load(instagramNode, [{id:"instagramCredentials1", type:"instagram-credentials"},
+                                        {id:"instagramNode1", type:"instagram", instagram: "instagramCredentials1","inputType":"like","outputType":"link", wires:[["helperNode1"]]},
+                                        {id:"helperNode1", type:"helper"}],
+                                        {
+                                            "instagramCredentials1" : { // pre-loaded credentials, no need to call OAuth
+                                                username: "UserJohn",
+                                                access_token: "AN_ACCESS_TOKEN",
+                                                cliend_id: "A_CLIENT_ID",
+                                                client_secret: "A_CLIENT_SECRET",
+                                                redirect_uri: "AN_URI",
+                                                code: "A_CODE"
+                                            }
+                                        }, function() {
                 helper.request()
                 .get('/instagram-credentials/auth')
                 .end(function(err, res) {
@@ -112,11 +127,6 @@ describe('instagram nodes', function() {
                 
                 var querystring = require("querystring");
                 var redirectURIQueryString = querystring.escape(redirectURI);
-                
-                var flow = [{id:"n1", type:"helper", wires:[["n2"]]},
-                            {id:"n4", type:"instagram-credentials"},
-                            {id:"n2", type:"instagram", instagram: "n4", wires:[["n3"]],"inputType":"like","outputType":"link"},
-                            {id:"n3", type:"helper"}];
                 
                 var scope = null;
                 
@@ -143,7 +153,19 @@ describe('instagram nodes', function() {
                     .reply(404, "No tokens found, sorry!");
                 }
                 
-                helper.load(instagramNode, flow, function() {
+                helper.load(instagramNode, [{id:"instagramCredentials1", type:"instagram-credentials"},
+                                            {id:"instagramNode1", type:"instagram", instagram: "instagramCredentials1","inputType":"like","outputType":"link", wires:[["helperNode1"]]},
+                                            {id:"helperNode1", type:"helper"}],
+                                            {
+                                                "instagramCredentials1" : { // pre-loaded credentials, no need to call OAuth
+                                                    username: "UserJohn",
+                                                    access_token: "AN_ACCESS_TOKEN",
+                                                    cliend_id: "A_CLIENT_ID",
+                                                    client_secret: "A_CLIENT_SECRET",
+                                                    redirect_uri: "AN_URI",
+                                                    code: "A_CODE"
+                                                }
+                                            }, function() {
                     helper.request()
                     .get('/instagram-credentials/auth?node_id=n2&client_id=' + clientID + '&client_secret=' + clientSecret + '&redirect_uri=' + redirectURI)
                     .expect(function(res) {
