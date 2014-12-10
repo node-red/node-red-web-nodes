@@ -31,6 +31,7 @@
             "foursquare":"foursquare/foursquare.js",
             "swarm":"foursquare/swarm.js",
             "instagram" : "instagram/instagram.js",
+            "jawboneup" : "jawboneup/jawboneup.js",
             "google": "google/google.js",
             "googlecalendar": "google/calendar.js",
             "weather": "weather/weather.js",
