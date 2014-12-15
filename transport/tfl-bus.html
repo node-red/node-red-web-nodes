@@ -1,0 +1,306 @@
+<!--
+  Copyright 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="tfl-bus">
+    <div id="node-input-stop-finder">
+        <div class="form-row">
+            <label for="node-input-lat"><i class="icon-search"></i> Latitude</label>
+            <input type="text" id="node-input-lat" placeholder="Latitude of stop">
+        </div>
+        <div class="form-row">
+            <label for="node-input-lon"><i class="icon-search"></i> Longitude</label>
+            <input type="text" id="node-input-lon" placeholder="Longitude of stop">
+        </div>
+        <div class="form-row">
+            <label for="node-input-radius"><i class="icon-search"></i> Radius (m)</label>
+            <input type="text" id="node-input-radius" placeholder="Search radius in metres">
+        </div>
+        <div class="form-row">
+            <a class="btn" id="node-input-stopsearch" href="#">Find bus stops</a>
+        </div>
+    </div>
+    <div id="node-input-stop-selector">
+            <table style="width:100%">
+                <tr>
+                    <td>
+                        <div class="form-row">
+                            <label for="node-input-stopCode1"><i class="icon-search"></i> Select Stop</label>
+                            <select type="text" id="node-input-stopCode1" style="display: inline-block; vertical-align: middle; width:60%;">
+                                <option value="unset" selected>Please find a bus stop first</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td rowspan="2">
+                        <a class="btn" id="node-input-findStops" href="#">Find bus stops</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-row">
+                            <label for="node-input-lineID"><i class="icon-search"></i> Line</label>
+                            <select type="text" id="node-input-lineID" style="display: inline-block; vertical-align: middle; width:60%;">
+                                <option value="unset" selected>Please select a bus stop first</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        <div class="form-row">
+            <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+            <input type="text" id="node-input-name" placeholder="Name">
+        </div>
+    </div>
+    <div id="node-input-dropdowns">
+        <div class="form-row">
+            <label for="node-input-stopName"></label>
+            <input type="text" id="node-input-stopName">
+        </div>
+        <div class="form-row">
+            <label for="node-input-lineName"></label>
+            <input type="text" id="node-input-lineName">
+        </div>
+    </div>
+    <div class="form-tips form-errors" id="node-config-errortip">
+        #
+    </div>
+    <div class="form-tips">
+        <p>Before using this node please sign up to <code><a href=https://api-portal.tfl.gov.uk/login target=\"_blank\" style=\"text-decoration:underline;\">Transport for London</a></code><br> and accept the terms and conditions to gain access to the live feeds.</p>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="tfl-bus">
+    <p>Transport for London Buses and River Buses query node</p>
+    <p>Get live bus departure/arrival info for your bus stop.</p>
+    
+    <p>This node enables the user to get bus or river bus arrival information for 
+    selected lines arriving at selected stops. The node returns the first vehicle/vessel
+    to arrive at a particular stop. The data is provided by
+    <a href="https://www.tfl.gov.uk/">Transport for London</a>.</p>
+    
+    <p> If bus departures are scheduled from the specified stop then
+    the node sets msg.payload to provide information about this bus:
+    
+    <ul>
+        <li>StopPointName: The name of the stop the bus is departing from.</li>
+        <li>lineID: The bus line's number.</li>
+        <li>DestinationText: The bus's destination text as displayed on the bus.</li>
+        <li>RegistratoinNumber: The vehicle's registration plate.</li>
+        <li>EstimatedTime: The Estimated Arrival Time of arrival at the specified stop as a JavaScript object.</li>
+    </ul>
+    
+    </p>
+    
+    <p>In order to select your bus stop and line, you need to find bus stops first by searching
+    for them based on a given GPS coordinate and a search radius around specified coordinate.</p>
+    
+    <p>Before using this node, please sign up to  
+    <a href=https://api-portal.tfl.gov.uk/login target="_blank" style="text-decoration:underline;\">Transport for London</a> 
+    and accept the terms and conditions to gain access to the live feeds.
+    </p>
+    
+    <p>Powered by TfL Open Data.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('tfl-bus',{
+        category: 'transport',
+        defaults: {
+            lat: {value:""},
+            lon: {value:""},
+            radius: {value:""},
+            stopCode1: {value: "unset"},
+            lineID: {value:"unset"},
+            stopName: {value:""},
+            lineName: {value:""},
+            name: {value:""}
+        },
+        color:"#ff8282",
+        inputs:1,
+        outputs:1,
+        icon: "tfl-bus.png",
+        label: function() {
+            return this.name||"TfL Bus";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        },
+        oneditprepare: function() {
+            var id = this.id;
+            
+            var node = this; // need to access this within JQuery event of drop down update ($("#node-input-stopCode1").change()) so that the UI doesn't get auto-refreshed/loaded at init.
+            
+            // restore drop-down UI state
+            if(this.lineName && this.lineID) {
+                $("#node-input-stopCode1").html("<option value=\"" + this.stopCode1 + "\">" + this.stopName + "</option>");
+                $("#node-input-lineID").html("<option value=\"" + this.lineID + "\">" + this.lineName + "</option>");
+            }
+            
+            function drawFindStopsUI() {
+                $("#node-input-dropdowns").hide();
+                $("#node-input-stop-selector").hide();
+                $("#node-input-stop-finder").show();
+                $("#node-config-errortip").hide();
+                $('#node-input-stopsearch').attr("disabled", true);
+                
+                validateGeoData();
+            }
+            
+            function drawDefaultUI() {
+                $("#node-input-dropdowns").hide();
+                $("#node-input-stop-finder").hide();
+                $("#node-input-stop-selector").show();
+                $("#node-config-errortip").hide();
+            }
+            
+            drawDefaultUI();
+            
+            function setLinesDropDown() {
+                var stopCode1 = $("#node-input-stopCode1").val();
+                
+                var query = "stopCode1=" + stopCode1;
+                var url = '/tfl-bus/linesquery/?' + query;
+                
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: "json"
+                }).done (function (data) {
+                    if(data.statusCode) { // this is actually an error from the TfL server
+                        setWarningInUI("TfL's servers have returned an error to us. The node might not work correctly. For more details, please check the console.");
+                    } else if (data.indexOf("ERROR") === 0) { // some connection error
+                        setWarningInUI("An error occurred when connecting to TfL. The node might not work correctly. For more details, please check the console.");
+                    } else { // good path case
+                        var htmlDropDown = "";
+                        var foundLine = false;
+                        for(var i = 0; i < data.length; i++) {
+                            if(data[i]) {
+                                htmlDropDown = htmlDropDown + "<option value=\"" +data[i][0] + "\">" + data[i][0] + " to " + data[i][1] + "</option>";
+                                foundLine = true;
+                            } else {
+                                continue;
+                            }
+                        }
+                        if(foundLine === false) {
+                            htmlDropDown = htmlDropDown + "<option value=\"" + "NODEPARTURE" + "\">" + "No buses currently departing from the above stop. Please find alternative options." + "</option>";
+                        }
+                        $("#node-input-lineID").html(htmlDropDown);
+                    }
+                });
+            }
+            
+            function setWarningInUI(warningMessage) {
+                $("#node-config-errortip").text(warningMessage);
+                $("#node-config-errortip").show();
+            }
+            
+            function validateGeoData() {
+                var lat = $("#node-input-lat").val();
+                var lon = $("#node-input-lon").val();
+                var radius = $("#node-input-radius").val();
+                
+                if(lat && lon && radius) {
+                    if(isNaN(lat)) {
+                        setWarningInUI("Latitude provided is not a number, please provide a valid number.");
+                        $('#node-input-stopsearch').attr("disabled", true);
+                    } else if(isNaN(lon)) {
+                        setWarningInUI("Longitude provided is not a number, please provide a valid number.");
+                        $('#node-input-stopsearch').attr("disabled", true);
+                    } else if(isNaN(radius)) {
+                        setWarningInUI("Radius provided is not a number, please provide a valid number.");
+                        $('#node-input-stopsearch').attr("disabled", true);
+                    } else if(radius < 1 || radius.toString().indexOf(".") !== -1) {
+                       setWarningInUI("Radius provided is invalid. Please use a positive whole number.");
+                       $('#node-input-stopsearch').attr("disabled", true);
+                    } else if(lat < -90 || lat > 90) {
+                       setWarningInUI("Latitude provided is out of range. Please revise your values.");
+                       $('#node-input-stopsearch').attr("disabled", true);
+                    } else if(lon < -180 || lon > 180) {
+                       setWarningInUI("Latitude provided is out of range. Please revise your values.");
+                       $('#node-input-stopsearch').attr("disabled", true);
+                    } else {
+                        $("#node-config-errortip").hide();
+                        $('#node-input-stopsearch').attr("disabled", false);
+                    }
+                } else {
+                    $('#node-input-stopsearch').attr("disabled", true);
+                }
+            }
+            
+            $("#node-input-lat").keyup(function() {validateGeoData();});
+            $("#node-input-lon").keyup(function() {validateGeoData();});
+            $("#node-input-radius").keyup(function() {validateGeoData();});
+            
+            $("#node-input-stopsearch").click(function() {
+                
+                node.stopCode1 = null; // need to reset so that the drop downs can be populated again
+                
+                if($("#node-input-stopsearch").attr("disabled")) {
+                    // no-op attribude disabled
+                } else {
+                    var lat = $("#node-input-lat").val();
+                    var lon = $("#node-input-lon").val();
+                    var radius = $("#node-input-radius").val();
+                    
+                    var query = "lat=" + lat + "&lon=" + lon + "&radius=" + radius;
+                    var url = '/tfl-bus/stopsquery/?' + query;
+                    $.ajax({
+                        type: "GET",
+                        url: url,
+                        dataType: "json"
+                    }).done (function (data) {
+                        if(data.statusCode) { // this is actually an error from the TfL server
+                            if(data.statusCode === 416) {
+                                setWarningInUI("No bus stops found with the given parameters, please provide different values.");
+                            } else {
+                                setWarningInUI("TfL's servers have returned an error to us. The node might not work correctly. For more details, please check the console.");
+                            }
+                        } else if (data.indexOf("ERROR") === 0) { // some connection error
+                            setWarningInUI("An error occurred when connecting to TfL. The node might not work correctly. For more details, please check the console.");
+                        } else { // good path case
+                            var htmlDropDown = "";
+                            for(var i = 0; i < data.length; i++) {
+                                if(data[i][2] !== null && data[i][4] !== null) {
+                                    htmlDropDown = htmlDropDown + "<option value=\"" +data[i][2] + "\">" + data[i][1] + " towards " + data[i][4] + "</option>";
+                                } else {
+                                    continue;
+                                }
+                            }
+                            drawDefaultUI();
+                            $("#node-input-stopCode1").html(htmlDropDown);
+                            setLinesDropDown();
+                        }
+                    });
+                }
+            });
+            
+            $("#node-input-stopCode1").change(function() {
+                if($("#node-input-stopCode1").html().indexOf("Please find a bus stop first") === -1 && $("#node-input-stopCode1").html().indexOf(node.stopCode1) === -1 ) {
+                    setLinesDropDown();
+                } else {
+                }
+            });
+            
+            $("#node-input-findStops").mousedown(function() {
+                drawFindStopsUI();
+            });
+        },
+        oneditsave: function() {
+        
+            $("#node-input-stopName").val($("#node-input-stopCode1 :selected").text());
+            $("#node-input-lineName").val($("#node-input-lineID :selected").text());
+        }
+    });
+</script>
