@@ -14,6 +14,124 @@
   limitations under the License.
 -->
 
+<script type="text/x-red" data-template-name="google calendar in">
+    <div class="form-row">
+        <label for="node-input-google"><i class="fa fa-user"></i> Google</label>
+        <input type="text" id="node-input-google">
+    </div>
+    <div class="form-row">
+        <label for="node-input-calendar"><i class="fa fa-tag"></i> Calendar</label>
+        <input type="text" id="node-input-calendar">
+    </div>
+    <div class="form-row">
+        Inject message
+        <select id="node-input-offsetType" style="width:6em;">
+            <option value="at">at</option>
+            <option value="before">before</option>
+            <option value="after">after</option>
+        </select>
+        the
+        <select id="node-input-offsetFrom" style="width:5em;">
+            <option value="start">start</option>
+            <option value="end">end</option>
+        </select>
+        of each event.
+    </div>
+
+    <div id="node-row-offset" class="form-row hidden">
+        Inject message <input type="text" id="node-input-offset"
+                            style="width: 3em;" />
+        <select id="node-input-offsetUnits" style="width:7em;">
+            <option value="seconds">seconds</option>
+            <option value="minutes" selected="true">minutes</option>
+            <option value="hours">hours</option>
+            <option value="days">days</option>
+        </select>
+        <span id="node-input-type">before</span> the <span id="node-input-from">start</span> of each event.
+    </div>
+
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="google calendar in">
+  <p>Send a message every time an event occurs in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
+  <p>The message sent from the node will have properties:
+    <ul>
+      <li><b>title</b> - the summary string from the calendar entry</li>
+      <li><b>description</b> - the description from the calendar entry</li>
+      <li><b>location.description</b> - the location string from the calendar entry</li>
+      <li><b>data</b> - the raw event from the google calendar query as described in the <a href="https://developers.google.com/google-apps/calendar/v3/reference/events/list">event list API documentation</a></li>
+      <li><b>payload</b> - an object containing:
+        <ul>
+          <li><b>title</b> - the summary string from the calendar entry</li>
+          <li><b>description</b> - the description from the calendar entry</li>
+          <li><b>location.description</b> - the location string from the calendar entry</li>
+          <li><b>start</b> - Javascript Date of start time - midnight for all day event</li>
+          <li><b>end</b> - Javascript Date of end time - midnight for all day event</li>
+          <li><b>allDayEvent</b> - true if event is an all day event</li>
+          <li><b>creator</b> - object containing name and email properties</li>
+          <li><b>attendees</b> - list of objects containing name and email properties</li>
+        </ul>
+      </li>
+    </ul>
+  </p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google calendar in',{
+        category: 'social',
+        color:"#C0DEED",
+        defaults: {
+            google: {type:"google-credentials",required:true},
+            name: {value:""},
+            calendar: {value:""},
+            offsetType: {value:"at"},
+            offsetFrom: {value:"start"},
+            offset: {value:"10"},
+            offsetUnits: {value:"minutes"}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "google-calendar.png",
+        label: function() {
+            return this.name||"Google Calendar";
+        },
+        oneditprepare: function() {
+            var type = this.offsetType || "at";
+            $("#node-input-offsetType option").filter(function() {
+                return $(this).val() == type;
+            }).attr('selected', true);
+            var from = this.offsetFrom || "start";
+            $("#node-input-offsetFrom option").filter(function() {
+                return $(this).val() == from;
+            }).attr('selected', true);
+            $("#node-input-offset").val(this.offset || "0");
+            var units = this.offsetUnits || "minutes";
+            $("#node-input-offsetUnits option").filter(function() {
+                return $(this).val() == units;
+            }).attr('selected', true);
+
+            var updateOptions = function() {
+                var type = $("#node-input-offsetType option:selected").val();
+                var from = $("#node-input-offsetFrom option:selected").val();
+                if (type === "at") {
+                    $("#node-row-offset").hide();
+                } else {
+                    $("#node-input-type").html(type);
+                    $("#node-input-from").html(from);
+                    $("#node-row-offset").show();
+                }
+             };
+             updateOptions();
+             $("#node-input-offsetType").change(updateOptions);
+             $("#node-input-offsetFrom").change(updateOptions);
+        },
+    });
+</script>
+
 <script type="text/x-red" data-template-name="google calendar">
     <div class="form-row">
         <label for="node-input-google"><i class="fa fa-user"></i> Google</label>
