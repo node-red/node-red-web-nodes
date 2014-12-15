@@ -151,3 +151,42 @@
     });
 })();
 </script>
+
+<script type="text/x-red" data-template-name="google-api-config">
+    <div class="form-row">
+        <label for="node-config-input-key"><i class="fa fa-bookmark"></i>API key</label>
+        <input class="input-append-left" type="password" id="node-config-input-key" style="width: 40%;" >
+    </div>
+    <div class="form-tips">
+        To obtain these credentials, visit the <a
+        href="https://console.developers.google.com/">Google Developer Console</a>.
+        Once signed up:
+        <ol>
+           <li>click "Create project",</li>
+           <li>select "API & auth",</li>
+           <li>select "Credentials",</li>
+           <li>click "Create new Key",</li>
+           <li>select "Server key",</li>
+           <li>enter IP address(es) to limit access or leave blank,</li>
+           <li>click "Create"</li>
+        </ol>
+        <p>The subsequent app page will contain the new API key to be copied
+        here.</p>
+    </div>
+</script>
+
+<script type="text/javascript">
+(function() {
+    RED.nodes.registerType('google-api-config',{
+        category: 'config',
+        defaults: { },
+        credentials: {
+            key: {type: "password",required:true},
+        },
+        label: function() {
+            return 'Google API';
+        },
+        exportable: false,
+    });
+})();
+</script>
