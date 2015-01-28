@@ -1,12 +1,9 @@
 <!--
   Copyright 2014 IBM Corp.
-
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-
   http://www.apache.org/licenses/LICENSE-2.0
-
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,62 +11,255 @@
   limitations under the License.
 -->
 
-<script type="text/x-red" data-template-name="google places">
-    <div class="form-row">
-        <label for="node-input-googleAPI"><i class="fa fa-user"></i> Google API</label>
-        <input type="text" id="node-input-googleAPI">
+<script type="text/x-red" data-template-name="places">
+	<div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i>Node Name</label>
+        <input type="text" id="node-input-name" placeholder="Node Name">
     </div>
-    <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name">
+	<br />
+	<div class="form-row">
+        <label for="node-input-reqType"><i class="fa fa-tasks"></i> Request Type </label>
+        <select type="text" id="node-input-reqType" style="width:72%;">
+        <option value="placesNearby">Places Nearby</option>
+        <option value="placesText"> Places Text</option>
+		<option value="placesDetails">Place Details</option>
+        </select>
+    </div>
+	<br />
+	<div class="form-row placesNearby placesDetails placesText">
+        <label for="node-input-key"><i class="fa fa-key"></i> API Key</label>
+        <input type="text" id="node-input-key" placeholder="API Key">
+    </div>
+	<br />
+	<div class="form-row node-input-geocodeBy-row-coordinates placesText">
+        <label for="node-input-query"><i class="fa fa-globe"></i> Query</label>
+        <input type="text" id="node-input-query" placeholder="Query">
+    </div>
+	<br class="placesText">
+	<div class="form-row node-input-geocodeBy-row-coordinates placesNearby placesText">
+        <label for="node-input-lat"><i class="fa fa-globe"></i> Latitude</label>
+        <input type="text" id="node-input-lat" placeholder="Latitude">
+    </div>
+	<div class="form-row node-input-geocodeBy-row-coordinates placesNearby placesText">
+        <label for="node-input-lng"><i class="fa fa-globe"></i> Longitude</label>
+        <input type="text" id="node-input-lng" placeholder="Longitude">
+    </div>
+	<div class="form-row placesDetails">
+        <label for="node-input-placeId">Place Id</label>
+        <input type="text" id="node-input-placeId" placeholder="Place Id">
+    </div>
+	<br class="placesNearby placesDetails">
+	<div class="form-row placesNearby placesRadius placesText">
+        <label for="node-input-radius"><i class="fa fa-flag"></i> Radius (m)</label>
+        <input type="text" id="node-input-radius" placeholder="Radius">
+    </div>
+	<div class="form-row placesNearby">
+        <label for="node-input-rankBy"><i class="fa fa-tasks"></i> Rank by </label>
+        <select type="text" id="node-input-rankBy" style="width:72%;">
+        <option value="prominence">Prominence</option>
+        <option value="distance">Distance</option>
+        </select>
+    </div>
+	<div class="form-row placesNearby">
+        <label for="node-input-keyword"><i class="fa fa-flag"></i> Keyword</label>
+        <input type="text" id="node-input-keyword" placeholder="Keyword">
+    </div>
+	<div class="form-row placesNearby placesDetails placesText">
+        <label for="node-input-language"><i class="fa fa-language"></i> Language</label>
+        <input type="text" id="node-input-language" placeholder="Language">
+    </div>
+	<div class="form-row placesNearby placesText">
+        <label for="node-input-minPrice"><i class="fa fa-globe"></i> Min Price</label>
+        <input type="text" id="node-input-minPrice" placeholder="Min Price">
+    </div>
+	<div class="form-row placesNearby placesText">
+        <label for="node-input-maxPrice">Max Price</label>
+        <input type="text" id="node-input-maxPrice" placeholder="Max Price">
+    </div>
+	<div class="form-row placesNearby">
+        <label for="node-input-placeName">Place Name</label>
+        <input type="text" id="node-input-placeName" placeholder="Place Name">
+    </div>
+	<div class="form-row placesNearby placesText">
+        <label for="node-input-types">Types</label>
+        <input type="text" id="node-input-types" placeholder="Types">
+    </div>
+	
+	<div class="form-row placesDetails">
+        <label for="node-input-extensions">Extensions</label>
+        <input type="text" id="node-input-extensions" placeholder="Extensions">
+    </div>
+	<div class="form-row placesNearby placesText">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-openNow" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-openNow" style="width: 70%;">Open Now?</label>
+    </div>
+    <div class="form-row placesNearby placesDetails placesText">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-sendFullResult" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-sendFullResult" style="width: 70%;">Send full result?</label>
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="google places">
-  <p>Performs a <a href="https://developers.google.com/places/documentation/search#TextSearchRequests">Google Places text search</a>.</p>
-  <p>The incoming message can provide the following properties:
-    <ul>
-      <li><b>payload</b> - a text search string</li>
-      <li><b>location</b> - an optional object with <b>lat</b>, <b>lon</b> and <b>radius</b> properties. The radius is optional and will default to the maximum permitted 50km. The location will be used to weight results but prominent places outside the vicinity may be still returned.</li>
-    </ul>
-  </p>
-  <p>If the query returns one or more places, then the message sent from
-  the node will have properties relating to the first place:
-    <ul>
-      <li><b>payload</b> - the place name with, if available, the full address</li>
-      <li><b>title</b> - the place name</li>
-      <li><b>location.lat</b> - the latitude of the place</li>
-      <li><b>location.lon</b> - the longitude of the place</li>
-      <li><b>location.description</b> - same as <b>payload</b> above</li>
-      <li><b>html_attributions</b> - the <a href="https://developers.google.com/places/documentation/search#PlaceSearchResults">HTML attributions</a> from the response</li>
-      <li><b>data</b> - the raw data for the place from the <a href="https://developers.google.com/places/documentation/search#PlaceSearchResults">Google Places search results</a></li>
-      </li>
-    </ul>
-  </p>
-  <p>If the query results in an error or the result contains no
-  places, then the message sent from the node will have no payload but
-  will have properties:
-    <ul>
-      <li><b>error</b> - an error string</li>
-      <li><b>data</b> - the raw data of the complete result</li>
-    </ul>
-  </p>
+<script type="text/x-red" data-help-name="places">
+    <p><b>Utilizes the Google Places API in order to find and learn more about local establishments.</b></p>
+	<p>The node can be configured to send three different types of Places requests by toggling the <code>reqType</code> parameter in the node.</p>
+	<br>
+	<p><b><u>Google Places Nearby</u></b></p>
+	<p><b>Input Parameters:</b></p>
+	<p><code>Name</code> - Name of the node</p>
+	<p><code>reqType</code> - Toggle to switch between a Places Nearby, Places Text, and Places Details request.</p>
+	<p><b>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</b></p>
+	<p><code>key</code> - Your application's API key. This key identifies your application for purposes of quota management. <b><i>(Required)</i></b></p>
+	<p><code>lat</code> - Latitude point to be sent to Google in order to be converted to a human-readable address. <b><i>(Required)</i></b></p>
+	<p><code>lng</code> - Longitude point to be sent to Google in order to be converted to a human-readable address. <b><i>(Required)</i></b></p>
+	<br>
+	<p><code>radius</code> - Defines the distance (in meters) within which to return place results. The maximum allowed radius is 50000 meters. <b><i>(Required if rankby=prominence. If rankby=distance, radius is not allowed)</i></b></p>
+	<p><code>keyword</code> - A term to be matched against all content that Google has indexed for this place, including but not limited to name, type, and address, as well as customer reviews and other third-party content.</p>
+	<p><code>language</code> - The language in which to return results.</p>
+	<p><code>minprice</code> - Restricts results to only those places within the specified price level. Valid values are in the range from 0 (most affordable) to 4 (most expensive), inclusive.</p>
+	<p><code>maxprice</code> - Restricts results to only those places within the specified price level. Valid values are in the range from 0 (most affordable) to 4 (most expensive), inclusive.</p>
+	<p><code>name</code> - The name of the business to search for.</p>
+	<p><code>types</code> - Restricts the results to places matching at least one of the specified types. Types should be separated with a pipe symbol (type1|type2|etc). (<a href="https://developers.google.com/places/documentation/supported_types">Click here</a> for supported types)</p>
+	<p><code>opennow</code> - If set to true, will only return results that are currently open now.</p>
+	<p><code>sendFullResult</code> - Boolean that when set, will return the entire result returned by the Google Geocoding API.</p>
+	<br>
+	<p><b>Return values:</b></p>
+	<p><code>status</code> - If the request succeeded, the status will be "OK". Otherwise, an error status will be displayed, and an additional <code>error_message</code> field will give more details.</p>
+	<p><code>results</code> - An array of results matching the supplied parameters. Each result will take this form:<br>
+	<code>{<br>
+    placeid - a unique identifier for a place. To retrieve information about the place, pass this identifier in the placeId field of a Places API request.<br>
+    name - Name of the establishment,<br>
+	vicinity - Contains a feature name of a nearby location. Often this feature refers to a street or neighborhood within the given results.,<br>
+	types - Contains an array of feature types describing the given result,<br>
+	pricelevel - The price level of the place, on a scale of 0 to 4 (0-Free 1-Inexpensive 2-Moderate 3-Expensive 4-Very Expensive),<br>
+	rating - Contains the place's rating, from 1.0 to 5.0, based on aggregated user reviews.,<br>
+	opennow (if available) - Boolean that shows whether the business is currently open<br>
+	}</code></p>
+	<br><br>
+	<p><b><u>Google Places Text</u></b></p>
+	<p><b>Input Parameters:</b></p>
+	<p><code>Name</code> - Name of the node</p>
+	<p><code>reqType</code> - Toggle to switch between a Places Nearby, Places Text, and Places Details request.</p>
+	<p><b>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</b></p>
+	<p><code>key</code> - Your application's API key. This key identifies your application for purposes of quota management. <b><i>(Required)</i></b></p>
+	<p><code>query</code> - The text string on which to search, for example: "restaurant". The Google Places service will return candidate matches based on this string and order the results based on their perceived relevance. <b><i>(Required)</i></b></p>
+	<br>
+	<p><code>lat</code> - Latitude point to be sent to Google in order to be converted to a human-readable address.</p>
+	<p><code>lng</code> - Longitude point to be sent to Google in order to be converted to a human-readable address.</p>
+	<p><code>radius</code> - Defines the distance (in meters) within which to return place results. The maximum allowed radius is 50000 meters.</p>
+	<p><code>keyword</code> - A term to be matched against all content that Google has indexed for this place, including but not limited to name, type, and address, as well as customer reviews and other third-party content.</p>
+	<p><code>language</code> - The language in which to return results.</p>
+	<p><code>minprice</code> - Restricts results to only those places within the specified price level. Valid values are in the range from 0 (most affordable) to 4 (most expensive), inclusive.</p>
+	<p><code>maxprice</code> - Restricts results to only those places within the specified price level. Valid values are in the range from 0 (most affordable) to 4 (most expensive), inclusive.</p>
+	<p><code>types</code> - Restricts the results to places matching at least one of the specified types. Types should be separated with a pipe symbol (type1|type2|etc). (<a href="https://developers.google.com/places/documentation/supported_types">Click here</a> for supported types)</p>
+	<p><code>opennow</code> - If set to true, will only return results that are currently open now.</p>
+	<p><code>sendFullResult</code> - Boolean that when set, will return the entire result returned by the Google Geocoding API.</p>
+	<br>
+	<p><b>Return values:</b></p>
+	<p><code>status</code> - If the request succeeded, the status will be "OK". Otherwise, an error status will be displayed, and an additional <code>error_message</code> field will give more details.</p>
+	<p><code>results</code> - An array of results matching the supplied parameters. Each result will take this form:<br>
+	<code>{<br>
+    placeid - a unique identifier for a place. To retrieve information about the place, pass this identifier in the placeId field of a Places API request.<br>
+    name - Name of the establishment,<br>
+	address - Address of the establishment,<br>
+	types - Contains an array of feature types describing the given result,<br>
+	pricelevel - The price level of the place, on a scale of 0 to 4 (0-Free 1-Inexpensive 2-Moderate 3-Expensive 4-Very Expensive),<br>
+	rating - Contains the place's rating, from 1.0 to 5.0, based on aggregated user reviews.,<br>
+	opennow (if available) - Boolean that shows whether the business is currently open<br>
+	}</code></p>
+	<br><br>
+	<p><b><u>Google Places Details</u></b></p>
+	<p><b>Input Parameters:</b></p>
+	<p><code>Name</code> - Name of the node</p>
+	<p><code>reqType</code> - Toggle to switch between a Places Nearby, Places Text, and Places Details request.</p>
+	<p><b>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</b></p>
+	<p><code>key</code> - Your application's API key. This key identifies your application for purposes of quota management. <b><i>(Required)</i></b></p>
+	<p><code>placeid</code> - A unique identifier that is returned from a Google Places request. <b><i>(Required)</i></b></p>
+	<br>
+	<p><code>language</code> - The language in which to return results.</p>
+	<p><code>extensions</code> - Indicates if the Place Details response should include additional fields. Additional fields may include Premium data, requiring an additional license, or values that are not commonly requested. Extensions are currently experimental. Supported values for the extensions parameter are {review_summary}.</p>
+	<p><code>sendFullResult</code> - Boolean that when set, will return the entire result returned by the Google Geocoding API.</p>
+	<br>
+	<p><b>Return values:</b></p>
+	<p><code>status</code> - If the request succeeded, the status will be "OK". Otherwise, an error status will be displayed, and an additional <code>error_message</code> field will give more details.</p>
+	<p><code>name</code> - Name of the establishment.<br></p>
+	<p><code>address</code> - Human-readable address of the establishment.<br></p>
+	<p><code>phone</code> - Phone number in local format.<br></p>
+	<p><code>website</code> - Web address for the establishment.<br></p>
+	<p><code>rating</code> - Contains the place's rating, from 1.0 to 5.0, based on aggregated user reviews.<br></p>
+	<p><code>pricelevel</code> - The price level of the place, on a scale of 0 to 4 (0-Free 1-Inexpensive 2-Moderate 3-Expensive 4-Very Expensive).<br></p>
+	<p><code>opennow</code> - Boolean that shows whether the establishment is currently open.<br></p>
+	<p><code>open</code> - Will return the day (0-6) and time (0000-2359) that the establishment is open.<br></p>
+	<p><code>close</code> - Will return any day (0-6) that the establishment is closed.<br></p>
+	<p><code>permanently_closed</code> - Will return true if the establishment is permanently close.<br></p>
+	<br><br>
+	
+	
+	<p>For more information, please visit the <a href="https://developers.google.com/maps/documentation/geocoding/">Google Geocoding API Developer Docs</a>
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('google places',{
-        category: 'social',
-        color:"#C0DEED",
+    RED.nodes.registerType('places',{
+        category: 'function',
+        color: '#ff9999',
         defaults: {
-            googleAPI: {type:"google-api-config",required:true},
-            name: {value:""},
+			reqType: {value:"placesNearby"},
+			name: {value:""},
+			lat: {value:""},
+			lng: {value:""},
+			query: {value:""},
+            key: {value:""},
+			radius: {value:""},
+			rankBy: {value:"prominence"},
+			keyword: {value:""},
+			language: {value:""},
+			minPrice: {value:""},
+			maxPrice: {value:""},
+			placeName: {value:""},
+			placeId: {value:""},
+			extensions: {value:""},
+			openNow: {value:""},
+			types: {value:""},
+			sendFullResult: {value:""}
         },
         inputs:1,
         outputs:1,
-        icon: "google-places.png",
-        align: "right",
+        icon: "logo_maps.png",
         label: function() {
-            return this.name||"Google Places";
+			if(this.reqType === 'placesNearby')
+				return this.name||"Places Nearby Search";
+			else if(this.reqType === 'placesText')
+				return this.name||"Places Text Search";
+			else if(this.reqType === 'placesDetails')
+				return this.name||"Places Details Search";
+			else
+				return this.name||"Places";
+        },
+		oneditprepare: function() {
+			$("#node-input-reqType").change(function() {
+                if ($(this).val() === 'placesNearby') {
+                    $(".placesDetails").hide();
+					$(".placesText").hide();
+					$(".placesNearby").show();
+                } else if ($(this).val() === 'placesDetails') {
+                    $(".placesNearby").hide();
+					$(".placesText").hide();
+					$(".placesDetails").show();
+                } else if ($(this).val() === 'placesText') {
+					$(".placesNearby").hide();
+					$(".placesDetails").hide();
+					$(".placesText").show();
+				}
+            });
+			
+			$("#node-input-rankBy").change(function() {
+                if ($(this).val() === 'prominence') {
+					$(".placesRadius").show();
+                } else if ($(this).val() === 'distance') {
+                    $(".placesRadius").hide();
+                }
+            });
         }
     });
 </script>
