@@ -57,51 +57,55 @@ module.exports = function(RED) {
         node.outputAs = n.outputas || "multiple";
         node.openday = n.openday || "today";
         node.opentime = n.opentime || "currenttime";
-        
-        var credentials = RED.nodes.getCredentials(n.foursquare);
-        var credentialsOk = checkCredentials(node, credentials);
-        
-        if (credentialsOk) {              
-            this.on("input", function(msg) {
-                if (msg.location.lat && msg.location.lon) {
-                    // data in the node settings overwrites that in the msg
-                    if ((!node.section || (node.section === "empty")) && 
-                            (msg.section && 
-                                (msg.section === "food" || msg.section ==="drinks" || 
-                                    msg.section === "coffee" || msg.section === "shops" || 
-                                        msg.section === "arts" || msg.section === "outdoors" ||
-                                            msg.section === "sights" || msg.section === "all"))) {
+
+        var nodeCredentials = RED.nodes.getCredentials(n.foursquare);
+        checkCredentials(node, nodeCredentials);
+
+        this.on("input", function(msg) {
+            var credentials = nodeCredentials && nodeCredentials.accesstoken ? nodeCredentials : msg.credentials || {};
+            if (!credentials.accesstoken) {
+                node.warn("No credentials available");
+                delete msg.payload;
+                msg.error = "no access token provided";
+                node.send(msg);
+                return;
+            }
+            if (msg.location.lat && msg.location.lon) {
+                // data in the node settings overwrites that in the msg
+                if ((!node.section || (node.section === "empty")) &&
+                    (msg.section &&
+                     (msg.section === "food" || msg.section ==="drinks" ||
+                      msg.section === "coffee" || msg.section === "shops" ||
+                      msg.section === "arts" || msg.section === "outdoors" ||
+                      msg.section === "sights" || msg.section === "all"))) {
                             node.section = msg.section;
-                    }
-                    if (node.section && (node.section !== "empty")) {
-                        getRecommendedVenuesNearLocation(node, credentials, msg, function(msg) {
-                            node.send(msg);
-                        });  
-                    } else {
-                        node.error("problem with node input: section is not defined correctly");
-                        node.status({fill:"red",shape:"ring",text:"failed"});   
-                    }
-                                
-                } else {
-                    node.error("problem with node input: latitude and/or longitude not set");
-                    node.status({fill:"red",shape:"ring",text:"failed"});                          
                 }
-            });            
-        }
-     } 
-    
-    RED.nodes.registerType("foursquare", FoursquareQueryNode); 
-    
-    function checkCredentials(node, credentials) {       
+                if (node.section && (node.section !== "empty")) {
+                    getRecommendedVenuesNearLocation(node, credentials, msg, function(msg) {
+                        node.send(msg);
+                    });
+                } else {
+                    node.error("problem with node input: section is not defined correctly");
+                    node.status({fill:"red",shape:"ring",text:"failed"});
+                }
+            } else {
+                node.error("problem with node input: latitude and/or longitude not set");
+                node.status({fill:"red",shape:"ring",text:"failed"});
+            }
+        });
+     }
+
+    RED.nodes.registerType("foursquare", FoursquareQueryNode);
+
+    function checkCredentials(node, credentials) {
         if (credentials && credentials.clientid && credentials.clientsecret && credentials.accesstoken) {
-           return true;
+            return true;
         } else {
-            node.error("problem with credentials being set: " + credentials + ", ");
-            node.status({fill:"red",shape:"ring",text:"failed"});      
+            node.warn("no credentials for node");
             return false;
         }
     }
-    
+
     function getRecommendedVenuesNearLocation(node, credentials, msg, callback) {
         var apiUrl = "https://api.foursquare.com/v2/venues/explore?oauth_token=" + credentials.accesstoken;   
         if (node.section !== "all") {
