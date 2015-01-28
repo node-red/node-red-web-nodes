@@ -100,11 +100,11 @@ describe('google places', function() {
                     msg.should.have.property('payload',
                         'SE10 8XJ, London SE10 8XJ, UK');
                     msg.should.have.property('title', 'SE10 8XJ');
-                    msg.should.have.property('location', {
-                        lat: 51.4778051,
-                        lon: -0.00143,
-                        description: 'SE10 8XJ, London SE10 8XJ, UK'
-                    });
+					msg.should.have.property('location');
+					msg.location.should.have.property('lat', 51.4778051);
+					msg.location.should.have.property('lon', -0.00143);
+					msg.location.should.have.property('description', 'SE10 8XJ, London SE10 8XJ, UK');
+					msg.location.should.have.property('address', 'London SE10 8XJ, UK');
                     done();
                 });
                 input.send({ payload: 'SE10 8XJ' });
@@ -167,11 +167,11 @@ describe('google places', function() {
                     msg.should.have.property('payload',
                         'SUBWAY Royal Victoria Dock, The Excel Centre, Western Gateway, Royal Victoria Dock, London, London & Greater London E16 1XL, United Kingdom');
                     msg.should.have.property('title', 'SUBWAY Royal Victoria Dock');
-                    msg.should.have.property('location', {
-                        lat: 51.507998,
-                        lon: 0.030968,
-                        description: 'SUBWAY Royal Victoria Dock, The Excel Centre, Western Gateway, Royal Victoria Dock, London, London & Greater London E16 1XL, United Kingdom'
-                    });
+					msg.should.have.property('location');
+					msg.location.should.have.property('lat', 51.507998);
+					msg.location.should.have.property('lon', 0.030968);
+					msg.location.should.have.property('description', 'SUBWAY Royal Victoria Dock, The Excel Centre, Western Gateway, Royal Victoria Dock, London, London & Greater London E16 1XL, United Kingdom');
+					msg.location.should.have.property('address', 'The Excel Centre, Western Gateway, Royal Victoria Dock, London, London & Greater London E16 1XL, United Kingdom');
                     done();
                 });
                 input.send({

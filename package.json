@@ -17,7 +17,7 @@
         "url":"https://github.com/node-red/node-red-web-nodes"
     },
     "license": "Apache-v2.0",
-    "keywords": [ "node-red", "flickr", "pinboard", "dropbox", "aws", "s3" ],
+    "keywords": [ "node-red", "flickr", "pinboard", "dropbox", "aws", "s3", "google" ],
     "node-red"      : {
         "nodes"     : {
             "aws": "aws/aws.js",
@@ -35,6 +35,7 @@
             "google": "google/google.js",
             "googlecalendar": "google/calendar.js",
             "googleplaces": "google/places.js",
+			"googlegeocoding": "google/geocoding.js",
             "weather": "weather/weather.js",
             "tfl-bus": "transport/tfl-bus.js",
             "tfl-underground": "transport/tfl-underground.js",

@@ -1,0 +1,136 @@
+<!--
+  Copyright 2015 IBM Corp.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="google geocoding">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <br />
+    <div class="form-row">
+        <label for="node-input-geocodeBy"><i class="fa fa-tasks"></i> Geocode by </label>
+        <select type="text" id="node-input-geocodeBy" style="width:72%;">
+        <option value="address">Address</option>
+        <option value="coordinates">Coordinates</option>
+        </select>
+    </div>
+    <br>
+    <div class="form-row node-input-geocodeBy-row-address">
+        <label for="node-input-address"><i class="fa fa-globe"></i> Address</label>
+        <input type="text" id="node-input-address" placeholder="Address">
+    </div>
+    <div class="form-row node-input-geocodeBy-row-coordinates">
+        <label for="node-input-lat"><i class="fa fa-globe"></i> Latitude</label>
+        <input type="text" id="node-input-lat" placeholder="Latitude">
+    </div>
+    <div class="form-row node-input-geocodeBy-row-coordinates">
+        <label for="node-input-lon"><i class="fa fa-globe"></i> Longitude</label>
+        <input type="text" id="node-input-lon" placeholder="Longitude">
+    </div>
+    <br />
+    <div class="form-row">
+        <label for="node-input-googleAPI"><i class="fa fa-user"></i> Google API Key</label>
+        <input type="text" id="node-input-googleAPI">
+    </div>
+    <div class="form-row">
+        <label for="node-input-bounds"><i class="fa fa-flag"></i> Bounds</label>
+        <input type="text" id="node-input-bounds" placeholder="Bounds">
+    </div>
+    <div class="form-row">
+        <label for="node-input-language"><i class="fa fa-language"></i> Language</label>
+        <input type="text" id="node-input-language" placeholder="Language">
+    </div>
+    <div class="form-row">
+        <label for="node-input-region"><i class="fa fa-globe"></i> Region</label>
+        <input type="text" id="node-input-region" placeholder="Region">
+    </div>
+    <div class="form-row">
+        <label for="node-input-components">Components</label>
+        <input type="text" id="node-input-components" placeholder="Components">
+    </div>
+    <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-sendFullResult" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-sendFullResult" style="width: 70%;">Send full result?</label>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="google geocoding">
+    <p><b>Utilizes the Google Geocoding API to allow conversion of addresses to coordinate sets, and vice versa.</b></p>
+    <p>The node can be configured to send a geocode or reverse-geocode request by changing the <code>geocodeBy</code> parameter in the node.</p>
+    <br>
+    <p><b>Input Parameters:</b></p>
+    <p><code>Name</code> - Name of the node</p>
+    <p><code>Geocode by</code> - Toggle to switch between a geocode and reverse-geocode request. Switching between the two will toggle the address and latitude/longitude inputs.</p>
+    <p><b>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</b></p>
+    <p><code>msg.location.address</code> - Address to be sent to Google in order to be converted to a set of coordinates. <b><i>(Required if using Geocode by Address)</i></b></p>
+    <p><code>msg.location.lat</code> - Latitude point to be sent to Google in order to be converted to a human-readable address. <b><i>(Required if using Geocode by Coordinates)</i></b></p>
+    <p><code>msg.location.lon</code> - Longitude point to be sent to Google in order to be converted to a human-readable address. <b><i>(Required if using Geocode by Coordinates)</i></b></p>
+    <p><code>msg.key</code> - Your application's API key. This key identifies your application for purposes of quota management.</p>
+    <p><code>msg.bounds</code> - The bounding box of the viewport within which to bias geocode results more prominently. This parameter will only influence, not fully restrict, results from the geocoder.</p>
+    <p><code>msg.language</code> - The language in which to return results.</p>
+    <p><code>msg.region</code> - The region code, specified as a ccTLD ("top-level domain") two-character value. This parameter will only influence, not fully restrict, results from the geocoder.</p>
+    <p><code>msg.components</code> - The component filters, separated by a pipe (|). Each component filter consists of a component:value pair and will fully restrict the results from the geocoder.</p>
+    <br>
+    <p><b>Return values:</b></p>
+    <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
+    <p>If <code>msg.status</code> returned 'OK':
+    <p><code>msg.location</code> - If provided with an <code>address</code>, <code>msg.location</code> will contain a <code>lat</code> and <code>lon</code> point. If provided with a <code>lat</code>/<code>lon</code> pair, <code>msg.location</code> will contain an <code>address</code></p>
+    <br>
+    <p>Otherwise:</p>
+    <p><code>msg.error</code> will contain a more detailed error message, if available</p>
+    <br><br>
+    <p>For more information, please visit the <a href="https://developers.google.com/maps/documentation/geocoding/">Google Geocoding API Developer Docs</a>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('google geocoding',{
+        category: 'function',
+        color: '#ff9999',
+        defaults: {
+            name: {value:""},
+            geocodeBy: {value:"address", required:true},
+            address: {value:""},
+            lat: {value:""},
+            lon: {value:""},
+            googleAPI: {type:"google-api-config"},
+            bounds: {value:""},
+            language: {value:""},
+            region: {value:""},
+            components: {value:""},
+            sendFullResult: {value:""}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "logo_maps.png",
+        label: function() {
+            if(this.geocodeBy === 'address')
+                return this.name||"Geocode by Address";
+            if(this.geocodeBy === 'coordinates')
+                return this.name||"Geocode by Coordinates";
+            else
+                return this.name||"Google Geocoding";
+        },
+        oneditprepare: function() {
+            $("#node-input-geocodeBy").change(function() {
+                if ($(this).val() === 'address') {
+                    $(".node-input-geocodeBy-row-address").show();
+                    $(".node-input-geocodeBy-row-coordinates").hide();
+                } else {
+                    $(".node-input-geocodeBy-row-coordinates").show();
+                    $(".node-input-geocodeBy-row-address").hide();
+                }
+            });
+        }
+    });
+</script>
