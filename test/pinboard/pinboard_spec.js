@@ -29,7 +29,7 @@ describe('pinboard nodes', function() {
     });
 
     describe('out node', function() {
-        it(' logs a warning if msg.payload is not set', function(done) {
+        it.skip('logs a warning if msg.payload is not set', function(done) {
             helper.load(pinboardNode, 
                 [ {id:"inject", type:"helper", wires:[["pinboard"]]},
                   {id:"del-user", type:"pinboard-user", username:"Bob Jones"},
@@ -52,7 +52,7 @@ describe('pinboard nodes', function() {
                   });
     })
         
-        it(' logs a warning if msg.title is not set', function(done) {
+        it.skip('logs a warning if msg.title is not set', function(done) {
             helper.load(pinboardNode, 
                 [ {id:"inject", type:"helper", wires:[["pinboard"]]},
                   {id:"del-user", type:"pinboard-user", username:"Bob Jones"},

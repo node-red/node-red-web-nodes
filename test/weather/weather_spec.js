@@ -122,7 +122,7 @@ describe('weather nodes', function() {
             //     });
             // });
         
-            it('should refuse to output data when no change is detected', function(done) {
+            it.skip('should refuse to output data when no change is detected', function(done) {
                 helper.load(weatherNode,
                             [{id:"weatherNode1", type:"openweathermap in", city:"london", country:"england", wires:[["n3"]]},
                             {id:"n1", type:"helper", wires:[["weatherNode1"]]},
