@@ -49,14 +49,24 @@ describe('delicious nodes', function() {
                       var inject = helper.getNode("inject");
                       var delicious = helper.getNode("delicious");
                       delicious.should.have.property('id','delicious');
-                      delicious.on('log',function(obj) {
-                          should.deepEqual({level:"warn", id:delicious.id,
-                                            type:delicious.type, msg:"url must be provided in msg.payload"}, obj);
-                          done();
-                      });
                       inject.send({title:"test",description:"testdesc"});
+                      setTimeout(function() {
+                          try {
+                              helper.log().called.should.be.true;
+                              var logEvents = helper.log().args.filter(function(evt) {
+                                      return evt[0].level == "warn";
+                              });
+                              logEvents.should.have.length(1);
+                              logEvents[0][0].should.have.a.property("id",delicious.id);
+                              logEvents[0][0].should.have.a.property("type",delicious.type);
+                              logEvents[0][0].should.have.a.property("msg","url must be provided in msg.payload");
+                              done();
+                          } catch(err) {
+                              done(err);
+                          }
+                      },200);
                   });
-    })
+        })
         
         it(' logs a warning if msg.title is not set', function(done) {
             helper.load(deliciousNode, 
@@ -72,14 +82,24 @@ describe('delicious nodes', function() {
                       var inject = helper.getNode("inject");
                       var delicious = helper.getNode("delicious");
                       delicious.should.have.property('id','delicious');
-                      delicious.on('log',function(obj) {
-                          should.deepEqual({level:"warn", id:delicious.id,
-                                            type:delicious.type, msg:"msg.title must be provided"}, obj);
-                          done();
-                      });
                       inject.send({payload:"foobar",description:"testdesc"});
+                      setTimeout(function() {
+                          try {
+                              helper.log().called.should.be.true;
+                              var logEvents = helper.log().args.filter(function(evt) {
+                                      return evt[0].level == "warn";
+                              });
+                              logEvents.should.have.length(1);
+                              logEvents[0][0].should.have.a.property("id",delicious.id);
+                              logEvents[0][0].should.have.a.property("type",delicious.type);
+                              logEvents[0][0].should.have.a.property("msg","msg.title must be provided");
+                              done();
+                          } catch(err) {
+                              done(err);
+                          }
+                      },200);
                   });
-    })
+        })
         
         if (nock) {
             
