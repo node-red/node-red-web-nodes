@@ -42,14 +42,84 @@ describe('tfl-underground nodes', function() {
     });
 
     describe('query node', function() {
+        it(' can detect and refuse when the input message has nothing in it.', function(done) {
+            helper.load(tubeNode,
+              [ {id:"n1", type:"helper", wires:[["n2"]]},
+                {id:"n2", type:"tfl underground", line:"Input Defined"}],
+                function() {
+                  var n1 = helper.getNode("n1");
+                  var n2 = helper.getNode("n2");
+                  var stub = sinon.stub(n2, 'error', function(msg) {
+                    msg.should.equal("No station in message input.");
+                    stub.restore();
+                    done();
+                  });
+
+                  n2.should.have.property('id','n2');
+                  n1.send({payload:""});
+                }
+            );
+        });
 
         if (nock) {
-            
+            it(' can detect and refuse when an invalid station is supplied.', function(done){
+              fs.readFile(file, 'utf8', function(err, data) {
+                helper.load(tubeNode,
+                    [ {id:"n1", type:"helper", wires:[["n2"]]},
+                      {id:"n2", type:"tfl underground", line:"Input Defined"}],
+                      function() {
+                        var scope = nock('http://cloud.tfl.gov.uk').get('/TrackerNet/LineStatus').reply(200, data);
+
+                        var n1 = helper.getNode("n1");
+                        var n2 = helper.getNode("n2");
+                        var stub = sinon.stub(n2, 'error', function(msg) {
+                          msg.should.equal("Invalid tube line provided in message: failure");
+                          stub.restore();
+                          done();
+                        });
+
+                        n2.should.have.property('id','n2');
+                        n1.send({payload:{tubeline:"failure"}});
+                      }
+                  );
+               });
+            });
+
+            it(' can pull data using input supplied station', function(done){
+              fs.readFile(file, 'utf8', function(err, data) {
+                helper.load(tubeNode,
+                    [ {id:"n1", type:"helper", wires:[["n2"]]},
+                      {id:"n2", type:"tfl underground", wires:[["n3"]], line:"Input Defined"},
+                      {id:"n3", type:"helper"}], 
+                      function() {
+                        var scope = nock('http://cloud.tfl.gov.uk').get('/TrackerNet/LineStatus').reply(200, data);
+
+                        var n1 = helper.getNode("n1");
+                        var n2 = helper.getNode("n2");
+                        var n3 = helper.getNode("n3");
+
+                        n2.should.have.property('id','n2');
+                        n1.send({payload:{tubeline:"Bakerloo"}});
+                        n3.on('input', function(msg){
+                            msg.payload.should.have.property('status', "GoodService");
+                            msg.payload.should.have.property('description', "Good Service");
+                            msg.payload.should.have.property('details', "");
+                            msg.payload.should.have.property('goodservice', true);
+                            msg.payload.should.have.property('branchdisruptions');
+                            msg.payload.branchdisruptions.should.be.an.instanceOf(Array);
+                            msg.payload.branchdisruptions.length.should.equal(0);
+                            done();
+                        });
+                      }
+                  );
+               });
+            }); 
+
             it(' can fetch Good Service information', function(done) {
                 fs.readFile(file, 'utf8', function(err, data) {
                     helper.load(tubeNode, 
                             [ {id:"n1", type:"helper", wires:[["n2"]]},
-                              {id:"n2", type:"tfl underground", wires:[["n3"]], line:"Bakerloo", acceptedtcs:true},
+                              {id:"n2", type:"tfl underground", wires:[["n3"]], line:"Bakerloo"},
                               {id:"n3", type:"helper"}], 
                               function() {
                                   var scope = nock('http://cloud.tfl.gov.uk').get('/TrackerNet/LineStatus').reply(200, data);
@@ -60,6 +130,7 @@ describe('tfl-underground nodes', function() {
                                   n2.should.have.property('id','n2');
                                   n1.send({payload:"foo"});
                                   n3.on('input', function(msg){
+                                      msg.should.have.property('description', "Status of the Bakerloo line");
                                       msg.payload.should.have.property('status', "GoodService");
                                       msg.payload.should.have.property('description', "Good Service");
                                       msg.payload.should.have.property('details', "");
@@ -78,7 +149,7 @@ describe('tfl-underground nodes', function() {
                     fs.readFile(file, 'utf8', function(err, data) {
                         helper.load(tubeNode, 
                                 [ {id:"n1", type:"helper", wires:[["n2"]]},
-                                  {id:"n2", type:"tfl underground", wires:[["n3"]], line:"District",acceptedtcs:true},
+                                  {id:"n2", type:"tfl underground", wires:[["n3"]], line:"District"},
                                   {id:"n3", type:"helper"}], 
                                   function() {
                                       var scope = nock('http://cloud.tfl.gov.uk').get('/TrackerNet/LineStatus').reply(200, data);
@@ -105,7 +176,7 @@ describe('tfl-underground nodes', function() {
                         fs.readFile(file, 'utf8', function(err, data) {
                             helper.load(tubeNode, 
                                     [ {id:"n1", type:"helper", wires:[["n2"]]},
-                                      {id:"n2", type:"tfl underground", wires:[["n3"]], line:"Jubilee",acceptedtcs:true},
+                                      {id:"n2", type:"tfl underground", wires:[["n3"]], line:"Jubilee"},
                                       {id:"n3", type:"helper"}], 
                                       function() {
                                           var scope = nock('http://cloud.tfl.gov.uk').get('/TrackerNet/LineStatus').reply(200, data);
@@ -133,7 +204,7 @@ describe('tfl-underground nodes', function() {
                         fs.readFile(file, 'utf8', function(err, data) {
                             helper.load(tubeNode, 
                                     [ {id:"n1", type:"helper", wires:[["n2"]]},
-                                      {id:"n2", type:"tfl underground", wires:[["n3"]], line:"Piccadilly",acceptedtcs:true},
+                                      {id:"n2", type:"tfl underground", wires:[["n3"]], line:"Piccadilly"},
                                       {id:"n3", type:"helper"}], 
                                       function() {
                                           var scope = nock('http://cloud.tfl.gov.uk').get('/TrackerNet/LineStatus').reply(200, data);
