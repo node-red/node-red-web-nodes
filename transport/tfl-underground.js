@@ -27,47 +27,64 @@ module.exports = function(RED) {
         node.line = n.line;
                    
         this.on("input", function(msg) {
-            var apiUrl = "http://cloud.tfl.gov.uk/TrackerNet/LineStatus";   
-            request.get(apiUrl,function(err, httpResponse, body) {
-                if (err) {
-                    node.error(err.toString());
-                    node.status({fill:"red",shape:"ring",text:"failed"});
+            var line;
+            if(node.line === "Input Defined"){
+                if(msg.payload && msg.payload.tubeline){
+                    line = msg.payload.tubeline;
                 } else {
-                    parseString(body, {strict:true,async:true}, function (err, result) {
-                        if (err) { node.error(err); }
-                        else {
-                            var linestatus = result.ArrayOfLineStatus.LineStatus;
-                            for (var i = 0; i < linestatus.length; i++) {
-                                var linename = linestatus[i].Line[0].$.Name;
-                                if (linename === node.line) {
-                                    msg.description = "Status of the " + linename + " line";
-                                    msg.payload = {};
-                                    msg.payload.status = linestatus[i].Status[0].$.CssClass;
-                                    if (msg.payload.status === "GoodService") {
-                                        msg.payload.goodservice = true;
-                                     } else {
-                                        msg.payload.goodservice = false;
-                                     }
-                                     msg.payload.description = linestatus[i].Status[0].$.Description;
-                                     msg.payload.details = linestatus[i].$.StatusDetails;
-                                     msg.payload.branchdisruptions = [];
-                                     var disruptions = linestatus[i].BranchDisruptions;
-
-                                     for (var j = 0; j < disruptions.length; j++) {
-                                        if (disruptions[j].BranchDisruption) {
-                                            msg.payload.branchdisruptions[j] = disruptions[j].BranchDisruption[0];
-                                         }
-                                     }
-                                        
-                                     msg.data = linestatus[i];
-                                     break;
-                                }
-                            }
-                            node.send(msg);
-                        }
-                    });
+                    node.error("No station in message input.");
                 }
-            });
+            } else {
+                line = node.line;
+            }
+            var msgMatched = false;
+            var apiUrl = "http://cloud.tfl.gov.uk/TrackerNet/LineStatus";
+            if(line){
+                request.get(apiUrl,function(err, httpResponse, body) {
+                    if (err) {
+                        node.error(err.toString());
+                        node.status({fill:"red",shape:"ring",text:"failed"});
+                    } else {
+                        parseString(body, {strict:true,async:true}, function (err, result) {
+                            if (err) { node.error(err); }
+                            else {
+                                var linestatus = result.ArrayOfLineStatus.LineStatus;
+                                for (var i = 0; i < linestatus.length; i++) {
+                                    var linename = linestatus[i].Line[0].$.Name;
+                                    if (linename.toLowerCase() === line.toLowerCase()) {
+                                        msgMatched = true;
+                                        msg.description = "Status of the " + linename + " line";
+                                        msg.payload = {};
+                                        msg.payload.status = linestatus[i].Status[0].$.CssClass;
+                                        if (msg.payload.status === "GoodService") {
+                                            msg.payload.goodservice = true;
+                                         } else {
+                                            msg.payload.goodservice = false;
+                                         }
+                                         msg.payload.description = linestatus[i].Status[0].$.Description;
+                                         msg.payload.details = linestatus[i].$.StatusDetails;
+                                         msg.payload.branchdisruptions = [];
+                                         var disruptions = linestatus[i].BranchDisruptions;
+
+                                         for (var j = 0; j < disruptions.length; j++) {
+                                            if (disruptions[j].BranchDisruption) {
+                                                msg.payload.branchdisruptions[j] = disruptions[j].BranchDisruption[0];
+                                             }
+                                         }
+                                            
+                                         msg.data = linestatus[i];
+                                         break;
+                                    }
+                                }
+                                if(!msgMatched){
+                                    node.error("Invalid tube line provided in message: " + msg.payload.tubeline);
+                                }
+                                node.send(msg);
+                            }
+                        });
+                    }
+                });
+            }
         });            
 
      } 
