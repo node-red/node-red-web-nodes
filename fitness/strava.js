@@ -115,7 +115,7 @@ module.exports = function(RED) {
         });
     }
     
-    function populateMsgSync(msg, activityDetails) {
+    function populateMsgSync(node, msg, activityDetails) {
         msg.data = activityDetails; // msg.data contains everything Strava returns
         
         msg.payload = {};
@@ -168,9 +168,9 @@ module.exports = function(RED) {
                 msg.payload.starttime = new Date(time);
             } catch (err) { // never actually trust date parsing ;)
                 if(useLocalTime ===  true) {
-                    node.log("We couldn't parse activity " + activityID + "'s local date into a JavaScript object. " + "The timestamp was " + activityDetails.start_date_local);   
+                    node.log("We couldn't parse activity " + activityDetails.id + "'s local date into a JavaScript object. " + "The timestamp was " + activityDetails.start_date_local);
                 } else {
-                    node.log("We couldn't parse activity " + activityID + "'s date into a JavaScript object. " + "The timestamp was " + activityDetails.start_date);
+                    node.log("We couldn't parse activity " + activityDetails.id + "'s date into a JavaScript object. " + "The timestamp was " + activityDetails.start_date);
                 }
             }
         }
@@ -213,7 +213,7 @@ module.exports = function(RED) {
                             if(error) {
                                 node.send(msg);
                             } else {
-                                populateMsgSync(msg, activityDetails);
+                                populateMsgSync(node, msg, activityDetails);
                                 node.send(msg);
                             }
                          });
