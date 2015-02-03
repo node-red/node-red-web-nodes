@@ -72,27 +72,32 @@ module.exports = function(RED) {
         RED.nodes.createNode(this, n);
         var node = this;
         this.request = n.request || "get-most-recent-checkin";
-        var credentials = RED.nodes.getCredentials(n.foursquare);
-        var credentialsOk = checkCredentials(node, credentials);
-        if (credentialsOk) {
-          this.on("input", function(msg) {
-              if (node.request === "get-most-recent-checkin") {
-                  getCheckinsAfterTimestamp(node, "self", null, credentials, msg, function(msg) {
-                      node.send(msg);
-                  });
-              }
-          });
-        }
-    } 
-    
+        var nodeCredentials = RED.nodes.getCredentials(n.foursquare);
+        checkCredentials(node, nodeCredentials);
+        this.on("input", function(msg) {
+            var credentials = nodeCredentials && nodeCredentials.accesstoken ? nodeCredentials : msg.credentials || {};
+            if (!credentials.accesstoken) {
+                node.warn("No credentials available");
+                delete msg.payload;
+                msg.error = "no access token provided";
+                node.send(msg);
+                return;
+            }
+            if (node.request === "get-most-recent-checkin") {
+                getCheckinsAfterTimestamp(node, "self", null, credentials, msg, function(msg) {
+                    node.send(msg);
+                });
+            }
+        });
+    }
+
     RED.nodes.registerType("swarm", SwarmQueryNode); 
     
     function checkCredentials(node, credentials) {
         if (credentials && credentials.clientid && credentials.clientsecret && credentials.accesstoken) {
            return true;
         } else {
-            node.error("problem with credentials being set: " + credentials + ", ");
-            node.status({fill:"red",shape:"ring",text:"failed"});      
+            node.warn("no credentials for node");
             return false;
         }
     }
