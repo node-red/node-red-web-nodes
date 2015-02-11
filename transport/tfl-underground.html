@@ -35,6 +35,7 @@
                 <option value="Piccadilly">Piccadilly</option>
                 <option value="Victoria">Victoria</option>
                 <option value="Waterloo and City">Waterloo and City</option>
+                <option value="Input Defined">Input Defined</option>
             </select>&nbsp;line 
     </div>
 
@@ -60,6 +61,8 @@
        <li><b>msg.payload.branchdisruptions</b> - an array of information about the disruptions if any exist</li>
        <li><b>msg.data</b> - object containing the full information about the requested line</li>
     </ul>
+    <p>The line can be selected from a list on the node UI, or fed into the node as the <b>msg.payload.tubeline</b> of the message input when "Input Defined" is chosen in the UI.
+    </p>
     </p>
     <p>Before using this node, please sign up to  
     <a href=https://api-portal.tfl.gov.uk/login target="_blank" style="text-decoration:underline;\">Transport for London</a> 

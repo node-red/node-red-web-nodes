@@ -84,7 +84,7 @@
             $("#node-config-input-client_id").on('change keydown paste input',updateJawboneupAuthButton);
             $("#node-config-input-app_secret").on('change keydown paste input',updateJawboneupAuthButton);
             
-            function updateJawboneScreenName(sn) {
+            function updateJawboneupScreenName(sn) {
                 $("#node-config-jawboneup-app-keys").hide();
                 $("#node-config-jawboneup-user").show();
                 $("#node-config-input-displayname").val(sn);
@@ -95,7 +95,7 @@
                 $.getJSON('credentials/jawboneup-credentials/'+id,function(data) {
                     if (data.displayname) {                     
                         $("#node-config-dialog-ok").button("enable");
-                        updateJawboneScreenName(data.displayname);
+                        updateJawboneupScreenName(data.displayname);
                         delete window.jawboneupConfigNodeIntervalId;
                     } else {
                         window.jawboneupConfigNodeIntervalId = window.setTimeout(pollJawboneupCredentials,2000);

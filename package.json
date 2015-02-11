@@ -39,7 +39,8 @@
             "weather": "weather/weather.js",
             "tfl-bus": "transport/tfl-bus.js",
             "tfl-underground": "transport/tfl-underground.js",
-            "forecastio": "forecast/forecastio.js"
+            "forecastio": "forecast/forecastio.js",
+            "strava": "fitness/strava.js"
         }
     },
     "devDependencies": {

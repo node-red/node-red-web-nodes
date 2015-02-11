@@ -43,14 +43,24 @@ describe('pinboard nodes', function() {
                       var inject = helper.getNode("inject");
                       var pinboard = helper.getNode("pinboard");
                       pinboard.should.have.property('id','pinboard');
-                      pinboard.on('log',function(obj) {
-                          should.deepEqual({level:"warn", id:pinboard.id,
-                                            type:pinboard.type, msg:"url must be provided in msg.payload"}, obj);
-                          done();
-                      });
                       inject.send({title:"test",description:"testdesc"});
+                      setTimeout(function() {
+                          try {
+                              helper.log().called.should.be.true;
+                              var logEvents = helper.log().args.filter(function(evt) {
+                                      return evt[0].level == "warn";
+                              });
+                              logEvents.should.have.length(1);
+                              logEvents[0][0].should.have.a.property("id",pinboard.id);
+                              logEvents[0][0].should.have.a.property("type",pinboard.type);
+                              logEvents[0][0].should.have.a.property("msg","url must be provided in msg.payload");
+                              done();
+                          } catch(err) {
+                              done(err);
+                          }
+                      },200);
                   });
-    })
+        })
         
         it(' logs a warning if msg.title is not set', function(done) {
             helper.load(pinboardNode, 
@@ -66,12 +76,22 @@ describe('pinboard nodes', function() {
                       var inject = helper.getNode("inject");
                       var pinboard = helper.getNode("pinboard");
                       pinboard.should.have.property('id','pinboard');
-                      pinboard.on('log',function(obj) {
-                          should.deepEqual({level:"warn", id:pinboard.id,
-                                            type:pinboard.type, msg:"msg.title must be provided"}, obj);
-                          done();
-                      });
                       inject.send({payload:"foobar",description:"testdesc"});
+                      setTimeout(function() {
+                          try {
+                              helper.log().called.should.be.true;
+                              var logEvents = helper.log().args.filter(function(evt) {
+                                      return evt[0].level == "warn";
+                              });
+                              logEvents.should.have.length(1);
+                              logEvents[0][0].should.have.a.property("id",pinboard.id);
+                              logEvents[0][0].should.have.a.property("type",pinboard.type);
+                              logEvents[0][0].should.have.a.property("msg","msg.title must be provided");
+                              done();
+                          } catch(err) {
+                              done(err);
+                          }
+                      },200);
                   });
         })
     });
