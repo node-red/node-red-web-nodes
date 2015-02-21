@@ -48,7 +48,7 @@ describe('pinboard nodes', function() {
                           try {
                               helper.log().called.should.be.true;
                               var logEvents = helper.log().args.filter(function(evt) {
-                                      return evt[0].level == "warn";
+                                      return evt[0].type == "pinboard out";
                               });
                               logEvents.should.have.length(1);
                               logEvents[0][0].should.have.a.property("id",pinboard.id);
@@ -81,7 +81,7 @@ describe('pinboard nodes', function() {
                           try {
                               helper.log().called.should.be.true;
                               var logEvents = helper.log().args.filter(function(evt) {
-                                      return evt[0].level == "warn";
+                                      return evt[0].type == "pinboard out";
                               });
                               logEvents.should.have.length(1);
                               logEvents[0][0].should.have.a.property("id",pinboard.id);
