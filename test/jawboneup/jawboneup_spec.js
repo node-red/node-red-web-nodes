@@ -370,19 +370,19 @@ describe('jawboneup nodes', function() {
                                   msg.should.have.property('title', "Run");
                                   
                                   msg.should.have.property('location');
-                                  msg.location.should.have.property('lat', "37.451572");
-                                  msg.location.should.have.property('lon', "-122.184435");
+                                  msg.location.should.have.property('lat', 37.451572);
+                                  msg.location.should.have.property('lon', -122.184435);
                                   
                                   msg.payload.should.have.property('starttime');
                                   msg.payload.starttime.getTime().should.equal(1417694436);
-                                  msg.payload.should.have.property('duration',"1800");
-                                  msg.payload.should.have.property('distance',"5000");
-                                  msg.payload.should.have.property('calories',"50");
+                                  msg.payload.should.have.property('duration',1800);
+                                  msg.payload.should.have.property('distance',5000);
+                                  msg.payload.should.have.property('calories',50);
                                   msg.payload.should.have.property('type', "Run");
                                   msg.payload.should.have.property('id', "XD_ew123");
                                   
-                                  msg.payload.details.should.have.property('meters', "5000");
-                                  msg.data.details.should.have.property('meters', "5000");
+                                  msg.payload.details.should.have.property('meters', 5000);
+                                  msg.data.details.should.have.property('meters', 5000);
                                   
                                   done();
                               });

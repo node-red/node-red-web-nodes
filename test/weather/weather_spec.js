@@ -25,18 +25,18 @@ describe('weather nodes', function() {
     var weatherDataTest = function(weatherdata, locationdata, timedata){
         timedata.toUTCString().should.be.exactly("Wed, 08 Oct 2014 14:00:48 GMT");
         weatherdata.should.have.property("detail", "scattered clouds");
-        weatherdata.should.have.property("tempk", "290.12");
-        weatherdata.should.have.property("humidity", "63");
-        weatherdata.should.have.property("maxtemp", "291.15");
-        weatherdata.should.have.property("mintemp", "289.15");
-        weatherdata.should.have.property("windspeed", "8.7");
-        weatherdata.should.have.property("winddirection", "220");
+        weatherdata.should.have.property("tempk", 290.12);
+        weatherdata.should.have.property("humidity", 63);
+        weatherdata.should.have.property("maxtemp", 291.15);
+        weatherdata.should.have.property("mintemp", 289.15);
+        weatherdata.should.have.property("windspeed", 8.7);
+        weatherdata.should.have.property("winddirection", 220);
         weatherdata.should.have.property("location", "London");
-        weatherdata.should.have.property("sunrise", "1412748812");
-        weatherdata.should.have.property("sunset", "1412788938");
-        weatherdata.should.have.property("clouds", "40");
-        locationdata.should.have.property("lon", "-0.13");
-        locationdata.should.have.property("lat", "51.51");
+        weatherdata.should.have.property("sunrise", 1412748812);
+        weatherdata.should.have.property("sunset", 1412788938);
+        weatherdata.should.have.property("clouds", 40);
+        locationdata.should.have.property("lon", -0.13);
+        locationdata.should.have.property("lat", 51.51);
         locationdata.should.have.property("city", "London");
         locationdata.should.have.property("country", "GB");
     }

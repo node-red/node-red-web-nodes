@@ -339,8 +339,8 @@ describe('foursquare nodes', function() {
                                   var bobs = msg;
                                   bobs.should.have.property('title', "Bobs Restaurant");
                                   bobs.should.have.property('location');                                  
-                                  bobs.location.should.have.property('lat', "51.03");
-                                  bobs.location.should.have.property('lon', "-1.42");
+                                  bobs.location.should.have.property('lat', 51.03);
+                                  bobs.location.should.have.property('lon', -1.42);
                                   bobs.location.should.have.property('city', undefined);
                                   bobs.location.should.have.property('country', undefined);
                                   bobs.location.should.have.property('name', "Bobs Restaurant");
@@ -385,8 +385,8 @@ describe('foursquare nodes', function() {
                                   var zoo = msg;
                                   zoo.should.have.property('title', "Zoo");
                                   zoo.should.have.property('location'); 
-                                  zoo.location.should.have.property('lat', "51.03");
-                                  zoo.location.should.have.property('lon', "-1.42");
+                                  zoo.location.should.have.property('lat', 51.03);
+                                  zoo.location.should.have.property('lon', -1.42);
                                   zoo.location.should.have.property('city', "Winchester");
                                   zoo.location.should.have.property('country', "England");
                                   zoo.location.should.have.property('name', "Zoo");
@@ -434,15 +434,15 @@ describe('foursquare nodes', function() {
                                   var zoo = msg.payload[0];
                                   zoo.should.have.property('title', "Zoo");
                                   zoo.should.have.property('location'); 
-                                  zoo.location.should.have.property('lat', "51.03");
-                                  zoo.location.should.have.property('lon', "-1.42");
+                                  zoo.location.should.have.property('lat', 51.03);
+                                  zoo.location.should.have.property('lon', -1.42);
                                   zoo.payload.reasons.items[0].should.have.property('summary', "You've been here 3 times");
                                   
                                   var playground = msg.payload[1];
                                   playground.should.have.property('title', "Playground");
                                   playground.should.have.property('location'); 
-                                  playground.location.should.have.property('lat', "52.12");
-                                  playground.location.should.have.property('lon', "-1.62");
+                                  playground.location.should.have.property('lat', 52.12);
+                                  playground.location.should.have.property('lon', -1.62);
                                   playground.payload.reasons.items[0].should.have.property('summary', "Very popular");
                                   
                                   done();
@@ -569,15 +569,15 @@ describe('foursquare nodes', function() {
                                   var zoo = msg.payload[0];
                                   zoo.should.have.property('title', "Zoo");
                                   zoo.should.have.property('location'); 
-                                  zoo.location.should.have.property('lat', "51.03");
-                                  zoo.location.should.have.property('lon', "-1.42");
+                                  zoo.location.should.have.property('lat', 51.03);
+                                  zoo.location.should.have.property('lon', -1.42);
                                   zoo.payload.reasons.items[0].should.have.property('summary', "You've been here 3 times");
                                   
                                   var playground = msg.payload[1];
                                   playground.should.have.property('title', "Playground");
                                   playground.should.have.property('location'); 
-                                  playground.location.should.have.property('lat', "52.12");
-                                  playground.location.should.have.property('lon', "-1.62");
+                                  playground.location.should.have.property('lat', 52.12);
+                                  playground.location.should.have.property('lon', -1.62);
                                   playground.payload.reasons.items[0].should.have.property('summary', "Very popular");
                                   
                                   done();
