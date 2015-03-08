@@ -35,7 +35,9 @@ describe('s3 nodes', function() {
     });
 
     describe("watch node", function() {
+console.log("----A");
         if (!nock) return;
+console.log("----B");
         it('should report file add event', function(done) {
             nock('https://foobar.s3.amazonaws.com:443')
                 .get('/')
@@ -82,6 +84,7 @@ describe('s3 nodes', function() {
                             });
                         });
         });
+console.log("----C");
 
         it('should report file delete event', function(done) {
             nock('https://foobar.s3.amazonaws.com:443')
@@ -129,6 +132,7 @@ describe('s3 nodes', function() {
                             });
                         });
         });
+console.log("----D");
 
         it('should report no event when there is no change', function(done) {
             nock('https://foobar.s3.amazonaws.com:443')
@@ -178,6 +182,7 @@ describe('s3 nodes', function() {
                             });
                         });
         });
+console.log("----E");
 
         it('should report event when filepattern matches', function(done) {
             nock('https://foobar.s3.amazonaws.com:443')
@@ -226,6 +231,7 @@ describe('s3 nodes', function() {
                             });
                         });
         });
+console.log("----F");
 
         it('should report no event when filepattern does not match', function(done) {
             nock('https://foobar.s3.amazonaws.com:443')
@@ -276,6 +282,7 @@ describe('s3 nodes', function() {
                             });
                         });
         });
+console.log("----G");
     });
 
     describe("query node", function() {
