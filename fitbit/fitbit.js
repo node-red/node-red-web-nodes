@@ -61,7 +61,7 @@ module.exports = function(RED) {
         }
     }
 
-    function displayError(node, err) {
+    function formatError(err) {
         var errors = [];
         if (err.statusCode === 503) {
              errors = JSON.parse(err.data).restrictions.map(function(e) {
@@ -74,11 +74,9 @@ module.exports = function(RED) {
                     " \"" + e.message + "\"";
              });
         }
-        node.error("Error "+ err.statusCode + ": " + errors.join(", "));
-        node.status({fill:"red",shape:"ring",text:"failed"});
-        return;
+        return "Error "+ err.statusCode + ": " + errors.join(", ");
     }
-
+    
     function FitbitInNode(n) {
         RED.nodes.createNode(this,n);
         this.fitbitConfig = RED.nodes.getNode(n.fitbit);
@@ -100,18 +98,22 @@ module.exports = function(RED) {
                        credentials.access_token_secret,
                        function(err, body, response) {
                     if (err) {
-                        return displayError(node, err);
+                        node.error(formatError(err));
+                        node.status({fill:"red",shape:"ring",text:"failed"});
+                        return;
                     }
                     node.state = JSON.parse(body).badges;
                     node.status({});
-                    node.on('input', function() {
+                    node.on('input', function(msg) {
                         node.status({fill:"blue",shape:"dot",text:"querying"});
                         oa.get('https://api.fitbit.com/1/user/-/badges.json',
                                credentials.access_token,
                                credentials.access_token_secret,
                                function(err, body, response) {
                             if (err) {
-                                return displayError(node, err);
+                                node.error(formatError(err),msg);
+                                node.status({fill:"red",shape:"ring",text:"failed"});
+                                return;
                             }
                             var badges = JSON.parse(body).badges;
                             outerLoop:
@@ -142,7 +144,9 @@ module.exports = function(RED) {
                        credentials.access_token_secret,
                        function(err, body, response) {
                     if (err) {
-                        return displayError(node, err);
+                        node.error(formatError(err));
+                        node.status({fill:"red",shape:"ring",text:"failed"});
+                        return;
                     }
                     var data = JSON.parse(body);
                     node.state = {
@@ -150,7 +154,7 @@ module.exports = function(RED) {
                         sleep: mainSleep(data.sleep),
                     };
                     node.status({});
-                    node.on('input', function() {
+                    node.on('input', function(msg) {
                         node.status({fill:"blue",shape:"dot",text:"querying"});
                         var day = today();
                         oa.get('https://api.fitbit.com/1/user/-/sleep/date/'+day+'.json',
@@ -158,7 +162,9 @@ module.exports = function(RED) {
                                credentials.access_token_secret,
                                function(err, body, response) {
                             if (err) {
-                                return displayError(node, err);
+                                node.error(formatError(err),msg);
+                                node.status({fill:"red",shape:"ring",text:"failed"});
+                                return;
                             }
                             var data = JSON.parse(body);
                             var sleep = mainSleep(data.sleep);
@@ -180,7 +186,9 @@ module.exports = function(RED) {
                        credentials.access_token_secret,
                        function(err, body, response) {
                     if (err) {
-                        return displayError(node, err);
+                        node.error(formatError(err));
+                        node.status({fill:"red",shape:"ring",text:"failed"});
+                        return;
                     }
                     var data = JSON.parse(body);
                     node.state = {
@@ -188,7 +196,7 @@ module.exports = function(RED) {
                         summary: data.summary,
                     };
                     node.status({});
-                    node.on('input', function() {
+                    node.on('input', function(msg) {
                         node.status({fill:"blue",shape:"dot",text:"querying"});
                         var day = today();
                         var fetchDay = day;
@@ -202,7 +210,9 @@ module.exports = function(RED) {
                                credentials.access_token_secret,
                                function(err, body, response) {
                             if (err) {
-                                return displayError(node, err);
+                                node.error(formatError(err),msg);
+                                node.status({fill:"red",shape:"ring",text:"failed"});
+                                return;
                             }
                             var data = JSON.parse(body);
                             if (data.summary.steps >= data.goals.steps &&
@@ -261,8 +271,13 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         this.fitbitConfig = RED.nodes.getNode(n.fitbit);
         this.dataType = n.dataType || 'activities';
+        var supportedTypes = ["activities","sleep","badges"];
+        if (supportedTypes.indexOf(this.dataType) == -1) {
+            this.error("Unsupported data type");
+            return;
+        }
         if (!this.fitbitConfig) {
-            this.warn("Missing fitbit credentials");
+            this.error("Missing fitbit credentials");
             return;
         }
         var credentials = this.fitbitConfig.credentials;
@@ -280,25 +295,23 @@ module.exports = function(RED) {
                         node.dataType + '/date/' + day + '.json';
                 } else if (node.dataType === 'badges') {
                     url = 'https://api.fitbit.com/1/user/-/badges.json';
-                } else {
-                    node.status({fill:"red",shape:"ring",text:"invalid type"});
-                    return;
                 }
                 oa.get(url,
                        credentials.access_token,
                        credentials.access_token_secret,
                        function(err, body, response) {
                     if (err) {
-                        return displayError(node, err);
+                        node.error(formatError(err),msg);
+                        node.status({fill:"red",shape:"ring",text:"failed"});
+                        return;
                     }
                     var data = JSON.parse(body);
                     msg.data = data;
                     if (node.dataType === 'sleep') {
                         var sleep = mainSleep(data.sleep);
                         if (!sleep) {
-                            node.warn("no main sleep recorded");
-                            delete msg.payload;
-                            msg.error = "no main sleep record found";
+                            node.warn("no main sleep record found");
+                            return;
                         } else {
                             msg.payload = sleep;
                             delete msg.error;

@@ -54,7 +54,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         this.flickrConfig = RED.nodes.getNode(n.flickr);
         if (!this.flickrConfig) {
-            this.warn("Missing flickr credentials");
+            this.error("Missing flickr credentials");
             return;
         }
         this.tags = n.tags;
@@ -117,7 +117,7 @@ module.exports = function(RED) {
                                 node.status({});
                             } else {
                                 //TODO: This API only returns XML. Need to parse out error messages
-                                node.error(body);
+                                node.error(body,msg);
                                 node.status({fill:"red",shape:"ring",text:"failed"});
                             }
                         }

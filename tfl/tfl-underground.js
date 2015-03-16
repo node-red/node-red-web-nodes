@@ -32,7 +32,7 @@ module.exports = function(RED) {
                 if(msg.payload && msg.payload.tubeline){
                     line = msg.payload.tubeline;
                 } else {
-                    node.error("No station in message input.");
+                    node.error("No station in message input.",msg);
                 }
             } else {
                 line = node.line;
@@ -42,11 +42,11 @@ module.exports = function(RED) {
             if(line){
                 request.get(apiUrl,function(err, httpResponse, body) {
                     if (err) {
-                        node.error(err.toString());
+                        node.error(err.toString(),msg);
                         node.status({fill:"red",shape:"ring",text:"failed"});
                     } else {
                         parseString(body, {strict:true,async:true}, function (err, result) {
-                            if (err) { node.error(err); }
+                            if (err) { node.error(err,msg); }
                             else {
                                 var linestatus = result.ArrayOfLineStatus.LineStatus;
                                 for (var i = 0; i < linestatus.length; i++) {
@@ -77,9 +77,10 @@ module.exports = function(RED) {
                                     }
                                 }
                                 if(!msgMatched){
-                                    node.error("Invalid tube line provided in message: " + msg.payload.tubeline);
+                                    node.error("Invalid tube line: " + msg.payload.tubeline,msg);
+                                } else {
+                                    node.send(msg);
                                 }
-                                node.send(msg);
                             }
                         });
                     }

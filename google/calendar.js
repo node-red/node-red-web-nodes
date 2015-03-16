@@ -51,7 +51,7 @@ module.exports = function(RED) {
         node.status({fill:"blue",shape:"dot",text:"querying"});
         calendarList(node, function(err) {
             if (err) {
-                node.error(err);
+                node.error(err,{});
                 node.status({fill:"red",shape:"ring",text:"failed"});
                 return;
             }
@@ -69,7 +69,7 @@ module.exports = function(RED) {
                         node.emit('input', {});
                     });
                     if (err) {
-                        node.warn(err);
+                        node.error(err,msg);
                         node.status({fill:"blue",shape:"dot",text:"failed"});
                     } else {
                         node.status({});
@@ -150,7 +150,7 @@ module.exports = function(RED) {
         node.status({fill:"blue",shape:"dot",text:"querying"});
         calendarList(node, function(err) {
             if (err) {
-                node.error(err);
+                node.error(err,{});
                 node.status({fill:"red",shape:"ring",text:"failed"});
                 return;
             }
@@ -161,18 +161,18 @@ module.exports = function(RED) {
                 var cal = calendarByNameOrId(node, msg.calendar) ||
                     calendarByNameOrId(node, node.calendar);
                 if (!cal) {
+                    node.error("invalid calendar",msg);
                     node.status({fill:"red",shape:"ring",text:"invalid calendar"});
                     return;
                 }
                 nextStartingEvent(node, cal, msg, function(err, ev) {
                     if (err) {
-                        node.error("Error: " + err.toString());
+                        node.error("Error: " + err.toString(),msg);
                         node.status({fill:"red",shape:"ring",text:"failed"});
-                        sendError(node, "event lookup failed", msg);
                         return;
                     }
                     if (!ev) {
-                        sendError(node, "no event found", msg);
+                        node.error("Error: no event found",msg);
                         node.status({fill:"red",shape:"ring",text:"no event"});
                     } else {
                         sendEvent(node, ev, msg);
@@ -453,16 +453,6 @@ module.exports = function(RED) {
         });
     }
 
-    function sendError(node, error, msg) {
-        if (typeof msg === 'undefined') {
-            msg = {};
-        }
-        delete msg.payload;
-        delete msg.data;
-        msg.error = error;
-        node.send(msg);
-    }
-
     function sendEvent(node, ev, msg) {
         if (typeof msg === 'undefined') {
             msg = {};
@@ -559,6 +549,7 @@ module.exports = function(RED) {
                 var cal = calendarByNameOrId(node, msg.calendar) ||
                     calendarByNameOrId(node, node.calendar);
                 if (!cal) {
+                    node.error("invalid calendar",msg);
                     node.status({fill:"red",shape:"ring",text:"invalid calendar"});
                     return;
                 }
@@ -581,10 +572,10 @@ module.exports = function(RED) {
                 }
                 node.google.request(request, function(err, data) {
                     if (err) {
-                        node.error(err.toString());
+                        node.error(err.toString(),msg);
                         node.status({fill:"red",shape:"ring",text:"failed"});
                     } else if (data.error) {
-                        node.error(data.error.message);
+                        node.error(data.error.message,msg);
                         node.status({fill:"red",shape:"ring",text:"failed"});
                     } else {
                         node.status({});

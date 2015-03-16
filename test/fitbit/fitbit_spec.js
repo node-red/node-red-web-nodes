@@ -444,7 +444,7 @@ describe('fitbit nodes', function() {
         });
     });
 
-    describe('out node', function() {
+    describe('query node', function() {
 
         if (nock) {
 
@@ -566,7 +566,7 @@ describe('fitbit nodes', function() {
                });
             });
 
-            it('can fetch sleep data', function(done) {
+            it('handles empty sleep data', function(done) {
                 helper.load(fitbitNode, [
                     {id:"input", type:"helper", wires:[["fitbit"]]},
                     {id:"fitbit-config", type:"fitbit-credentials",
@@ -600,11 +600,15 @@ describe('fitbit nodes', function() {
                     var output = helper.getNode("output");
                     fitbit.should.have.property('id', 'fitbit');
                     input.send({ date: "2014-09-29" });
+                    var errored = false;
+                    setTimeout(function() {
+                        if (!errored) {
+                            done();
+                        }
+                    },500);
                     output.on('input', function(msg) {
-                        msg.should.not.have.property('payload');
-                        msg.should.have.property('error',
-                            'no main sleep record found');
-                        done();
+                        errored = true;
+                        done(new Error("Should not receive an msg.error"));
                     });
                });
             });
@@ -843,38 +847,6 @@ describe('fitbit nodes', function() {
                 var n = helper.getNode("f1");
                 n.should.have.property('id', 'f1');
                 done();
-            });
-        });
-
-        it('fails to fetch invalid data type', function(done) {
-            helper.load(fitbitNode,
-                        [{id:"input", type:"helper", wires:[["fitbit"]]},
-                         {id:"fitbit-config", type:"fitbit-credentials", username: "Bob"},
-                         {id:"fitbit", type:"fitbit", fitbit: "fitbit-config", wires:[["output"]],
-                          dataType:"foobar"},
-                         {id:"output", type:"helper"}],
-                        {
-                            "fitbit-config": { client_key: "fade",
-                                    client_secret: "face",
-                                    access_token: "beef",
-                                    access_token_secret: "feed",
-                                    username: "Bob",
-                                  },
-                        }, function() {
-                var input = helper.getNode("input");
-                var fitbit = helper.getNode("fitbit");
-                var output = helper.getNode("output");
-                var expected = [
-                    {"fill":"blue","shape":"dot","text":"querying"},
-                    {"fill":"red","shape":"ring","text":"invalid type"},
-                ];
-                sinon.stub(fitbit, 'status', function(status) {
-                    should.deepEqual(status, expected.shift());
-                    if (expected.length === 0) {
-                        done();
-                    }
-                });
-                input.send({ date: "2014-09-29" });
             });
         });
 

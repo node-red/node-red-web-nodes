@@ -62,7 +62,7 @@ module.exports = function(RED) {
                 node.status({fill:"blue",shape:"dot",text:"checking for changes"});
                 dropbox.pullChanges(node.state, function(err, data) {
                     if (err) {
-                        node.warn("failed to fetch changes" + err.toString());
+                        node.error("failed to fetch changes" + err.toString(),msg);
                         node.status({}); // clear status since poll retries anyway
                         return;
                     }
@@ -116,22 +116,20 @@ module.exports = function(RED) {
         node.on("input", function(msg) {
             var filename = this.filename || msg.filename;
             if (filename === "") {
-                node.warn("No filename specified");
+                node.error("No filename specified",msg);
                 return;
             }
             msg.filename = filename;
             node.status({fill:"blue",shape:"dot",text:"downloading"});
             dropbox.readFile(filename, function(err, data) {
                     if (err) {
-                        node.warn("download failed " + err.toString());
-                        delete msg.payload;
-                        msg.error = err;
+                        node.error("download failed " + err.toString(),msg);
+                        node.status({fill:"red",shape:"ring",text:"failed"});
                     } else {
                         msg.payload = data;
-                        delete msg.error;
+                        node.status({});
+                        node.send(msg);
                     }
-                node.status({});
-                node.send(msg);
             });
         });
     }
@@ -166,7 +164,8 @@ module.exports = function(RED) {
             node.on("input", function(msg) {
                 var filename = this.filename || msg.filename;
                 if (filename === "") {
-                    node.warn("No filename specified");
+                    node.error("No filename specified",msg);
+                    node.status({fill:"red",shape:"ring",text:"failed"});
                     return;
                 }
                 var localFilename = this.localFilename || msg.localFilename;
@@ -175,14 +174,14 @@ module.exports = function(RED) {
                     node.status({fill:"blue",shape:"dot",text:"uploading"});
                     fs.readFile(localFilename, function read(err, data) {
                         if (err) {
-                            node.error(err.toString());
+                            node.error(err.toString(),msg);
                             node.status({fill:"red",shape:"ring",text:"failed"});
                             return;
                         }
 
                         dropbox.writeFile(filename, data, function(err) {
                             if (err) {
-                                node.error(err.toString());
+                                node.error(err.toString(),msg);
                                 node.status({fill:"red",shape:"ring",text:"failed"});
                                 return;
                             }
@@ -194,7 +193,7 @@ module.exports = function(RED) {
                     node.status({fill:"blue",shape:"dot",text:"uploading"});
                     dropbox.writeFile(filename, data, function(err) {
                         if (err) {
-                            node.error(err.toString());
+                            node.error(err.toString(),msg);
                             node.status({fill:"red",shape:"ring",text:"failed"});
                             return;
                         }

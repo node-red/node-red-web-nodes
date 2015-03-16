@@ -45,16 +45,14 @@ module.exports = function(RED) {
             node.status({fill:"blue",shape:"dot",text:"querying"});
             this.googleAPI.request(req, function(err, data) {
                 if (err) {
-                    node.warn(err);
+                    node.error(err,msg);
                     node.status({fill:"red",shape:"ring",text:"failed"});
-                    delete msg.payload;
-                    msg.error = "request failed";
-                    msg.data = data;
+                    return;
                 } else if (data.results.length < 1) {
                     node.warn("no results returned");
-                    node.status({fill:"red",shape:"ring",text:"failed"});
+                    node.status({});
                     delete msg.payload;
-                    msg.error = "no results returned";
+                    delete msg.title;
                     msg.data = data;
                 } else {
                     delete msg.error;

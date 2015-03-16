@@ -39,11 +39,11 @@ module.exports = function(RED) {
         if (this.user) {
             this.on("input", function(msg) {
                 if (!msg.payload) {
-                    node.warn("url must be provided in msg.payload");
+                    node.error("url must be provided in msg.payload",msg);
                     return;
                 }
                 if (!msg.title) {
-                    node.warn("msg.title must be provided");
+                    node.error("msg.title must be provided",msg);
                     return;
                 }
                 var options = {
@@ -79,12 +79,12 @@ module.exports = function(RED) {
                         if (result.result_code == "done") {
                             node.status({});
                         } else {
-                            node.error(result.result_code);
+                            node.error(result.result_code,msg);
                             node.status({fill:"red",shape:"ring",text:result.result_code});
                         }
                     });
                 }).on('error',function(err) {
-                    node.error(err);
+                    node.error(err,msg);
                     node.status({fill:"red",shape:"ring",text:err.code});
                 });
                 

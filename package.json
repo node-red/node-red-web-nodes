@@ -1,6 +1,6 @@
 {
     "name"          : "node-red-node-web-nodes",
-    "version"       : "0.2.0",
+    "version"       : "0.3.0",
     "description"   : "A collection of Node-RED nodes for popular web services.",
     "dependencies"  : {
         "aws-sdk": "^2.0.15",
@@ -17,7 +17,7 @@
         "url":"https://github.com/node-red/node-red-web-nodes"
     },
     "license": "Apache-v2.0",
-    "keywords": [ "node-red", "flickr", "pinboard", "dropbox", "aws", "s3" ],
+    "keywords": [ "node-red", "flickr", "pinboard", "dropbox", "aws", "s3", "swarm", "foursquare"," instagram","google","tfl","strava","forecastio","jawbone" ],
     "node-red"      : {
         "nodes"     : {
             "aws": "aws/aws.js",
@@ -36,10 +36,10 @@
             "googlecalendar": "google/calendar.js",
             "googleplaces": "google/places.js",
             "weather": "weather/weather.js",
-            "tfl-bus": "transport/tfl-bus.js",
-            "tfl-underground": "transport/tfl-underground.js",
+            "tfl-bus": "tfl/tfl-bus.js",
+            "tfl-underground": "tfl/tfl-underground.js",
             "forecastio": "forecast/forecastio.js",
-            "strava": "fitness/strava.js"
+            "strava": "strava/strava.js"
         }
     },
     "devDependencies": {

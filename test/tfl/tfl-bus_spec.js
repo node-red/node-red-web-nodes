@@ -14,7 +14,7 @@
  * limitations under the License.
  **/
 
-var busNode = require("../../transport/tfl-bus.js");
+var busNode = require("../../tfl/tfl-bus.js");
 var helper = require('../helper.js');
 
 var should = require("should");

@@ -64,10 +64,7 @@ module.exports = function(RED) {
         this.on("input", function(msg) {
             var credentials = nodeCredentials && nodeCredentials.accesstoken ? nodeCredentials : msg.credentials || {};
             if (!credentials.accesstoken) {
-                node.warn("No credentials available");
-                delete msg.payload;
-                msg.error = "no access token provided";
-                node.send(msg);
+                node.error("No access token available",msg);
                 return;
             }
             if (msg.location.lat && msg.location.lon) {
@@ -85,11 +82,11 @@ module.exports = function(RED) {
                         node.send(msg);
                     });
                 } else {
-                    node.error("problem with node input: section is not defined correctly");
+                    node.error("problem with node input: section is not defined correctly",msg);
                     node.status({fill:"red",shape:"ring",text:"failed"});
                 }
             } else {
-                node.error("problem with node input: latitude and/or longitude not set");
+                node.error("problem with node input: latitude and/or longitude not set",msg);
                 node.status({fill:"red",shape:"ring",text:"failed"});
             }
         });
@@ -126,8 +123,9 @@ module.exports = function(RED) {
             } else {
                 var result = JSON.parse(body);
                 if (result.meta.code != 200) {
-                    node.error("Error code: " + result.meta.code + ", errorDetail: " + result.meta.errorDetail);
+                    node.error("Error code: " + result.meta.code + ", errorDetail: " + result.meta.errorDetail,msg);
                     node.status({fill:"red",shape:"ring",text:"failed"});
+                    return;
                 } else {
                     if (result.response.groups[0].items.length !== 0) {
                         if (node.outputNumber === 1) {
@@ -161,7 +159,7 @@ module.exports = function(RED) {
                             callback([msgs]);
                         } else {
                             // shouldn't ever get here
-                            node.error("Incorrect number of messages to output or incorrect choice of how to output them");
+                            node.error("Incorrect number of messages to output or incorrect choice of how to output them",msg);
                             node.status({fill:"red",shape:"ring",text:"failed"});
                         }
                     

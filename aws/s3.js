@@ -46,7 +46,7 @@ module.exports = function(RED) {
                 node.status({fill:"blue",shape:"dot",text:"checking for changes"});
                 s3.listObjects({ Bucket: node.bucket }, function(err, data) {
                     if (err) {
-                        node.warn("failed to fetch S3 state: " + err);
+                        node.error("failed to fetch S3 state: " + err,msg);
                         node.status({});
                         return;
                     }
@@ -117,12 +117,12 @@ module.exports = function(RED) {
         node.on("input", function(msg) {
             var bucket = node.bucket || msg.bucket;
             if (bucket === "") {
-                node.warn("No bucket specified");
+                node.error("No bucket specified",msg);
                 return;
             }
             var filename = node.filename || msg.filename;
             if (filename === "") {
-                node.warn("No filename specified");
+                node.error("No filename specified",msg);
                 return;
             }
             msg.bucket = bucket;
@@ -133,12 +133,10 @@ module.exports = function(RED) {
                 Key: filename,
             }, function(err, data) {
                 if (err) {
-                    node.warn("download failed " + err.toString());
-                    delete msg.payload;
-                    msg.error = err;
+                    node.error("download failed " + err.toString(),msg);
+                    return;
                 } else {
                     msg.payload = data.Body;
-                    delete msg.error;
                 }
                 node.status({});
                 node.send(msg);
@@ -173,12 +171,12 @@ module.exports = function(RED) {
                 node.on("input", function(msg) {
                     var bucket = node.bucket || msg.bucket;
                     if (bucket === "") {
-                        node.warn("No bucket specified");
+                        node.error("No bucket specified",msg);
                         return;
                     }
                     var filename = node.filename || msg.filename;
                     if (filename === "") {
-                        node.warn("No filename specified");
+                        node.error("No filename specified",msg);
                         return;
                     }
                     var localFilename = node.localFilename || msg.localFilename;
@@ -192,7 +190,7 @@ module.exports = function(RED) {
                             Key: filename,
                         }, function(err) {
                             if (err) {
-                                node.error(err.toString());
+                                node.error(err.toString(),msg);
                                 node.status({fill:"red",shape:"ring",text:"failed"});
                                 return;
                             }
@@ -206,7 +204,7 @@ module.exports = function(RED) {
                             Key: filename,
                         }, function(err) {
                             if (err) {
-                                node.error(err.toString());
+                                node.error(err.toString(),msg);
                                 node.status({fill:"red",shape:"ring",text:"failed"});
                                 return;
                             }

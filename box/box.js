@@ -344,7 +344,7 @@ module.exports = function(RED) {
                     url: 'https://api.box.com/2.0/events?stream_position='+node.state+'&stream_type=changes',
                 }, function(err, data) {
                     if (err) {
-                        node.warn("failed to fetch events: " + err.toString());
+                        node.error("failed to fetch events: " + err.toString(),msg);
                         node.status({});
                         return;
                     }
@@ -440,18 +440,15 @@ module.exports = function(RED) {
         node.on("input", function(msg) {
             var filename = node.filename || msg.filename;
             if (filename === "") {
-                node.warn("No filename specified");
+                node.error("No filename specified");
                 return;
             }
             msg.filename = filename;
             node.status({fill:"blue",shape:"dot",text:"resolving path"});
             node.box.resolveFile(filename, function(err, file_id) {
                 if (err) {
-                    node.warn("failed to resolve path: " + err.toString());
-                    node.status({});
-                    delete msg.payload;
-                    msg.error = err;
-                    node.send(msg);
+                    node.error("failed to resolve path: " + err.toString(),msg);
+                    node.status({fill:"red",shape:"ring",text:"failed"});
                     return;
                 }
                 node.status({fill:"blue",shape:"dot",text:"downloading"});
@@ -463,15 +460,14 @@ module.exports = function(RED) {
                     encoding: null,
                 }, function(err, data) {
                     if (err) {
-                        node.warn("download failed: " + err.toString());
-                        delete msg.payload;
-                        msg.error = err;
+                        node.error("download failed: " + err.toString(),msg);
+                        node.status({fill:"red",shape:"ring",text:"failed"});
                     } else {
                         msg.payload = data;
                         delete msg.error;
+                        node.status({});
+                        node.send(msg);
                     }
-                    node.status({});
-                    node.send(msg);
                 });
             });
         });
@@ -492,7 +488,7 @@ module.exports = function(RED) {
         node.on("input", function(msg) {
             var filename = node.filename || msg.filename;
             if (filename === "") {
-                node.warn("No filename specified");
+                node.error("No filename specified");
                 return;
             }
             var path = filename.split("/");
@@ -504,7 +500,7 @@ module.exports = function(RED) {
             }
             node.box.resolvePath(path, function(err, parent_id) {
                 if (err) {
-                    node.error("failed to resolve path: " + err.toString());
+                    node.error("failed to resolve path: " + err.toString(),msg);
                     node.status({fill:"red",shape:"ring",text:"failed"});
                     return;
                 }
@@ -524,7 +520,7 @@ module.exports = function(RED) {
                                     data.context_info.conflicts.id+'/content',
                             }, function(err, data) {
                                 if (err) {
-                                    node.error("failed upload: " + err.toString());
+                                    node.error("failed upload: " + err.toString(),msg);
                                     node.status({fill:"red",shape:"ring",text:"failed"});
                                     return;
                                 }
@@ -539,7 +535,7 @@ module.exports = function(RED) {
                                 { filename: basename });
                             }
                         } else {
-                            node.error("failed upload: " + err.toString());
+                            node.error("failed upload: " + err.toString(),msg);
                             node.status({fill:"red",shape:"ring",text:"failed"});
                         }
                         return;

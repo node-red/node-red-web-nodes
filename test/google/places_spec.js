@@ -213,10 +213,10 @@ describe('google places', function() {
                 var output = helper.getNode("output");
                 output.should.have.property('id', 'output');
                 var sinon = require("sinon");
-                var stub = sinon.stub(places, 'warn', function(warning) {
+                var stub = sinon.stub(places, 'error', function(err) {
                     stub.restore();
                     stub = null;
-                    warning.should.containEql("API key is invalid");
+                    err.should.containEql("API key is invalid");
                     done();
                 });
                 input.send({ payload: 'foobar' });

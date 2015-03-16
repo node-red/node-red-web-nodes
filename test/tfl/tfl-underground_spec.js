@@ -15,7 +15,7 @@
  **/
 
 var should = require("should");
-var tubeNode = require("../../transport/tfl-underground.js");
+var tubeNode = require("../../tfl/tfl-underground.js");
 var helper = require('../helper.js');
 var sinon = require('sinon');
 var path = require("path");
@@ -73,7 +73,7 @@ describe('tfl-underground nodes', function() {
                         var n1 = helper.getNode("n1");
                         var n2 = helper.getNode("n2");
                         var stub = sinon.stub(n2, 'error', function(msg) {
-                          msg.should.equal("Invalid tube line provided in message: failure");
+                          msg.should.equal("Invalid tube line: failure");
                           stub.restore();
                           done();
                         });

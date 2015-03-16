@@ -77,10 +77,7 @@ module.exports = function(RED) {
         this.on("input", function(msg) {
             var credentials = nodeCredentials && nodeCredentials.accesstoken ? nodeCredentials : msg.credentials || {};
             if (!credentials.accesstoken) {
-                node.warn("No credentials available");
-                delete msg.payload;
-                msg.error = "no access token provided";
-                node.send(msg);
+                node.error("No access token available",msg);
                 return;
             }
             if (node.request === "get-most-recent-checkin") {
@@ -110,13 +107,15 @@ module.exports = function(RED) {
         }
         request.get(apiUrl,function(err, httpResponse, body) {
             if (err) {
-                node.error(err.toString());
+                node.error(err.toString(),msg);
                 node.status({fill:"red",shape:"ring",text:"failed"});
+                return;
             } else {
                 var result = JSON.parse(body);
                 if (result.meta.code != 200) {
-                    node.error("Error code: " + result.meta.code + ", errorDetail: " + result.meta.errorDetail);
+                    node.error("Error code: " + result.meta.code + ", errorDetail: " + result.meta.errorDetail,msg);
                     node.status({fill:"red",shape:"ring",text:"failed"});
+                    return;
                 } else {
                     if (result.response.checkins.items.length !== 0) {
                       var latest = result.response.checkins.items[0];

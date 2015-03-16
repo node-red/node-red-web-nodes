@@ -12,17 +12,23 @@ The latest release of these nodes can be installed by running:
 
 ### Nodes
 
-The current release contains the following nodes:
+The current release contains the following nodes for the follow servives
 
  - Amazon S3
-   - Write to a file
+ - Box
  - Delicious
-   - Add a bookmark
  - Dropbox
-   - Write to a file
+ - FitBit
  - Flickr
-   - Upload images
+ - Forecast.io
+ - FourSquare/Swarm
+ - Google Calendar
+ - Google Places
+ - Instagram
+ - Jawbone
  - Pinboard
-   - Add a bookmark
+ - Strava
+ - Transport for London
+ - OpenWeatherMap 
 
-We are continuing to add additional nodes and broaden their capabilities. Have a look at the [issue list](https://github.com/node-red/node-red-web-nodes/labels/node) for a preview of what's being worked on.
+

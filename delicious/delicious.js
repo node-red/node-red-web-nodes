@@ -40,11 +40,11 @@ module.exports = function(RED) {
         if (this.user) {
             this.on("input", function(msg) {
                 if (!msg.payload) {
-                    node.warn("url must be provided in msg.payload");
+                    node.error("url must be provided in msg.payload",msg);
                     return;
                 }
                 if (!msg.title) {
-                    node.warn("msg.title must be provided");
+                    node.error("msg.title must be provided",msg);
                     return;
                 }
                 var options = {
@@ -70,19 +70,19 @@ module.exports = function(RED) {
 
                 request.get(options, function(err,res,body) {
                     if (err) {
-                        node.error(err);
+                        node.error(err,msg);
                         node.status({fill:"red",shape:"ring",text:"failed"});
                     } else {
                         if (body.indexOf('code="done"') != -1) {
                             node.status({});
                         } else {
                             //TODO: This API only returns XML. Need to parse out error messages
-                            node.error(body);
+                            node.error(body,msg);
                             node.status({fill:"red",shape:"ring",text:"failed"});
                         }
                     }
                 }).on('error',function(err) {
-                    node.error(err);
+                    node.error(err,msg);
                     node.status({fill:"red",shape:"ring",text:err.code});
                 });
                 

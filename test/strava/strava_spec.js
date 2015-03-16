@@ -17,7 +17,7 @@
 var should = require("should");
 var sinon = require('sinon');
 
-var stravaNode = require("../../fitness/strava.js");
+var stravaNode = require("../../strava/strava.js");
 
 var helper = require('../helper.js');
 var nock = helper.nock;

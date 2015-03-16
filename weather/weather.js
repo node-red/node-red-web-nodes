@@ -18,7 +18,7 @@ module.exports = function(RED) {
     "use strict";
     var http = require("http");
 
-    function assignmentFunction(node, lat, lon, city, country, callback){
+    function assignmentFunction(node, msg, lat, lon, city, country, callback){
         if (country && city){
             node.country = country;
             node.city = city;
@@ -26,13 +26,15 @@ module.exports = function(RED) {
             if(90 >= lat && lat >= -90){
                 node.lat = lat;
             } else {
-                node.error("Invalid lat provided");
+                node.error("Invalid lat provided",msg);
+                return;
             }
             
             if(180 >= lon && lon >= -180){
                 node.lon = lon;
             } else {
-                node.error("Invalid lon provided");
+                node.error("Invalid lon provided",msg);
+                return;
             }
         }
         callback();
@@ -65,8 +67,8 @@ module.exports = function(RED) {
                     try {
                         jsun = JSON.parse(weather);
                     } catch (e) {
-                        node.error("The API has returned an invalid JSON");
-                        callback();
+                        callback("The API has returned an invalid JSON");
+                        return;
                     }
                     if(jsun){
                         if(jsun.weather){
@@ -95,22 +97,21 @@ module.exports = function(RED) {
                             callback();
                         } else {
                             if (jsun.message === "Error: Not found city"){
-                                node.error("Invalid city/country");
-                                callback();
+                                callback("Invalid city/country");
+                                return;
                             } else {
-                                node.error(jsun.cod + " " + jsun.message);
-                                callback();
+                                callback(jsun.cod + " " + jsun.message);
+                                return;
                             }
                         }
                     }
                 });
             }).on('error', function(e) {
-                node.error(e);
-                callback();
+                callback(e);
+                return;
             });
         } else {
-            node.error("Invalid location information provided");
-            callback();
+            callback("Invalid location information provided");
         }
     }
     
@@ -137,12 +138,16 @@ module.exports = function(RED) {
                 lat = n.lat;
                 lon = n.lon;
             }
-            assignmentFunction(node, lat, lon, city, country, function() {
-                weatherPoll(node, msg, function(){
-                    var msgString = JSON.stringify(msg);
-                    if(msgString !== previousdata){
-                        previousdata = msgString;
-                        node.send(msg);
+            assignmentFunction(node, msg, lat, lon, city, country, function() {
+                weatherPoll(node, msg, function(err){
+                    if (err) {
+                        node.error(err,msg);
+                    } else {
+                        var msgString = JSON.stringify(msg);
+                        if(msgString !== previousdata){
+                            previousdata = msgString;
+                            node.send(msg);
+                        }
                     }
                 });
             });
@@ -181,9 +186,13 @@ module.exports = function(RED) {
                     country = msg.location.country;
                 }
             }
-            assignmentFunction(node, lat, lon, city, country, function() {
-                weatherPoll(node, msg, function(){
-                    node.send(msg);
+            assignmentFunction(node, msg, lat, lon, city, country, function() {
+                weatherPoll(node, msg, function(err){
+                    if (err) {
+                        node.error(err,msg);
+                    } else {
+                        node.send(msg);
+                    }
                 });
             });
         });

@@ -18,22 +18,18 @@ module.exports = function(RED) {
     "use strict";
     var https = require("https");
 
-        function assignmentFunction(node, date, time, lat, lon, forecastioConfig, callback){
+    function assignmentFunction(node, date, time, lat, lon, forecastioConfig, callback){
         if (forecastioConfig && forecastioConfig.credentials && forecastioConfig.credentials.client_key) {
             node.apikey = forecastioConfig.credentials.client_key;
         } else {
-            node.error("Missing forecastio credentials");
-            callback();
-            return;
+            return callback("missing forecast.io credentials");
         }
 
         if(90 >= lat && 180 >= lon && lat >= -90 && lon >= -180){
             node.lat = lat;
             node.lon = lon;
         } else {
-            node.error("Invalid lat/lon provided");
-            callback();
-            return;
+            return callback("Invalid lat/lon provided");
         }
 
         if(date && time){ 
@@ -45,13 +41,9 @@ module.exports = function(RED) {
             node.hours = time.substring(0,2);
             node.minutes = time.substring(3);
         } else if (node.date){
-            node.error("Invalid time provided");
-            callback();
-            return;
+            return callback("Invalid time provided");
         } else if (node.time){
-            node.error("Invalid date provided");
-            callback();
-            return;
+            return callback("Invalid date provided");
         }
         callback();
     }
@@ -91,7 +83,7 @@ module.exports = function(RED) {
                       
                 res.on('end', function() {
                     if(weather === "Forbidden"){
-                        node.error("Incorrect API key provided");
+                        return callback("Incorrect API key provided");
                     } else {
                         var jsun = JSON.parse(weather);
                         msg.data = jsun;
@@ -113,14 +105,14 @@ module.exports = function(RED) {
                         msg.time = new Date(jsun.daily.data[when].time*1000);
                         msg.title = "Weather Forecast Information";
                         msg.description = "Weather forecast information for: " + msg.time.toLocaleString() + " at coordinates: " + msg.location.lat + ", " + msg.location.lon;
+                        callback();
                     } 
-                    callback();
                 });
             }).on('error', function(e) {
-                  node.error(e);
+                callback(e);
             });
         } else {
-            callback();
+            callback("invalid url");
         }
     }
 
@@ -136,14 +128,22 @@ module.exports = function(RED) {
         }, this.repeat );
         
         this.on('input', function(msg) { 
-            assignmentFunction(node, n.date, n.time, n.lat, n.lon, RED.nodes.getNode(n.forecastio), function(){
-                weatherPoll(node, msg, function(){
-                    var msgString = JSON.stringify(msg.payload);
-                    if(msgString !== previousdata){
-                        previousdata = msgString;
-                        node.send(msg);
-                    } 
-                });
+            assignmentFunction(node, n.date, n.time, n.lat, n.lon, RED.nodes.getNode(n.forecastio), function(err){
+                if (err) {
+                    node.error(err,msg);
+                } else {
+                    weatherPoll(node, msg, function(err){
+                        if (err) {
+                            node.error(err,msg);
+                        } else {
+                            var msgString = JSON.stringify(msg.payload);
+                            if(msgString !== previousdata){
+                                previousdata = msgString;
+                                node.send(msg);
+                            }
+                        }
+                    });
+                }
             });
         });
         
@@ -197,10 +197,18 @@ module.exports = function(RED) {
                 time = msg.time.toISOString().substring(11,16);
             }
 
-            assignmentFunction(node, date, time, lat, lon, RED.nodes.getNode(n.forecastio), function(){
-                weatherPoll(node, msg, function(){
-                    node.send(msg);
-                });
+            assignmentFunction(node, date, time, lat, lon, RED.nodes.getNode(n.forecastio), function(err){
+                if (err) {
+                    node.error(err,msg);
+                } else {
+                    weatherPoll(node, msg, function(err){
+                        if (err) {
+                            node.error(err,msg);
+                        } else {
+                            node.send(msg);
+                        }
+                    });
+                }
             });
 
              

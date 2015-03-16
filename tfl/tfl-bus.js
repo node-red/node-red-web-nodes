@@ -71,7 +71,7 @@ module.exports = function(RED) {
     
     function fetchDataForStopAndLine(stopCode1, lineID, callback) {
         if(lineID == "NODEPARTURE") {
-            callback(null);
+            callback(null,null);
             return;
         }
         var fetchQuery = "StopCode1="+ stopCode1 + "&LineID=" + lineID;
@@ -86,11 +86,11 @@ module.exports = function(RED) {
                     var tempJsonObj = JSON.parse(rawArray[i]);
                     linesArray.push(tempJsonObj);
                 }
-                callback(linesArray);
+                callback(null,linesArray);
             } else if(error) {
-                callback("ERROR: " + error);
+                callback(error,null);
             } else if(response !== 200) {
-                callback(response);
+                callback(response,null);
             }
         });
     }
@@ -106,39 +106,42 @@ module.exports = function(RED) {
         node.lat = n.lat;
         node.lon = n.lon;
         node.radius = n.radius;
+        
+        if(!node.stopCode1 || !node.lineID || node.stopCode1 === "unset" || node.lineID === "unset") {
+            node.error("No bus stops or bus line numbers have been configured.",msg);
+            return;
+        }
                 
         node.on("input", function(msg) {
-            if(!node.stopCode1 || !node.lineID || node.stopCode1 === "unset" || node.lineID === "unset") {
-                node.error("No bus stops or bus line numbers have been configured.");
-                node.send(msg);
-                return;
-            }
                     
             if(msg.location && msg.location.lat && msg.location.on && msg.location.radius) {
                 //TODO implement bus stop finder? ==> To be done later
             }
-            fetchDataForStopAndLine(node.stopCode1, node.lineID, function(departuresArray) {
-                if(departuresArray === null) {
-                    node.error("No valid departures found at stopCode1: " + node.stopCode1 + " and line ID: " + node.lineID);
+            fetchDataForStopAndLine(node.stopCode1, node.lineID, function(err,departuresArray) {
+                if(err) {
+                    node.error(err,msg);
+                    return;
                 } else {
-                    // the node only considers the first bus arriving to the stop
-                    var firstBusArrivingArray = departuresArray[0];
-    
-                    // [1] => from (StopPointName => this stop)
-                    // [2] => LineID
-                    // [3] => DestinationText
-                    // [4] => RegistrationNumber
-                    // [5] => EstimatedTime
                     msg.payload = {};
-                    msg.payload.StopPointName = firstBusArrivingArray[1];
-                    msg.payload.LineID = firstBusArrivingArray[2];
-                    msg.payload.DestinationText = firstBusArrivingArray[3];
-                    msg.payload.RegistrationNumber = firstBusArrivingArray[4];
-                    msg.payload.EstimatedTime = new Date(firstBusArrivingArray[5]);
+                    if (departuresArray) {
+                        // the node only considers the first bus arriving to the stop
+                        var firstBusArrivingArray = departuresArray[0];
+        
+                        // [1] => from (StopPointName => this stop)
+                        // [2] => LineID
+                        // [3] => DestinationText
+                        // [4] => RegistrationNumber
+                        // [5] => EstimatedTime
+                        msg.payload.StopPointName = firstBusArrivingArray[1];
+                        msg.payload.LineID = firstBusArrivingArray[2];
+                        msg.payload.DestinationText = firstBusArrivingArray[3];
+                        msg.payload.RegistrationNumber = firstBusArrivingArray[4];
+                        msg.payload.EstimatedTime = new Date(firstBusArrivingArray[5]);
+                    }
                 }
                 
                 if(!msg.location) {
-                        msg.location = {};
+                    msg.location = {};
                 }
                     
                 msg.location.lat = node.lat;

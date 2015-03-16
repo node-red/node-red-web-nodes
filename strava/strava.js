@@ -45,30 +45,23 @@ module.exports = function(RED) {
             var activityIDToReturn;
             var error;
             if (err) {
-                node.error("Error getting most recent activity: request error:" + err);
-                error = true;
+                return callback(null,err);
             }
             if (data.error) {
-                node.error("Error getting most recent activity: data error: " + data.error);
-                error = true;
+                return callback(null,node.error);
             }
             
             if(result.statusCode !== 200) {
                 console.log(data);
-                node.error("Strava replied with the unexpected HTTP status code when getting activities " + result.statusCode + "\nDetails:\n" + data);
-                error = true;
+                return callback(null,result.statusCode);
             }
             
             if(data.length > 0) {
                 if(data[0].id) {
                     activityIDToReturn = data[0].id;
                 } else {
-                    node.error("The most recent activity had no ID. Integrity error. No activity details can be sent.");
-                    error = true;
+                    return callback(null,"No activity ID");
                 }
-            } else {
-                node.log("No data has been uploaded to Strava yet. Nothing to do.");
-                error = true;
             }
             
             callback(activityIDToReturn, error);
@@ -91,24 +84,18 @@ module.exports = function(RED) {
             var activityDetails;
             var error;
             if (err) {
-                node.error("Error getting activity ID " + activityID + ": request error:" + err);
-                error = true;
+                return callback(null,err);
             }
             if(data) {
                 if (data.error) {
-                    node.error("Error getting activity ID " + activityID + ": data error:" + data.error);
-                    error = true;
+                    return callback(null,data.error);
                 }
                 if(result.statusCode !== 200) {
                     console.log(data);
-                    node.error("Strava replied with the unexpected HTTP status code when getting specific activity ID " + activityID + " " + result.statusCode + "\nDetails:\n" + data);
-                    error = true;
+                    return callback(null,result.statusCode)
                 }
                 
                 activityDetails = data;
-            } else {
-                node.log("No data found for activity, nothing to do.");
-                error = true;
             }
             
             callback(activityDetails, error);
@@ -167,11 +154,6 @@ module.exports = function(RED) {
                 }
                 msg.payload.starttime = new Date(time);
             } catch (err) { // never actually trust date parsing ;)
-                if(useLocalTime ===  true) {
-                    node.log("We couldn't parse activity " + activityDetails.id + "'s local date into a JavaScript object. " + "The timestamp was " + activityDetails.start_date_local);
-                } else {
-                    node.log("We couldn't parse activity " + activityDetails.id + "'s date into a JavaScript object. " + "The timestamp was " + activityDetails.start_date);
-                }
             }
         }
         // Adding extra fields
@@ -207,16 +189,18 @@ module.exports = function(RED) {
             if(node.request === "get-most-recent-activity") {
                 getMostRecentActivityIDForSelf(node, function(activityID, error) {
                     if(error) {
-                        node.send(msg);
+                        node.error(error,msg);
                     } else {
-                        getActivity(node, activityID, function(activityDetails, error) {
-                            if(error) {
-                                node.send(msg);
-                            } else {
-                                populateMsgSync(node, msg, activityDetails);
-                                node.send(msg);
-                            }
-                         });
+                        if (activityID) {
+                            getActivity(node, activityID, function(activityDetails, error) {
+                                if(error) {
+                                    node.error(error,msg);
+                                } else if (activityDetails) {
+                                    populateMsgSync(node, msg, activityDetails);
+                                    node.send(msg);
+                                }
+                             });
+                        }
                     }
                 });   
             }

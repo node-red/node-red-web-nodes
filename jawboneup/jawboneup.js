@@ -70,7 +70,7 @@ module.exports = function(RED) {
               }
               var r = request.get(options,function(err, httpResponse, body) {
                   if (err) {
-                      node.error(err.toString());
+                      node.error(err.toString(),msg);
                       node.status({fill:"red",shape:"ring",text:"failed"});
                   } else {
                       var result = JSON.parse(body);
@@ -99,7 +99,7 @@ module.exports = function(RED) {
                                   node.send([msgs]);                                  
                               } else {
                                   // shouldn't ever get here
-                                  node.error("Incorrect number of messages to output or incorrect choice of how to output them");
+                                  node.error("Incorrect number of messages to output or incorrect choice of how to output them",msg);
                                   node.status({fill:"red",shape:"ring",text:"failed"});
                               }
                          } else {
