@@ -73,7 +73,7 @@ module.exports = function(RED) {
                 if (Buffer.isBuffer(msg.payload)) {
                     var options = {
                         api_key:"e99784b8ff80eaabc9c096b22e517c13"
-                    }
+                    };
                     if (msg.title) {
                         options.title = RED.util.ensureString(msg.title);
                     }
@@ -88,7 +88,7 @@ module.exports = function(RED) {
                             tags = msg.tags.join(" ");
                         }
                         if (node.tags) {
-                            tags += (tags.length > 0 ? " ":"")+node.tags
+                            tags += (tags.length > 0 ? " ":"")+node.tags;
                         }
                         options.tags = tags;
                     }
@@ -160,11 +160,11 @@ module.exports = function(RED) {
                 '<p>Something went wrong with the authentication process. The following error was returned:<p>'+
                 '<p><b>'+error.statusCode+'</b>: '+error.data+'</p>'+
                 '<p>One known cause of this type of failure is if the clock is wrong on system running Node-RED.';
-                res.send(resp)
+                res.send(resp);
             } else {
                 credentials.oauth_token = oauth_token;
                 credentials.oauth_token_secret = oauth_token_secret;
-                res.redirect('https://www.flickr.com/services/oauth/authorize?oauth_token='+oauth_token)
+                res.redirect('https://www.flickr.com/services/oauth/authorize?oauth_token='+oauth_token);
                 RED.nodes.addCredentials(req.params.id,credentials);
             }
         });
@@ -199,4 +199,4 @@ module.exports = function(RED) {
             }
         );
     });
-}
+};

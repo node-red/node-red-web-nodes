@@ -58,13 +58,13 @@ module.exports = function(RED) {
                     headers: {
                         "Accept":"application/json"
                     }
-                }
+                };
                 // TODO: allow tags to be added by the message 
                 if (node.tags) {
-                    options.path += "&tags="+encodeURIComponent(node.tags)
+                    options.path += "&tags="+encodeURIComponent(node.tags);
                 }
                 if (msg.description) {
-                    options.path += "&extended="+encodeURIComponent(msg.description)
+                    options.path += "&extended="+encodeURIComponent(msg.description);
                 }
                 
                 node.status({fill:"blue",shape:"dot",text:"saving"});
@@ -95,4 +95,4 @@ module.exports = function(RED) {
         
     }
     RED.nodes.registerType("pinboard out",PinboardOutNode);
-}
+};

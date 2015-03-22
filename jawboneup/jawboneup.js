@@ -67,7 +67,7 @@ module.exports = function(RED) {
                       headers: {
                           "Authorization":"Bearer  " + credentials.accesstoken
                       }
-              }
+              };
               var r = request.get(options,function(err, httpResponse, body) {
                   if (err) {
                       node.error(err.toString(),msg);
@@ -216,13 +216,13 @@ module.exports = function(RED) {
                              var resp = '<h2>Oh no!</h2>'+
                              '<p>Something went wrong with the authentication process. The following error was returned:</p>'+
                              '<p><b>'+error.statusCode+'</b>: '+error.data+'</p>';
-                             res.send(resp)
+                             res.send(resp);
                          } else {
                              if (results.error) {
                                  var response = '<h2>Oh no!</h2>'+
                                  '<p>Something went wrong with the authentication process. The following error was returned:</p>'+
                                  '<p><b>'+results.error+'</b>: '+results.error_description+'</p>';
-                                 res.send(response)
+                                 res.send(response);
                             } else {
                                 // note the extra whitespace after "Bearer" is required otherwise api call will return 401
                                 var options = {
@@ -230,20 +230,20 @@ module.exports = function(RED) {
                                         headers: {
                                             "Authorization":"Bearer  " + oauth_access_token
                                         }
-                                    }
+                                    };
                                 var r = request.get(options,function(err, httpResponse, body) {
                                     if (err) {
                                         var resp = '<h2>Oh no!</h2>'+
                                         '<p>Something went wrong with the authentication process. The following error was returned:</p>'+
                                         '<p><b>'+err.statusCode+'</b>: '+err.data+'</p>';
-                                        res.send(resp)
+                                        res.send(resp);
                                     } else {
                                         var result = JSON.parse(body);
                                         if (result.meta.code != 200) {
                                             var message = '<h2>Oh no!</h2>'+
                                             '<p>Something went wrong with the authentication process. Http return code:</p>'+
                                             '<p><b>'+result.meta.code+'</b></p>';
-                                            res.send(message)                                         
+                                            res.send(message);                                         
                                         } else {
                                             credentials = {};
                                             credentials.displayname = result.data.first + " " + result.data.last;
@@ -263,4 +263,4 @@ module.exports = function(RED) {
 
     });
     
-}
+};

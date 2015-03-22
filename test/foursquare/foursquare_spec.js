@@ -56,13 +56,17 @@ describe('foursquare nodes', function() {
                                     .get('/foursquare-credentials/auth?id=n4&clientid=abcdefg&clientsecret=mnopqrs&response_type=code&callback=http://localhost:1880:/foursquare-credentials')
                                     .expect(302)
                                     .end(function(err, res) {
-                                        if (err) return done(err);
+                                        if (err) {
+                                        	return done(err);
+                                        }
                                         var state = res.text.split("state=n4%253A");
                                         helper.request()
                                             .get('/foursquare-credentials/auth/callback?code=123456&state=n4:'+state[1])
                                             .expect(200)
                                             .end(function(err, res) {
-                                                if (err) return done(err);
+                                                if (err) {
+                                                	return done(err);
+                                                }
                                                 helper.credentials.get("n4")
                                                     .should.have.property('displayname',
                                                                           'John Smith');
@@ -98,13 +102,17 @@ describe('foursquare nodes', function() {
                             .get('/foursquare-credentials/auth?id=n4&clientid=abcdefg&clientsecret=mnopqrs&response_type=code&callback=http://localhost:1880:/foursquare-credentials')
                             .expect(302)
                             .end(function(err, res) {
-                                if (err) return done(err);
+                                if (err) {
+                                	return done(err);
+                                }
                               var state = res.text.split("state=n4%253A");
                               helper.request()
                                   .get('/foursquare-credentials/auth/callback?code=123456&state=n4:'+state[1])
                                   .expect(200)
                                   .end(function(err, res) {
-                                      if (err) return done(err);
+                                      if (err) {
+                                    	  return done(err);
+                                      }
                                       res.text.should.containEql('Oh no');
                                       done();
                                   });
@@ -131,13 +139,17 @@ describe('foursquare nodes', function() {
                                     .get('/foursquare-credentials/auth?id=n4&clientid=abcdefg&clientsecret=mnopqrs&response_type=code&callback=http://localhost:1880:/foursquare-credentials')
                                     .expect(302)
                                     .end(function(err, res) {
-                                        if (err) return done(err);
+                                        if (err) {
+                                        	return done(err);
+                                        }
                                         var state = res.text.split("state=n4%253A");
                                         helper.request()
                                             .get('/foursquare-credentials/auth/callback?code=123456&state=n4:'+state[1])
                                             .expect(200)
                                             .end(function(err, res) {
-                                                if (err) return done(err);
+                                                if (err) {
+                                                	return done(err);
+                                                }
                                                 res.text.should.containEql('Http return code');
                                                 done();
                                             });
@@ -160,12 +172,16 @@ describe('foursquare nodes', function() {
                                 .get('/foursquare-credentials/auth?id=n4&clientid=abcdefg&clientsecret=mnopqrs&response_type=code&callback=http://localhost:1880:/foursquare-credentials')
                                 .expect(302)
                                 .end(function(err, res) {
-                                    if (err) return done(err);
+                                    if (err) {
+                                    	return done(err);
+                                    }
                                     helper.request()
                                         .get('/foursquare-credentials/auth/callback?code=123456&state=n4:13579')
                                         .expect(401)
                                         .end(function(err, res) {
-                                            if (err) return done(err);
+                                            if (err) {
+                                            	return done(err);
+                                            }
                                             res.text.should.containEql('CSRF token mismatch, possible cross-site request forgery attempt');
                                             done();
                                         });

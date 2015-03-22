@@ -84,7 +84,9 @@ describe('instagram nodes', function() {
                    
                 })
                 .end(function(err, res) {
-                    if (err) return done(err);
+                    if (err) {
+                    	return done(err);
+                    }
                     done();
                 });
             });
@@ -107,7 +109,9 @@ describe('instagram nodes', function() {
                 helper.request()
                 .get('/instagram-credentials/auth')
                 .end(function(err, res) {
-                    if (err) return done(err);
+                    if (err) {
+                    	return done(err);
+                    }
                     res.text.should.equal("ERROR: Received query from UI without the needed credentials");
                     done();
                 });
@@ -115,7 +119,7 @@ describe('instagram nodes', function() {
         });
         
         if (nock) { // featues requiring HTTP communication/mocking // TODO check if all tests require nock here
-            
+        	/*jshint -W082 */
             function doOauthDance(done, matchCsrfToken, return200, serveUserName, serveAccessToken) {
                 var csrfToken; // required to get and process/pass on the token, otherwise OAuth fails
                 
@@ -180,7 +184,9 @@ describe('instagram nodes', function() {
                        
                     })
                     .end(function(err, res) {
-                        if (err) return done(err);
+                        if (err) {
+                        	return done(err);
+                        }
                         // now call the callback URI as if Instagram called it
                         if(matchCsrfToken === true) {
                             if(return200 === true && serveUserName === true && serveAccessToken === true) {
@@ -194,7 +200,9 @@ describe('instagram nodes', function() {
                                     }
                                 })
                                 .end(function(err, res) {
-                                    if (err) return done(err);
+                                    if (err) {
+                                    	return done(err);
+                                    }
                                     // now call the callback URI as if Instagram called it
                                     done();
                                 });  
@@ -202,7 +210,9 @@ describe('instagram nodes', function() {
                                 helper.request()
                                 .get('/instagram-credentials/auth/callback?code=' + sessionCode + '&state=n2:' + csrfToken)
                                 .end(function(err, res) {
-                                    if (err) return done(err);
+                                    if (err) {
+                                    	return done(err);
+                                    }
                                     res.text.should.equal("Error! Instagram node has failed to fetch a valid access token.");
                                     done();
                                 }); 
@@ -211,7 +221,9 @@ describe('instagram nodes', function() {
                                 helper.request()
                                 .get('/instagram-credentials/auth/callback?code=' + sessionCode + '&state=n2:' + csrfToken)
                                 .end(function(err, res) {
-                                    if (err) return done(err);
+                                    if (err) {
+                                    	return done(err);
+                                    }
                                     res.text.should.equal("Error! Instagram node has failed to fetch the username.");
                                     done();
                                 }); 
@@ -219,7 +231,9 @@ describe('instagram nodes', function() {
                                 helper.request()
                                 .get('/instagram-credentials/auth/callback?code=' + sessionCode + '&state=n2:' + csrfToken)
                                 .end(function(err, res) {
-                                    if (err) return done(err);
+                                    if (err) {
+                                    	return done(err);
+                                    }
                                     res.text.should.equal("Instagram replied with the unexpected HTTP status code of 404\nDetails:\nNo tokens found, sorry!");
                                     done();
                                 }); 
@@ -228,7 +242,9 @@ describe('instagram nodes', function() {
                             helper.request()
                             .get('/instagram-credentials/auth/callback?code=' + sessionCode + '&state=n2:' + csrfToken)
                             .end(function(err, res) {
-                                if (err) return done(err);
+                                if (err) {
+                                	return done(err);
+                                }
                                 res.text.should.equal("CSRF token mismatch, possible cross-site request forgery attempt.");
                                 done();
                             });   
@@ -427,7 +443,7 @@ describe('instagram nodes', function() {
                 });
                 
             });
-            
+            /*jshint -W082 */
             function fetchUploadedPhotos(done, workingFirstRequest, workingSubsequentRequest) {
             // need to fake the HTTP requests of the init sequence, then straight away the sequence of getting a second photo 
             var photoURI = 'http://mytesturl.com/aPhotoStandard.jpg';

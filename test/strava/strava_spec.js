@@ -75,7 +75,9 @@ describe('Strava node', function() {
                    
                 })
                 .end(function(err, res) {
-                    if (err) return done(err);
+                    if (err) {
+                    	return done(err);
+                    }
                     done();
                 });
             });
@@ -96,7 +98,9 @@ describe('Strava node', function() {
                 helper.request()
                 .get('/strava-credentials/auth')
                 .end(function(err, res) {
-                    if (err) return done(err);
+                    if (err) {
+                    	return done(err);
+                    }
                     res.text.should.equal("ERROR: Received query from UI without the needed credentials");
                     done();
                 });
@@ -104,7 +108,7 @@ describe('Strava node', function() {
         });
         
         if (nock) { // featues requiring HTTP communication/mocking
-            
+        	/*jshint -W082 */
             function doOauthDance(done, matchCsrfToken, return200, serveUserName, serveAccessToken) {
                 var csrfToken; // required to get and process/pass on the token, otherwise OAuth fails
                 
@@ -122,15 +126,15 @@ describe('Strava node', function() {
                 if(return200 === true && serveUserName === true && serveAccessToken === true) {
                     scope = nock('https://www.strava.com')
                     .post('/oauth/token', "client_id=" + clientID + "&client_secret=" + clientSecret + "&code=" + sessionCode)
-                    .reply(200, {"access_token":accessToken,"athlete":{"firstname":"John","lastname": "Smith"}})
+                    .reply(200, {"access_token":accessToken,"athlete":{"firstname":"John","lastname": "Smith"}});
                 } else if(return200 === true && serveUserName === true && serveAccessToken === false) {
                     scope = nock('https://www.strava.com')
                     .post('/oauth/token', "client_id=" + clientID + "&client_secret=" + clientSecret + "&code=" + sessionCode)
-                    .reply(200, {"athlete":{"firstname":"John","lastname": "Smith"}})
+                    .reply(200, {"athlete":{"firstname":"John","lastname": "Smith"}});
                 } else if(return200 === true && serveUserName === false){
                     scope = nock('https://www.strava.com')
                     .post('/oauth/token', "client_id=" + clientID + "&client_secret=" + clientSecret + "&code=" + sessionCode)
-                    .reply(200, {"access_token":accessToken})
+                    .reply(200, {"access_token":accessToken});
                 } else {
                     scope = nock('https://www.strava.com')
                     .post('/oauth/token', "client_id=" + clientID + "&client_secret=" + clientSecret + "&code=" + sessionCode)
@@ -162,7 +166,9 @@ describe('Strava node', function() {
                        
                     })
                     .end(function(err, res) {
-                        if (err) return done(err);
+                        if (err) {
+                        	return done(err);
+                        }
                         // now call the callback URI as if Strava called it
                         if(matchCsrfToken === true) {
                             if(return200 === true && serveUserName === true && serveAccessToken === true) {
@@ -176,7 +182,9 @@ describe('Strava node', function() {
                                     }
                                 })
                                 .end(function(err, res) {
-                                    if (err) return done(err);
+                                    if (err) {
+                                    	return done(err);
+                                    }
                                     // now call the callback URI as if Strava called it
                                     done();
                                 });  
@@ -184,7 +192,9 @@ describe('Strava node', function() {
                                 helper.request()
                                 .get('/strava-credentials/auth/callback?code=' + sessionCode + '&state=n2:' + csrfToken)
                                 .end(function(err, res) {
-                                    if (err) return done(err);
+                                    if (err) {
+                                    	return done(err);
+                                    }
                                     res.text.should.equal("Error! Strava node has failed to fetch a valid access token.");
                                     done();
                                 }); 
@@ -193,7 +203,9 @@ describe('Strava node', function() {
                                 helper.request()
                                 .get('/strava-credentials/auth/callback?code=' + sessionCode + '&state=n2:' + csrfToken)
                                 .end(function(err, res) {
-                                    if (err) return done(err);
+                                    if (err) {
+                                    	return done(err);
+                                    }
                                     res.text.should.equal("Error! Strava node has failed to fetch the authenticated user\'s name.");
                                     done();
                                 }); 
@@ -201,7 +213,9 @@ describe('Strava node', function() {
                                 helper.request()
                                 .get('/strava-credentials/auth/callback?code=' + sessionCode + '&state=n2:' + csrfToken)
                                 .end(function(err, res) {
-                                    if (err) return done(err);
+                                    if (err) {
+                                    	return done(err);
+                                    }
                                     res.text.should.equal("Strava replied with the unexpected HTTP status code of 404");
                                     done();
                                 }); 
@@ -210,7 +224,9 @@ describe('Strava node', function() {
                             helper.request()
                             .get('/strava-credentials/auth/callback?state=n2:' + csrfToken)
                             .end(function(err, res) {
-                                if (err) return done(err);
+                                if (err) {
+                                	return done(err);
+                                }
                                 res.text.should.equal("CSRF token mismatch, possible cross-site request forgery attempt.");
                                 done();
                             });   

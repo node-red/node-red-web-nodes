@@ -398,4 +398,4 @@ module.exports = function(RED) {
             }
         );
     });
-}
+};

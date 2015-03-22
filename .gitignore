@@ -1,3 +1,9 @@
-node_modules
 .npm
+.jshintignore
+.jshintrc
+.project
+.settings
+.tern-project
 coverage
+node_modules
+npm_debug.log

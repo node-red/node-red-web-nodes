@@ -150,4 +150,4 @@ module.exports = function(RED) {
             }
         });
     }
-}
+};

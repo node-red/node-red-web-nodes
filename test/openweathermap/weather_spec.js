@@ -39,7 +39,7 @@ describe('weather nodes', function() {
         locationdata.should.have.property("lat", 51.51);
         locationdata.should.have.property("city", "London");
         locationdata.should.have.property("country", "GB");
-    }
+    };
 
     beforeEach(function(done) {
         if(nock){

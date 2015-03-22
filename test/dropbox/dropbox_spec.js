@@ -40,7 +40,9 @@ describe('dropbox nodes', function() {
     });
 
     describe("watch node", function() {
-        if (!nock) return;
+        if (!nock) {
+        	return;
+        }
         it('should report file add event', function(done) {
             nock('https://api.dropbox.com:443')
                 .post('/1/delta')
@@ -357,7 +359,9 @@ describe('dropbox nodes', function() {
     });
 
     describe("query node", function() {
-        if (!nock) return;
+        if (!nock) {
+        	return;
+        }
         it('should fetch file', function(done) {
             nock('https://api-content.dropbox.com:443')
                 .get('/1/files/auto/foo.txt')
@@ -399,7 +403,9 @@ describe('dropbox nodes', function() {
     });
 
     describe('out node', function() {
-        if (!nock) return;
+        if (!nock) {
+        	return;
+        }
         it('should upload msg.payload', function(done) {
             nock('https://api.dropbox.com:443')
                 .get('/1/account/info')

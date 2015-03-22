@@ -585,4 +585,4 @@ module.exports = function(RED) {
         });
     }
     RED.nodes.registerType("google calendar out", GoogleCalendarOutNode);
-}
+};
