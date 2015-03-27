@@ -191,6 +191,9 @@ module.exports = function(RED) {
                             error.message = 'Request denied by Google';
                             break;
                         case 'UNKNOWN_ERROR':
+							error.code = 500;
+                            error.message = 'An unknown error occured. Please try again';
+							break;
                         default:
                             error.code = 500;
                             error.message = 'An unknown error occured. Please try again';
