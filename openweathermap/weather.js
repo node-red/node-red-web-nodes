@@ -29,7 +29,7 @@ module.exports = function(RED) {
                 node.error("Invalid lat provided",msg);
                 return;
             }
-            
+
             if(180 >= lon && lon >= -180){
                 node.lon = lon;
             } else {
@@ -39,7 +39,7 @@ module.exports = function(RED) {
         }
         callback();
     }
-    
+
     function weatherPoll(node, msg, callback) {
         //wipe clear the payload if it exists, or create it if it doesn't
         msg.payload = {};
@@ -51,8 +51,8 @@ module.exports = function(RED) {
             url = "http://api.openweathermap.org/data/2.5/weather?lat=" + node.lat + "&lon=" + node.lon;
         } else if (node.city && node.country) {
             url = "http://api.openweathermap.org/data/2.5/weather?q=" + node.city + "," + node.country;
-        } 
-        
+        }
+
         //If the URL is not initialised, there has been an error with the input data,
         //and a node.error is reported.
         if(url){
@@ -61,7 +61,7 @@ module.exports = function(RED) {
                 res.on('data', function(d) {
                     weather += d;
                 });
-                
+
                 res.on('end', function() {
                     var jsun;
                     try {
@@ -76,6 +76,7 @@ module.exports = function(RED) {
                             msg.payload.weather = jsun.weather[0].main;
                             msg.payload.detail = jsun.weather[0].description;
                             msg.payload.tempk = jsun.main.temp;
+                            msg.payload.tempc = Number(jsun.main.temp) - 273.2;
                             msg.payload.humidity = jsun.main.humidity;
                             msg.payload.maxtemp = jsun.main.temp_max;
                             msg.payload.mintemp = jsun.main.temp_min;
@@ -92,7 +93,7 @@ module.exports = function(RED) {
                             msg.time = new Date(jsun.dt*1000);
                             msg.title = "Current Weather Information";
                             msg.description = "Current weather information at coordinates: " + msg.location.lat + ", " + msg.location.lon;
-                           
+
                             msg.payload.description = ("The weather in " + jsun.name + " at coordinates: " + jsun.coord.lat + ", " + jsun.coord.lon + " is " + jsun.weather[0].main + " (" + jsun.weather[0].description + ")." );
                             callback();
                         } else {
@@ -114,7 +115,7 @@ module.exports = function(RED) {
             callback("Invalid location information provided");
         }
     }
-    
+
     function OpenWeatherMapInputNode(n) {
         RED.nodes.createNode(this, n);
         var node = this;
@@ -125,11 +126,11 @@ module.exports = function(RED) {
         var country;
         var lat;
         var lon;
-        
+
         this.interval_id = setInterval( function() {
             node.emit("input",{});
         }, this.repeat );
-        
+
         this.on('input', function(msg) {
             if (n.country && n.city){
                 country = n.country;
@@ -152,13 +153,13 @@ module.exports = function(RED) {
                 });
             });
         });
-        
+
         this.on("close", function() {
             if (this.interval_id !== null) {
                 clearInterval(this.interval_id);
             }
         });
-        
+
         node.emit("input",{});
     }
 
@@ -198,7 +199,7 @@ module.exports = function(RED) {
         });
     }
 
-RED.nodes.registerType("openweathermap",OpenWeatherMapQueryNode);  
+RED.nodes.registerType("openweathermap",OpenWeatherMapQueryNode);
 RED.nodes.registerType("openweathermap in",OpenWeatherMapInputNode);
 
 };

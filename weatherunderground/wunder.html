@@ -1,0 +1,257 @@
+<!--
+  Copyright 2014,2015 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="wunderground">
+    <div class="form-row">
+        <label for="weather-location-type-select"><i class="fa fa-globe"></i> Location</label>
+        <select id="weather-location-type-select"  style="width: 288px"><option value="city">City</option><option value="coordinates">Coordinates</option></select>
+    </div>
+    <div class="form-row weather-location-type" id="weather-location-type-city">
+        <label for=""><i class="weather-location-type"></i> City</label>
+        <input type="text" class="weather-location-input" style="width: 180px; margin-bottom:7px" id="node-input-city" placeholder="City"></input>
+        </br>
+        <label for=""><i class="weather-location-type"></i> Country</label>
+        <input type="text" class="weather-location-input" style="width: 180px; margin-bottom:7px" id="node-input-country" placeholder="Country"></input>
+    </div>
+     <div class="form-row weather-location-type hidden" id="weather-location-type-coordinates">
+        <label for=""><i class="weather-location-type"></i> Latitude</label><input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom:7px" placeholder="Latitude">
+        </br>
+        <label for=""><i class="weather-location-type"></i> Longitude</label><input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px; margin-bottom:7px" placeholder="Longitude">
+    </div>
+    <div class="form-row">
+        <label for="node-input-apikey"><i class="fa fa-key"></i> API Key</label>
+        <input type="password" id="node-input-apikey">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('wunderground',{
+        category: 'weather',
+        color: '#FFCC66',
+        defaults: {
+            name: {value:""},
+            lon: {value:"", validate:function(v) {return ((v>=-180) && (v<=180));} },
+            lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
+            city: {value:""},
+            country: {value:""},
+        },
+        credentials: {
+            apikey: {type: "password"}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "wu.png",
+        label: function() {
+            return this.name||"wunderground";
+        },
+        oneditprepare: function() {
+            $("#weather-location-type-select").change(function() {
+                var id = $("#weather-location-type-select option:selected").val();
+                $(".weather-location-type").hide();
+                $("#weather-location-type-"+id).show();
+            });
+            if(this.lon !== ""||this.lat !== ""){
+                $("#weather-location-type-select").val("coordinates");
+            } else {
+                $("#weather-location-type-select").val("city");
+            }
+            var id = $("#weather-location-type-select option:selected").val();
+            $(".weather-location-type").hide();
+            $("#weather-location-type-"+id).show();
+        },
+        oneditsave: function() {
+            var type = $("#weather-location-type-select option:selected").val();
+            if(type == "coordinates"){
+                $("#node-input-city").val("");
+                $("#node-input-country").val("");
+            } else if (type == "city") {
+                $("#node-input-lon").val("");
+                $("#node-input-lat").val("");
+            }
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-help-name="wunderground">
+    <p>A node which uses the Wunderground API for current weather data when an input is received.</p>
+    <p> This is done using either:</p>
+    <ul>
+        <li> a city and the country in which that city lies</li>
+        <li> a latitude and longitude set of coordinates </li>
+    </ul>
+    <p>These can be passed in as settings on the node, or as the:</p>
+    <ul>
+       <li> <b>msg.location.lat</b> and <b>msg.location.lon</b>, or </li>
+       <li> <b>msg.location.city</b> and <b>msg.location.country</b> </li>
+    </ul>
+    <p>of the message input. </p>
+    <p>The node will always prioritise its settings over the msg properties.</p>
+    <p>The node sets the following properties of <b>msg.payload</b>:</p>
+    <ul>
+        <li><b>description</b> - a brief verbal description of the current weather for human reading.</li><br>
+        <li><b>weather</b> - a very short description of the current weather.</li><br>
+        <li><b>tempc</b> - the current gorund temperature at that location in Celcius.</li><br>
+        <li><b>tempk</b> - the current gorund temperature at that location in Kelvin.</li><br>
+        <li><b>humidity</b> - the current relative humidity at the location in percent.</li><br>
+        <li><b>windspeed</b> - the current wind speed at the location in Metres per second.</li><br>
+        <li><b>winddirection</b> - the current wind direction at the location in meteorological degrees.</li><br>
+        <li><b>location</b> - the name of the location from which the data was sourced.</li><br>
+        <li><b>forecast</b> - the forecast for the next 12 hours.</li><br>
+    </ul>
+    <p>The node also sets the following properties of <b>msg.location</b>.</p>
+    <ul>
+        <li><b>lat</b> - the longitude of the location from which the data was sourced.</li><br>
+        <li><b>lon</b> - the latitude of the location from which the data was sourced.</li><br>
+        <li><b>city</b> - the city from which the data was sourced.</li><br>
+        <li><b>country</b> - the country from which the data was sourced.</li><br>
+    </ul>
+    <p>Finally, the node sets:</p>
+    <ul>
+        <li><b>msg.time</b> - the time at which the weather data was received by The Weather Underground.</li><br>
+        <li><b>msg.data</b> - the full JSON returned by the API. </li>
+    </ul>
+    <p>Weather data provided by <a href="http://www.wunderground.com/" target="_blank">The Weather Underground</a></p>
+</script>
+
+
+
+<script type="text/x-red" data-template-name="wunderground in">
+    <div class="form-row">
+        <label for="weather-location-type-select"><i class="fa fa-globe"></i> Location</label>
+        <select id="weather-location-type-select"  style="width: 288px"><option value="city">City</option><option value="coordinates">Coordinates</option></select>
+    </div>
+    <div class="form-row weather-location-type" id="weather-location-type-city">
+        <label for=""><i class="weather-location-type"></i> City</label>
+        <input type="text" class="weather-location-input" style="width: 180px; margin-bottom:7px" id="node-input-city" placeholder="City"></input>
+        </br>
+        <label for=""><i class="weather-location-type"></i> Country</label>
+        <input type="text" class="weather-location-input" style="width: 180px; margin-bottom:7px" id="node-input-country" placeholder="Country"></input>
+    </div>
+     <div class="form-row weather-location-type hidden" id="weather-location-type-coordinates">
+        <label for=""><i class="weather-location-type"></i> Latitude</label><input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom:7px" placeholder="Latitude">
+        </br>
+        <label for=""><i class="weather-location-type"></i> Longitude</label><input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px; margin-bottom:7px" placeholder="Longitude">
+    </div>
+    <div class="form-row">
+        <label for="node-input-apikey"><i class="fa fa-key"></i> API Key</label>
+        <input type="password" id="node-input-apikey">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('wunderground in',{
+        category: 'weather',
+        color: '#FFCC66',
+        defaults: {
+            name: {value:""},
+            lon: {value:"", validate:function(v) {return ((v>=-180) && (v<=180));} },
+            lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
+            city: {value:""},
+            country: {value:""},
+        },
+        credentials: {
+            apikey: {type: "password"}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "wu.png",
+        label: function() {
+            return this.name||"wunderground";
+        },
+        oneditprepare: function() {
+            $("#weather-location-type-select").change(function() {
+                var id = $("#weather-location-type-select option:selected").val();
+                $(".weather-location-type").hide();
+                $("#weather-location-type-"+id).show();
+            });
+            if(this.lon !== ""||this.lat !== ""){
+                $("#weather-location-type-select").val("coordinates");
+            } else {
+                $("#weather-location-type-select").val("city");
+            }
+            var id = $("#weather-location-type-select option:selected").val();
+            $(".weather-location-type").hide();
+            $("#weather-location-type-"+id).show();
+        },
+        oneditsave: function() {
+            var type = $("#weather-location-type-select option:selected").val();
+            if(type == "coordinates"){
+                $("#node-input-city").val("");
+                $("#node-input-country").val("");
+            } else if (type == "city") {
+                $("#node-input-lon").val("");
+                $("#node-input-lat").val("");
+            }
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-help-name="wunderground in">
+    <p>A node which polls <a href="http://www.wunderground.com" target="_blank">The Weather Underground</a> API for current weather data periodically and returns when a change is detected.</p>
+    <p> This is done using either:</p>
+    <ul>
+        <li> a city and the country in which that city lies</li>
+        <li> a latitude and longitude set of coordinates </li>
+    </ul>
+    <p>The node sets the following properties of <b>msg.payload</b>:</p>
+    <ul>
+        <li><b>description</b> - a brief verbal description of the current weather for human reading.</li><br>
+        <li><b>weather</b> - a very short description of the current weather.</li><br>
+        <li><b>tempc</b> - the current gorund temperature at that location in Celcius.</li><br>
+        <li><b>tempk</b> - the current gorund temperature at that location in Kelvin.</li><br>
+        <li><b>humidity</b> - the current relative humidity at the location in percent.</li><br>
+        <li><b>windspeed</b> - the current wind speed at the location in Metres per second.</li><br>
+        <li><b>winddirection</b> - the current wind direction at the location in meteorological degrees.</li><br>
+        <li><b>location</b> - the name of the location from which the data was sourced.</li><br>
+        <li><b>forecast</b> - the forecast for the next 12 hours.</li><br>
+    </ul>
+    <p>The node also sets the following properties of <b>msg.location</b>.</p>
+    <ul>
+        <li><b>lat</b> - the longitude of the location from which the data was sourced.</li><br>
+        <li><b>lon</b> - the latitude of the location from which the data was sourced.</li><br>
+        <li><b>city</b> - the city from which the data was sourced.</li><br>
+        <li><b>country</b> - the country from which the data was sourced.</li><br>
+    </ul>
+    <p>Finally, the node sets:</p>
+    <ul>
+        <li><b>msg.time</b> - the time at which the weather data was received by openweathermap.org.</li><br>
+        <li><b>msg.data</b> - the full JSON returned by the API. </li>
+    </ul>
+    <p>Weather data provided by <a href="http://www.wunderground.com/" target="_blank">The Weather Underground</a>.</p>
+</script>
+
+<style>
+    .weather-location-type {
+        padding-left: 110px;
+    }
+    .weather-location-input{
+        margin-bottom: 10px;
+    }
+</style>
