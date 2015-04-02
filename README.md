@@ -30,5 +30,4 @@ The current release contains the following nodes for the follow servives
  - Strava
  - Transport for London
  - OpenWeatherMap 
-
-
+ - Weather Underground
