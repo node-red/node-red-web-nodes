@@ -35,11 +35,12 @@
             "google": "google/google.js",
             "googlecalendar": "google/calendar.js",
             "googleplaces": "google/places.js",
-            "weather": "weather/weather.js",
+            "openweathermap": "openweathermap/weather.js",
             "tfl-bus": "tfl/tfl-bus.js",
             "tfl-underground": "tfl/tfl-underground.js",
             "forecastio": "forecast/forecastio.js",
-            "strava": "strava/strava.js"
+            "strava": "strava/strava.js",
+            "weatherunderground": "weatherundergroud/wunder.js"
         }
     },
     "devDependencies": {
