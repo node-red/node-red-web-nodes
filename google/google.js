@@ -148,6 +148,7 @@ module.exports = function(RED) {
             clientSecret: req.query.clientSecret
         };
 
+        var gPlusScopes = 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/userinfo.profile';
         var csrfToken = crypto.randomBytes(18).toString('base64').replace(/\//g, '-').replace(/\+/g, '_');
         credentials.csrfToken = csrfToken;
         credentials.callback = callback;
@@ -162,7 +163,7 @@ module.exports = function(RED) {
                 state: node_id + ":" + csrfToken,
                 access_type: 'offline',
                 approval_prompt: 'force',
-                scope : 'profile https://www.googleapis.com/auth/calendar',
+                scope : 'profile https://www.googleapis.com/auth/calendar ' + gPlusScopes,
                 // TODO: include_granted_scopes: 'true', ?
                 redirect_uri: callback
             }
@@ -273,4 +274,4 @@ module.exports = function(RED) {
             return cb(null, data);
         });
     };
-}
+};

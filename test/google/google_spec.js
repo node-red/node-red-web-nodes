@@ -59,7 +59,7 @@ describe('google nodes', function() {
                 helper.request()
                     .get('/google-credentials/auth?id=google-config&clientId=CLIENT&clientSecret=SECRET&callback=http://localhost:1880/google-credentials/auth/callback')
                     .expect(302)
-                    .expect('Location', /https:\/\/accounts\.google\.com\/o\/oauth2\/auth\?response_type=code&client_id=CLIENT&state=([^&]*)&access_type=offline&approval_prompt=force&scope=profile%20https%3A%2F%2Fwww\.googleapis\.com%2Fauth%2Fcalendar&redirect_uri=http%3A%2F%2Flocalhost%3A1880%2Fgoogle-credentials%2Fauth%2Fcallback/)
+                    .expect('Location', /https:\/\/accounts\.google\.com\/o\/oauth2\/auth\?response_type=code&client_id=CLIENT&state=([^&]*)&access_type=offline&approval_prompt=force&scope=profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&redirect_uri=http%3A%2F%2Flocalhost%3A1880%2Fgoogle-credentials%2Fauth%2Fcallback/)
                     .end(function(err, res) {
                         if (err) return done(err);
                         var location = url.parse(res.headers.location, true);
