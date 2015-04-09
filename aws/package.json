@@ -1,0 +1,24 @@
+{
+    "name"          : "node-red-node-aws",
+    "version"       : "0.0.1",
+    "description"   : "A Node-RED node to watch, save and retreive files from an Amazon S3 bucket",
+    "dependencies"  : {
+        "minimatch": "2.0.4"
+    },
+    "repository" : {
+        "type":"git",
+        "url":"https://github.com/node-red/node-red-web-nodes/tree/master/aws"
+    },
+    "license": "Apache-2.0",
+    "keywords": [ "node-red", "aws", "s3" ],
+    "node-red"      : {
+        "nodes"     : {
+            "amazon s3": "aws.js"
+        }
+    },
+    "author": {
+        "name": "Mark Hindess",
+        "email": "HINDESM@uk.ibm.com",
+        "url": "http://nodered.org"
+    }
+}

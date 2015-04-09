@@ -84,7 +84,7 @@
         <label for="node-input-types"><i class="fa fa-check-square-o"></i> Types</label>
         <input type="text" id="node-input-types" placeholder="Types">
     </div>
-    
+
     <div class="form-row placesDetails">
         <label for="node-input-extensions"><i class="fa fa-code"></i> Extensions</label>
         <input type="text" id="node-input-extensions" placeholder="Extensions">
@@ -113,14 +113,14 @@
 </script>
 
 <script type="text/x-red" data-help-name="google places">
-    <p><b>Utilizes the Google Places API in order to find and learn more about local establishments.</b></p>
+    <p>Utilizes the Google Places API in order to find and learn more about local establishments.</p>
     <p>The node can be configured to send three different types of Places requests by toggling the <code>reqType</code> parameter in the node.</p>
     <br>
-    <p><b><u>Google Places Nearby</u></b></p>
-    <p><b>Input Parameters:</b></p>
+    <p>Google Places Nearby</p>
+    <p>Input Parameters:</p>
     <p><code>Name</code> - Name of the node</p>
     <p><code>reqType</code> - Toggle to switch between a Places Nearby, Places Text, and Places Details request.</p>
-    <p><b>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</b></p>
+    <p>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</p>
     <p><code>msg.key</code> - Your application's API key. This key identifies your application for purposes of quota management. <b><i>(Required)</i></b></p>
     <p><code>msg.location.lat</code> - Latitude point to be sent to Google in order to be converted to a human-readable address. <b><i>(Required)</i></b></p>
     <p><code>msg.location.lon</code> - Longitude point to be sent to Google in order to be converted to a human-readable address. <b><i>(Required)</i></b></p>
@@ -134,7 +134,7 @@
     <p><code>msg.types</code> - Restricts the results to places matching at least one of the specified types. Types should be separated with a pipe symbol (type1|type2|etc). (<a href="https://developers.google.com/places/documentation/supported_types">Click here</a> for supported types)</p>
     <p><code>msg.opennow</code> - If set to true, will only return results that are currently open now.</p>
     <br>
-    <p><b>Return values:</b></p>
+    <p>Return values:</p>
     <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
     <p>If <code>msg.status</code> returned 'OK':
     <p><code>msg.location</code> - Will contain <code>lat</code>, <code>lon</code>, and <code>address</code></p>
@@ -153,11 +153,11 @@
     <p>Otherwise:</p>
     <p><code>msg.error</code> will contain a more detailed error message, if available</p>
     <br><br>
-    <p><b><u>Google Places Text</u></b></p>
-    <p><b>Input Parameters:</b></p>
+    <p>Google Places Text</p>
+    <p>Input Parameters:</p>
     <p><code>Name</code> - Name of the node</p>
     <p><code>reqType</code> - Toggle to switch between a Places Nearby, Places Text, and Places Details request.</p>
-    <p><b>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</b></p>
+    <p>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</p>
     <p><code>msg.key</code> - Your application's API key. This key identifies your application for purposes of quota management. <b><i>(Required)</i></b></p>
     <p><code>msg.query</code> - The text string on which to search, for example: "restaurant". The Google Places service will return candidate matches based on this string and order the results based on their perceived relevance. <b><i>(Required)</i></b></p>
     <br>
@@ -171,7 +171,7 @@
     <p><code>msg.types</code> - Restricts the results to places matching at least one of the specified types. Types should be separated with a pipe symbol (type1|type2|etc). (<a href="https://developers.google.com/places/documentation/supported_types">Click here</a> for supported types)</p>
     <p><code>msg.opennow</code> - If set to true, will only return results that are currently open now.</p>
     <br>
-    <p><b>Return values:</b></p>
+    <p>Return values:</p>
     <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
     <p>If <code>msg.status</code> returned 'OK':
     <p><code>msg.title</code> - The name of the establishment.
@@ -191,18 +191,18 @@
     <p>Otherwise:</p>
     <p><code>msg.error</code> will contain a more detailed error message, if available</p>
     <br><br>
-    <p><b><u>Google Places Details</u></b></p>
-    <p><b>Input Parameters:</b></p>
+    <p>Google Places Details</p>
+    <p>Input Parameters:</p>
     <p><code>Name</code> - Name of the node</p>
     <p><code>reqType</code> - Toggle to switch between a Places Nearby, Places Text, and Places Details request.</p>
-    <p><b>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</b></p>
+    <p>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</p>
     <p><code>msg.key</code> - Your application's API key. This key identifies your application for purposes of quota management. <b><i>(Required)</i></b></p>
     <p><code>msg.placeid</code> - A unique identifier that is returned from a Google Places request. <b><i>(Required)</i></b></p>
     <br>
     <p><code>msg.language</code> - The language in which to return results.</p>
     <p><code>msg.extensions</code> - Indicates if the Place Details response should include additional fields. Additional fields may include Premium data, requiring an additional license, or values that are not commonly requested. Extensions are currently experimental. Supported values for the extensions parameter are {review_summary}.</p>
     <br>
-    <p><b>Return values:</b></p>
+    <p>Return values:</p>
     <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
     <p>If <code>msg.status</code> returned 'OK':
     <p><code>msg.location</code> - Will contain <code>lat</code>, <code>lon</code>, and <code>address</code></p>
@@ -223,14 +223,14 @@
     <p>Otherwise:</p>
     <p><code>msg.error</code> will contain a more detailed error message, if available</p>
     <br><br>
-    
-    
+
+
     <p>For more information, please visit the <a href="https://developers.google.com/maps/documentation/geocoding/">Google Geocoding API Developer Docs</a>
 </script>
 
 <script type="text/javascript">
     RED.nodes.registerType('google places',{
-        category: 'function',
+        category: 'social',
         color: '#ff9999',
         defaults: {
             reqType: {value:""},
@@ -282,7 +282,7 @@
                     $(".placesText").show();
                 }
             });
-            
+
             $("#node-input-rankBy").change(function() {
                 if ($(this).val() === 'prominence') {
                     $(".placesRadius").show();
@@ -290,7 +290,7 @@
                     $(".placesRadius").hide();
                 }
             });
-            
+
             var updateOptions = function() {
                 var outputnumber = $("#node-input-outputnumber option:selected").val();
                 if (outputnumber === 1) {

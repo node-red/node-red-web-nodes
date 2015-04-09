@@ -88,12 +88,12 @@
 
 <script type="text/x-red" data-help-name="google plus">
   <p>Interact with the Google+ API to get information about people, activities, and comments.</p>
-  <h3>Request Types:</h3>
+  <p>Request Types:</p>
   <p><b>People</b> - Allows you to interact with Google+ profiles. You are able to <i>get</i> a particular profile, <i>search</i> for a profile, or gather a <i>list</i> of people that have +1'd or reshared an activity.</p>
   <p><b>Activities</b> - Allows you to interact with Google+ activities. You are able to <i>get</i> a particular activity, <i>search</i> for an activitiy, or gather a <i>list</i> of activities directly related to a person.</p>
   <p><b>Comments</b> - Allows you to interact with Google+ comments. You are able to <i>get</i> a particular comment, or gather a <i>list</i> of comments attached to an activity.</p>
   <br>
-  <h3>Inputs:</h3>
+  <p>Inputs:</p>
   <p><b>User Id</b> - The ID of the person to get the profile for. The special value "me" can be used to indicate the authenticated user.</p>
   <p><b>Activity Id</b> - The ID of the activity to get.</p>
   <p><b>Comment Id</b> - The ID of the comment to get.</p>
@@ -107,7 +107,7 @@
 
 <script type="text/javascript">
     RED.nodes.registerType('google plus',{
-        category: 'function',
+        category: 'social',
         color:"#ff9999",
         defaults: {
             google: {type:"google-credentials", required:false},
@@ -137,15 +137,15 @@
                     $("#node-input-action").val('get');
                 }
                 swapInputs($(this).val(), $("#node-input-action").val());
-                
+
             });
-            
+
             $("#node-input-action").change(function() {
                 swapInputs($("#node-input-reqType").val(), $(this).val());
             });
-            
+
             swapInputs($("#node-input-reqType").val(), $("#node-input-action").val());
-            
+
             function swapInputs( reqType, action ) {
                 $(".hideable").hide();
                 $("." + reqType + action.substring(0,1).toUpperCase() + action.substring(1)).show();

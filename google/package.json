@@ -1,0 +1,29 @@
+{
+    "name"          : "node-red-node-google",
+    "version"       : "0.0.1",
+    "description"   : "A set of Node-RED nodes to access various Google services",
+    "dependencies"  : {
+        "minimatch": "2.0.4"
+    },
+    "repository" : {
+        "type":"git",
+        "url":"https://github.com/node-red/node-red-web-nodes/tree/master/google"
+    },
+    "license": "Apache-2.0",
+    "keywords": [ "node-red", "google", "calendar", "directions", "places", "geocoding", "google plus" ],
+    "node-red"      : {
+        "nodes"     : {
+            "google plus": "plus.js",
+            "google places": "places.js",
+            "google-api-config": "google.js",
+            "google geocoding": "geocoding.js",
+            "google directions": "directions.js",
+            "google calendar":" "calendar.js"
+        }
+    },
+    "author": {
+        "name": "Cody Walker",
+        "email": "cmwalker@us.ibm.com",
+        "url": "http://nodered.org"
+    }
+}
