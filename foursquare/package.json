@@ -1,0 +1,24 @@
+{
+    "name"          : "node-red-node-foursquare",
+    "version"       : "0.0.1",
+    "description"   : "Node-RED nodes to talk to Foursquare and Swarm",
+    "dependencies"  : {
+    },
+    "repository" : {
+        "type":"git",
+        "url":"https://github.com/node-red/node-red-web-nodes/tree/master/foursquare"
+    },
+    "license": "Apache-2.0",
+    "keywords": [ "node-red", "foursquare", "swarm", "food", "checkin" ],
+    "node-red"      : {
+        "nodes"     : {
+            "foursquare": "foursquare.js",
+            "swarm": "swarm.js"
+        }
+    },
+    "author": {
+        "name": "Helen Beeken",
+        "email": "hbeeken@uk.ibm.com",
+        "url": "http://nodered.org"
+    }
+}

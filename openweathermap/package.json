@@ -1,0 +1,23 @@
+{
+    "name"          : "node-red-node-openweathermap",
+    "version"       : "0.0.1",
+    "description"   : "A Node-RED node that gets the weather report from openweathermap",
+    "dependencies"  : {
+    },
+    "repository" : {
+        "type":"git",
+        "url":"https://github.com/node-red/node-red-web-nodes/tree/master/openweathermap"
+    },
+    "license": "Apache 2.0",
+    "keywords": [ "node-red", "weather", "openweathermap" ],
+    "node-red"      : {
+        "nodes"     : {
+            "openweathermap": "weather.js"
+        }
+    },
+    "author": {
+        "name": "Ben Perry",
+        "email": "BENJAMIP@uk.ibm.com",
+        "url": "http://nodered.org"
+    }
+}

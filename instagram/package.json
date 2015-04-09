@@ -1,0 +1,23 @@
+{
+    "name"          : "node-red-node-instagram",
+    "version"       : "0.0.1",
+    "description"   : "Node-RED nodes that get photos from Instagram,
+    "dependencies"  : {
+    },
+    "repository" : {
+        "type":"git",
+        "url":"https://github.com/node-red/node-red-web-nodes/tree/master/instagram"
+    },
+    "license": "Apache",
+    "keywords": [ "node-red", "instagram", "photo" ],
+    "node-red"      : {
+        "nodes"     : {
+            "instagram": "instagram.js"
+        }
+    },
+    "author": {
+        "name": "Zoltan Balogh",
+        "email": "zoltan.balogh@uk.ibm.com",
+        "url": "http://nodered.org"
+    }
+}

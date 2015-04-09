@@ -1,0 +1,23 @@
+{
+    "name"          : "node-red-node-forecastio",
+    "version"       : "0.0.1",
+    "description"   : "A Node-RED node that gets the weather forecast from Forecast.io",
+    "dependencies"  : {
+    },
+    "repository" : {
+        "type":"git",
+        "url":"https://github.com/node-red/node-red-web-nodes/tree/master/forecast"
+    },
+    "license": "Apache 2.0",
+    "keywords": [ "node-red", "weather", "forecastio", "forecast" ],
+    "node-red"      : {
+        "nodes"     : {
+            "forecastio": "forecastio.js"
+        }
+    },
+    "author": {
+        "name": "Ben Perry",
+        "email": "BENJAMIP@uk.ibm.com",
+        "url": "http://nodered.org"
+    }
+}

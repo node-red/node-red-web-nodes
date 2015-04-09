@@ -1,0 +1,23 @@
+{
+    "name"          : "node-red-node-pinboard",
+    "version"       : "0.0.1",
+    "description"   : "A Node-RED node to save bookmarks to Pinboard",
+    "dependencies"  : {
+    },
+    "repository" : {
+        "type":"git",
+        "url":"https://github.com/node-red/node-red-web-nodes/tree/master/pinboard"
+    },
+    "license": "Apache-2.0",
+    "keywords": [ "node-red", "pinboard", "bookmark" ],
+    "node-red"      : {
+        "nodes"     : {
+            "pinboard": "pinboard.js"
+        }
+    },
+    "author": {
+        "name": "Nicholas O'Leary",
+        "email": "knolleary@gmail.com",
+        "url": "http://nodered.org"
+    }
+}

@@ -5,29 +5,32 @@ A collection of [node-red](http://nodered.org) nodes aimed at web services
 
 ### Installation
 
-The latest release of these nodes can be installed by running:
+These nodes are now being separated into individual npms.
 
-    $ npm install node-red-node-web-nodes
+They can be installed by
 
+    $ npm install node-red-node-{nodename}
+
+where `{nodename}` is one of the following :
 
 ### Nodes
 
-The current release contains the following nodes for the follow servives
+The install name is node-red-node-(the name in braces)
 
- - Amazon S3
- - Box
- - Delicious
- - Dropbox
- - FitBit
- - Flickr
- - Forecast.io
- - FourSquare/Swarm
- - Google Calendar
- - Google Places
- - Instagram
- - Jawbone
- - Pinboard
- - Strava
- - Transport for London
- - OpenWeatherMap 
- - Weather Underground
+ - Amazon S3 - not yet moved over
+ - Box (box)
+ - Delicious (delicious)
+ - Dropbox (dropbox)
+ - FitBit (fitbit)
+ - Flickr (flicker)
+ - Forecast.io (forecastio)
+ - FourSquare/Swarm (foursquare)
+ - Google Calendar - not yet moved over
+ - Google Places - not yet moved over
+ - Instagram (instagram)
+ - Jawbone (jawboneup)
+ - Pinboard (pinboard)
+ - Strava (strava)
+ - Transport for London (tfl)
+ - OpenWeatherMap (openweathermap)
+ - Weather Underground (weather-underground)

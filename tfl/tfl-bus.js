@@ -16,7 +16,7 @@
 module.exports = function(RED) {
     "use strict";
     var request = require('request');
-    
+
     var apiEndpoint = "http://countdown.api.tfl.gov.uk/interfaces/ura/instant_V1?";
 
     function fetchStopsInRadius(lat, lon, radius, callback) {
@@ -41,7 +41,7 @@ module.exports = function(RED) {
           }
       });
     }
-    
+
     function fetchLinesForStop(stopCode1, callback) {
         var fetchQuery = "StopCode1="+ stopCode1;
         var returnList = "&ReturnList=StopCode2,StopPointName,LineName,DestinationText,EstimatedTime,ExpireTime,RegistrationNumber,VehicleID";
@@ -68,7 +68,7 @@ module.exports = function(RED) {
             }
         });
     }
-    
+
     function fetchDataForStopAndLine(stopCode1, lineID, callback) {
         if(lineID == "NODEPARTURE") {
             callback(null,null);
@@ -97,23 +97,21 @@ module.exports = function(RED) {
 
     function TflbusNode(n) {
         RED.nodes.createNode(this,n);
-        
-        var node = this;
 
+        var node = this;
         node.stopCode1 = n.stopCode1;
         node.lineID = n.lineID;
-       
         node.lat = n.lat;
         node.lon = n.lon;
         node.radius = n.radius;
-        
+
         if(!node.stopCode1 || !node.lineID || node.stopCode1 === "unset" || node.lineID === "unset") {
             node.error("No bus stops or bus line numbers have been configured.",msg);
             return;
         }
-                
+
         node.on("input", function(msg) {
-                    
+
             if(msg.location && msg.location.lat && msg.location.on && msg.location.radius) {
                 //TODO implement bus stop finder? ==> To be done later
             }
@@ -126,7 +124,6 @@ module.exports = function(RED) {
                     if (departuresArray) {
                         // the node only considers the first bus arriving to the stop
                         var firstBusArrivingArray = departuresArray[0];
-        
                         // [1] => from (StopPointName => this stop)
                         // [2] => LineID
                         // [3] => DestinationText
@@ -139,15 +136,12 @@ module.exports = function(RED) {
                         msg.payload.EstimatedTime = new Date(firstBusArrivingArray[5]);
                     }
                 }
-                
                 if(!msg.location) {
                     msg.location = {};
                 }
-                    
                 msg.location.lat = node.lat;
                 msg.location.lon = node.lon;
                 msg.location.radius = node.radius;
-                    
                 node.send(msg);
             });
         });
@@ -155,11 +149,9 @@ module.exports = function(RED) {
         node.on("close", function() {
             node.stopCode1 = null;
             node.lineID = null;
-            
             node.lat = null;
             node.lon = null;
             node.radius = null;
-            
             node.acceptedtcs = null;
         });
     }
@@ -170,13 +162,13 @@ module.exports = function(RED) {
             res.send(stops);
         });
     });
-    
+
     RED.httpAdmin.get('/tfl-bus/linesquery', function(req, res) {
         var state = req.query;
         fetchLinesForStop(state.stopCode1, function(lines) {
             res.send(lines);
         });
     });
-    
-    RED.nodes.registerType("tfl-bus",TflbusNode);
+
+    RED.nodes.registerType("tfl bus",TflbusNode);
 };

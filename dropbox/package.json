@@ -1,0 +1,25 @@
+{
+    "name"          : "node-red-node-dropbox",
+    "version"       : "0.0.1",
+    "description"   : "Node-RED nodes to watch and download files from Dropbox",
+    "dependencies"  : {
+        "dropbox":"0.10.3",
+        "minimatch":"2.0.*"
+    },
+    "repository" : {
+        "type":"git",
+        "url":"https://github.com/node-red/node-red-web-nodes/tree/master/dropbox"
+    },
+    "license": "Apache-2.0",
+    "keywords": [ "node-red", "dropbox" ],
+    "node-red"      : {
+        "nodes"     : {
+            "dropbox": "dropbox.js"
+        }
+    },
+    "author": {
+        "name": "Mark Hindess",
+        "email": "HINDESSM@vnet.ibm.com",
+        "url": "http://nodered.org"
+    }
+}

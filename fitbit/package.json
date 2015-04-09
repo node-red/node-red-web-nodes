@@ -1,0 +1,23 @@
+{
+    "name"          : "node-red-node-fitbit",
+    "version"       : "0.0.1",
+    "description"   : "Node-RED nodes that get information from a Fitbit",
+    "dependencies"  : {
+    },
+    "repository" : {
+        "type":"git",
+        "url":"https://github.com/node-red/node-red-web-nodes/tree/master/fitbit"
+    },
+    "license": "Apache",
+    "keywords": [ "node-red", "fitbit", "exercise", "biometric" ],
+    "node-red"      : {
+        "nodes"     : {
+            "fitbit": "fitbit.js"
+        }
+    },
+    "author": {
+        "name": "Mark Hindess",
+        "email": "HINDESSM@uk.ibm.com",
+        "url": "http://nodered.org"
+    }
+}

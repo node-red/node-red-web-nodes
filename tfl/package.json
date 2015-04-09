@@ -1,0 +1,24 @@
+{
+    "name"          : "node-red-node-tfl",
+    "version"       : "0.0.1",
+    "description"   : "Node-RED nodes to interrogate Transport-for-London (TfL) transport APIs for bus and Undergroound information",
+    "dependencies"  : {
+    },
+    "repository" : {
+        "type":"git",
+        "url":"https://github.com/node-red/node-red-web-nodes/tree/master/tfl"
+    },
+    "license": "Apache-2.0",
+    "keywords": [ "node-red", "tfl", "bus", "underground", "London", "transport" ],
+    "node-red"      : {
+        "nodes"     : {
+            "tfl underground": "tfl-underground.js",
+            "tfl bus": "tfl-bus.js"
+        }
+    },
+    "author": {
+        "name": "Ben Perry",
+        "email": "BENJAMIP@uk.ibm.com",
+        "url": "http://nodered.org"
+    }
+}
