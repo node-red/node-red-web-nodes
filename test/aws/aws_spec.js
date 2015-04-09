@@ -80,7 +80,7 @@ describe('aws nodes', function() {
                     'content-type': 'application/xml',
                     'transfer-encoding': 'chunked',
                     server: 'AmazonS3' });
-            helper.load([s3Node, awsNode],
+            helper.load([awsNode],
                         [{id:"aws", type: "aws-config"},
                          {id:"s3", type:"amazon s3 in", aws: "aws",
                           bucket: "foobar", wires: [["output"]] },
@@ -127,7 +127,7 @@ describe('aws nodes', function() {
                     'content-type': 'application/xml',
                     'transfer-encoding': 'chunked',
                     server: 'AmazonS3' });
-            helper.load([s3Node, awsNode],
+            helper.load([awsNode],
                         [{id:"aws", type: "aws-config"},
                          {id:"s3", type:"amazon s3 in", aws: "aws",
                           bucket: "foobar", wires: [["output"]] },
@@ -174,7 +174,7 @@ describe('aws nodes', function() {
                     'content-type': 'application/xml',
                     'transfer-encoding': 'chunked',
                     server: 'AmazonS3' });
-            helper.load([s3Node, awsNode],
+            helper.load([awsNode],
                         [{id:"aws", type: "aws-config"},
                          {id:"s3", type:"amazon s3 in", aws: "aws",
                           bucket: "foobar", wires: [["output"]] },
@@ -223,7 +223,7 @@ describe('aws nodes', function() {
                     'content-type': 'application/xml',
                     'transfer-encoding': 'chunked',
                     server: 'AmazonS3' });
-            helper.load([s3Node, awsNode],
+            helper.load([awsNode],
                         [{id:"aws", type: "aws-config"},
                          {id:"s3", type:"amazon s3 in", aws: "aws",
                           bucket: "foobar", filepattern: '**/*.txt',
@@ -271,7 +271,7 @@ describe('aws nodes', function() {
                     'content-type': 'application/xml',
                     'transfer-encoding': 'chunked',
                     server: 'AmazonS3' });
-            helper.load([s3Node, awsNode],
+            helper.load([awsNode],
                         [{id:"aws", type: "aws-config"},
                          {id:"s3", type:"amazon s3 in", aws: "aws",
                           bucket: "foobar", filepattern: '**/*.txt',
@@ -321,7 +321,7 @@ describe('aws nodes', function() {
                     'content-type': 'application/octet-stream',
                     'content-length': '6',
                     server: 'AmazonS3' });
-            helper.load([s3Node, awsNode],
+            helper.load([awsNode],
                         [{id:"inject", type: "helper", wires: [["s3"]]},
                          {id:"aws", type: "aws-config"},
                          {id:"s3", type:"amazon s3", aws: "aws",
@@ -368,7 +368,7 @@ describe('aws nodes', function() {
                          etag: '"3858f62230ac3c915f300c664312c63f"',
                          'content-length': '0',
                          server: 'AmazonS3' });
-            helper.load([s3Node, awsNode],
+            helper.load([awsNode],
                 [{id:"inject", type: "helper", wires: [["s3"]]},
                  {id:"aws", type: "aws-config"},
                  {id:"s3", type:"amazon s3 out", aws: "aws", bucket: "foobar" }
