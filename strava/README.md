@@ -1,4 +1,4 @@
-node-red-node-flickr
+node-red-node-strava
 ====================
 
 A <a href="http://nodered.org" target="_new">Node-RED</a> node to get your latest
