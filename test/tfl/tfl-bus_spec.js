@@ -59,7 +59,9 @@ describe('TfL Bus Node', function() {
                     }
                 })
                 .end(function(err, res) {
-                    if (err) return done(err);
+                    if (err) {
+                    	return done(err);
+                    }
                     done();
                 });
             });
@@ -83,7 +85,9 @@ describe('TfL Bus Node', function() {
                     }
                 })
                 .end(function(err, res) {
-                    if (err) return done(err);
+                    if (err) {
+                    	return done(err);
+                    }
                     done();
                 });
             });

@@ -61,13 +61,17 @@ describe('jawboneup nodes', function() {
                                     .get('/jawboneup-credentials/auth?id=n4&callback=http://localhost:1880:/jawboneup-credentials&clientid=abcdefg&appsecret=mnopqrs&response_type=code')
                                     .expect(302)
                                     .end(function(err, res) {
-                                        if (err) return done(err);
+                                        if (err) {
+                                        	return done(err);
+                                        }
                                         var state = res.text.split("state=n4%253A");
                                         helper.request()
                                             .get('/jawboneup-credentials/auth/callback?code=123456&state=n4:'+state[1])
                                             .expect(200)
                                             .end(function(err, res) {
-                                                if (err) return done(err);
+                                                if (err) {
+                                                	return done(err);
+                                                }
                                                 helper.credentials.get("n4")
                                                     .should.have.property('displayname',
                                                                           'John Smith');
@@ -105,13 +109,17 @@ describe('jawboneup nodes', function() {
                             .get('/jawboneup-credentials/auth?id=n4&callback=http://localhost:1880:/jawboneup-credentials&clientid=abcdefg&appsecret=mnopqrs&response_type=code')
                             .expect(302)
                             .end(function(err, res) {
-                                if (err) return done(err);
+                                if (err) {
+                                	return done(err);
+                                }
                               var state = res.text.split("state=n4%253A");
                               helper.request()
                                   .get('/jawboneup-credentials/auth/callback?code=123456&state=n4:'+state[1])
                                   .expect(200)
                                   .end(function(err, res) {
-                                      if (err) return done(err);
+                                      if (err) {
+                                    	  return done(err);
+                                      }
                                       res.text.should.containEql('Oh no');
                                       done();
                                   });
@@ -136,13 +144,17 @@ describe('jawboneup nodes', function() {
                                     .get('/jawboneup-credentials/auth?id=n4&callback=http://localhost:1880:/jawboneup-credentials&clientid=abcdefg&appsecret=mnopqrs&response_type=code')
                                     .expect(302)
                                     .end(function(err, res) {
-                                        if (err) return done(err);
+                                        if (err) {
+                                        	return done(err);
+                                        }
                                         var state = res.text.split("state=n4%253A");
                                         helper.request()
                                             .get('/jawboneup-credentials/auth/callback?code=123456&state=n4:'+state[1])
                                             .expect(200)
                                             .end(function(err, res) {
-                                                if (err) return done(err);
+                                                if (err) {
+                                                	return done(err);
+                                                }
                                                 res.text.should.containEql('Http return code');
                                                 done();
                                             });
@@ -165,12 +177,16 @@ describe('jawboneup nodes', function() {
                                 .get('/jawboneup-credentials/auth?id=n4&clientid=abcdefg&appsecret=mnopqrs&response_type=code&callback=http://localhost:1880:/jawboneup-credentials')
                                 .expect(302)
                                 .end(function(err, res) {
-                                    if (err) return done(err);
+                                    if (err) {
+                                    	return done(err);
+                                    }
                                     helper.request()
                                         .get('/jawboneup-credentials/auth/callback?code=123456&state=n4:13579')
                                         .expect(401)
                                         .end(function(err, res) {
-                                            if (err) return done(err);
+                                            if (err) {
+                                            	return done(err);
+                                            }
                                             res.text.should.containEql('CSRF token mismatch, possible cross-site request forgery attempt');
                                             done();
                                         });
@@ -419,7 +435,7 @@ describe('jawboneup nodes', function() {
                               n1.send({payload:"nothing", foo:"bar", starttime:"1417694436"});
                               n3.on('input', function(msg){
                                   msg.should.have.property('foo', "bar");
-                                  msg.payload.should.be.an.instanceOf(Array).and.have.lengthOf(1);;
+                                  msg.payload.should.be.an.instanceOf(Array).and.have.lengthOf(1);
                                   msg.payload[0].should.have.property('title', "Run");
                                   done();
                               });

@@ -35,7 +35,9 @@ describe('box nodes', function() {
     });
 
     describe("box credentials", function() {
-        if (!nock) return;
+        if (!nock) {
+        	return;
+        }
         it("should complete oauth dance", function(done) {
             helper.load(boxNode, [
                 {id:"input", type:"helper", wires:[["input"]]},
@@ -74,14 +76,18 @@ describe('box nodes', function() {
                     .expect(302)
                     .expect('Location', /https:\/\/app\.box\.com\/api\/oauth2\/authorize\?response_type=code&client_id=CLIENT&state=([^&]*)&redirect_uri=http%3A%2F%2Flocalhost%3A1880%2Fbox-credentials%2Fauth%2Fcallback/)
                     .end(function(err, res) {
-                        if (err) return done(err);
+                        if (err) {
+                        	return done(err);
+                        }
                         var location = url.parse(res.headers.location, true);
                         var state = location.query.state;
                         helper.request()
                             .get('/box-credentials/auth/callback?code=CODE&state='+state)
                             .expect(200)
                             .end(function(err, res) {
-                                if (err) return done(err);
+                                if (err) {
+                                	return done(err);
+                                }
                                 helper.credentials.get("box-config")
                                     .should.have.property('displayName','Foo Bar');
                                 done();
@@ -92,7 +98,9 @@ describe('box nodes', function() {
     });
 
     describe("watch node", function() {
-        if (!nock) return;
+        if (!nock) {
+        	return;
+        }
         it('should report file add event', function(done) {
             nock('https://api.box.com:443')
                 .get('/2.0/events?stream_position=now&stream_type=changes')
@@ -227,9 +235,10 @@ describe('box nodes', function() {
                     });
                 });
         });
-        return; // TODO: finish below
+        
+        // TODO: finish below tests
 
-        it('should report no event when filepattern does not match', function(done) {
+        it.skip('should report no event when filepattern does not match', function(done) {
             nock('https://api.box.com:443')
                 .post('/1/delta')
                 .reply(200, {
@@ -295,7 +304,7 @@ describe('box nodes', function() {
                 });
         });
 
-        it('should report event when filepattern matches', function(done) {
+        it.skip('should report event when filepattern matches', function(done) {
             nock('https://api.box.com:443')
                 .post('/1/delta')
                 .reply(200, {
@@ -359,7 +368,7 @@ describe('box nodes', function() {
                 });
         });
 
-        it('should report file delete event', function(done) {
+        it.skip('should report file delete event', function(done) {
             nock('https://api.box.com:443')
                 .post('/1/delta')
                 .reply(200, {
@@ -427,7 +436,9 @@ describe('box nodes', function() {
     });
 
     describe("query node", function() {
-        if (!nock) return;
+        if (!nock) {
+        	return;
+        }
         it('should fetch file', function(done) {
             nock('https://api.box.com:443')
                 .get('/2.0/folders/0')
@@ -513,7 +524,9 @@ describe('box nodes', function() {
     });
 
     describe('out node', function() {
-        if (!nock) return;
+        if (!nock) {
+        	return;
+        }
         it('should upload msg.payload', function(done) {
             nock('https://api.box.com:443')
                 .post('/oauth2/token',

@@ -29,7 +29,7 @@ function TimeOffset(offsetSeconds) {
 }
 
 function ISOTimeString(offsetSeconds) {
-    return TimeOffset(offsetSeconds).toISOString();
+    return new TimeOffset(offsetSeconds).toISOString();
 }
 
 describe('google calendar nodes', function() {
@@ -48,19 +48,18 @@ describe('google calendar nodes', function() {
     describe('input node', function() {
         if (!nock) { return; }
         it('injects message for calendar entry', function(done) {
-            var oneMinuteAgo = TimeOffset(-60); // definitely passed
-            var now = TimeOffset();
-            var oneSecondFromNow = TimeOffset(1);
-            var oneMinuteFromNow = TimeOffset(60);
-            var oneMinuteOneSecondFromNow = TimeOffset(61);
-            var twoMinutesFromNow = TimeOffset(120);
+            var oneMinuteAgo = new TimeOffset(-60); // definitely passed
+            var now = new TimeOffset();
+            var oneSecondFromNow = new TimeOffset(1);
+            var oneMinuteFromNow = new TimeOffset(60);
+            var oneMinuteOneSecondFromNow = new TimeOffset(61);
+            var twoMinutesFromNow = new TimeOffset(120);
             var scope = nock('https://www.googleapis.com:443')
                 .filteringPath(function(path) {
                     path = path.replace(/\.\d\d\dZ$/g, '.000Z');
                     path =
                         path.replace(
-                            'timeMin='
-                              +encodeURIComponent(oneMinuteAgo.toISOString()),
+                            'timeMin=' + encodeURIComponent(oneMinuteAgo.toISOString()),
                             'timeMin=oneMinuteAgo');
                     [now, oneSecondFromNow].forEach(function(t) {
                         path =
@@ -211,19 +210,18 @@ describe('google calendar nodes', function() {
         });
 
         it('injects message for calendar entry based on end time', function(done) {
-            var oneMinuteAgo = TimeOffset(-60); // definitely passed
-            var now = TimeOffset();
-            var oneSecondFromNow = TimeOffset(1);
-            var oneMinuteFromNow = TimeOffset(60);
-            var oneMinuteOneSecondFromNow = TimeOffset(61);
-            var twoMinutesFromNow = TimeOffset(120);
+            var oneMinuteAgo = new TimeOffset(-60); // definitely passed
+            var now = new TimeOffset();
+            var oneSecondFromNow = new TimeOffset(1);
+            var oneMinuteFromNow = new TimeOffset(60);
+            var oneMinuteOneSecondFromNow = new TimeOffset(61);
+            var twoMinutesFromNow = new TimeOffset(120);
             var scope = nock('https://www.googleapis.com:443')
                 .filteringPath(function(path) {
                     path = path.replace(/\.\d\d\dZ$/g, '.000Z');
                     path =
                         path.replace(
-                            'timeMin='
-                              +encodeURIComponent(oneMinuteAgo.toISOString()),
+                            'timeMin=' + encodeURIComponent(oneMinuteAgo.toISOString()),
                             'timeMin=oneMinuteAgo');
                     [now, oneSecondFromNow].forEach(function(t) {
                         path =
@@ -378,9 +376,9 @@ describe('google calendar nodes', function() {
     describe('query node', function() {
         if (!nock) { return; }
         it('returns calendar entry', function(done) {
-            var oneHourAgo = TimeOffset(-3600);
-            var oneHourFromNow = TimeOffset(3600);
-            var twoHoursFromNow = TimeOffset(7200);
+            var oneHourAgo = new TimeOffset(-3600);
+            var oneHourFromNow = new TimeOffset(3600);
+            var twoHoursFromNow = new TimeOffset(7200);
             nock('https://www.googleapis.com:443')
                 .get('/calendar/v3/users/me/calendarList')
                 .reply(200, {

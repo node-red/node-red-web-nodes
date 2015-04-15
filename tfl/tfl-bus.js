@@ -106,7 +106,7 @@ module.exports = function(RED) {
         node.radius = n.radius;
 
         if(!node.stopCode1 || !node.lineID || node.stopCode1 === "unset" || node.lineID === "unset") {
-            node.error("No bus stops or bus line numbers have been configured.",msg);
+            node.error("No bus stops or bus line numbers have been configured.");
             return;
         }
 

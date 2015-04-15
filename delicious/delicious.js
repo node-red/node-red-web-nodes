@@ -57,13 +57,13 @@ module.exports = function(RED) {
                         user: node.user.username,
                         password: node.user.credentials.password
                     }
-                }
+                };
                 // TODO: allow tags to be added by the message 
                 if (node.tags) {
-                    options.url += "&tags="+encodeURIComponent(node.tags)
+                    options.url += "&tags="+encodeURIComponent(node.tags);
                 }
                 if (msg.description) {
-                    options.url += "&extended="+encodeURIComponent(msg.description)
+                    options.url += "&extended="+encodeURIComponent(msg.description);
                 }
                 
                 node.status({fill:"blue",shape:"dot",text:"saving"});
@@ -93,4 +93,4 @@ module.exports = function(RED) {
         
     }
     RED.nodes.registerType("delicious out",DeliciousOutNode);
-}
+};

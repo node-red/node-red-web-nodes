@@ -85,7 +85,7 @@ module.exports = function(RED) {
                 msg.payload.forecast = loc.city+" : "+fcast.title+" : "+ fcast.fcttext_metric;
                 callback(null);
             }
-        }
+        };
     }
 
     function WunderInputNode(n) {

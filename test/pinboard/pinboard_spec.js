@@ -60,7 +60,7 @@ describe('pinboard nodes', function() {
                           }
                       },200);
                   });
-        })
+        });
         
         it(' logs a warning if msg.title is not set', function(done) {
             helper.load(pinboardNode, 
@@ -93,6 +93,6 @@ describe('pinboard nodes', function() {
                           }
                       },200);
                   });
-        })
+        });
     });
 });

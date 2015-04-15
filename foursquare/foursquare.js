@@ -247,7 +247,7 @@ module.exports = function(RED) {
                              var resp = '<h2>Oh no!</h2>'+
                              '<p>Something went wrong with the authentication process. The following error was returned:</p>'+
                              '<p><b>'+error.statusCode+'</b>: '+error.data+'</p>';
-                             res.send(resp)
+                             res.send(resp);
                          } else {
                              var apiUrl = "https://api.foursquare.com/v2/users/self?oauth_token=" + oauth_access_token  + "&v=20141016";
                              var r = request.get(apiUrl,function(err, httpResponse, body) {
@@ -255,14 +255,14 @@ module.exports = function(RED) {
                                      var resp = '<h2>Oh no!</h2>'+
                                      '<p>Something went wrong with the authentication process. The following error was returned:</p>'+
                                      '<p><b>'+err.statusCode+'</b>: '+err.data+'</p>';
-                                     res.send(resp)
+                                     res.send(resp);
                                  } else {
                                      var result = JSON.parse(body);
                                      if (result.meta.code != 200) {
                                          var message = '<h2>Oh no!</h2>'+
                                          '<p>Something went wrong with the authentication process. Http return code:</p>'+
                                          '<p><b>'+result.meta.code+'</b></p>';
-                                         res.send(message)                                         
+                                         res.send(message);
                                      } else {
                                          credentials = {};
                                          credentials.displayname = result.response.user.firstName + " " + result.response.user.lastName;
@@ -280,4 +280,4 @@ module.exports = function(RED) {
 
     });
     
-}
+};

@@ -92,7 +92,7 @@ module.exports = function(RED) {
                 }
                 if(result.statusCode !== 200) {
                     console.log(data);
-                    return callback(null,result.statusCode)
+                    return callback(null,result.statusCode);
                 }
                 
                 activityDetails = data;

@@ -35,7 +35,9 @@ describe('google nodes', function() {
     });
 
     describe("google credentials", function() {
-        if (!nock) return;
+        if (!nock) {
+        	return;
+        }
         it("should complete oauth dance", function(done) {
             helper.load(googleNode, [
                 {id:"google-config", type:"google-credentials"},
@@ -61,14 +63,18 @@ describe('google nodes', function() {
                     .expect(302)
                     .expect('Location', /https:\/\/accounts\.google\.com\/o\/oauth2\/auth\?response_type=code&client_id=CLIENT&state=([^&]*)&access_type=offline&approval_prompt=force&scope=profile%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&redirect_uri=http%3A%2F%2Flocalhost%3A1880%2Fgoogle-credentials%2Fauth%2Fcallback/)
                     .end(function(err, res) {
-                        if (err) return done(err);
+                        if (err) {
+                        	return done(err);
+                        }
                         var location = url.parse(res.headers.location, true);
                         var state = location.query.state;
                         helper.request()
                             .get('/google-credentials/auth/callback?code=CODE&state='+state)
                             .expect(200)
                             .end(function(err, res) {
-                                if (err) return done(err);
+                                if (err) {
+                                	return done(err);
+                                }
                                 helper.credentials.get("google-config")
                                     .should.have.property('displayName','Foo Bar');
                                 done();

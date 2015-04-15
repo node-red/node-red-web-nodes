@@ -66,7 +66,7 @@ describe('delicious nodes', function() {
                           }
                       },200);
                   });
-        })
+        });
         
         it(' logs a warning if msg.title is not set', function(done) {
             helper.load(deliciousNode, 
@@ -99,7 +99,7 @@ describe('delicious nodes', function() {
                           }
                       },200);
                   });
-        })
+        });
         
         if (nock) {
             
@@ -116,7 +116,7 @@ describe('delicious nodes', function() {
                           function() {
                               var scope = nock('https://api.delicious.com:443')
                                   .get('/v1/posts/add?url=foobar&description=test&auth_token=undefined&shared=no&tags=testtag&extended=testdesc')
-                                    .reply(200, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\<code=\"done\"/>");
+                                    .reply(200, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><code=\"done\"/>");
                              
                               var inject = helper.getNode("inject");
                               var delicious = helper.getNode("delicious");
@@ -130,7 +130,7 @@ describe('delicious nodes', function() {
                                   return;
                               });
                           });
-            })
+            });
             
             it(' fails if failure with save link', function(done) {
                     helper.load(deliciousNode, 
@@ -145,7 +145,7 @@ describe('delicious nodes', function() {
                           function() {
                               var scope = nock('https://api.delicious.com:443')
                                   .get('/v1/posts/add?url=foobar&description=test&auth_token=undefined&shared=no&tags=testtag&extended=testdesc')
-                                    .reply(401, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\<code=\"access denied\"/>");
+                                    .reply(401, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><code=\"access denied\"/>");
                              
                               var inject = helper.getNode("inject");
                               var delicious = helper.getNode("delicious");
@@ -161,9 +161,9 @@ describe('delicious nodes', function() {
                               });
                               inject.send({payload:"foobar", title:"test",description:"testdesc"});
                           });
-            })
+            });
             
             
-        };
+        }
     });
 });

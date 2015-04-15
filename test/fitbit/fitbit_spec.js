@@ -496,12 +496,16 @@ describe('fitbit nodes', function() {
                         .expect(302)
                         .expect('Location', 'https://www.fitbit.com/oauth/authorize?oauth_token=0123')
                         .end(function(err, res) {
-                            if (err) return done(err);
+                            if (err) {
+                            	return done(err);
+                            }
                             helper.request()
                                 .get('/fitbit-credentials/fitbit-config/auth/callback?oauth_verifier=abcdef')
                                 .expect(200)
                                 .end(function(err, res) {
-                                    if (err) return done(err);
+                                    if (err) {
+                                    	return done(err);
+                                    }
                                     helper.credentials.get("fitbit-config")
                                         .should.have.property('username',
                                                               'Foo Bar');
@@ -729,7 +733,9 @@ describe('fitbit nodes', function() {
                         .get('/fitbit-credentials/fitbit-config/auth?client_key=0123&client_secret=4567&callback=http://localhost:1880/fitbit-credentials/fitbit-config/auth/callback')
                         .expect(200)
                         .end(function(err, res) {
-                            if (err) return done(err);
+                            if (err) {
+                            	return done(err);
+                            }
                             res.text.should.containEql('Oh no');
                             done();
                         });
@@ -769,12 +775,16 @@ describe('fitbit nodes', function() {
                         .expect(302)
                         .expect('Location', 'https://www.fitbit.com/oauth/authorize?oauth_token=0123')
                         .end(function(err, res) {
-                            if (err) return done(err);
+                            if (err) {
+                            	return done(err);
+                            }
                             helper.request()
                                 .get('/fitbit-credentials/fitbit-config/auth/callback?oauth_verifier=abcdef')
                                 .expect(200)
                                 .end(function(err, res) {
-                                    if (err) return done(err);
+                                    if (err) {
+                                    	return done(err);
+                                    }
                                     res.text.should.containEql('Oh no');
                                     res.text.should.containEql('oauth_problem=permission_denied');
                                     done();
@@ -825,12 +835,16 @@ describe('fitbit nodes', function() {
                         .expect(302)
                         .expect('Location', 'https://www.fitbit.com/oauth/authorize?oauth_token=0123')
                         .end(function(err, res) {
-                            if (err) return done(err);
+                            if (err) {
+                            	return done(err);
+                            }
                             helper.request()
                                 .get('/fitbit-credentials/fitbit-config/auth/callback?oauth_verifier=abcdef')
                                 .expect(200)
                                 .end(function(err, res) {
-                                    if (err) return done(err);
+                                    if (err) {
+                                    	return done(err);
+                                    }
                                     res.text.should.containEql('Oh no');
                                     res.text.should.containEql('No user found');
                                     done();
@@ -861,7 +875,9 @@ describe('fitbit nodes', function() {
                     .get('/fitbit-credentials/fitbit-config/auth?client_key=0123')
                     .expect(400)
                     .end(function(err, res) {
-                        if (err) return done(err);
+                        if (err) {
+                        	return done(err);
+                        }
                         done();
                     });
             });
