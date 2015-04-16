@@ -27,6 +27,18 @@
          <label for="node-input-filepattern"><i class="fa fa-file"></i> Filename Pattern</label>
          <input type="text" id="node-input-filepattern" placeholder="Filepattern">
     </div>
+    <div class="form-row node-input-interval">
+         <label for="node-input-interval"><i class="fa fa-clock-o"></i> Interval between checks</label>
+         <input type="text" id="node-input-interval" placeholder="Interval">
+    </div>
+    <div class="form-row node-input-listenTo">
+         <label for="node-input-listenTo"><i class="fa fa-filter"></i> Events to listen to</label>
+         <select type="text" id="node-input-listenTo" value="add">
+            <option value="all">All</option>
+            <option value="add">Add</option>
+            <option value="delete">Delete</option>
+         </select>
+    </div>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -51,6 +63,8 @@
             bucket: {required:true},
             filepattern: {value:""},
             name: {value:""},
+            interval: {value: 900000},
+            listenTo: {value: 'add'}
         },
         inputs:0,
         outputs:1,

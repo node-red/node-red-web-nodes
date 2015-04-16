@@ -43,6 +43,8 @@ module.exports = function(RED) {
         this.awsConfig = RED.nodes.getNode(n.aws);
         this.region = n.region;
         this.bucket = n.bucket;
+        this.interval = n.interval || 900000;
+        this.listenTo = n.listenTo || "add";
         this.filepattern = n.filepattern || "";
         var node = this;
         var AWS = this.awsConfig ? this.awsConfig.AWS : null;
@@ -81,7 +83,7 @@ module.exports = function(RED) {
                         var file = newContents[i].Key;
                         if (seen[file]) {
                             delete seen[file];
-                        } else {
+                        } else if(node.listenTo === "add" || node.listenTo === "all"){
                             msg.payload = file;
                             msg.file = file.substring(file.lastIndexOf('/')+1);
                             msg.event = 'add';
@@ -90,7 +92,7 @@ module.exports = function(RED) {
                         }
                     }
                     for (var f in seen) {
-                        if (seen.hasOwnProperty(f)) {
+                        if (seen.hasOwnProperty(f) && node.listenTo === "delete" || node.listenTo === "all") {
                             msg.payload = f;
                             msg.file = f.substring(f.lastIndexOf('/')+1);
                             msg.event = 'delete';
@@ -103,7 +105,7 @@ module.exports = function(RED) {
             });
             var interval = setInterval(function() {
                 node.emit("input", {});
-            }, 900000); // 15 minutes
+            }, node.interval); // 15 minutes
             node.on("close", function() {
                 if (interval !== null) {
                     clearInterval(interval);
