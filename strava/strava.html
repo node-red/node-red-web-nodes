@@ -150,10 +150,11 @@
                var protocol = location.protocol;
                 var separator = '//';
                 var host = location.hostname;
-                var port = location.port;
                 var callbackPath = 'strava-credentials/auth/callback';
                 
-                var constructedURI = protocol + separator + host + ':' + port + '/' + callbackPath;
+                var constructedURI = protocol + separator + host + 
+                    (location.port?":"+location.port:"")+
+                    '/' + callbackPath;
                 
                 var constructedURIToShow;
                 if(host.valueOf().indexOf("localhost") !== -1 || host.valueOf().indexOf("127.0.0.1") !== -1) { // these are whitelisted

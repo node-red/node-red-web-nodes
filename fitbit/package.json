@@ -1,6 +1,6 @@
 {
     "name"          : "node-red-node-fitbit",
-    "version"       : "0.0.1",
+    "version"       : "0.0.2",
     "description"   : "Node-RED nodes that get information from a Fitbit",
     "dependencies"  : {
     },

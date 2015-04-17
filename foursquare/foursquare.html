@@ -70,7 +70,8 @@
                 pathname += "/";
             }
             var callback = location.protocol + "//" +
-                                  location.hostname + ":" + location.port +
+                                  location.hostname + 
+                                  (location.port?":"+location.port:"")+
                                   pathname + "foursquare-credentials";
             $("#node-config-foursquare-tooltip").html("<p>Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>"+callback+"</code>");
             
@@ -118,7 +119,9 @@
                 if (pathname.slice(-1) != "/") {
                     pathname += "/";
                 }
-                var callback = encodeURIComponent(location.protocol+"//"+location.hostname+":"+location.port+pathname+"foursquare-credentials/auth/callback");
+                var callback = encodeURIComponent(location.protocol+"//"+location.hostname+
+                    (location.port?":"+location.port:"")+
+                    pathname+"foursquare-credentials/auth/callback");
                 var url = 'foursquare-credentials/auth?id='+id+'&callback='+callback+'&clientid='+client_id+"&clientsecret="+client_secret;
                 $(this).attr("href",url);
                 window.foursquareConfigNodeIntervalId = window.setTimeout(pollFoursquareCredentials,2000);

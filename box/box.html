@@ -68,7 +68,8 @@
                 pathname += "/";
             }
             var callback = location.protocol + "//" +
-                           location.hostname + ":" + location.port +
+                           location.hostname + 
+                           (location.port? ":"+location.port:"")+
                            pathname + "box-credentials/auth/callback";
             $("#node-config-box-tooltip").html("<p>Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>"+callback+"</code>");
 

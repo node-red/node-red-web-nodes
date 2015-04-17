@@ -113,7 +113,9 @@
                 if (pathname.slice(-1) != "/") {
                     pathname += "/";
                 }
-                var callback = encodeURIComponent(location.protocol+"//"+location.hostname+":"+location.port+pathname+"flickr-credentials/"+id+"/auth/callback");
+                var callback = encodeURIComponent(location.protocol+"//"+location.hostname+
+                    (location.port?":"+location.port:"")+
+                    pathname+"flickr-credentials/"+id+"/auth/callback");
                 var url = 'flickr-credentials/'+id+'/auth?callback='+callback+'&client_key='+key+"&client_secret="+secret;
                 $(this).attr("href",url);
                 window.flickrConfigNodeIntervalId = window.setTimeout(pollFlickrCredentials,2000);
