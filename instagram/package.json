@@ -1,6 +1,6 @@
 {
     "name"          : "node-red-node-instagram",
-    "version"       : "0.0.2",
+    "version"       : "0.0.3",
     "description"   : "Node-RED nodes that get photos from Instagram",
     "dependencies"  : {
     },
