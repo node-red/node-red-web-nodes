@@ -18,7 +18,7 @@
             "google-api-config": "google.js",
             "google geocoding": "geocoding.js",
             "google directions": "directions.js",
-            "google calendar":" "calendar.js"
+            "google calendar": "calendar.js"
         }
     },
     "author": {
