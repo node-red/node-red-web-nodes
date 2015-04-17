@@ -1,7 +1,7 @@
 {
     "name"          : "node-red-node-box",
-    "version"       : "0.0.2",
-    "description"   : "A Node-RED node to save bookmarks to Delicious",
+    "version"       : "0.0.3",
+    "description"   : "Node-RED nodes to watch, download and save files to Box",
     "dependencies"  : {
     },
     "repository" : {
