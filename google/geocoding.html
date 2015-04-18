@@ -108,12 +108,13 @@
         outputs:1,
         icon: "logo_maps.png",
         label: function() {
-            if(this.geocodeBy === 'address')
-                return this.name||"Geocode by Address";
-            if(this.geocodeBy === 'coordinates')
-                return this.name||"Geocode by Coordinates";
-            else
-                return this.name||"Google Geocoding";
+            if (this.geocodeBy === 'address') {
+                return this.name || "Geocode by Address";
+            } else if (this.geocodeBy === 'coordinates') {
+                return this.name || "Geocode by Coordinates";
+            } else {
+                return this.name || "Google Geocoding";
+            }
         },
         oneditprepare: function() {
             $("#node-input-geocodeBy").change(function() {

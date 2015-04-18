@@ -257,14 +257,15 @@
         outputs:1,
         icon: "logo_maps.png",
         label: function() {
-            if(this.reqType === 'placesNearby')
-                return this.name||"Places Nearby Search";
-            else if(this.reqType === 'placesText')
-                return this.name||"Places Text Search";
-            else if(this.reqType === 'placesDetails')
-                return this.name||"Places Details Search";
-            else
-                return this.name||"Google Places";
+            if(this.reqType === 'placesNearby') {
+                return this.name || "Places Nearby Search";
+            } else if(this.reqType === 'placesText') {
+                return this.name || "Places Text Search";
+            } else if(this.reqType === 'placesDetails') {
+                return this.name || "Places Details Search";
+            } else {
+                return this.name || "Google Places";
+            }
         },
         oneditprepare: function() {
             $("#node-input-reqType").change(function() {
