@@ -3,6 +3,8 @@
     "version"       : "0.0.3",
     "description"   : "Node-RED nodes that get photos from Instagram",
     "dependencies"  : {
+        "request":"~2.40.0",
+        "instagram-node":"0.5.1"
     },
     "repository" : {
         "type":"git",

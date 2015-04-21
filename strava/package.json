@@ -3,6 +3,7 @@
     "version"       : "0.0.3",
     "description"   : "A Node-RED node to get your activity from Strava",
     "dependencies"  : {
+        "request":"~2.40.0"
     },
     "repository" : {
         "type":"git",
