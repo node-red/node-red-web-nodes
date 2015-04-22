@@ -3,6 +3,8 @@
     "version"       : "0.0.3",
     "description"   : "Node-RED nodes to watch, download and save files to Box",
     "dependencies"  : {
+        "minimatch": "^1.0.0",
+        "request":"~2.40.0"
     },
     "repository" : {
         "type":"git",

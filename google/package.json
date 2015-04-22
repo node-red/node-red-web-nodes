@@ -3,8 +3,10 @@
     "version"       : "0.0.2",
     "description"   : "A set of Node-RED nodes to access various Google services",
     "dependencies"  : {
-        "minimatch": "2.0.4"
-    },
+        "clone": "0.1.11",
+        "minimatch": "2.0.4",
+        "request":"~2.40.0"
+      },
     "repository" : {
         "type":"git",
         "url":"https://github.com/node-red/node-red-web-nodes/tree/master/google"

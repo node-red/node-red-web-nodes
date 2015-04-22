@@ -3,6 +3,7 @@
     "version"       : "0.0.2",
     "description"   : "Node-RED nodes that get information from a Fitbit",
     "dependencies"  : {
+        "oauth":"~0.9.11"
     },
     "repository" : {
         "type":"git",
