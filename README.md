@@ -10,9 +10,9 @@ install from [npm](https://www.npmjs.com/search?q=node-red-node-).
 
 They can be installed by
 
-    $ npm install node-red-node-{nodename}
+        npm install node-red-node-{nodename}
 
-in your node-red user directory - this is usually ~/.node-red-web-nodes
+in your node-red user directory - this is usually `~/.node-red`
 
 ### Nodes
 
