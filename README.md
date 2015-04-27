@@ -5,18 +5,21 @@ A collection of [node-red](http://nodered.org) nodes aimed at web services
 
 ### Installation
 
-These nodes are now being separated into individual npms and available to
+These nodes are now separated into individual npms and available to
 install from [npm](https://www.npmjs.com/search?q=node-red-node-).
 
 They can be installed by
 
     $ npm install node-red-node-{nodename}
 
-where `{nodename}` is one of the following :
+in your node-red user directory - this is usually ~/.node-red-web-nodes
 
 ### Nodes
 
-The install name is node-red-node-(the name in braces)
+The install name is node-red-node-*(the name in braces)*. For example
+
+        cd ~/.node-red
+        npm install node-red-node-weather-underground
 
  - Amazon S3 (aws)
  - Box (box)
@@ -38,3 +41,17 @@ The install name is node-red-node-(the name in braces)
  - Strava (strava)
  - Transport for London (tfl)
  - Weather Underground (weather-underground)
+
+### Contributing / Fixes
+
+Now that we support npm installaton of nodes we recommend people create and post their own
+via [npm](https://www.npmjs.org/). Please read
+the [packaging guide notes](http://nodered.org/docs/creating-nodes/packaging.html).
+
+If you are an IBMer, please contact us directly as the contribution process
+is slightly different.
+
+For simple typos and single line fixes please just raise an issue pointing out
+our mistakes. If you need to raise a pull request please read our
+[contribution guidelines](https://github.com/node-red/node-red/blob/master/CONTRIBUTING.md)
+before doing so.
