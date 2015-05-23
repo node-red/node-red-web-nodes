@@ -18,19 +18,18 @@ module.exports = function(RED) {
     "use strict";
     var http = require("http");
 
-    function assignmentFunction(node, msg, lat, lon, city, country, callback){
-        if (country && city){
+    function assignmentFunction(node, msg, lat, lon, city, country, callback) {
+        if (country && city) {
             node.country = country;
             node.city = city;
-        } else if(lat && lon) {
-            if(90 >= lat && lat >= -90){
+        } else if (lat && lon) {
+            if (90 >= lat && lat >= -90) {
                 node.lat = lat;
             } else {
                 node.error("Invalid lat provided",msg);
                 return;
             }
-
-            if(180 >= lon && lon >= -180){
+            if (180 >= lon && lon >= -180) {
                 node.lon = lon;
             } else {
                 node.error("Invalid lon provided",msg);
@@ -47,7 +46,7 @@ module.exports = function(RED) {
 
         var url;
         //If there is a value missing, the URL is not initialised.
-        if (node.lat && node.lon){
+        if (node.lat && node.lon) {
             url = "http://api.openweathermap.org/data/2.5/weather?lat=" + node.lat + "&lon=" + node.lon;
         } else if (node.city && node.country) {
             url = "http://api.openweathermap.org/data/2.5/weather?q=" + node.city + "," + node.country;
@@ -55,7 +54,8 @@ module.exports = function(RED) {
 
         //If the URL is not initialised, there has been an error with the input data,
         //and a node.error is reported.
-        if(url){
+        if (url) {
+            node.status({fill:"blue",shape:"dot",text:"requesting"});
             http.get(url, function(res) {
                 var weather = "";
                 res.on('data', function(d) {
@@ -70,13 +70,13 @@ module.exports = function(RED) {
                         callback("The API has returned an invalid JSON");
                         return;
                     }
-                    if(jsun){
-                        if(jsun.weather){
+                    if (jsun) {
+                        if (jsun.hasOwnProperty("weather") && jsun.hasOwnProperty("main")) {
                             msg.data = jsun;
                             msg.payload.weather = jsun.weather[0].main;
                             msg.payload.detail = jsun.weather[0].description;
                             msg.payload.tempk = jsun.main.temp;
-                            msg.payload.tempc = Number(jsun.main.temp) - 273.2;
+                            if (jsun.main.hasOwnProperty("temp")) { msg.payload.tempc = parseInt(10 * (Number(jsun.main.temp) - 273.2))/10; }
                             msg.payload.humidity = jsun.main.humidity;
                             msg.payload.maxtemp = jsun.main.temp_max;
                             msg.payload.mintemp = jsun.main.temp_min;
@@ -90,14 +90,14 @@ module.exports = function(RED) {
                             msg.location.lat = jsun.coord.lat;
                             msg.location.city = jsun.name;
                             msg.location.country = jsun.sys.country;
-                            msg.time = new Date(jsun.dt*1000);
+                            if (jsun.hasOwnProperty("dt")) { msg.time = new Date(jsun.dt*1000); }
                             msg.title = "Current Weather Information";
                             msg.description = "Current weather information at coordinates: " + msg.location.lat + ", " + msg.location.lon;
 
                             msg.payload.description = ("The weather in " + jsun.name + " at coordinates: " + jsun.coord.lat + ", " + jsun.coord.lon + " is " + jsun.weather[0].main + " (" + jsun.weather[0].description + ")." );
                             callback();
                         } else {
-                            if (jsun.message === "Error: Not found city"){
+                            if (jsun.message === "Error: Not found city") {
                                 callback("Invalid city/country");
                                 return;
                             } else {
@@ -111,6 +111,7 @@ module.exports = function(RED) {
                 callback(e);
                 return;
             });
+            node.status({});
         } else {
             callback("Invalid location information provided");
         }
@@ -132,20 +133,20 @@ module.exports = function(RED) {
         }, this.repeat );
 
         this.on('input', function(msg) {
-            if (n.country && n.city){
+            if (n.country && n.city) {
                 country = n.country;
                 city = n.city;
-            } else if(n.lat && n.lon) {
+            } else if (n.lat && n.lon) {
                 lat = n.lat;
                 lon = n.lon;
             }
             assignmentFunction(node, msg, lat, lon, city, country, function() {
-                weatherPoll(node, msg, function(err){
+                weatherPoll(node, msg, function(err) {
                     if (err) {
                         node.error(err,msg);
                     } else {
                         var msgString = JSON.stringify(msg);
-                        if(msgString !== previousdata){
+                        if (msgString !== previousdata) {
                             previousdata = msgString;
                             node.send(msg);
                         }
@@ -171,24 +172,24 @@ module.exports = function(RED) {
         var lat;
         var lon;
 
-        this.on ('input', function(msg) {
-            if (n.country && n.city){
+        this.on('input', function(msg) {
+            if (n.country && n.city) {
                 country = n.country;
                 city = n.city;
-            } else if(n.lat && n.lon) {
+            } else if (n.lat && n.lon) {
                 lat = n.lat;
                 lon = n.lon;
-            } else if(msg.location){
-                if(msg.location.lat && msg.location.lon){
+            } else if (msg.location) {
+                if (msg.location.lat && msg.location.lon) {
                     lat = msg.location.lat;
                     lon = msg.location.lon;
-                } else if(msg.location.city && msg.location.country) {
+                } else if (msg.location.city && msg.location.country) {
                     city = msg.location.city;
                     country = msg.location.country;
                 }
             }
             assignmentFunction(node, msg, lat, lon, city, country, function() {
-                weatherPoll(node, msg, function(err){
+                weatherPoll(node, msg, function(err) {
                     if (err) {
                         node.error(err,msg);
                     } else {
@@ -199,7 +200,7 @@ module.exports = function(RED) {
         });
     }
 
-RED.nodes.registerType("openweathermap",OpenWeatherMapQueryNode);
-RED.nodes.registerType("openweathermap in",OpenWeatherMapInputNode);
+    RED.nodes.registerType("openweathermap",OpenWeatherMapQueryNode);
+    RED.nodes.registerType("openweathermap in",OpenWeatherMapInputNode);
 
 };
