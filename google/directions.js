@@ -18,21 +18,21 @@ module.exports = function(RED) {
     "use strict";
     var request = require('request');
     var clone = require('clone');
-    
+
     function GoogleDirectionsNode(n) {
         RED.nodes.createNode(this,n);
         var node = this;
         this.googleAPI = RED.nodes.getNode(n.googleAPI);
-        
+
         this.on('input', function(msg){
             var url, queryParams, key, origin, destination, mode, waypoints, alternatives, avoid, language, units, region, departure_time, arrival_time, transit_mode, transit_routing_preferences;
-            
+
             if(this.googleAPI && this.googleAPI.credentials && this.googleAPI.credentials.key){
                 key = this.googleAPI.credentials.key;
             } else if(msg.key){
                 key = msg.key;
             }
-            
+
             origin = n.origin || msg.origin;
             destination = n.destination || msg.destination;
             mode = n.mode || msg.mode;
@@ -46,22 +46,23 @@ module.exports = function(RED) {
             arrival_time = n.arrival_time || msg.arrival_time;
             transit_mode = n.transit_mode || msg.transit_mode;
             transit_routing_preferences = n.transit_routing_preferences || msg.transit_routing_preferences;
-            
-            
+
+            node.status({fill:"blue",shape:"dot",text:"requesting"});
             function processInput(){
                 queryParams = {};
-                
+
                 if(key){
                     queryParams.key = key;
                 }
-                
+
                 directionsRequest(function(response){
                     if(response){
+                        node.status({});
                         node.send(response);
                     }
                 });
             }
-            
+
             function directionsRequest(cb){
                 url = 'https://maps.googleapis.com/maps/api/directions/json';
                 if(!origin){
@@ -75,7 +76,7 @@ module.exports = function(RED) {
                 if(!destination){
                     throwNodeError({
                         code: 400,
-                        message: 'Please supply an destination value',
+                        message: 'Please supply a destination value',
                         status: 'MISSING_VALUES'
                     }, msg);
                     return;
@@ -128,7 +129,7 @@ module.exports = function(RED) {
                     }
                 });
             }
-            
+
             function handleDirectionsResponse(data, cb){
                 var newMsg;
                 if(data.status == 'OK'){
@@ -166,7 +167,7 @@ module.exports = function(RED) {
                     newMsg.title = 'ZERO_RESULTS';
                     newMsg.description = 'ZERO_RESULTS';
                     cb(newMsg);
-                }else{
+                } else {
                     var error = {};
                     error.status = data.status;
                     switch(data.status){
@@ -188,25 +189,21 @@ module.exports = function(RED) {
                             break;
                         case 'REQUEST_DENIED':
                             error.code = 400;
-                            error.message = 'Request denied by Google';
+                            error.message = 'Request denied by Google. Is the API activated ?';
                             break;
                         case 'UNKNOWN_ERROR':
-							error.code = 500;
+                            error.code = 500;
                             error.message = 'An unknown error occured. Please try again';
-							break;
+                            break;
                         default:
                             error.code = 500;
                             error.message = 'An unknown error occured. Please try again';
                     }
-                    throwNodeError({
-                        code: 400,
-                        message: 'Please supply an destination value',
-                        status: 'MISSING_VALUES'
-                    }, msg);
+                    throwNodeError(error, msg);
                     return;
                 }
             }
-            
+
             function sendReqToGoogle(cb){
                 request.get({
                     url: url,
@@ -216,7 +213,7 @@ module.exports = function(RED) {
                     cb(err, body);
                 });
             }
-            
+
             function parseRoute(route){
                 var parsedRoute = {};
                 parsedRoute.copyrights = route.copyrights;
@@ -244,7 +241,7 @@ module.exports = function(RED) {
                 }
                 return parsedRoute;
             }
-            
+
             function parseLeg(leg){
                 var parsedLeg = {};
                 parsedLeg.distance = leg.distance;
@@ -268,7 +265,7 @@ module.exports = function(RED) {
                 }
                 return parsedLeg;
             }
-            
+
             function parseStep(step){
                 var parsedStep = {};
                 parsedStep.distance = step.distance;
@@ -289,7 +286,7 @@ module.exports = function(RED) {
                 }
                 return parsedStep;
             }
-            
+
             processInput();
         });
 
@@ -301,7 +298,7 @@ module.exports = function(RED) {
         }
     }
     RED.nodes.registerType("google directions",GoogleDirectionsNode);
-    
+
     function cloneMsg(msg){
         var req = msg.req;
         var res = msg.res;

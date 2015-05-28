@@ -11,6 +11,17 @@ Run the following command in the root directory of your Node-RED install
 
         npm install node-red-node-google
 
+Pre-requisite
+-------------
+
+You must enable the Google APIs.
+
+In the Google Developer Console under "Api & auth" select "APIs"
+
+Search for "Directions API" click on it and then click "Enable API"
+
+or see - https://code.google.com/apis/console
+
 Usage
 -----
 
