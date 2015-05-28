@@ -11,8 +11,8 @@ Run the following command in the root directory of your Node-RED install
 
         npm install node-red-node-google
 
-Pre-requisite
--------------
+Pre-requisites
+--------------
 
 You must enable the Google APIs.
 
@@ -100,10 +100,10 @@ Usage
 <p><code>Name</code> - Name of the node</p>
 <p>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</p>
 <p><code>msg.key</code> - Your application's API key. This key identifies your application for purposes of quota management.</p>
-<p><code>msg.origin</code> - The address or textual latitude/longitude value from which you wish to calculate directions. If you pass an address as a string, the Directions service will geocode the string and convert it to a latitude/longitude coordinate to calculate directions. If you pass coordinates, ensure that no space exists between the latitude and longitude values.</p>
-<p><code>msg.destination</code> - The address or textual latitude/longitude value from which you wish to calculate directions. If you pass an address as a string, the Directions service will geocode the string and convert it to a latitude/longitude coordinate to calculate directions. If you pass coordinates, ensure that no space exists between the latitude and longitude values.</p>
+<p><code>msg.origin</code> - The address or textual <i>latitude,longitude</i> value from which you wish to calculate directions. If you pass an address as a string, the Directions service will geocode the string and convert it to a <i>latitude,longitude</i> coordinate to calculate directions. If you pass coordinates, ensure that no space exists between the latitude and longitude values.</p>
+<p><code>msg.destination</code> - The address or textual <i>latitude,longitude</i> value from which you wish to calculate directions. If you pass an address as a string, the Directions service will geocode the string and convert it to a <i>latitude,longitude</i> coordinate to calculate directions. If you pass coordinates, ensure that no space exists between the latitude and longitude values.</p>
 <p><code>msg.mode</code> - (Defaults to driving). Specifies the mode of transport to use when calculating directions. Valid values and other request details are specified in <a href="https://developers.google.com/maps/documentation/directions/?csw=1#TravelModes">Travel Modes</a>.</p>
-<p><code>msg.waypoints</code> - Specifies an array of waypoints. Waypoints alter a route by routing it through the specified location(s). A waypoint is specified as either a latitude/longitude coordinate or as an address which will be geocoded. Waypoints are only supported for driving, walking and bicycling directions. (For more information on waypoints, see <a href="https://developers.google.com/maps/documentation/directions/?csw=1#Waypoints">Using Waypoints in Routes</a>.)</p>
+<p><code>msg.waypoints</code> - Specifies an array of waypoints. Waypoints alter a route by routing it through the specified location(s). A waypoint is specified as either a <i>latitude,longitude</i> coordinate or as an address which will be geocoded. Waypoints are only supported for driving, walking and bicycling directions. (For more information on waypoints, see <a href="https://developers.google.com/maps/documentation/directions/?csw=1#Waypoints">Using Waypoints in Routes</a>.)</p>
 <p><code>msg.alternatives</code> - If set to true, specifies that the Directions service may provide more than one route alternative in the response. Note that providing route alternatives may increase the response time from the server.</p>
 <p><code>msg.avoid</code> -  Indicates that the calculated route(s) should avoid the indicated features. This parameter supports the following arguments:
     <ul>
@@ -221,7 +221,7 @@ Usage
 <p>The node can be configured to send a geocode or reverse-geocode request by changing the <code>geocodeBy</code> parameter in the node.</p>
 ####Input Parameters:
 <p><code>Name</code> - Name of the node</p>
-<p><code>Geocode by</code> - Toggle to switch between a geocode and reverse-geocode request. Switching between the two will toggle the address and latitude/longitude inputs.</p>
+<p><code>Geocode by</code> - Toggle to switch between a geocode and reverse-geocode request. Switching between the two will toggle the address and <i>latitude,longitude</i> inputs.</p>
 <p>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</p>
 <p><code>msg.location.address</code> - Address to be sent to Google in order to be converted to a set of coordinates. <i>(Required if using Geocode by Address)</i></p>
 <p><code>msg.location.lat</code> - Latitude point to be sent to Google in order to be converted to a human-readable address. <i>(Required if using Geocode by Coordinates)</i></p>
