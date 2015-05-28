@@ -67,7 +67,7 @@ module.exports = function(RED) {
                     try {
                         jsun = JSON.parse(weather);
                     } catch (e) {
-                        callback("The API has returned an invalid JSON");
+                        callback("The API call returned invalid JSON");
                         return;
                     }
                     if (jsun) {
@@ -93,7 +93,6 @@ module.exports = function(RED) {
                             if (jsun.hasOwnProperty("dt")) { msg.time = new Date(jsun.dt*1000); }
                             msg.title = "Current Weather Information";
                             msg.description = "Current weather information at coordinates: " + msg.location.lat + ", " + msg.location.lon;
-
                             msg.payload.description = ("The weather in " + jsun.name + " at coordinates: " + jsun.coord.lat + ", " + jsun.coord.lon + " is " + jsun.weather[0].main + " (" + jsun.weather[0].description + ")." );
                             callback();
                         } else {
