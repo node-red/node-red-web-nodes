@@ -77,7 +77,7 @@ module.exports = function(RED) {
         this.on("input", function(msg) {
             var credentials = nodeCredentials && nodeCredentials.accesstoken ? nodeCredentials : msg.credentials || {};
             if (!credentials.accesstoken) {
-                node.error("No access token available",msg);
+                node.error(RED._("swarm.errors.no-accesstoken"),msg);
                 return;
             }
             if (node.request === "get-most-recent-checkin") {
@@ -94,7 +94,7 @@ module.exports = function(RED) {
         if (credentials && credentials.clientid && credentials.clientsecret && credentials.accesstoken) {
            return true;
         } else {
-            node.warn("no credentials for node");
+            node.warn(RED._("swarm.warns.no-credentials"));
             return false;
         }
     }
@@ -108,13 +108,13 @@ module.exports = function(RED) {
         request.get(apiUrl,function(err, httpResponse, body) {
             if (err) {
                 node.error(err.toString(),msg);
-                node.status({fill:"red",shape:"ring",text:"failed"});
+                node.status({fill:"red",shape:"ring",text:RED._("swarm.status.failed")});
                 return;
             } else {
                 var result = JSON.parse(body);
                 if (result.meta.code != 200) {
-                    node.error("Error code: " + result.meta.code + ", errorDetail: " + result.meta.errorDetail,msg);
-                    node.status({fill:"red",shape:"ring",text:"failed"});
+                    node.error(RED._("swarm.errors.errorcode", {metaCode: result.meta.code, errorDetail: result.meta.errorDetail}), msg);
+                    node.status({fill:"red",shape:"ring",text:RED._("swarm.status.failed")});
                     return;
                 } else {
                     if (result.response.checkins.items.length !== 0) {

@@ -47,25 +47,25 @@ module.exports = function(RED) {
         var node = this;
         var AWS = this.awsConfig ? this.awsConfig.AWS : null;
         if (!AWS) {
-            node.warn("Missing AWS credentials");
+            node.warn(RED._("aws.warns.missing-credentials"));
             return;
         }
         var s3 = new AWS.S3();
-        node.status({fill:"blue",shape:"dot",text:"initializing"});
+        node.status({fill:"blue",shape:"dot",text:RED._("aws.status.initializing")});
         s3.listObjects({ Bucket: node.bucket }, function(err, data) {
             if (err) {
-                node.error("failed to fetch S3 state: " + err);
-                node.status({fill:"red",shape:"ring",text:"error"});
+                node.error(RED._("aws.errors.failed-to-fetch", {err:err}));
+                node.status({fill:"red",shape:"ring",text:RED._("aws.status.error")});
                 return;
             }
             var contents = node.filterContents(data.Contents);
             node.state = contents.map(function (e) { return e.Key; });
             node.status({});
             node.on("input", function(msg) {
-                node.status({fill:"blue",shape:"dot",text:"checking for changes"});
+                node.status({fill:"blue",shape:"dot",text:RED._("aws.status.checking-for-changes")});
                 s3.listObjects({ Bucket: node.bucket }, function(err, data) {
                     if (err) {
-                        node.error("failed to fetch S3 state: " + err,msg);
+                        node.error(RED._("aws.errors.failed-to-fetch", {err:err}),msg);
                         node.status({});
                         return;
                     }
@@ -129,30 +129,30 @@ module.exports = function(RED) {
         var node = this;
         var AWS = this.awsConfig ? this.awsConfig.AWS : null;
         if (!AWS) {
-            node.warn("Missing AWS credentials");
+            node.warn(RED._("aws.warns.missing-credentials"));
             return;
         }
         var s3 = new AWS.S3();
         node.on("input", function(msg) {
             var bucket = node.bucket || msg.bucket;
             if (bucket === "") {
-                node.error("No bucket specified",msg);
+                node.error(RED._("aws.errors.no-bucket-specified"),msg);
                 return;
             }
             var filename = node.filename || msg.filename;
             if (filename === "") {
-                node.error("No filename specified",msg);
+                node.error(RED._("aws.errors.no-filename-specified"),msg);
                 return;
             }
             msg.bucket = bucket;
             msg.filename = filename;
-            node.status({fill:"blue",shape:"dot",text:"downloading"});
+            node.status({fill:"blue",shape:"dot",text:RED._("aws.status.downloading")});
             s3.getObject({
                 Bucket: bucket,
                 Key: filename,
             }, function(err, data) {
                 if (err) {
-                    node.error("download failed " + err.toString(),msg);
+                    node.error(RED._("aws.errors.download-failed",{err:err.toString()}),msg);
                     return;
                 } else {
                     msg.payload = data.Body;
@@ -174,34 +174,34 @@ module.exports = function(RED) {
         var node = this;
         var AWS = this.awsConfig ? this.awsConfig.AWS : null;
         if (!AWS) {
-            node.warn("Missing AWS credentials");
+            node.warn(RED._("aws.warns.missing-credentials"));
             return;
         }
         if (AWS) {
             var s3 = new AWS.S3();
-            node.status({fill:"blue",shape:"dot",text:"checking credentials"});
+            node.status({fill:"blue",shape:"dot",text:RED._("aws.status.checking-credentials")});
             s3.listObjects({ Bucket: node.bucket }, function(err) {
                 if (err) {
-                    node.error("AWS S3 error: " + err);
-                    node.status({fill:"red",shape:"ring",text:"error"});
+                    node.error(RED._("aws.errors.aws-s3-error",{err:err}));
+                    node.status({fill:"red",shape:"ring",text:RED._("aws.status.error")});
                     return;
                 }
                 node.status({});
                 node.on("input", function(msg) {
                     var bucket = node.bucket || msg.bucket;
                     if (bucket === "") {
-                        node.error("No bucket specified",msg);
+                        node.error(RED._("aws.errors.no-bucket-specified"),msg);
                         return;
                     }
                     var filename = node.filename || msg.filename;
                     if (filename === "") {
-                        node.error("No filename specified",msg);
+                        node.error(RED._("aws.errors.no-filename-specified"),msg);
                         return;
                     }
                     var localFilename = node.localFilename || msg.localFilename;
                     if (localFilename) {
                         // TODO: use chunked upload for large files
-                        node.status({fill:"blue",shape:"dot",text:"uploading"});
+                        node.status({fill:"blue",shape:"dot",text:RED._("aws.status.uploading")});
                         var stream = fs.createReadStream(localFilename);
                         s3.putObject({
                             Bucket: bucket,
@@ -210,13 +210,13 @@ module.exports = function(RED) {
                         }, function(err) {
                             if (err) {
                                 node.error(err.toString(),msg);
-                                node.status({fill:"red",shape:"ring",text:"failed"});
+                                node.status({fill:"red",shape:"ring",text:RED._("aws.status.failed")});
                                 return;
                             }
                             node.status({});
                         });
                     } else if (typeof msg.payload !== "undefined") {
-                        node.status({fill:"blue",shape:"dot",text:"uploading"});
+                        node.status({fill:"blue",shape:"dot",text:RED._("aws.status.uploading")});
                         s3.putObject({
                             Bucket: bucket,
                             Body: RED.util.ensureBuffer(msg.payload),
@@ -224,7 +224,7 @@ module.exports = function(RED) {
                         }, function(err) {
                             if (err) {
                                 node.error(err.toString(),msg);
-                                node.status({fill:"red",shape:"ring",text:"failed"});
+                                node.status({fill:"red",shape:"ring",text:RED._("aws.status.failed")});
                                 return;
                             }
                             node.status({});

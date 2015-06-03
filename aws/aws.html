@@ -16,20 +16,20 @@
 
 <script type="text/x-red" data-template-name="amazon s3 in">
     <div class="form-row">
-        <label for="node-input-aws"><i class="fa fa-user"></i> AWS</label>
+        <label for="node-input-aws"><i class="fa fa-user"></i> <span data-i18n="aws.label.aws"></span></label>
         <input type="text" id="node-input-aws">
     </div>
     <div class="form-row">
-        <label for="node-input-bucket"><i class="fa fa-folder"></i> Bucket</label>
-        <input type="text" id="node-input-bucket" placeholder="bucket name">
+        <label for="node-input-bucket"><i class="fa fa-folder"></i> <span data-i18n="aws.label.bucket"></span></label>
+        <input type="text" id="node-input-bucket" data-i18n="[placeholder]aws.placeholder.bucket">
     </div>
     <div class="form-row node-input-filepattern">
-         <label for="node-input-filepattern"><i class="fa fa-file"></i> Filename Pattern</label>
-         <input type="text" id="node-input-filepattern" placeholder="Filepattern">
+         <label for="node-input-filepattern"><i class="fa fa-file"></i> <span data-i18n="aws.label.pattern"></span></label>
+         <input type="text" id="node-input-filepattern" data-i18n="[placeholder]aws.placeholder.pattern">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="aws.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]aws.placeholder.name">
     </div>
 </script>
 
@@ -63,20 +63,20 @@
 
 <script type="text/x-red" data-template-name="amazon s3">
     <div class="form-row">
-        <label for="node-input-aws"><i class="fa fa-user"></i> AWS</label>
+        <label for="node-input-aws"><i class="fa fa-user"></i> <span data-i18n="aws.label.aws"></span></label>
         <input type="text" id="node-input-aws">
     </div>
     <div class="form-row">
-        <label for="node-input-bucket"><i class="fa fa-folder"></i> Bucket</label>
-        <input type="text" id="node-input-bucket" placeholder="bucket name">
+        <label for="node-input-bucket"><i class="fa fa-folder"></i> <span data-i18n="aws.label.bucket"></span></label>
+        <input type="text" id="node-input-bucket" data-i18n="[placeholder]aws.placeholder.bucket">
     </div>
     <div class="form-row node-input-filename">
-         <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
-         <input type="text" id="node-input-filename" placeholder="Filename">
+         <label for="node-input-filename"><i class="fa fa-file"></i> <span data-i18n="aws.label.filename"></span></label>
+         <input type="text" id="node-input-filename" data-i18n="[placeholder]aws.placeholder.filename">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="aws.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]aws.placeholder.name">
     </div>
 </script>
 
@@ -106,24 +106,24 @@
 
 <script type="text/x-red" data-template-name="amazon s3 out">
     <div class="form-row">
-        <label for="node-input-aws"><i class="fa fa-user"></i> AWS</label>
+        <label for="node-input-aws"><i class="fa fa-user"></i> <span data-i18n="aws.label.aws"></span></label>
         <input type="text" id="node-input-aws">
     </div>
     <div class="form-row">
-        <label for="node-input-bucket"><i class="fa fa-folder"></i> Bucket</label>
-        <input type="text" id="node-input-bucket" placeholder="bucket name">
+        <label for="node-input-bucket"><i class="fa fa-folder"></i> <span data-i18n="aws.label.bucket"></span></label>
+        <input type="text" id="node-input-bucket" data-i18n="[placeholder]aws.placeholder.bucket">
     </div>
     <div class="form-row node-input-filename">
-         <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
-         <input type="text" id="node-input-filename" placeholder="Filename">
+         <label for="node-input-filename"><i class="fa fa-file"></i> <span data-i18n="aws.label.filename"></span></label>
+         <input type="text" id="node-input-filename" data-i18n="[placeholder]aws.placeholder.filename">
     </div>
     <div class="form-row node-input-localFilename">
-         <label for="node-input-localFilename"><i class="fa fa-file"></i> Local Filename</label>
-         <input type="text" id="node-input-localFilename" placeholder="Local Filename">
+         <label for="node-input-localFilename"><i class="fa fa-file"></i> <span data-i18n="aws.label.local"></span></label>
+         <input type="text" id="node-input-localFilename" data-i18n="[placeholder]aws.placeholder.local">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="aws.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]aws.placeholder.name">
     </div>
 </script>
 
@@ -154,19 +154,16 @@
 
 <script type="text/x-red" data-template-name="aws-config">
     <div class="form-row">
-        <label for="node-config-input-accesskeyid"><i class="fa fa-bookmark"></i>AccessKeyID</label>
+        <label for="node-config-input-accesskeyid"><i class="fa fa-bookmark"></i><span data-i18n="aws.label.keyid"></span></label>
         <input class="input-append-left" type="text" id="node-config-input-accesskeyid" style="width: 40%;" >
     </div>
     <div class="form-row">
-        <label for="node-config-input-secretaccesskey"><i class="fa fa-bookmark"></i>Secret Access Key</label>
+        <label for="node-config-input-secretaccesskey"><i class="fa fa-bookmark"></i><span data-i18n="aws.label.secret"></span></label>
         <input class="input-append-left" type="password" id="node-config-input-secretaccesskey" style="width: 40%;" >
     </div>
     <div class="form-tips">
-      <p>To obtain these credentials, sign up to <a href="http://aws.amazon.com/">Amazon Web Services</a>, Then either:
-   <ul>
-   <li>click on your account name and select "Security Credentials" then click "Access Keys (Access Key ID and Secret Access Key)" or</li>
-   <li>select "IAM" under "Deployment & Management" from the AWS console and create an 'IAM' user with a suitable policy.</li>
-    </ul>
+        <span data-i18n="[html]aws.tip.config1"></span>
+        <span data-i18n="[html]aws.tip.config2"></span>
     </div>
 </script>
 
