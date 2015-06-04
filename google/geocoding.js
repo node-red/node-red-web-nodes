@@ -67,7 +67,7 @@ module.exports = function(RED) {
                     delete msg.payload;
                     msg.error = {
                         code: 400,
-                        message: 'Please provide a longitude and latitude.',
+                        message: RED._("geocoding.errors.no-lan_lon"),
                         status: 'MISSING_VALUES'
                     };
                     node.error(msg.error, msg);
@@ -81,7 +81,7 @@ module.exports = function(RED) {
                     delete msg.payload;
                     msg.error = {
                         code: 400,
-                        message: 'Please provide an address.',
+                        message: RED._("geocoding.errors.no-address"),
                         status: 'MISSING_VALUES'
                     };
                     node.error(msg.error, msg);
@@ -180,7 +180,7 @@ module.exports = function(RED) {
         });
         
         function throwNodeError(err, msg){
-            node.status({fill:"red",shape:"ring",text:"failed"});
+            node.status({fill:"red",shape:"ring",text:RED._("geocoding.status.failed")});
             msg.error = err;
             node.error(err, msg);
             return;

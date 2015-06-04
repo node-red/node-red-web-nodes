@@ -48,7 +48,7 @@ module.exports = function(RED) {
             //setup and clear vars on new input
             var url, key, lat, lon, radius, rankBy, keyword, language, minPrice, maxPrice, name, types, query, placeId, extensions, openNow;
             var queryParams = {}, error = {};
-            node.status({fill:"blue",shape:"dot",text:"querying"});
+            node.status({fill:"blue",shape:"dot",text:RED._("places.status.querying")});
             if(this.googleAPI && this.googleAPI.credentials && this.googleAPI.credentials.key){
                 key = this.googleAPI.credentials.key;
             } else{
@@ -95,7 +95,7 @@ module.exports = function(RED) {
                 error = {
                         code: 400,
                         status: 'MISSING_VALUES',
-                        message: 'Please provide your application API key.'
+                        message: RED._("places.errors.no-apikey")
                 };
                 throwNodeError(node, msg, error);
                 return;
@@ -115,7 +115,7 @@ module.exports = function(RED) {
                     error = {
                             code: 400,
                             status: 'MISSING_VALUES',
-                            message: 'Please provide a longitude and latitude.'
+                            message: RED._("places.errors.no-lat_lon")
                     };
                     throwNodeError(node, msg, error);
                     return;
@@ -127,7 +127,7 @@ module.exports = function(RED) {
                         error = {
                                 code: 400,
                                 status: 'BAD_REQUEST',
-                                message: 'If rankby is set to distance, then radius is not allowed in the request. Instead, you are required to provide at least one of keyword/name/types.'
+                                message: RED._("places.errors.radius-not-allowed")
                         };
                         throwNodeError(node, msg, error);
                         return;
@@ -137,7 +137,7 @@ module.exports = function(RED) {
                         error = {
                                 code: 400,
                                 status: 'BAD_REQUEST',
-                                message: 'If rankby is set to distance, you are required to provide at least one of keyword/name/types.'
+                                message: RED._("places.errors.no-keyword_name_type")
                         };
                         throwNodeError(node, msg, error);
                         return;
@@ -149,7 +149,7 @@ module.exports = function(RED) {
                     error = {
                             code: 400,
                             status: 'BAD_REQUEST',
-                            message: 'The allowed options for rankby are \'prominence\'(default) and \'distance\''
+                            message: RED._("places.errors.no-prominence_distance")
                     };
                     throwNodeError(node, msg, error);
                     return;
@@ -163,7 +163,7 @@ module.exports = function(RED) {
                     error = {
                             code: 400,
                             status: 'MISSING_VALUES',
-                            message: 'Please provide a placeid.'
+                            message: RED._("places.errors.no-placeid")
                     };
                     throwNodeError(node, msg, error);
                     return;
@@ -177,7 +177,7 @@ module.exports = function(RED) {
                     error = {
                             code: 400,
                             status: 'MISSING_VALUES',
-                            message: 'Please provide a query for the places text search.'
+                            message: RED._("places.errors.no-text")
                     };
                     throwNodeError(node, msg, error);
                     return;
@@ -281,9 +281,9 @@ module.exports = function(RED) {
                             msg.error = body.error_message || '';
                             if(reqType === 'placesDetails' && msg.statusCode === 400){
                                 msg.status = 'BAD_REQUEST';
-                                msg.error = 'Please provide a valid placeid.';
+                                msg.error = RED._("places.errors.invalid-placeid");
                             }
-                            node.status({fill:"red",shape:"ring",text:"failed"});
+                            node.status({fill:"red",shape:"ring",text:RED._("places.status.failed")});
                             throwNodeError(node, msg, {
                                 code: msg.statusCode,
                                 status: msg.status,
@@ -329,7 +329,7 @@ module.exports = function(RED) {
                                 msg.html_attributions = body.html_attributions;
                                 msg.data = body;
                                 msg.status = body.status;
-                                msg.title = (Math.min(outputNum, body.results.length)) + ' results returned';
+                                msg.title = (Math.min(outputNum, body.results.length)) + ' ' + RED._("places.messages.results-returned");
                                 msg.payload = [];
                                 for(i = 0; i < (Math.min(outputNum, body.results.length)); i++){
                                     result = body.results[i];
@@ -474,7 +474,7 @@ module.exports = function(RED) {
                                 }
                             } else if(outputAs === 'single'){    //send one combined message
                                 msg.payload = [];
-                                msg.title = (Math.min(outputNum, body.results.length)) + ' results returned';
+                                msg.title = (Math.min(outputNum, body.results.length)) + ' ' + RED._("places.messages.results-returned");
                                 for(i = 0; i < (Math.min(outputNum, body.results.length)); i++ ) {
                                     msg.payload[i] = {};
                                     msg.payload[i].title = body.results[i].name;
@@ -562,7 +562,7 @@ module.exports = function(RED) {
     
     function throwNodeError(node, msg, error){
         msg.error = error;
-        node.status({fill:"red",shape:"ring",text:"failed"});
+        node.status({fill:"red",shape:"ring",text:RED._("places.status.failed")});
         node.error(error, msg);
     }
 };

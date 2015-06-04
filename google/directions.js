@@ -18,21 +18,21 @@ module.exports = function(RED) {
     "use strict";
     var request = require('request');
     var clone = require('clone');
-
+    
     function GoogleDirectionsNode(n) {
         RED.nodes.createNode(this,n);
         var node = this;
         this.googleAPI = RED.nodes.getNode(n.googleAPI);
-
+        
         this.on('input', function(msg){
             var url, queryParams, key, origin, destination, mode, waypoints, alternatives, avoid, language, units, region, departure_time, arrival_time, transit_mode, transit_routing_preferences;
-
+            
             if(this.googleAPI && this.googleAPI.credentials && this.googleAPI.credentials.key){
                 key = this.googleAPI.credentials.key;
             } else if(msg.key){
                 key = msg.key;
             }
-
+            
             origin = n.origin || msg.origin;
             destination = n.destination || msg.destination;
             mode = n.mode || msg.mode;
@@ -46,29 +46,28 @@ module.exports = function(RED) {
             arrival_time = n.arrival_time || msg.arrival_time;
             transit_mode = n.transit_mode || msg.transit_mode;
             transit_routing_preferences = n.transit_routing_preferences || msg.transit_routing_preferences;
-
-            node.status({fill:"blue",shape:"dot",text:"requesting"});
+            
+            
             function processInput(){
                 queryParams = {};
-
+                
                 if(key){
                     queryParams.key = key;
                 }
-
+                
                 directionsRequest(function(response){
                     if(response){
-                        node.status({});
                         node.send(response);
                     }
                 });
             }
-
+            
             function directionsRequest(cb){
                 url = 'https://maps.googleapis.com/maps/api/directions/json';
                 if(!origin){
                     throwNodeError({
                         code: 400,
-                        message: 'Please supply an origin value',
+                        message: RED._("directions.errors.no-origin"),
                         status: 'MISSING_VALUES'
                     }, msg);
                     return;
@@ -76,7 +75,7 @@ module.exports = function(RED) {
                 if(!destination){
                     throwNodeError({
                         code: 400,
-                        message: 'Please supply a destination value',
+                        message: RED._("directions.errors.no-destination"),
                         status: 'MISSING_VALUES'
                     }, msg);
                     return;
@@ -129,7 +128,7 @@ module.exports = function(RED) {
                     }
                 });
             }
-
+            
             function handleDirectionsResponse(data, cb){
                 var newMsg;
                 if(data.status == 'OK'){
@@ -142,7 +141,7 @@ module.exports = function(RED) {
                         newMsg.payload.routes.push(parseRoute(data.routes[i]));
                     }
                     newMsg.status = data.status;
-                    newMsg.title = 'Travel directions via ' + newMsg.payload.routes[0].summary;
+                    newMsg.title = RED._("directions.messages.travel-directions") + ' ' + newMsg.payload.routes[0].summary;
                     newMsg.description = 'Travel directions via ' + newMsg.payload.routes[0].summary;
                     newMsg.distance = newMsg.payload.routes[0].legs[0].distance.value;
                     newMsg.duration = newMsg.payload.routes[0].legs[0].duration.value;
@@ -167,43 +166,47 @@ module.exports = function(RED) {
                     newMsg.title = 'ZERO_RESULTS';
                     newMsg.description = 'ZERO_RESULTS';
                     cb(newMsg);
-                } else {
+                }else{
                     var error = {};
                     error.status = data.status;
                     switch(data.status){
                         case 'NOT_FOUND':
                             error.code = 400;
-                            error.message = 'Could not find origin, destination, or waypoint';
+                            error.message = RED._("directions.errors.no-waypoint");
                             break;
                         case 'MAX_WAYPOINTS_EXCEEDED':
                             error.code = 400;
-                            error.message = 'Too many waypoints provided. The maximum allowed is 8';
+                            error.message = RED._("directions.errors.too-many-waypoints");
                             break;
                         case 'INVALID_REQUEST':
                             error.code = 400;
-                            error.message = 'Invalid request. Check for an invalid parameter or parameter value';
+                            error.message = RED._("directions.errors.invalid-request");
                             break;
                         case 'OVER_QUERY_REQUEST':
                             error.code = 429;
-                            error.message = 'Too many requests from provided application key';
+                            error.message = RED._("directions.errors.too-many-requests");
                             break;
                         case 'REQUEST_DENIED':
                             error.code = 400;
-                            error.message = 'Request denied by Google. Is the API activated ?';
+                            error.message = RED._("directions.errors.request-denied");
                             break;
                         case 'UNKNOWN_ERROR':
-                            error.code = 500;
-                            error.message = 'An unknown error occured. Please try again';
-                            break;
+							error.code = 500;
+                            error.message = RED._("directions.errors.unknown-error");
+							break;
                         default:
                             error.code = 500;
-                            error.message = 'An unknown error occured. Please try again';
+                            error.message = RED._("directions.errors.unknown-error");
                     }
-                    throwNodeError(error, msg);
+                    throwNodeError({
+                        code: 400,
+                        message: RED._("directions.errors.no-destination"),
+                        status: 'MISSING_VALUES'
+                    }, msg);
                     return;
                 }
             }
-
+            
             function sendReqToGoogle(cb){
                 request.get({
                     url: url,
@@ -213,7 +216,7 @@ module.exports = function(RED) {
                     cb(err, body);
                 });
             }
-
+            
             function parseRoute(route){
                 var parsedRoute = {};
                 parsedRoute.copyrights = route.copyrights;
@@ -241,7 +244,7 @@ module.exports = function(RED) {
                 }
                 return parsedRoute;
             }
-
+            
             function parseLeg(leg){
                 var parsedLeg = {};
                 parsedLeg.distance = leg.distance;
@@ -265,7 +268,7 @@ module.exports = function(RED) {
                 }
                 return parsedLeg;
             }
-
+            
             function parseStep(step){
                 var parsedStep = {};
                 parsedStep.distance = step.distance;
@@ -286,19 +289,19 @@ module.exports = function(RED) {
                 }
                 return parsedStep;
             }
-
+            
             processInput();
         });
 
         function throwNodeError(err, msg){
-            node.status({fill:"red",shape:"ring",text:"failed"});
+            node.status({fill:"red",shape:"ring",text:RED._("directions.status.failed")});
             msg.error = err;
             node.error(err, msg);
             return;
         }
     }
     RED.nodes.registerType("google directions",GoogleDirectionsNode);
-
+    
     function cloneMsg(msg){
         var req = msg.req;
         var res = msg.res;
