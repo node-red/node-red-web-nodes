@@ -1,6 +1,6 @@
 {
     "name"          : "node-red-node-fitbit",
-    "version"       : "0.0.3",
+    "version"       : "0.0.4",
     "description"   : "Node-RED nodes that get information from a Fitbit",
     "dependencies"  : {
         "oauth":"~0.9.11"
@@ -9,7 +9,7 @@
         "type":"git",
         "url":"https://github.com/node-red/node-red-web-nodes/tree/master/fitbit"
     },
-    "license": "Apache",
+    "license": "Apache-2.0",
     "keywords": [ "node-red", "fitbit", "exercise", "biometric" ],
     "node-red"      : {
         "nodes"     : {

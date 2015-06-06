@@ -1,6 +1,6 @@
 {
     "name"          : "node-red-node-instagram",
-    "version"       : "0.0.4",
+    "version"       : "0.0.5",
     "description"   : "Node-RED nodes that get photos from Instagram",
     "dependencies"  : {
         "request":"~2.40.0",
@@ -10,7 +10,7 @@
         "type":"git",
         "url":"https://github.com/node-red/node-red-web-nodes/tree/master/instagram"
     },
-    "license": "Apache 2.0",
+    "license": "Apache-2.0",
     "keywords": [ "node-red", "instagram", "photo" ],
     "node-red"      : {
         "nodes"     : {
