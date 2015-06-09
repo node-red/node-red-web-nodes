@@ -16,24 +16,24 @@
 
 <script type="text/x-red" data-template-name="openweathermap">
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="weather.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]weather.placeholder.name">
     </div>
     <div class="form-row">
-        <label for="weather-location-type-select"><i class="fa fa-globe"></i> Location</label>
-        <select id="weather-location-type-select"  style="width: 288px"><option value="city">City</option><option value="coordinates">Coordinates</option></select>
+        <label for="weather-location-type-select"><i class="fa fa-globe"></i> <span data-i18n="weather.label.location"></span></label>
+        <select id="weather-location-type-select"  style="width: 288px"><option value="city" data-i18n="weather.label.option_city"></option><option value="coordinates" data-i18n="weather.label.option_coordinates"></option></select>
     </div>
     <div class="form-row weather-location-type" id="weather-location-type-city">
-        <label for=""><i class="weather-location-type"></i> City</label>
-        <input type="text" class="weather-location-input" style="width: 180px; margin-bottom:7px" id="node-input-city" placeholder="City"></input>
+        <label for=""><i class="weather-location-type"></i> <span data-i18n="weather.label.city"></span></label>
+        <input type="text" class="weather-location-input" style="width: 180px; margin-bottom:7px" id="node-input-city" data-i18n="[placeholder]weather.placeholder.city"></input>
         </br>
-        <label for=""><i class="weather-location-type"></i> Country</label>
-        <input type="text" class="weather-location-input" style="width: 180px; margin-bottom:7px" id="node-input-country" placeholder="Country"></input>
+        <label for=""><i class="weather-location-type"></i> <span data-i18n="weather.label.country"></span></label>
+        <input type="text" class="weather-location-input" style="width: 180px; margin-bottom:7px" id="node-input-country" data-i18n="[placeholder]weather.placeholder.country"></input>
     </div>
      <div class="form-row weather-location-type hidden" id="weather-location-type-coordinates">
-        <label for=""><i class="weather-location-type"></i> Latitude</label><input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom:7px" placeholder="Latitude">
+        <label for=""><i class="weather-location-type"></i> <span data-i18n="weather.label.latitude"></span></label><input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom:7px" data-i18n="[placeholder]weather.placeholder.latitude">
         </br>
-        <label for=""><i class="weather-location-type"></i> Longitude</label><input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px; margin-bottom:7px" placeholder="Longitude">
+        <label for=""><i class="weather-location-type"></i> <span data-i18n="weather.label.longitude"></span></label><input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px; margin-bottom:7px" data-i18n="[placeholder]weather.placeholder.longitude">
     </div>
 </script>
 
@@ -52,7 +52,7 @@
         outputs:1,
         icon: "weather.png",
         label: function() {
-            return this.name||"openweathermap";
+            return this.name||this._("weather.label.weather");
         },
         oneditprepare: function() {
             $("#weather-location-type-select").change(function() {
@@ -140,24 +140,24 @@
 
 <script type="text/x-red" data-template-name="openweathermap in">
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="weather.label.name"></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]weather.placeholder.name">
     </div>
     <div class="form-row">
-        <label for="weather-location-type-select"><i class="fa fa-globe"></i> Location</label>
-        <select id="weather-location-type-select"  style="width: 288px"><option value="city">City</option><option value="coordinates">Coordinates</option></select>
+        <label for="weather-location-type-select"><i class="fa fa-globe"></i> <span data-i18n="weather.label.location"></span></label>
+        <select id="weather-location-type-select"  style="width: 288px"><option value="city" data-i18n="weather.label.option_city"></option><option value="coordinates" data-i18n="weather.label.option_coordinates"></option></select>
     </div>
     <div class="form-row weather-location-type" id="weather-location-type-city">
-        <label for=""><i class="weather-location-type"></i> City</label>
-        <input type="text" class="weather-location-input" style="width: 180px; margin-bottom:7px" id="node-input-city" placeholder="City"></input>
+        <label for=""><i class="weather-location-type"></i> <span data-i18n="weather.label.city"></span></label>
+        <input type="text" class="weather-location-input" style="width: 180px; margin-bottom:7px" id="node-input-city" data-i18n="[placeholder]weather.placeholder.city"></input>
         </br>
-        <label for=""><i class="weather-location-type"></i> Country</label>
-        <input type="text" class="weather-location-input" style="width: 180px; margin-bottom:7px" id="node-input-country" placeholder="Country"></input>
+        <label for=""><i class="weather-location-type"></i> <span data-i18n="weather.label.country"></span></label>
+        <input type="text" class="weather-location-input" style="width: 180px; margin-bottom:7px" id="node-input-country" data-i18n="[placeholder]weather.placeholder.country"></input>
     </div>
      <div class="form-row weather-location-type hidden" id="weather-location-type-coordinates">
-        <label for=""><i class="weather-location-type"></i> Latitude</label><input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom:7px" placeholder="Latitude">
+        <label for=""><i class="weather-location-type"></i> <span data-i18n="weather.label.latitude"></span></label><input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom:7px" data-i18n="[placeholder]weather.placeholder.latitude">
         </br>
-        <label for=""><i class="weather-location-type"></i> Longitude</label><input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px; margin-bottom:7px" placeholder="Longitude">
+        <label for=""><i class="weather-location-type"></i> <span data-i18n="weather.label.longitude"></span></label><input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px; margin-bottom:7px" data-i18n="[placeholder]weather.placeholder.longitude">
     </div>
 </script>
 
@@ -176,7 +176,7 @@
         outputs:1,
         icon: "weather.png",
         label: function() {
-            return this.name||"openweathermap";
+            return this.name||this._("weather.label.weather");
         },
         oneditprepare: function() {
             $("#weather-location-type-select").change(function() {

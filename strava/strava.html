@@ -18,34 +18,34 @@
 <script type="text/x-red" data-template-name="strava-credentials">
     <div id="node-config-strava-app-keys">
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>1.</b> Create your own app at <a href="https://www.strava.com/settings/api" target="_blank" style="text-decoration:underline;">strava.com</a></p>
+            <p style="margin-top: 10px;"><b>1.</b> <span data-i18n="strava.label.create"></span> <a href="https://www.strava.com/settings/api" target="_blank" style="text-decoration:underline;">strava.com</a></p>
         </div>
         <div class="form-tips" id="node-config-tooltip">
             #
         </div>
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>2.</b> Copy the app details here:</p>
+            <p style="margin-top: 10px;"><b>2.</b> <span data-i18n="strava.label.copy"></span>:</p>
         </div>
         <div class="form-row">
-          <label for="node-config-input-clientID"><i class="fa fa-user"></i> Client ID</label>
+          <label for="node-config-input-clientID"><i class="fa fa-user"></i> <span data-i18n="strava.label.clientid"></span></label>
           <input type="text" id="node-config-input-clientID">
         </div>
         <div class="form-row" id="node-config-clientSecret">
-            <label for="node-config-input-clientSecret"><i class="fa fa-lock"></i>Client Secret</label>
+            <label for="node-config-input-clientSecret"><i class="fa fa-lock"></i><span data-i18n="strava.label.clientsecret"></span></label>
             <input type="password" id="node-config-input-clientSecret">
         </div>
         <div class="form-row" id="node-config-redirectURI">
-            <label for="node-config-input-redirectURI"><i class="fa fa-user"></i>Redirect URI</label>
+            <label for="node-config-input-redirectURI"><i class="fa fa-user"></i><span data-i18n="strava.label.redirecturi"></span></label>
             <input type="text" id="node-config-input-redirectURI">
         </div>
         <div class="form-row">
            <label>&nbsp;</label>
-           <a class="btn" id="node-config-start-auth" href="#" target="_blank">Authenticate with Strava</a>
+           <a class="btn" id="node-config-start-auth" href="#" target="_blank"><span data-i18n="strava.label.authenticate"></span></a>
         </div>
     </div>
     <div id="node-config-strava-user">
         <div class="form-row">
-            <label><i class="fa fa-user"></i> Strava User</label><span id="node-config-strava-username" class="input-xlarge uneditable-input"></span>
+            <label><i class="fa fa-user"></i> <span data-i18n="strava.label.stravausr"></span></label><span id="node-config-strava-username" class="input-xlarge uneditable-input"></span>
         </div>
         <input type="hidden" id="node-config-input-username">
     </div>
@@ -53,18 +53,18 @@
 
 <script type="text/x-red" data-template-name="strava">
     <div class="form-row">
-        <label for="node-input-strava"><i class="fa fa-user"></i> User</label>
+        <label for="node-input-strava"><i class="fa fa-user"></i> <span data-i18n="strava.label.user"></span></label>
         <input type="text" id="node-input-strava">
     </div>
     <div class="form-row">
-        <label for="node-input-request">&nbsp;<i class="fa fa-filter"></i> Request</label>
+        <label for="node-input-request">&nbsp;<i class="fa fa-filter"></i> <span data-i18n="strava.label.request"></span></label>
         <select id="node-input-request" style="width:73% !important">
-             <option value="get-most-recent-activity">get the most recent activity</option>
+             <option value="get-most-recent-activity" data-i18n="strava.label.activity"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="strava.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]strava.placeholder.name">
     </div>
 </script>
 
@@ -107,7 +107,19 @@
         exportable: false,
         oneditprepare: function() {
             var id = this.id;
-                    
+            var pathname = document.location.pathname;
+            if (pathname.slice(-1) != "/") {
+                pathname += "/";
+            }
+            var constructedURI = location.protocol + '//' + location.hostname + (location.port?":"+location.port:"") + pathname + 'strava-credentials/auth/callback';
+            var constructedURIToShow;
+            if(location.hostname.valueOf().indexOf("localhost") !== -1 || location.hostname.valueOf().indexOf("127.0.0.1") !== -1) { // these are whitelisted
+                constructedURIToShow = "http://example.com";
+            } else {
+                constructedURIToShow = location.protocol + '//' + location.hostname;
+            }
+            var tip = this._("strava.tip.redirect", {constructedURIToShow: constructedURIToShow})
+            
             function updateStravaAuthButton() {
                 var v1 = $("#node-config-input-clientID").val();
                 var v2 = $("#node-config-input-clientSecret").val();
@@ -147,29 +159,7 @@
             }
             
             function updateRedirectURI() {
-               var protocol = location.protocol;
-                var separator = '//';
-                var host = location.hostname;
-                
-                var pathname = document.location.pathname;
-                if (pathname.slice(-1) != "/") {
-                    pathname += "/";
-                }
-
-                var callbackPath = 'strava-credentials/auth/callback';
-                
-                var constructedURI = protocol + separator + host + 
-                    (location.port?":"+location.port:"")+
-                    pathname + callbackPath;
-                
-                var constructedURIToShow;
-                if(host.valueOf().indexOf("localhost") !== -1 || host.valueOf().indexOf("127.0.0.1") !== -1) { // these are whitelisted
-                    constructedURIToShow = "http://example.com";
-                } else {
-                    constructedURIToShow = protocol + separator + host;
-                }
-                
-                $("#node-config-tooltip").html('<p>Please configure Strava to accept the following <b>Authorization Callback Domain</b> for authentication of your application: </p>\n<code>' + constructedURIToShow + '</code>');
+                $("#node-config-tooltip").html(tip);
                 $("#node-config-input-redirectURI").val(constructedURI);
                 $("#node-config-input-redirectURI").hide();
                 $("#node-config-redirectURI").hide();
@@ -226,7 +216,7 @@
         outputs:1,
         icon: "strava.png",
         label: function() {
-            return this.name||"Strava";
+            return this.name||this._("strava.label.strava");
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";

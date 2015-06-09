@@ -1,0 +1,28 @@
+{
+    "pinboard": {
+        "label": {
+            "pinboard": "Pinboard",
+            "user": "User",
+            "tags": "Tags",
+            "private": "Mark as private?",
+            "later": "Read later?",
+            "name": "Name",
+            "token": "Token"
+        },
+        "placeholder": {
+            "tags": "space-separated tags to add",
+            "name": "Name"
+        },
+        "tip": {
+            "apitoken": "You can find your API Token here: <a target=\"_blank\" href=\"https://pinboard.in/settings/password\">https://pinboard.in/settings/password</a>."
+        },
+        "status": {
+            "saving": "saving"
+        },
+        "errors": {
+            "no-url": "url must be provided in msg.payload",
+            "no-title": "msg.title must be provided",
+            "no-apitoken": "missing api token"
+        }
+    }
+}

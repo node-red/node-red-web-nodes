@@ -17,40 +17,40 @@
 
 <script type="text/x-red" data-template-name="pinboard-user">
     <div class="form-row">
-        <label for="node-config-input-user"><i class="fa fa-user"></i> User</label>
+        <label for="node-config-input-user"><i class="fa fa-user"></i> <span data-i18n="pinboard.label.user"></span></label>
         <input type="text" id="node-config-input-user">
     </div>
     <div class="form-row">
-        <label for="node-config-input-token"><i class="fa fa-lock"></i> Token</label>
+        <label for="node-config-input-token"><i class="fa fa-lock"></i> <span data-i18n="pinboard.label.token"></span></label>
         <input type="password" id="node-config-input-token">
     </div>
-    <div class="form-tips">You can find your API Token here: <a target="_blank" href="https://pinboard.in/settings/password">https://pinboard.in/settings/password</a>.</div>
+    <div class="form-tips"><span data-i18n="[html]pinboard.tip.apitoken"></span></div>
 
     
 </script>
 
 <script type="text/x-red" data-template-name="pinboard out">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-user"></i> User</label>
+        <label for="node-input-name"><i class="fa fa-user"></i> <span data-i18n="pinboard.label.user"></span></label>
         <input type="text" id="node-input-user">
     </div>
     <div class="form-row">
-        <label for="node-input-tags"><i class="fa fa-tags"></i> Tags</label>
-        <input type="text" id="node-input-tags" placeholder="space-separated tags to add">
+        <label for="node-input-tags"><i class="fa fa-tags"></i> <span data-i18n="pinboard.label.tags"></span></label>
+        <input type="text" id="node-input-tags" data-i18n="[placeholder]pinboard.placeholder.tags">
     </div>
     <div class="form-row">
         <label>&nbsp;</label>
         <input type="checkbox" id="node-input-private" style="display: inline-block; width: auto; vertical-align: top;">
-        <label for="node-input-private" style="width: 70%;">Mark as private?</label>
+        <label for="node-input-private" style="width: 70%;"><span data-i18n="pinboard.label.private"></span></label>
     </div>
     <div class="form-row">
         <label>&nbsp;</label>
         <input type="checkbox" id="node-input-toread" style="display: inline-block; width: auto; vertical-align: top;">
-        <label for="node-input-toread" style="width: 70%;">Read later?</label>
+        <label for="node-input-toread" style="width: 70%;"><span data-i18n="pinboard.label.later"></span></label>
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="pinboard.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]pinboard.placeholder.name">
     </div>
 </script>
 
@@ -94,7 +94,7 @@
         icon: "pinboard.png",
         align: "right",
         label: function() {
-            return this.name||"Pinboard";
+            return this.name||this._("pinboard.label.pinboard");
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";

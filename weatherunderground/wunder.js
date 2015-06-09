@@ -18,22 +18,22 @@ module.exports = function(RED) {
     "use strict";
     var Wunderground = require('wundergroundnode');
 
-    function assignmentFunction(node, msg, lat, lon, city, country, callback){
-        if (country && city){
+    function assignmentFunction(node, msg, lat, lon, city, country, callback) {
+        if (country && city) {
             node.country = country;
             node.city = city;
         } else if (lat && lon) {
             if (90 >= lat && lat >= -90) {
                 node.lat = lat;
             } else {
-                node.error("Invalid lat provided",msg);
+                node.error(RED._("wunder.errors.invalid-lat"),msg);
                 return;
             }
 
             if (180 >= lon && lon >= -180) {
                 node.lon = lon;
             } else {
-                node.error("Invalid lon provided",msg);
+                node.error(RED._("wunder.errors.invalid-lon"),msg);
                 return;
             }
         }
@@ -45,13 +45,13 @@ module.exports = function(RED) {
         msg.payload = {};
         msg.location = {};
 
-        if (node.lat && node.lon){
-            node.wunder.conditions().forecast().request(node.lat+","+node.lon, function(err, response){
+        if (node.lat && node.lon) {
+            node.wunder.conditions().forecast().request(node.lat+","+node.lon, function(err, response) {
                 if (err) { callback(err); }
                 else { handleResponse(response); }
             });
         } else if (node.city && node.country) {
-            node.wunder.conditions().forecast().request(node.city+","+node.country, function(err, response){
+            node.wunder.conditions().forecast().request(node.city+","+node.country, function(err, response) {
                 if (err) { callback(err); }
                 else { handleResponse(response); }
             });
@@ -78,9 +78,9 @@ module.exports = function(RED) {
                 msg.location.city = loc.city;
                 msg.location.country = loc.country;
                 msg.time = new Date(Number(cur.observation_epoch*1000));
-                msg.title = "Data supplied by The Weather Underground.";
-                msg.description = "Current weather information at coordinates: " + msg.location.lat + ", " + msg.location.lon;
-                msg.payload.description = ("The weather in " + msg.location.city + " at coordinates: " + msg.location.lat + ", " + msg.location.lon + " is " +  cur.weather);
+                msg.title = RED._("wunder.messages.title");
+                msg.description = RED._("wunder.messages.description", {lat: msg.location.lat, lon: msg.location.lon});
+                msg.payload.description = (RED._("wunder.messages.payload", {city: msg.location.city, lat: msg.location.lat, lon: msg.location.lon, weather: cur.weather}));
                 var fcast = res.forecast.txt_forecast.forecastday[0];
                 msg.payload.forecast = loc.city+" : "+fcast.title+" : "+ fcast.fcttext_metric;
                 callback(null);
@@ -92,7 +92,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this, n);
         var credentials = this.credentials;
         if ((credentials) && (credentials.hasOwnProperty("apikey"))) { this.apikey = credentials.apikey; }
-        else { this.error("No Wunderground API key set"); }
+        else { this.error(RED._("wunder.errors.no-apikey")); }
         this.wunder = new Wunderground(this.apikey);
         this.repeat = 300000;
         this.interval_id = null;
@@ -108,20 +108,20 @@ module.exports = function(RED) {
         }, this.repeat );
 
         this.on('input', function(msg) {
-            if (n.country && n.city){
+            if (n.country && n.city) {
                 country = n.country;
                 city = n.city;
-            } else if(n.lat && n.lon) {
+            } else if (n.lat && n.lon) {
                 lat = n.lat;
                 lon = n.lon;
             }
             assignmentFunction(node, msg, lat, lon, city, country, function() {
-                weatherPoll(node, msg, function(err){
+                weatherPoll(node, msg, function(err) {
                     if (err) {
                         node.error(err,msg);
                     } else {
                         var msgString = JSON.stringify(msg);
-                        if(msgString !== previousdata){
+                        if (msgString !== previousdata) {
                             previousdata = msgString;
                             node.send(msg);
                         }
@@ -145,7 +145,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         var credentials = this.credentials;
         if ((credentials) && (credentials.hasOwnProperty("apikey"))) { this.apikey = credentials.apikey; }
-        else { this.error("No Wunderground API key set"); }
+        else { this.error(RED._("wunder.errors.no-apikey")); }
         this.wunder = new Wunderground(this.apikey);
         var node = this;
         var city;
@@ -154,14 +154,14 @@ module.exports = function(RED) {
         var lon;
 
         this.on ('input', function(msg) {
-            if (n.country && n.city){
+            if (n.country && n.city) {
                 country = n.country;
                 city = n.city;
             } else if (n.lat && n.lon) {
                 lat = n.lat;
                 lon = n.lon;
-            } else if (msg.location){
-                if(msg.location.lat && msg.location.lon){
+            } else if (msg.location) {
+                if (msg.location.lat && msg.location.lon) {
                     lat = msg.location.lat;
                     lon = msg.location.lon;
                 } else if (msg.location.city && msg.location.country) {
@@ -170,7 +170,7 @@ module.exports = function(RED) {
                 }
             }
             assignmentFunction(node, msg, lat, lon, city, country, function() {
-                weatherPoll(node, msg, function(err){
+                weatherPoll(node, msg, function(err) {
                     if (err) {
                         node.error(err,msg);
                     } else {
@@ -181,10 +181,10 @@ module.exports = function(RED) {
         });
     }
 
-RED.nodes.registerType("wunderground",WunderNode, {
+    RED.nodes.registerType("wunderground",WunderNode, {
         credentials: { apikey: {type: "password"} }
     });
-RED.nodes.registerType("wunderground in",WunderInputNode, {
+    RED.nodes.registerType("wunderground in",WunderInputNode, {
         credentials: { apikey: {type: "password"} }
     });
 
