@@ -54,7 +54,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         this.flickrConfig = RED.nodes.getNode(n.flickr);
         if (!this.flickrConfig) {
-            this.error(RED._("flickr.errors.missing-credentials"));
+            this.error(RED._("flickr.error.missing-credentials"));
             return;
         }
         this.tags = n.tags;
@@ -156,7 +156,7 @@ module.exports = function(RED) {
                 oauth_callback: req.query.callback
         },function(error, oauth_token, oauth_token_secret, results){
             if (error) {
-                var resp = RED._("flickr.errors.oautherror",{statusCode: error.statusCode, errorData: error.data});
+                var resp = RED._("flickr.error.oautherror",{statusCode: error.statusCode, errorData: error.data});
                 res.send(resp);
             } else {
                 credentials.oauth_token = oauth_token;
@@ -181,7 +181,7 @@ module.exports = function(RED) {
             function(error, oauth_access_token, oauth_access_token_secret, results){
                 if (error){
                     console.log(error);
-                    res.send(RED._("flickr.errors.something-broke"));
+                    res.send(RED._("flickr.error.something-broke"));
                 } else {
                     credentials = {};
                     credentials.client_key = client_key;
@@ -191,7 +191,7 @@ module.exports = function(RED) {
                     credentials.username = results.username;
                     credentials.user_nsid = results.user_nsid;
                     RED.nodes.addCredentials(req.params.id,credentials);
-                    res.send(RED._("flickr.errors.authorized"));
+                    res.send(RED._("flickr.error.authorized"));
                 }
             }
         );

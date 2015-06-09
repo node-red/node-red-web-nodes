@@ -32,13 +32,13 @@
             "uploading": "uploading",
             "overwriting": "overwriting"
         },
-        "warns": {
+        "warn": {
             "refresh-token": "trying to refresh token due to expiry",
             "refresh-401": "refreshing access token after 401 error",
             "missing-credentials": "Missing box credentials",
             "old-path-failed": "failed to resolve old path: __err__"
         },
-        "errors": {
+        "error": {
             "not-found": "not found",
             "missing-filename": "missing filename?",
             "no-credentials": "ERROR: no credentials - should never happen",

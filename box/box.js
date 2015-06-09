@@ -44,8 +44,8 @@ module.exports = function(RED) {
             // TODO: add a timeout to make sure we make a request
             // every so often (if no flows trigger one) to ensure the
             // refresh token does not expire
-            node.error(RED._("box.errors.no-refresh-token"));
-            return cb(RED._("box.errors.no-refresh-token"));
+            node.error(RED._("box.error.no-refresh-token"));
+            return cb(RED._("box.error.no-refresh-token"));
         }
         request.post({
             url: 'https://api.box.com/oauth2/token',
@@ -58,11 +58,11 @@ module.exports = function(RED) {
             },
         }, function(err, result, data) {
             if (err) {
-                node.error(RED._("box.errors.token-request-error",{err:err}));
+                node.error(RED._("box.error.token-request-error",{err:err}));
                 return;
             }
             if (data.error) {
-                node.error(RED._("box.errors.refresh-token-error",{message:data.error.message}));
+                node.error(RED._("box.error.refresh-token-error",{message:data.error.message}));
                 return;
             }
             // console.log("refreshed: " + require('util').inspect(data));
@@ -99,11 +99,11 @@ module.exports = function(RED) {
         if (!this.credentials.expireTime ||
             this.credentials.expireTime < (new Date().getTime()/1000)) {
             if (retries === 0) {
-                node.error(RED._("box.errors.too-many-refresh-attempts"));
-                cb(RED._("box.errors.too-many-refresh-attempts"));
+                node.error(RED._("box.error.too-many-refresh-attempts"));
+                cb(RED._("box.error.too-many-refresh-attempts"));
                 return;
             }
-            node.warn(RED._("box.warns.refresh-token"));
+            node.warn(RED._("box.warn.refresh-token"));
             node.refreshToken(function (err) {
                 if (err) {
                     return;
@@ -119,7 +119,7 @@ module.exports = function(RED) {
             }
             if (result.statusCode === 401 && retries > 0) {
                 retries--;
-                node.warn(RED._("box.warns.refresh-401"));
+                node.warn(RED._("box.warn.refresh-401"));
                 node.refreshToken(function (err) {
                     if (err) {
                         return cb(err, null);
@@ -167,7 +167,7 @@ module.exports = function(RED) {
                     return node.resolvePath(path, entries[i].id, cb);
                 }
             }
-            return cb(RED._("box.errors.not-found"), -1);
+            return cb(RED._("box.error.not-found"), -1);
         });
     };
 
@@ -185,7 +185,7 @@ module.exports = function(RED) {
             path = path.filter(function(e) { return e !== ""; });
         }
         if (path.length === 0) {
-            return cb(RED._("box.errors.missing-filename"), -1);
+            return cb(RED._("box.error.missing-filename"), -1);
         }
         var file = path.pop();
         node.resolvePath(path, function(err, parent_id) {
@@ -204,7 +204,7 @@ module.exports = function(RED) {
                         return cb(null, entries[i].id);
                     }
                 }
-                return cb(RED._("box.errors.not-found"), -1);
+                return cb(RED._("box.error.not-found"), -1);
             });
         });
     };
@@ -256,11 +256,11 @@ module.exports = function(RED) {
         var node_id = state[0];
         var credentials = RED.nodes.getCredentials(node_id);
         if (!credentials || !credentials.clientId || !credentials.clientSecret) {
-            return res.send(RED._("box.errors.no-credentials"));
+            return res.send(RED._("box.error.no-credentials"));
         }
         if (state[1] !== credentials.csrfToken) {
             return res.status(401).send(
-                RED._("box.errors.token-mismatch")
+                RED._("box.error.token-mismatch")
             );
         }
 
@@ -277,11 +277,11 @@ module.exports = function(RED) {
         }, function(err, result, data) {
             if (err) {
                 console.log("request error:" + err);
-                return res.send(RED._("box.errors.something-broke"));
+                return res.send(RED._("box.error.something-broke"));
             }
             if (data.error) {
                 console.log("oauth error: " + data.error);
-                return res.send(RED._("box.errors.something-broke"));
+                return res.send(RED._("box.error.something-broke"));
             }
             //console.log("data: " + require('util').inspect(data));
             credentials.accessToken = data.access_token;
@@ -300,20 +300,20 @@ module.exports = function(RED) {
             }, function(err, result, data) {
                 if (err) {
                     console.log('fetching box profile failed: ' + err);
-                    return res.send(RED._("box.errors.profile-fetch-failed"));
+                    return res.send(RED._("box.error.profile-fetch-failed"));
                 }
                 if (result.statusCode >= 400) {
                     console.log('fetching box profile failed: ' +
                                 result.statusCode + ": " + data.message);
-                    return res.send(RED._("box.errors.profile-fetch-failed"));
+                    return res.send(RED._("box.error.profile-fetch-failed"));
                 }
                 if (!data.name) {
                     console.log('fetching box profile failed: no name found');
-                    return res.send(RED._("box.errors.profile-fetch-failed"));
+                    return res.send(RED._("box.error.profile-fetch-failed"));
                 }
                 credentials.displayName = data.name;
                 RED.nodes.addCredentials(node_id, credentials);
-                res.send(RED._("box.errors.authorized"));
+                res.send(RED._("box.error.authorized"));
             });
         });
     });
@@ -324,7 +324,7 @@ module.exports = function(RED) {
         this.box = RED.nodes.getNode(n.box);
         var node = this;
         if (!this.box || !this.box.credentials.accessToken) {
-            this.warn(RED._("box.warns.missing-credentials"));
+            this.warn(RED._("box.warn.missing-credentials"));
             return;
         }
         node.status({fill:"blue",shape:"dot",text:RED._("box.status.initializing")});
@@ -332,7 +332,7 @@ module.exports = function(RED) {
             url: 'https://api.box.com/2.0/events?stream_position=now&stream_type=changes',
         }, function (err, data) {
             if (err) {
-                node.error(RED._("box.errors.event-stream-initialize-failed",{err:err.toString()}));
+                node.error(RED._("box.error.event-stream-initialize-failed",{err:err.toString()}));
                 node.status({fill:"red",shape:"ring",text:RED._("box.status.failed")});
                 return;
             }
@@ -344,7 +344,7 @@ module.exports = function(RED) {
                     url: 'https://api.box.com/2.0/events?stream_position='+node.state+'&stream_type=changes',
                 }, function(err, data) {
                     if (err) {
-                        node.error(RED._("box.errors.events-fetch-failed",{err:err.toString()}),msg);
+                        node.error(RED._("box.error.events-fetch-failed",{err:err.toString()}),msg);
                         node.status({});
                         return;
                     }
@@ -415,7 +415,7 @@ module.exports = function(RED) {
         var node = this;
         node.box.folderInfo(source.parent.id, function(err, folder) {
             if (err) {
-                node.warn(RED._("box.warns.old-path-failed",{err:err.toString()}));
+                node.warn(RED._("box.warn.old-path-failed",{err:err.toString()}));
                 node.status({fill:"red",shape:"ring",text:RED._("box.status.failed")});
                 return;
             }
@@ -433,21 +433,21 @@ module.exports = function(RED) {
         this.box = RED.nodes.getNode(n.box);
         var node = this;
         if (!this.box || !this.box.credentials.accessToken) {
-            this.warn(RED._("box.warns.missing-credentials"));
+            this.warn(RED._("box.warn.missing-credentials"));
             return;
         }
 
         node.on("input", function(msg) {
             var filename = node.filename || msg.filename;
             if (filename === "") {
-                node.error(RED._("box.errors.no-filename-specified"));
+                node.error(RED._("box.error.no-filename-specified"));
                 return;
             }
             msg.filename = filename;
             node.status({fill:"blue",shape:"dot",text:RED._("box.status.resolving-path")});
             node.box.resolveFile(filename, function(err, file_id) {
                 if (err) {
-                    node.error(RED._("box.errors.path-resolve-failed",{err:err.toString()}),msg);
+                    node.error(RED._("box.error.path-resolve-failed",{err:err.toString()}),msg);
                     node.status({fill:"red",shape:"ring",text:RED._("box.status.failed")});
                     return;
                 }
@@ -460,7 +460,7 @@ module.exports = function(RED) {
                     encoding: null,
                 }, function(err, data) {
                     if (err) {
-                        node.error(RED._("box.errors.download-failed",{err:err.toString()}),msg);
+                        node.error(RED._("box.error.download-failed",{err:err.toString()}),msg);
                         node.status({fill:"red",shape:"ring",text:RED._("box.status.failed")});
                     } else {
                         msg.payload = data;
@@ -481,14 +481,14 @@ module.exports = function(RED) {
         this.box = RED.nodes.getNode(n.box);
         var node = this;
         if (!this.box || !this.box.credentials.accessToken) {
-            this.warn(RED._("box.warns.missing-credentials"));
+            this.warn(RED._("box.warn.missing-credentials"));
             return;
         }
 
         node.on("input", function(msg) {
             var filename = node.filename || msg.filename;
             if (filename === "") {
-                node.error(RED._("box.errors.no-filename-specified"));
+                node.error(RED._("box.error.no-filename-specified"));
                 return;
             }
             var path = filename.split("/");
@@ -500,7 +500,7 @@ module.exports = function(RED) {
             }
             node.box.resolvePath(path, function(err, parent_id) {
                 if (err) {
-                    node.error(RED._("box.errors.path-resolve-failed",{err:err.toString()}),msg);
+                    node.error(RED._("box.error.path-resolve-failed",{err:err.toString()}),msg);
                     node.status({fill:"red",shape:"ring",text:RED._("box.status.failed")});
                     return;
                 }
@@ -520,7 +520,7 @@ module.exports = function(RED) {
                                     data.context_info.conflicts.id+'/content',
                             }, function(err, data) {
                                 if (err) {
-                                    node.error(RED._("box.errors.upload-failed",{err:err.toString()}),msg);
+                                    node.error(RED._("box.error.upload-failed",{err:err.toString()}),msg);
                                     node.status({fill:"red",shape:"ring",text:RED._("box.status.failed")});
                                     return;
                                 }
@@ -535,7 +535,7 @@ module.exports = function(RED) {
                                 { filename: basename });
                             }
                         } else {
-                            node.error(RED._("box.errors.upload-failed",{err:err.toString()}),msg);
+                            node.error(RED._("box.error.upload-failed",{err:err.toString()}),msg);
                             node.status({fill:"red",shape:"ring",text:RED._("box.status.failed")});
                         }
                         return;

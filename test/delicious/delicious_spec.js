@@ -59,7 +59,7 @@ describe('delicious nodes', function() {
                               logEvents.should.have.length(1);
                               logEvents[0][0].should.have.a.property("id",delicious.id);
                               logEvents[0][0].should.have.a.property("type",delicious.type);
-                              logEvents[0][0].should.have.a.property("msg","url must be provided in msg.payload");
+                              logEvents[0][0].should.have.a.property("msg","delicious.error.missing-url");
                               done();
                           } catch(err) {
                               done(err);
@@ -92,7 +92,7 @@ describe('delicious nodes', function() {
                               logEvents.should.have.length(1);
                               logEvents[0][0].should.have.a.property("id",delicious.id);
                               logEvents[0][0].should.have.a.property("type",delicious.type);
-                              logEvents[0][0].should.have.a.property("msg","msg.title must be provided");
+                              logEvents[0][0].should.have.a.property("msg","delicious.error.missing-title");
                               done();
                           } catch(err) {
                               done(err);
@@ -151,8 +151,8 @@ describe('delicious nodes', function() {
                               var delicious = helper.getNode("delicious");
                               delicious.should.have.property('id','delicious');
                               var stub = sinon.stub(delicious, 'status', function(status) {
-                                  if (status.text === "failed") {
-                                      var expected = {fill:"red",shape:"ring",text:"failed"};
+                                  if (status.text === "delicious.status.failed") {
+                                      var expected = {fill:"red",shape:"ring",text:"delicious.status.failed"};
                                       should.deepEqual(status, expected);
                                       stub.restore();
                                       done();                                    

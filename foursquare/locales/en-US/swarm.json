@@ -10,10 +10,10 @@
         "status": {
             "failed": "failed"
         },
-        "warns": {
+        "warn": {
             "no-credentials": "no credentials for node"
         },
-        "errors": {
+        "error": {
             "no-accesstoken": "No access token available",
             "errorcode": "Error code: __metaCode__, errorDetail: __errorDetail__"
         }

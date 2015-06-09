@@ -38,10 +38,10 @@
         "status": {
             "failed": "failed"
         },
-        "warns": {
+        "warn": {
             "no-credentials": "no credentials for node"
         },
-        "errors": {
+        "error": {
             "no-accesstoken": "No access token available",
             "section-not-defined": "problem with node input: section is not defined correctly",
             "lat_lon-not-set": "problem with node input: latitude and/or longitude not set",
@@ -55,7 +55,7 @@
             "oauth-error-meta": "<h2>Oh no!</h2><p>Something went wrong with the authentication process. Http return code:</p><p><b>__metaCode__</b></p>",
             "token-mismatch": "CSRF token mismatch, possible cross-site request forgery attempt."
         },
-        "messages": {
+        "message": {
             "authorized": "<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>"
         }
     }

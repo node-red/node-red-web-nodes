@@ -26,13 +26,13 @@ module.exports = function(RED) {
             if (90 >= lat && lat >= -90) {
                 node.lat = lat;
             } else {
-                node.error(RED._("weather.errors.invalid-lat"),msg);
+                node.error(RED._("weather.error.invalid-lat"),msg);
                 return;
             }
             if (180 >= lon && lon >= -180) {
                 node.lon = lon;
             } else {
-                node.error(RED._("weather.errors.invalid-lon"),msg);
+                node.error(RED._("weather.error.invalid-lon"),msg);
                 return;
             }
         }
@@ -67,7 +67,7 @@ module.exports = function(RED) {
                     try {
                         jsun = JSON.parse(weather);
                     } catch (e) {
-                        callback(RED._("weather.errors.invalid-json"));
+                        callback(RED._("weather.error.invalid-json"));
                         return;
                     }
                     if (jsun) {
@@ -91,13 +91,13 @@ module.exports = function(RED) {
                             msg.location.city = jsun.name;
                             msg.location.country = jsun.sys.country;
                             if (jsun.hasOwnProperty("dt")) { msg.time = new Date(jsun.dt*1000); }
-                            msg.title = RED._("weather.messages.title");
-                            msg.description = RED._("weather.messages.description", {lat: msg.location.lat, lon: msg.location.lon});
-                            msg.payload.description = (RED._("weather.messages.payload", {name: jsun.name, lat: jsun.coord.lat, lon: jsun.coord.lon, main: jsun.weather[0].main, description: jsun.weather[0].description}));
+                            msg.title = RED._("weather.message.title");
+                            msg.description = RED._("weather.message.description", {lat: msg.location.lat, lon: msg.location.lon});
+                            msg.payload.description = (RED._("weather.message.payload", {name: jsun.name, lat: jsun.coord.lat, lon: jsun.coord.lon, main: jsun.weather[0].main, description: jsun.weather[0].description}));
                             callback();
                         } else {
-                            if (jsun.message === RED._("weather.errors.city-not-found")) {
-                                callback(RED._("weather.errors.invalid-city_country"));
+                            if (jsun.message === "Error: Not found city") {
+                                callback(RED._("weather.error.invalid-city_country"));
                                 return;
                             } else {
                                 callback(jsun.cod + " " + jsun.message);
@@ -112,7 +112,7 @@ module.exports = function(RED) {
             });
             node.status({});
         } else {
-            callback(RED._("weather.errors.invalid-location"));
+            callback(RED._("weather.error.invalid-location"));
         }
     }
 

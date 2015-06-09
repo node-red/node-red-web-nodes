@@ -77,7 +77,7 @@ module.exports = function(RED) {
         this.on("input", function(msg) {
             var credentials = nodeCredentials && nodeCredentials.accesstoken ? nodeCredentials : msg.credentials || {};
             if (!credentials.accesstoken) {
-                node.error(RED._("swarm.errors.no-accesstoken"),msg);
+                node.error(RED._("swarm.error.no-accesstoken"),msg);
                 return;
             }
             if (node.request === "get-most-recent-checkin") {
@@ -94,7 +94,7 @@ module.exports = function(RED) {
         if (credentials && credentials.clientid && credentials.clientsecret && credentials.accesstoken) {
            return true;
         } else {
-            node.warn(RED._("swarm.warns.no-credentials"));
+            node.warn(RED._("swarm.warn.no-credentials"));
             return false;
         }
     }
@@ -113,7 +113,7 @@ module.exports = function(RED) {
             } else {
                 var result = JSON.parse(body);
                 if (result.meta.code != 200) {
-                    node.error(RED._("swarm.errors.errorcode", {metaCode: result.meta.code, errorDetail: result.meta.errorDetail}), msg);
+                    node.error(RED._("swarm.error.errorcode", {metaCode: result.meta.code, errorDetail: result.meta.errorDetail}), msg);
                     node.status({fill:"red",shape:"ring",text:RED._("swarm.status.failed")});
                     return;
                 } else {

@@ -67,7 +67,7 @@ module.exports = function(RED) {
                     delete msg.payload;
                     msg.error = {
                         code: 400,
-                        message: RED._("geocoding.errors.no-lan_lon"),
+                        message: RED._("geocoding.error.no-lan_lon"),
                         status: 'MISSING_VALUES'
                     };
                     node.error(msg.error, msg);
@@ -81,7 +81,7 @@ module.exports = function(RED) {
                     delete msg.payload;
                     msg.error = {
                         code: 400,
-                        message: RED._("geocoding.errors.no-address"),
+                        message: RED._("geocoding.error.no-address"),
                         status: 'MISSING_VALUES'
                     };
                     node.error(msg.error, msg);

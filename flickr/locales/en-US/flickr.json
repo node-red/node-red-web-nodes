@@ -25,7 +25,7 @@
             "uploading": "uploading",
             "failed": "failed"
         },
-        "errors": {
+        "error": {
             "missing-credentials": "Missing flickr credentials",
             "something-broke": "Something broke.",
             "oautherror": "<h2>Oh no!</h2><p>Something went wrong with the authentication process. The following error was returned:</p><p><b>__statusCode__</b>: __errorData__</p><p>One known cause of this type of failure is if the clock is wrong on system running Node-RED.</p>",

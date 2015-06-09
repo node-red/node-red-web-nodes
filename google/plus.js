@@ -127,7 +127,7 @@ module.exports = function(RED) {
                     var error = {
                         code: 400,
                         status: 'MISSING_VALUES',
-                        message: RED._("plus.errors.no-query")
+                        message: RED._("plus.error.no-query")
                     };
                     throwNodeError(error, msg);
                     return;
@@ -163,7 +163,7 @@ module.exports = function(RED) {
                     var error = {
                         code: 400,
                         status: 'MISSING_VALUES',
-                        message: RED._("plus.errors.no-collection")
+                        message: RED._("plus.error.no-collection")
                     };
                     throwNodeError(error, msg);
                     return;
@@ -199,7 +199,7 @@ module.exports = function(RED) {
                     var error = {
                         code: 400,
                         status: 'MISSING_VALUES',
-                        message: RED._("plus.errors.no-activityid")
+                        message: RED._("plus.error.no-activityid")
                     };
                     throwNodeError(error, msg);
                     return;
@@ -226,7 +226,7 @@ module.exports = function(RED) {
                     var error = {
                         code: 400,
                         status: 'MISSING_VALUES',
-                        message: RED._("plus.errors.no-query")
+                        message: RED._("plus.error.no-query")
                     };
                     throwNodeError(error, msg);
                     return;
@@ -266,7 +266,7 @@ module.exports = function(RED) {
                     var error = {
                         code: 400,
                         status: 'MISSING_VALUES',
-                        message: RED._("plus.errors.no-collection")
+                        message: RED._("plus.error.no-collection")
                     };
                     throwNodeError(error, msg);
                     return;
@@ -299,7 +299,7 @@ module.exports = function(RED) {
                     var error = {
                         code: 400,
                         status: 'MISSING_VALUES',
-                        message: RED._("plus.errors.no-commentid")
+                        message: RED._("plus.error.no-commentid")
                     };
                     throwNodeError(error, msg);
                     return;
@@ -326,7 +326,7 @@ module.exports = function(RED) {
                     var error = {
                         code: 400,
                         status: 'MISSING_VALUES',
-                        message: RED._("plus.errors.no-activityid")
+                        message: RED._("plus.error.no-activityid")
                     };
                     throwNodeError(error, msg);
                     return;
@@ -391,7 +391,7 @@ module.exports = function(RED) {
                         emails: data.emails,
                         image: data.image.url,
                         isPlusUser: data.isPlusUser,
-                        status: RED._("plus.messages.ok")
+                        status: RED._("plus.message.ok")
                     };
                     cb(newMsg);
                 }
@@ -416,7 +416,7 @@ module.exports = function(RED) {
                     newMsg.payload = {
                         results: [],
                         nextPageToken: data.nextPageToken,
-                        status: RED._("plus.messages.ok")
+                        status: RED._("plus.message.ok")
                     };
                     newMsg.nextPageToken = data.nextPageToken;
                     for(var i = 0; i < data.items.length; i++){
@@ -449,7 +449,7 @@ module.exports = function(RED) {
                     newMsg.payload = {
                         results: [],
                         nextPageToken: data.nextPageToken,
-                        status: RED._("plus.messages.ok")
+                        status: RED._("plus.message.ok")
                     };
                     newMsg.nextPageToken = data.nextPageToken;
                     for(var i = 0; i < data.items.length; i++){
@@ -505,7 +505,7 @@ module.exports = function(RED) {
                             placeId: data.placeId,
                             placeName: data.placeName
                         },
-                        status: RED._("plus.messages.ok")
+                        status: RED._("plus.message.ok")
                     };
                     newMsg.description = newMsg.payload.actor.displayName + ', ' + newMsg.payload.verb + ', ' + newMsg.payload.object.id;
                     newMsg.activityId = data.id;
@@ -529,7 +529,7 @@ module.exports = function(RED) {
                     newMsg.payload = {
                         results: [],
                         nextPageToken: data.nextPageToken,
-                        status: RED._("plus.messages.ok")
+                        status: RED._("plus.message.ok")
                     };
                     newMsg.nextPageToken = data.nextPageToken;
                     for(var i = 0; i < data.items.length; i++){
@@ -583,7 +583,7 @@ module.exports = function(RED) {
                     newMsg.payload = {
                         results: [],
                         nextPageToken: data.nextPageToken,
-                        status: RED._("plus.messages.ok")
+                        status: RED._("plus.message.ok")
                     };
                     newMsg.nextPageToken = data.nextPageToken;
                     for(var i = 0; i < data.items.length; i++){
@@ -633,7 +633,7 @@ module.exports = function(RED) {
                 }else{
                     var newMsg = cloneMsg(msg);     //quick clone msg
                     newMsg.data = data;
-                    newMsg.title = RED._("plus.messages.comment") + " " + data.id;
+                    newMsg.title = RED._("plus.message.comment") + " " + data.id;
                     newMsg.payload = {
                         id: data.id,
                         actor: {
@@ -650,7 +650,7 @@ module.exports = function(RED) {
                         updated: data.updated,
                         inReplyTo: data.inReplyTo,
                         plusoners: data.plusoners.totalItems,
-                        status: RED._("plus.messages.ok")
+                        status: RED._("plus.message.ok")
                     };
                     newMsg.description = data.object.originalContent;
                     newMsg.commentId = data.id;
@@ -673,7 +673,7 @@ module.exports = function(RED) {
                     newMsg.payload = {
                         results: [],
                         nextPageToken: data.nextPageToken,
-                        status: RED._("plus.messages.ok")
+                        status: RED._("plus.message.ok")
                     };
                     newMsg.nextPageToken = data.nextPageToken;
                     for(var i = 0; i < data.items.length; i++){
@@ -742,7 +742,7 @@ module.exports = function(RED) {
                 throwNodeError({
                     code: 400,
                     status: 'MISSING_VALUES',
-                    message: RED._("plus.errors.no-accesstoken")
+                    message: RED._("plus.error.no-accesstoken")
                 }, msg);
                 return;
             }

@@ -32,7 +32,7 @@ module.exports = function(RED) {
                 if(msg.payload && msg.payload.tubeline){
                     line = msg.payload.tubeline;
                 } else {
-                    node.error(RED._("tfl-underground.errors.no-station"),msg);
+                    node.error(RED._("tfl-underground.error.no-station"),msg);
                 }
             } else {
                 line = node.line;
@@ -53,7 +53,7 @@ module.exports = function(RED) {
                                     var linename = linestatus[i].Line[0].$.Name;
                                     if (linename.toLowerCase() === line.toLowerCase()) {
                                         msgMatched = true;
-                                        msg.description = RED._("tfl-underground.errors.description", {linename: linename});
+                                        msg.description = RED._("tfl-underground.message.description", {linename: linename});
                                         msg.payload = {};
                                         msg.payload.status = linestatus[i].Status[0].$.CssClass;
                                         if (msg.payload.status === "GoodService") {
@@ -77,7 +77,7 @@ module.exports = function(RED) {
                                     }
                                 }
                                 if(!msgMatched){
-                                    node.error(RED._("tfl-underground.errors.invalid-tubeline", {tubeline: msg.payload.tubeline}),msg);
+                                    node.error(RED._("tfl-underground.error.invalid-tubeline", {tubeline: msg.payload.tubeline}),msg);
                                 } else {
                                     node.send(msg);
                                 }

@@ -19,7 +19,7 @@
         "status": {
             "saving": "saving"
         },
-        "errors": {
+        "error": {
             "no-url": "url must be provided in msg.payload",
             "no-title": "msg.title must be provided",
             "no-apitoken": "missing api token"

@@ -40,11 +40,11 @@ module.exports = function(RED) {
         if (this.user) {
             this.on("input", function(msg) {
                 if (!msg.payload) {
-                    node.error(RED._("delicious.errors.missing-url"),msg);
+                    node.error(RED._("delicious.error.missing-url"),msg);
                     return;
                 }
                 if (!msg.title) {
-                    node.error(RED._("delicious.errors.missing-title"),msg);
+                    node.error(RED._("delicious.error.missing-title"),msg);
                     return;
                 }
                 var options = {
@@ -88,7 +88,7 @@ module.exports = function(RED) {
                 
             });
         } else {
-            this.error(RED._("delicious.errors.missing-credentials"));
+            this.error(RED._("delicious.error.missing-credentials"));
         }
         
     }

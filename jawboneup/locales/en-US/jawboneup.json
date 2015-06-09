@@ -27,7 +27,7 @@
         "status": {
             "failed": "failed"
         },
-        "errors": {
+        "error": {
             "errorinfo": "Error code: __code__, error type: __type__, error detail: __detail__, message: __message__",
             "incorrect-output": "Incorrect number of messages to output or incorrect choice of how to output them",
             "credentials-error": "problem with credentials being set: __credentials__, ",
@@ -39,7 +39,7 @@
             "oautherrorinfo": "<h2>Oh no!</h2><p>Something went wrong with the authentication process. The following error was returned:</p><p><b>__statusCode__</b>: __errorData__</p>",
             "oautherrorcode": "<h2>Oh no!</h2><p>Something went wrong with the authentication process. Http return code:</p><p><b>__metaCode__</b></p>"
         },
-        "messages": {
+        "message": {
             "authorized": "<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>"
         }
    }

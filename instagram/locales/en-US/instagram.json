@@ -24,7 +24,7 @@
         "tip": {
             "redirect": "<p>Please configure Instagram to accept the following <b>Redirect URL</b> for authentication of your application: </p>\n<code>__constructedURI__</code>"
         },
-        "warns": {
+        "warn": {
             "image-not-sent": "Instagram node has failed to buffer up an image. Image was not sent.\n__error__\n__response__",
             "missing-accesstoken": "Missing Instagram access token. Authorization has not been completed before node initialization.",
             "missing-configuration": "Missing Instagram configuration or credentials. Authorization has not been completed before node initialization.",
@@ -39,7 +39,7 @@
             "media-fetch-failed": "Instagram node has failed to fetch any media",
             "missing-credentials": "Missing Instagram credentials"
         },
-        "errors": {
+        "error": {
             "csrf-token-mismatch": "CSRF token mismatch, possible cross-site request forgery attempt.",
             "no-required-code": "The callback from Instagram did not contain a required code",
             "unexpected-statuscode": "Instagram replied with the unexpected HTTP status code of __statusCode__\nDetails:\n__data__",
@@ -50,7 +50,7 @@
             "username-fetch-fail": "Error! Instagram node has failed to fetch the username.",
             "accesstoken-fetch-fail": "Error! Instagram node has failed to fetch a valid access token."
         },
-        "messages": {
+        "message": {
             "authorized": "<html><head></head><body>Successfully authorized with Instagram. You can close this window now.</body></html>"
         }
     }

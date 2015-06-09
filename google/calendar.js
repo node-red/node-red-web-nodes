@@ -21,7 +21,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         this.google = RED.nodes.getNode(n.google);
         if (!this.google || !this.google.credentials.accessToken) {
-            this.warn(RED._("calendar.warns.no-credentials"));
+            this.warn(RED._("calendar.warn.no-credentials"));
             return;
         }
         this.calendar = n.calendar || 'primary';
@@ -142,7 +142,7 @@ module.exports = function(RED) {
         this.calendar = n.calendar || 'primary';
 
         if (!this.google || !this.google.credentials.accessToken) {
-            this.warn(RED._("calendar.warns.no-credentials"));
+            this.warn(RED._("calendar.warn.no-credentials"));
             return;
         }
 
@@ -161,18 +161,18 @@ module.exports = function(RED) {
                 var cal = calendarByNameOrId(node, msg.calendar) ||
                     calendarByNameOrId(node, node.calendar);
                 if (!cal) {
-                    node.error(RED._("calendar.errors.invalid-calendar"),msg);
+                    node.error(RED._("calendar.error.invalid-calendar"),msg);
                     node.status({fill:"red",shape:"ring",text:RED._("calendar.status.invalid-calendar")});
                     return;
                 }
                 nextStartingEvent(node, cal, msg, function(err, ev) {
                     if (err) {
-                        node.error(RED._("calendar.errors.error", {error:err.toString()}),msg);
+                        node.error(RED._("calendar.error.error", {error:err.toString()}),msg);
                         node.status({fill:"red",shape:"ring",text:RED._("calendar.status.failed")});
                         return;
                     }
                     if (!ev) {
-                        node.error(RED._("calendar.errors.no-event"),msg);
+                        node.error(RED._("calendar.error.no-event"),msg);
                         node.status({fill:"red",shape:"ring",text:RED._("calendar.status.no-event")});
                     } else {
                         sendEvent(node, ev, msg);
@@ -208,11 +208,11 @@ module.exports = function(RED) {
         node.calendars = {};
         node.google.request('https://www.googleapis.com/calendar/v3/users/me/calendarList', function(err, data) {
             if (err) {
-                cb(RED._("calendar.errors.fetch-failed", {message:err.toString()}));
+                cb(RED._("calendar.error.fetch-failed", {message:err.toString()}));
                 return;
             }
             if (data.error) {
-                cb(RED._("calendar.errors.fetch-failed", {message:data.error.message}));
+                cb(RED._("calendar.error.fetch-failed", {message:data.error.message}));
                 return;
             }
             for (var i = 0; i < data.items.length; i++) {
@@ -247,9 +247,9 @@ module.exports = function(RED) {
         }
         var handle_response = function(err, data) {
             if (err) {
-                cb(RED._("calendar.errors.error", {error:err.toString()}), null);
+                cb(RED._("calendar.error.error", {error:err.toString()}), null);
             } else if (data.error) {
-                cb(RED._("calendar.errors.error-details", {code:data.error.code, message:JSON.stringify(data.error.message)}), null);
+                cb(RED._("calendar.error.error-details", {code:data.error.code, message:JSON.stringify(data.error.message)}), null);
             } else {
                 var ev;
                 /* 0 - 10 events ending after now ordered by startTime
@@ -301,9 +301,9 @@ module.exports = function(RED) {
         }
         var handle_response = function(err, data) {
             if (err) {
-                cb(RED._("calendar.errors.error", {error:err.toString()}), null);
+                cb(RED._("calendar.error.error", {error:err.toString()}), null);
             } else if (data.error) {
-                cb(RED._("calendar.errors.error-details", {code:data.error.code, message:JSON.stringify(data.error.message)}), null);
+                cb(RED._("calendar.error.error-details", {code:data.error.code, message:JSON.stringify(data.error.message)}), null);
             } else {
                 var ev;
                 /* 0 - 10 events ending after now ordered by startTime
@@ -357,9 +357,9 @@ module.exports = function(RED) {
         }
         node.google.request(request, function(err, data) {
             if (err) {
-                cb(RED._("calendar.errors.error", {error:err.toString()}), null);
+                cb(RED._("calendar.error.error", {error:err.toString()}), null);
             } else if (data.error) {
-                cb(RED._("calendar.errors.error-details", {code:data.error.code, message:JSON.stringify(data.error.message)}), null);
+                cb(RED._("calendar.error.error-details", {code:data.error.code, message:JSON.stringify(data.error.message)}), null);
             } else {
                 /* 0 - 10 events ending after now ordered by startTime
                  * so we find the first that starts after now to
@@ -420,9 +420,9 @@ module.exports = function(RED) {
         }
         node.google.request(request, function(err, data) {
             if (err) {
-                cb(RED._("calendar.errors.error", {error:err.toString()}), null);
+                cb(RED._("calendar.error.error", {error:err.toString()}), null);
             } else if (data.error) {
-                cb(RED._("calendar.errors.error-details", {code:data.error.code, message:JSON.stringify(data.error.message)}), null);
+                cb(RED._("calendar.error.error-details", {code:data.error.code, message:JSON.stringify(data.error.message)}), null);
             } else {
                 /* 0 - 10 events ending after now ordered by startTime
                  * so we find the first that starts after now to
@@ -526,7 +526,7 @@ module.exports = function(RED) {
         this.calendar = n.calendar || 'primary';
 
         if (!this.google || !this.google.credentials.accessToken) {
-            this.warn(RED._("calendar.warns.no-credentials"));
+            this.warn(RED._("calendar.warn.no-credentials"));
             return;
         }
 
@@ -545,7 +545,7 @@ module.exports = function(RED) {
                 var cal = calendarByNameOrId(node, msg.calendar) ||
                     calendarByNameOrId(node, node.calendar);
                 if (!cal) {
-                    node.error(RED._("calendar.errors.invalid-calendar"),msg);
+                    node.error(RED._("calendar.error.invalid-calendar"),msg);
                     node.status({fill:"red",shape:"ring",text:RED._("calendar.status.invalid-calendar")});
                     return;
                 }

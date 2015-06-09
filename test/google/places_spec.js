@@ -454,7 +454,7 @@ describe('google places', function () {
                         msg.should.have.property('payload');
                         msg.payload.should.be.an.Array;
                         msg.payload.length.should.equal(2);
-                        msg.should.have.property('title', '2 results returned');
+                        msg.should.have.property('title', '2 places.message.results-returned');
                         msg.should.not.have.property('location');
                         msg.should.not.have.property('placeid');
                         msg.should.not.have.property('description');
@@ -1053,7 +1053,7 @@ describe('google places', function () {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     output.on("input", function (msg) {
-                        msg.should.have.property('title', '2 results returned');
+                        msg.should.have.property('title', '2 places.message.results-returned');
                         msg.should.not.have.property('description');
                         msg.should.not.have.property('placeid');
                         msg.should.have.property('payload');

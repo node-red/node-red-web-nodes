@@ -82,7 +82,7 @@ module.exports = function(RED) {
         this.fitbitConfig = RED.nodes.getNode(n.fitbit);
         this.dataType = n.dataType || 'badges';
         if (!this.fitbitConfig) {
-            this.warn(RED._("fitbit.warns.missing-credentials"));
+            this.warn(RED._("fitbit.warn.missing-credentials"));
             return;
         }
         var credentials = this.fitbitConfig.credentials;
@@ -273,11 +273,11 @@ module.exports = function(RED) {
         this.dataType = n.dataType || 'activities';
         var supportedTypes = ["activities","sleep","badges"];
         if (supportedTypes.indexOf(this.dataType) == -1) {
-            this.error(RED._("fitbit.errors.unsupported-data-type"));
+            this.error(RED._("fitbit.error.unsupported-data-type"));
             return;
         }
         if (!this.fitbitConfig) {
-            this.error(RED._("fitbit.errors.missing-credentials"));
+            this.error(RED._("fitbit.error.missing-credentials"));
             return;
         }
         var credentials = this.fitbitConfig.credentials;
@@ -310,7 +310,7 @@ module.exports = function(RED) {
                     if (node.dataType === 'sleep') {
                         var sleep = mainSleep(data.sleep);
                         if (!sleep) {
-                            node.warn(RED._("fitbit.warns.no-sleep-record"));
+                            node.warn(RED._("fitbit.warn.no-sleep-record"));
                             return;
                         } else {
                             msg.payload = sleep;
@@ -346,7 +346,7 @@ module.exports = function(RED) {
             oauth_callback: req.query.callback
         }, function(error, oauth_token, oauth_token_secret, results) {
             if (error) {
-                res.send(RED._("fitbit.errors.oautherror",{statusCode: error.statusCode, errorData: error.data}));
+                res.send(RED._("fitbit.error.oautherror",{statusCode: error.statusCode, errorData: error.data}));
             } else {
                 credentials.oauth_token = oauth_token;
                 credentials.oauth_token_secret = oauth_token_secret;
@@ -369,7 +369,7 @@ module.exports = function(RED) {
             credentials.oauth_verifier,
             function(error, oauth_access_token, oauth_access_token_secret, results){
                 if (error){
-                    res.send(RED._("fitbit.errors.oautherror",{statusCode: error.statusCode, errorData: error.data}));
+                    res.send(RED._("fitbit.error.oautherror",{statusCode: error.statusCode, errorData: error.data}));
                 } else {
                     credentials = {};
                     credentials.client_key = client_key;
@@ -378,12 +378,12 @@ module.exports = function(RED) {
                     credentials.access_token_secret = oauth_access_token_secret;
                     oa.get('https://api.fitbit.com/1/user/-/profile.json', credentials.access_token, credentials.access_token_secret, function(err, body, response) {
                           if (err) {
-                            return res.send(RED._("fitbit.errors.oautherror",{statusCode: error.statusCode, errorData: error.data}));
+                            return res.send(RED._("fitbit.error.oautherror",{statusCode: err.statusCode, errorData: err.data}));
                         }
                         var data = JSON.parse(body);
                         credentials.username = data.user.fullName;
                         RED.nodes.addCredentials(req.params.id,credentials);
-                        res.send(RED._("fitbit.errors.authorized"));
+                        res.send(RED._("fitbit.error.authorized"));
                     });
                 }
             }

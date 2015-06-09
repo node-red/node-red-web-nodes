@@ -60,7 +60,7 @@ module.exports = function(RED) {
                 if(data[0].id) {
                     activityIDToReturn = data[0].id;
                 } else {
-                    return callback(null, RED._("strava.errors.no-id"));
+                    return callback(null, RED._("strava.error.no-id"));
                 }
             }
             
@@ -175,11 +175,11 @@ module.exports = function(RED) {
         
         if(node.stravaConfig && node.stravaConfig.credentials) {
             if(!node.stravaConfig.credentials.access_token) {
-                node.warn(RED._("strava.warns.no-acceesstoken"));
+                node.warn(RED._("strava.warn.no-acceesstoken"));
                 return;
             }   
         } else {
-            node.warn(RED._("strava.warns.no-configuration"));
+            node.warn(RED._("strava.warn.no-configuration"));
             return;
         }
         
@@ -233,7 +233,7 @@ module.exports = function(RED) {
         credentials.redirect_uri = req.query.redirect_uri;
         
         if (!credentials.client_id || !credentials.client_secret || ! credentials.redirect_uri) {
-            return res.send(RED._("strava.errors.no-credentials-ui"));
+            return res.send(RED._("strava.error.no-credentials-ui"));
         }
         
         var csrfToken = crypto.randomBytes(18).toString('base64').replace(/\//g, '-').replace(/\+/g, '_');
@@ -262,11 +262,11 @@ module.exports = function(RED) {
         var credentials = RED.nodes.getCredentials(node_id) || {};
 
         if (!credentials || !credentials.client_id || !credentials.client_secret || ! credentials.redirect_uri) {
-            return res.send(RED._("strava.errors.no-credentials"));
+            return res.send(RED._("strava.error.no-credentials"));
         }
         
         if (csrfToken !== credentials.csrfToken) {
-            return res.status(401).send(RED._("strava.errors.csrf-token-mismatch"));
+            return res.status(401).send(RED._("strava.error.csrf-token-mismatch"));
         }
         
         RED.nodes.deleteCredentials(node_id); // we don't want to keep the csrfToken
@@ -274,7 +274,7 @@ module.exports = function(RED) {
         delete credentials.csrfToken;
         
         if(!req.query.code) {
-            return res.status(400).send(RED._("strava.errors.no-code"));
+            return res.status(400).send(RED._("strava.error.no-code"));
         }
         
         credentials.code = req.query.code;
@@ -289,31 +289,31 @@ module.exports = function(RED) {
             },
         }, function(err, result, data) {
             if (err) {
-                return res.send(RED._("strava.errors.request-error", {err: err}));
+                return res.send(RED._("strava.error.request-error", {err: err}));
             }
             if (data.error) {
-                return res.send(RED._("strava.errors.oauth-error", {dataError: data.error}));
+                return res.send(RED._("strava.error.oauth-error", {dataError: data.error}));
             }
             
             if(result.statusCode !== 200) {
                 console.log(data);
-                return res.send(RED._("strava.errors.unexpected-statuscode", {statusCode: result.statusCode}));
+                return res.send(RED._("strava.error.unexpected-statuscode", {statusCode: result.statusCode}));
             }
             
             if(data.athlete && data.athlete.firstname && data.athlete.lastname) {
                 credentials.username = data.athlete.firstname + " " + data.athlete.lastname;
             } else {
-                return res.send(RED._("strava.errors.username-error"));
+                return res.send(RED._("strava.error.username-error"));
             }
             
             if(data.access_token) {
                 credentials.access_token = data.access_token;
             } else {
-                return res.send(RED._("strava.errors.acceesstoken-error"));
+                return res.send(RED._("strava.error.acceesstoken-error"));
             }
             
             RED.nodes.addCredentials(node_id,credentials);
-            res.send(RED._("strava.messages.authorized"));
+            res.send(RED._("strava.message.authorized"));
         });
     });
 };

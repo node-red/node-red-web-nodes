@@ -53,7 +53,7 @@ describe('pinboard nodes', function() {
                               logEvents.should.have.length(1);
                               logEvents[0][0].should.have.a.property("id",pinboard.id);
                               logEvents[0][0].should.have.a.property("type",pinboard.type);
-                              logEvents[0][0].should.have.a.property("msg","url must be provided in msg.payload");
+                              logEvents[0][0].should.have.a.property("msg","pinboard.error.no-url");
                               done();
                           } catch(err) {
                               done(err);
@@ -86,7 +86,7 @@ describe('pinboard nodes', function() {
                               logEvents.should.have.length(1);
                               logEvents[0][0].should.have.a.property("id",pinboard.id);
                               logEvents[0][0].should.have.a.property("type",pinboard.type);
-                              logEvents[0][0].should.have.a.property("msg","msg.title must be provided");
+                              logEvents[0][0].should.have.a.property("msg","pinboard.error.no-title");
                               done();
                           } catch(err) {
                               done(err);

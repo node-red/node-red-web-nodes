@@ -38,7 +38,7 @@ module.exports = function(RED) {
         var credentials = this.dropboxConfig ? this.dropboxConfig.credentials : {};
         if (!credentials.appkey || !credentials.appsecret ||
             !credentials.accesstoken) {
-            this.warn(RED._("dropbox.warns.missing-credentials"));
+            this.warn(RED._("dropbox.warn.missing-credentials"));
             return;
         }
 
@@ -52,7 +52,7 @@ module.exports = function(RED) {
         node.status({fill:"blue",shape:"dot",text:RED._("dropbox.status.initializing")});
         dropbox.pullChanges(function(err, data) {
             if (err) {
-                node.error(RED._("dropbox.errors.initialization-failed",{err:err.toString()}));
+                node.error(RED._("dropbox.error.initialization-failed",{err:err.toString()}));
                 node.status({fill:"red",shape:"ring",text:RED._("dropbox.status.failed")});
                 return;
             }
@@ -62,7 +62,7 @@ module.exports = function(RED) {
                 node.status({fill:"blue",shape:"dot",text:RED._("dropbox.status.checking-for-changes")});
                 dropbox.pullChanges(node.state, function(err, data) {
                     if (err) {
-                        node.error(RED._("dropbox.errors.change-fetch-failed",{err:err.toString()}),msg);
+                        node.error(RED._("dropbox.error.change-fetch-failed",{err:err.toString()}),msg);
                         node.status({}); // clear status since poll retries anyway
                         return;
                     }
@@ -102,7 +102,7 @@ module.exports = function(RED) {
         var credentials = this.dropboxConfig ? this.dropboxConfig.credentials : {};
         if (!credentials.appkey || !credentials.appsecret ||
             !credentials.accesstoken) {
-            this.warn(RED._("dropbox.warns.missing-credentials"));
+            this.warn(RED._("dropbox.warn.missing-credentials"));
             return;
         }
 
@@ -116,14 +116,14 @@ module.exports = function(RED) {
         node.on("input", function(msg) {
             var filename = this.filename || msg.filename;
             if (filename === "") {
-                node.error(RED._("dropbox.errors.no-filename"),msg);
+                node.error(RED._("dropbox.error.no-filename"),msg);
                 return;
             }
             msg.filename = filename;
             node.status({fill:"blue",shape:"dot",text:RED._("dropbox.status.downloading")});
             dropbox.readFile(filename, function(err, data) {
                     if (err) {
-                        node.error(RED._("dropbox.errors.download-failed",{err:err.toString()}),msg);
+                        node.error(RED._("dropbox.error.download-failed",{err:err.toString()}),msg);
                         node.status({fill:"red",shape:"ring",text:RED._("dropbox.status.failed")});
                     } else {
                         msg.payload = data;
@@ -143,7 +143,7 @@ module.exports = function(RED) {
         var credentials = this.dropboxConfig ? this.dropboxConfig.credentials : {};
         if (!credentials.appkey || !credentials.appsecret ||
             !credentials.accesstoken) {
-            this.warn(RED._("dropbox.warns.missing-credentials"));
+            this.warn(RED._("dropbox.warn.missing-credentials"));
             return;
         }
         var node = this;
@@ -156,7 +156,7 @@ module.exports = function(RED) {
         node.status({fill:"blue",shape:"dot",text:RED._("dropbox.status.checking-credentials")});
         dropbox.getAccountInfo(function (err) {
             if (err) {
-                node.error(RED._("dropbox.errors.credentials-error",{err:err}));
+                node.error(RED._("dropbox.error.credentials-error",{err:err}));
                 node.status({fill:"red",shape:"ring",text:RED._("dropbox.status.access-denied")});
                     return;
             }
@@ -164,7 +164,7 @@ module.exports = function(RED) {
             node.on("input", function(msg) {
                 var filename = this.filename || msg.filename;
                 if (filename === "") {
-                    node.error(RED._("dropbox.errors.no-filename"),msg);
+                    node.error(RED._("dropbox.error.no-filename"),msg);
                     node.status({fill:"red",shape:"ring",text:RED._("dropbox.status.failed")});
                     return;
                 }

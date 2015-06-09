@@ -16,7 +16,7 @@
             "saving": "saving",
             "failed": "failed"
         },
-        "errors": {
+        "error": {
             "missing-url": "url must be provided in msg.payload",
             "missing-title": "msg.title must be provided",
             "missing-credentials": "missing credentials"

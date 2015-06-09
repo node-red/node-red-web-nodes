@@ -305,7 +305,7 @@ describe('google plus', function () {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     output.on("input", function (msg) {
-                        msg.payload.should.have.property('status', 'OK');
+                        msg.payload.should.have.property('status', 'plus.message.ok');
                         msg.payload.should.have.property('results');
                         msg.payload.results.length.should.be.above(1);
                         msg.payload.results[0].should.have.properties({
@@ -407,7 +407,7 @@ describe('google plus', function () {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     output.on("input", function (msg) {
-                        msg.payload.should.have.property('status', 'OK');
+                        msg.payload.should.have.property('status', 'plus.message.ok');
                         msg.payload.should.have.property('results');
                         msg.payload.results.length.should.be.above(1);
                         msg.payload.results[0].should.have.properties({
@@ -547,7 +547,7 @@ describe('google plus', function () {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     output.on("input", function (msg) {
-                        msg.payload.should.have.property('status', 'OK');
+                        msg.payload.should.have.property('status', 'plus.message.ok');
                         msg.payload.should.have.property('id', 'z13');
                         msg.payload.should.have.property('actor', {
                             displayName: 'Tom Sample',
@@ -752,7 +752,7 @@ describe('google plus', function () {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     output.on("input", function (msg) {
-                        msg.payload.should.have.property('status', 'OK');
+                        msg.payload.should.have.property('status', 'plus.message.ok');
                         msg.payload.should.have.property('nextPageToken')
                         msg.payload.should.have.property('results');
                         msg.payload.results.length.should.be.above(1);
@@ -973,7 +973,7 @@ describe('google plus', function () {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     output.on("input", function (msg) {
-                        msg.payload.should.have.property('status', 'OK');
+                        msg.payload.should.have.property('status', 'plus.message.ok');
                         msg.payload.should.have.property('nextPageToken')
                         msg.payload.should.have.property('results');
                         msg.payload.results.length.should.be.above(1);
@@ -1091,7 +1091,7 @@ describe('google plus', function () {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     output.on("input", function (msg) {
-                        msg.payload.should.have.property('status', 'OK');
+                        msg.payload.should.have.property('status', 'plus.message.ok');
                         msg.payload.should.have.property('verb', 'post');
                         msg.payload.should.have.property('id', 'z12.11');
                         msg.payload.should.have.property('actor', {
@@ -1227,7 +1227,7 @@ describe('google plus', function () {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     output.on("input", function (msg) {
-                        msg.payload.should.have.property('status', 'OK');
+                        msg.payload.should.have.property('status', 'plus.message.ok');
                         msg.payload.should.have.property('nextPageToken');
                         msg.payload.should.have.property('results');
                         msg.payload.results.length.should.be.above(1);
@@ -1324,7 +1324,7 @@ describe('google plus', function () {
                 var stub = sinon.stub(plus, 'error', function (error) {
                     stub.restore();
                     stub = null;
-                    error.message.should.containEql("Please provide an accessToken");
+                    error.message.should.containEql("plus.error.no-accesstoken");
                     done();
                 });
                 input.send({

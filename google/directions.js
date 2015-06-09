@@ -67,7 +67,7 @@ module.exports = function(RED) {
                 if(!origin){
                     throwNodeError({
                         code: 400,
-                        message: RED._("directions.errors.no-origin"),
+                        message: RED._("directions.error.no-origin"),
                         status: 'MISSING_VALUES'
                     }, msg);
                     return;
@@ -75,7 +75,7 @@ module.exports = function(RED) {
                 if(!destination){
                     throwNodeError({
                         code: 400,
-                        message: RED._("directions.errors.no-destination"),
+                        message: RED._("directions.error.no-destination"),
                         status: 'MISSING_VALUES'
                     }, msg);
                     return;
@@ -141,7 +141,7 @@ module.exports = function(RED) {
                         newMsg.payload.routes.push(parseRoute(data.routes[i]));
                     }
                     newMsg.status = data.status;
-                    newMsg.title = RED._("directions.messages.travel-directions") + ' ' + newMsg.payload.routes[0].summary;
+                    newMsg.title = RED._("directions.message.travel-directions") + ' ' + newMsg.payload.routes[0].summary;
                     newMsg.description = 'Travel directions via ' + newMsg.payload.routes[0].summary;
                     newMsg.distance = newMsg.payload.routes[0].legs[0].distance.value;
                     newMsg.duration = newMsg.payload.routes[0].legs[0].duration.value;
@@ -172,35 +172,35 @@ module.exports = function(RED) {
                     switch(data.status){
                         case 'NOT_FOUND':
                             error.code = 400;
-                            error.message = RED._("directions.errors.no-waypoint");
+                            error.message = RED._("directions.error.no-waypoint");
                             break;
                         case 'MAX_WAYPOINTS_EXCEEDED':
                             error.code = 400;
-                            error.message = RED._("directions.errors.too-many-waypoints");
+                            error.message = RED._("directions.error.too-many-waypoints");
                             break;
                         case 'INVALID_REQUEST':
                             error.code = 400;
-                            error.message = RED._("directions.errors.invalid-request");
+                            error.message = RED._("directions.error.invalid-request");
                             break;
                         case 'OVER_QUERY_REQUEST':
                             error.code = 429;
-                            error.message = RED._("directions.errors.too-many-requests");
+                            error.message = RED._("directions.error.too-many-requests");
                             break;
                         case 'REQUEST_DENIED':
                             error.code = 400;
-                            error.message = RED._("directions.errors.request-denied");
+                            error.message = RED._("directions.error.request-denied");
                             break;
                         case 'UNKNOWN_ERROR':
 							error.code = 500;
-                            error.message = RED._("directions.errors.unknown-error");
+                            error.message = RED._("directions.error.unknown-error");
 							break;
                         default:
                             error.code = 500;
-                            error.message = RED._("directions.errors.unknown-error");
+                            error.message = RED._("directions.error.unknown-error");
                     }
                     throwNodeError({
                         code: 400,
-                        message: RED._("directions.errors.no-destination"),
+                        message: RED._("directions.error.no-destination"),
                         status: 'MISSING_VALUES'
                     }, msg);
                     return;

@@ -139,15 +139,15 @@
         },
         oneditprepare: function() {
             var node = this; // need to access this within JQuery event of drop down update ($("#node-input-stopCode1").change()) so that the UI doesn't get auto-refreshed/loaded at init.
-            var serverError = this._("tfl-bus.uiwarns.server-error");
-            var connectionError = this._("tfl-bus.uiwarns.connection-error");
-            var latNotNum = this._("tfl-bus.uiwarns.latitude-not-a-number");
-            var lonNotNum = this._("tfl-bus.uiwarns.longitude-not-a-number");
-            var radNotNum = this._("tfl-bus.uiwarns.radius-not-a-number");
-            var invalidRad = this._("tfl-bus.uiwarns.invalid-radius");
-            var latOutOfRange = this._("tfl-bus.uiwarns.latitude-out-of-range");
-            var lonOutOfRange = this._("tfl-bus.uiwarns.longitude-out-of-range");
-            var noBusStops = this._("tfl-bus.uiwarns.no-bus-stops");
+            var serverError = this._("tfl-bus.uiwarn.server-error");
+            var connectionError = this._("tfl-bus.uiwarn.connection-error");
+            var latNotNum = this._("tfl-bus.uiwarn.latitude-not-a-number");
+            var lonNotNum = this._("tfl-bus.uiwarn.longitude-not-a-number");
+            var radNotNum = this._("tfl-bus.uiwarn.radius-not-a-number");
+            var invalidRad = this._("tfl-bus.uiwarn.invalid-radius");
+            var latOutOfRange = this._("tfl-bus.uiwarn.latitude-out-of-range");
+            var lonOutOfRange = this._("tfl-bus.uiwarn.longitude-out-of-range");
+            var noBusStops = this._("tfl-bus.uiwarn.no-bus-stops");
             var noBusDeparting = this._("tfl-bus.html.no-buses-departing");
             var to = this._("tfl-bus.html.to");
             var towards = this._("tfl-bus.html.towards");

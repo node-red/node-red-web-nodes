@@ -112,7 +112,7 @@ describe('instagram nodes', function() {
                     if (err) {
                     	return done(err);
                     }
-                    res.text.should.equal("ERROR: Received query from UI without the needed credentials");
+                    res.text.should.equal("instagram.error.no-ui-credentials");
                     done();
                 });
             });
@@ -194,7 +194,7 @@ describe('instagram nodes', function() {
                                 .get('/instagram-credentials/auth/callback?code=' + sessionCode + '&state=n2:' + csrfToken)
                                 .expect(function(res) {
                                     try {
-                                        res.text.indexOf("Successfully authorized with Instagram").should.not.equal(-1); // should succeed
+                                        res.text.indexOf("instagram.message.authorized").should.not.equal(-1); // should succeed
                                     } catch (err) {
                                         done(err);
                                     }
@@ -213,7 +213,7 @@ describe('instagram nodes', function() {
                                     if (err) {
                                     	return done(err);
                                     }
-                                    res.text.should.equal("Error! Instagram node has failed to fetch a valid access token.");
+                                    res.text.should.equal("instagram.error.accesstoken-fetch-fail");
                                     done();
                                 }); 
                             }
@@ -224,7 +224,7 @@ describe('instagram nodes', function() {
                                     if (err) {
                                     	return done(err);
                                     }
-                                    res.text.should.equal("Error! Instagram node has failed to fetch the username.");
+                                    res.text.should.equal("instagram.error.username-fetch-fail");
                                     done();
                                 }); 
                             } else {
@@ -234,7 +234,7 @@ describe('instagram nodes', function() {
                                     if (err) {
                                     	return done(err);
                                     }
-                                    res.text.should.equal("Instagram replied with the unexpected HTTP status code of 404\nDetails:\nNo tokens found, sorry!");
+                                    res.text.should.equal("instagram.error.unexpected-statuscode");
                                     done();
                                 }); 
                             }
@@ -245,7 +245,7 @@ describe('instagram nodes', function() {
                                 if (err) {
                                 	return done(err);
                                 }
-                                res.text.should.equal("CSRF token mismatch, possible cross-site request forgery attempt.");
+                                res.text.should.equal("instagram.error.csrf-token-mismatch");
                                 done();
                             });   
                         }

@@ -30,14 +30,14 @@
         "status": {
             "failed": "failed"
         },
-        "errors": {
+        "error": {
             "no-query": "Please supply a query.",
             "no-collection": "Please supply a collection.",
             "no-activityid": "Please supply an activityId.",
             "no-commentid": "Please supply a commentId.",
             "no-accesstoken": "Please provide an accessToken."
         },
-        "messages": {
+        "message": {
             "ok": "OK",
             "comment": "Comment"
         }

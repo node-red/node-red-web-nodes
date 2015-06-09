@@ -75,7 +75,7 @@ module.exports = function(RED) {
                   } else {
                       var result = JSON.parse(body);
                       if (result.meta.code != 200) {
-                          node.error(RED._("jawboneup.errors.errorinfo", {code: result.meta.code, type: result.meta.error_type, detail: result.meta.error_detail, message: result.meta.message}));
+                          node.error(RED._("jawboneup.error.errorinfo", {code: result.meta.code, type: result.meta.error_type, detail: result.meta.error_detail, message: result.meta.message}));
                           node.status({fill:"red",shape:"ring",text:RED._("jawboneup.status.failed")});
                       } else {
                           if (result.data.items.length !== 0) {
@@ -99,7 +99,7 @@ module.exports = function(RED) {
                                   node.send([msgs]);                                  
                               } else {
                                   // shouldn't ever get here
-                                  node.error(RED._("jawboneup.errors.incorrect-output"),msg);
+                                  node.error(RED._("jawboneup.error.incorrect-output"),msg);
                                   node.status({fill:"red",shape:"ring",text:RED._("jawboneup.status.failed")});
                               }
                          } else {
@@ -119,7 +119,7 @@ module.exports = function(RED) {
         if (credentials && credentials.clientid && credentials.appsecret && credentials.accesstoken) {
            return true;
         } else {
-            node.error(RED._("jawboneup.errors.credentials-error", {credentials: credentials}));
+            node.error(RED._("jawboneup.error.credentials-error", {credentials: credentials}));
             node.status({fill:"red",shape:"ring",text:RED._("jawboneup.status.failed")});      
             return false;
         }
@@ -156,7 +156,7 @@ module.exports = function(RED) {
     
     RED.httpAdmin.get('/jawboneup-credentials/auth', function(req, res){
         if (!req.query.clientid || !req.query.appsecret || !req.query.id || !req.query.callback) {
-            return res.status(400).send(RED._("jawboneup.errors.no-parameters"));
+            return res.status(400).send(RED._("jawboneup.error.no-parameters"));
         }
         var nodeid = req.query.id;
         
@@ -165,7 +165,7 @@ module.exports = function(RED) {
         credentials.appsecret = req.query.appsecret || credentials.appsecret;
 
         if (!credentials.clientid || !credentials.appsecret) {
-            return res.status(400).send(RED._("jawboneup.errors.id_secret-not-defined"));
+            return res.status(400).send(RED._("jawboneup.error.id_secret-not-defined"));
         }
         var csrfToken = crypto.randomBytes(18).toString('base64').replace(/\//g, '-').replace(/\+/g, '_');
         res.cookie('csrf', csrfToken);
@@ -186,7 +186,7 @@ module.exports = function(RED) {
 
     RED.httpAdmin.get('/jawboneup-credentials/auth/callback', function(req, res){
         if (req.query.error) {
-            return res.send(RED._("jawboneup.errors.error", {error: req.query.error, description: req.query.error_description}));
+            return res.send(RED._("jawboneup.error.error", {error: req.query.error, description: req.query.error_description}));
         }
         var state = req.query.state.split(":");
         var nodeid = state[0];
@@ -194,10 +194,10 @@ module.exports = function(RED) {
         var credentials = RED.nodes.getCredentials(nodeid);
         
         if (!credentials || !credentials.clientid || !credentials.appsecret) {
-            return res.status(400).send(RED._("jawboneup.errors.no-credentials"));
+            return res.status(400).send(RED._("jawboneup.error.no-credentials"));
         }
         if(state[1]  !== credentials.csrftoken) {
-            return res.status(401).send(RED._("jawboneup.errors.csrf-token-mismatch"));
+            return res.status(401).send(RED._("jawboneup.error.csrf-token-mismatch"));
         }
         
         var clientid = credentials.clientid;
@@ -213,11 +213,11 @@ module.exports = function(RED) {
                      {redirect_uri: callback, grant_type : 'authorization_code'},
                      function(error, oauth_access_token, oauth_refresh_token, results){
                          if (error) {
-                             var resp = RED._("jawboneup.errors.oautherrorinfo", {statusCode: error.statusCode, errorData: error.data});
+                             var resp = RED._("jawboneup.error.oautherrorinfo", {statusCode: error.statusCode, errorData: error.data});
                              res.send(resp);
                          } else {
                              if (results.error) {
-                                 var response = RED._("jawboneup.errors.oautherrorinfo", {statusCode: results.error, errorData: results.error_description});
+                                 var response = RED._("jawboneup.error.oautherrorinfo", {statusCode: results.error, errorData: results.error_description});
                                  res.send(response);
                             } else {
                                 // note the extra whitespace after "Bearer" is required otherwise api call will return 401
@@ -229,12 +229,12 @@ module.exports = function(RED) {
                                     };
                                 var r = request.get(options,function(err, httpResponse, body) {
                                     if (err) {
-                                        var resp = RED._("jawboneup.errors.oautherrorinfo", {statusCode: err.statusCode, errorData: err.data});
+                                        var resp = RED._("jawboneup.error.oautherrorinfo", {statusCode: err.statusCode, errorData: err.data});
                                         res.send(resp);
                                     } else {
                                         var result = JSON.parse(body);
                                         if (result.meta.code != 200) {
-                                            var message = RED._("jawboneup.errors.oautherrorcode", {metaCode: result.meta.code});
+                                            var message = RED._("jawboneup.error.oautherrorcode", {metaCode: result.meta.code});
                                             res.send(message);                                         
                                         } else {
                                             credentials = {};
@@ -243,7 +243,7 @@ module.exports = function(RED) {
                                             credentials.appsecret = appsecret;
                                             credentials.accesstoken = oauth_access_token;
                                             RED.nodes.addCredentials(nodeid,credentials);
-                                            res.send(RED._("jawboneup.messages.authorized"));
+                                            res.send(RED._("jawboneup.message.authorized"));
                                         }
                                     }
                                 });              

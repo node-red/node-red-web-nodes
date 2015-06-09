@@ -26,7 +26,7 @@
             "to": "to",
             "towards": "towards"
         },
-        "uiwarns": {
+        "uiwarn": {
             "server-error": "TfL's servers have returned an error to us. The node might not work correctly. For more details, please check the console.",
             "connection-error": "An error occurred when connecting to TfL. The node might not work correctly. For more details, please check the console.",
             "latitude-not-a-number": "Latitude provided is not a number, please provide a valid number.",
@@ -37,7 +37,7 @@
             "longitude-out-of-range": "Latitude provided is out of range. Please revise your values.",
             "no-bus-stops": "No bus stops found with the given parameters, please provide different values."
         },
-        "errors": {
+        "error": {
             "error": "ERROR: __error__",
             "no-bus-stops": "No bus stops or bus line numbers have been configured."
         }

@@ -26,14 +26,14 @@ module.exports = function(RED) {
             if (90 >= lat && lat >= -90) {
                 node.lat = lat;
             } else {
-                node.error(RED._("wunder.errors.invalid-lat"),msg);
+                node.error(RED._("wunder.error.invalid-lat"),msg);
                 return;
             }
 
             if (180 >= lon && lon >= -180) {
                 node.lon = lon;
             } else {
-                node.error(RED._("wunder.errors.invalid-lon"),msg);
+                node.error(RED._("wunder.error.invalid-lon"),msg);
                 return;
             }
         }
@@ -78,9 +78,9 @@ module.exports = function(RED) {
                 msg.location.city = loc.city;
                 msg.location.country = loc.country;
                 msg.time = new Date(Number(cur.observation_epoch*1000));
-                msg.title = RED._("wunder.messages.title");
-                msg.description = RED._("wunder.messages.description", {lat: msg.location.lat, lon: msg.location.lon});
-                msg.payload.description = (RED._("wunder.messages.payload", {city: msg.location.city, lat: msg.location.lat, lon: msg.location.lon, weather: cur.weather}));
+                msg.title = RED._("wunder.message.title");
+                msg.description = RED._("wunder.message.description", {lat: msg.location.lat, lon: msg.location.lon});
+                msg.payload.description = (RED._("wunder.message.payload", {city: msg.location.city, lat: msg.location.lat, lon: msg.location.lon, weather: cur.weather}));
                 var fcast = res.forecast.txt_forecast.forecastday[0];
                 msg.payload.forecast = loc.city+" : "+fcast.title+" : "+ fcast.fcttext_metric;
                 callback(null);
@@ -92,7 +92,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this, n);
         var credentials = this.credentials;
         if ((credentials) && (credentials.hasOwnProperty("apikey"))) { this.apikey = credentials.apikey; }
-        else { this.error(RED._("wunder.errors.no-apikey")); }
+        else { this.error(RED._("wunder.error.no-apikey")); }
         this.wunder = new Wunderground(this.apikey);
         this.repeat = 300000;
         this.interval_id = null;
@@ -145,7 +145,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         var credentials = this.credentials;
         if ((credentials) && (credentials.hasOwnProperty("apikey"))) { this.apikey = credentials.apikey; }
-        else { this.error(RED._("wunder.errors.no-apikey")); }
+        else { this.error(RED._("wunder.error.no-apikey")); }
         this.wunder = new Wunderground(this.apikey);
         var node = this;
         var city;

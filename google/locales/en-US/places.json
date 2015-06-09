@@ -51,7 +51,7 @@
             "querying": "querying",
             "failed": "failed"
         },
-        "errors": {
+        "error": {
             "no-apikey": "Please provide your application API key.",
             "no-lat_lon": "Please provide a longitude and latitude.",
             "radius-not-allowed": "If rankby is set to distance, then radius is not allowed in the request. Instead, you are required to provide at least one of keyword/name/types.",
@@ -61,7 +61,7 @@
             "no-text": "Please provide a query for the places text search.",
             "invalid-placeid": "Please provide a valid placeid."
         },
-        "messages": {
+        "message": {
             "results-returned": "results returned"
         }
     }

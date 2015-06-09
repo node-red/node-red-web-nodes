@@ -39,11 +39,11 @@ module.exports = function(RED) {
         if (this.user) {
             this.on("input", function(msg) {
                 if (!msg.payload) {
-                    node.error(RED._("pinboard.errors.no-url"),msg);
+                    node.error(RED._("pinboard.error.no-url"),msg);
                     return;
                 }
                 if (!msg.title) {
-                    node.error(RED._("pinboard.errors.no-title"),msg);
+                    node.error(RED._("pinboard.error.no-title"),msg);
                     return;
                 }
                 var options = {
@@ -90,7 +90,7 @@ module.exports = function(RED) {
                 
             });
         } else {
-            this.error(RED._("pinboard.errors.no-apitoken"));
+            this.error(RED._("pinboard.error.no-apitoken"));
         }
         
     }

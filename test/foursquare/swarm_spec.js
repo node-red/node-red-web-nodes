@@ -107,7 +107,7 @@ describe('swarm nodes', function() {
                               n2.should.have.property('id','n2');
                               
                               sinon.stub(n2, 'status', function(status){
-                                  var expected = {fill:"red",shape:"ring",text:"failed"};
+                                  var expected = {fill:"red",shape:"ring",text:"swarm.status.failed"};
                                   should.deepEqual(status, expected);
                                   done();
                               });

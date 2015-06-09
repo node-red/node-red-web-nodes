@@ -30,10 +30,10 @@
             "access-denied": "access denied",
             "uploading": "uploading"
         },
-        "warns": {
+        "warn": {
             "missing-credentials": "Missing dropbox credentials"
         },
-        "errors": {
+        "error": {
             "initialization-failed": "initialization failed __err__",
             "change-fetch-failed": "failed to fetch changes __err__",
             "no-filename": "No filename specified",

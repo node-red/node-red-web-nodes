@@ -19,12 +19,12 @@
             "longitude": "Longitude",
             "name": "Name"
         },
-        "errors": {
+        "error": {
             "invalid-lat": "Invalid lat provided",
             "invalid-lon": "Invalid lon provided",
             "no-apikey": "No Wunderground API key set"
         },
-        "messages": {
+        "message": {
             "title": "Data supplied by The Weather Underground.",
             "description": "Current weather information at coordinates: __lat__, __lon__",
             "payload": "The weather in __city__ at coordinates: __lat__, __lon__ is __weather__"

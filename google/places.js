@@ -95,7 +95,7 @@ module.exports = function(RED) {
                 error = {
                         code: 400,
                         status: 'MISSING_VALUES',
-                        message: RED._("places.errors.no-apikey")
+                        message: RED._("places.error.no-apikey")
                 };
                 throwNodeError(node, msg, error);
                 return;
@@ -115,7 +115,7 @@ module.exports = function(RED) {
                     error = {
                             code: 400,
                             status: 'MISSING_VALUES',
-                            message: RED._("places.errors.no-lat_lon")
+                            message: RED._("places.error.no-lat_lon")
                     };
                     throwNodeError(node, msg, error);
                     return;
@@ -127,7 +127,7 @@ module.exports = function(RED) {
                         error = {
                                 code: 400,
                                 status: 'BAD_REQUEST',
-                                message: RED._("places.errors.radius-not-allowed")
+                                message: RED._("places.error.radius-not-allowed")
                         };
                         throwNodeError(node, msg, error);
                         return;
@@ -137,7 +137,7 @@ module.exports = function(RED) {
                         error = {
                                 code: 400,
                                 status: 'BAD_REQUEST',
-                                message: RED._("places.errors.no-keyword_name_type")
+                                message: RED._("places.error.no-keyword_name_type")
                         };
                         throwNodeError(node, msg, error);
                         return;
@@ -149,7 +149,7 @@ module.exports = function(RED) {
                     error = {
                             code: 400,
                             status: 'BAD_REQUEST',
-                            message: RED._("places.errors.no-prominence_distance")
+                            message: RED._("places.error.no-prominence_distance")
                     };
                     throwNodeError(node, msg, error);
                     return;
@@ -163,7 +163,7 @@ module.exports = function(RED) {
                     error = {
                             code: 400,
                             status: 'MISSING_VALUES',
-                            message: RED._("places.errors.no-placeid")
+                            message: RED._("places.error.no-placeid")
                     };
                     throwNodeError(node, msg, error);
                     return;
@@ -177,7 +177,7 @@ module.exports = function(RED) {
                     error = {
                             code: 400,
                             status: 'MISSING_VALUES',
-                            message: RED._("places.errors.no-text")
+                            message: RED._("places.error.no-text")
                     };
                     throwNodeError(node, msg, error);
                     return;
@@ -281,7 +281,7 @@ module.exports = function(RED) {
                             msg.error = body.error_message || '';
                             if(reqType === 'placesDetails' && msg.statusCode === 400){
                                 msg.status = 'BAD_REQUEST';
-                                msg.error = RED._("places.errors.invalid-placeid");
+                                msg.error = RED._("places.error.invalid-placeid");
                             }
                             node.status({fill:"red",shape:"ring",text:RED._("places.status.failed")});
                             throwNodeError(node, msg, {
@@ -329,7 +329,7 @@ module.exports = function(RED) {
                                 msg.html_attributions = body.html_attributions;
                                 msg.data = body;
                                 msg.status = body.status;
-                                msg.title = (Math.min(outputNum, body.results.length)) + ' ' + RED._("places.messages.results-returned");
+                                msg.title = (Math.min(outputNum, body.results.length)) + ' ' + RED._("places.message.results-returned");
                                 msg.payload = [];
                                 for(i = 0; i < (Math.min(outputNum, body.results.length)); i++){
                                     result = body.results[i];
@@ -474,7 +474,7 @@ module.exports = function(RED) {
                                 }
                             } else if(outputAs === 'single'){    //send one combined message
                                 msg.payload = [];
-                                msg.title = (Math.min(outputNum, body.results.length)) + ' ' + RED._("places.messages.results-returned");
+                                msg.title = (Math.min(outputNum, body.results.length)) + ' ' + RED._("places.message.results-returned");
                                 for(i = 0; i < (Math.min(outputNum, body.results.length)); i++ ) {
                                     msg.payload[i] = {};
                                     msg.payload[i].title = body.results[i].name;

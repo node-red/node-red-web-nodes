@@ -33,7 +33,7 @@ module.exports = function(RED) {
               }
               callback(stationsArray);
           } else if(error) {
-              callback(RED._("tfl-bus.errors.error", {error: error}));
+              callback(RED._("tfl-bus.error.error", {error: error}));
               console.log(error);
           } else if(response !== 200) {
               callback(response);
@@ -62,7 +62,7 @@ module.exports = function(RED) {
                 linesArray.sort();
                 callback(linesArray);
             } else if(error) {
-                callback(RED._("tfl-bus.errors.error", {error: error}));
+                callback(RED._("tfl-bus.error.error", {error: error}));
             } else if(response !== 200) {
                 callback(response);
             }
@@ -106,7 +106,7 @@ module.exports = function(RED) {
         node.radius = n.radius;
 
         if(!node.stopCode1 || !node.lineID || node.stopCode1 === "unset" || node.lineID === "unset") {
-            node.error(RED._("tfl-bus.errors.no-bus-stops"));
+            node.error(RED._("tfl-bus.error.no-bus-stops"));
             return;
         }
 

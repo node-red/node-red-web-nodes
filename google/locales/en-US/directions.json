@@ -30,7 +30,7 @@
         "status": {
             "failed": "failed"
         },
-        "errors": {
+        "error": {
             "no-origin": "Please supply an origin value",
             "no-destination": "Please supply an destination value",
             "no-waypoint": "Could not find origin, destination, or waypoint",
@@ -40,7 +40,7 @@
             "request-denied": "Request denied by Google",
             "unknown-error": "An unknown error occured. Please try again"
         },
-        "messages": {
+        "message": {
             "travel-directions": "Travel directions via"
         }
     }

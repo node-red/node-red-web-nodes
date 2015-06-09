@@ -47,14 +47,14 @@ module.exports = function(RED) {
         var node = this;
         var AWS = this.awsConfig ? this.awsConfig.AWS : null;
         if (!AWS) {
-            node.warn(RED._("aws.warns.missing-credentials"));
+            node.warn(RED._("aws.warn.missing-credentials"));
             return;
         }
         var s3 = new AWS.S3();
         node.status({fill:"blue",shape:"dot",text:RED._("aws.status.initializing")});
         s3.listObjects({ Bucket: node.bucket }, function(err, data) {
             if (err) {
-                node.error(RED._("aws.errors.failed-to-fetch", {err:err}));
+                node.error(RED._("aws.error.failed-to-fetch", {err:err}));
                 node.status({fill:"red",shape:"ring",text:RED._("aws.status.error")});
                 return;
             }
@@ -65,7 +65,7 @@ module.exports = function(RED) {
                 node.status({fill:"blue",shape:"dot",text:RED._("aws.status.checking-for-changes")});
                 s3.listObjects({ Bucket: node.bucket }, function(err, data) {
                     if (err) {
-                        node.error(RED._("aws.errors.failed-to-fetch", {err:err}),msg);
+                        node.error(RED._("aws.error.failed-to-fetch", {err:err}),msg);
                         node.status({});
                         return;
                     }
@@ -129,19 +129,19 @@ module.exports = function(RED) {
         var node = this;
         var AWS = this.awsConfig ? this.awsConfig.AWS : null;
         if (!AWS) {
-            node.warn(RED._("aws.warns.missing-credentials"));
+            node.warn(RED._("aws.warn.missing-credentials"));
             return;
         }
         var s3 = new AWS.S3();
         node.on("input", function(msg) {
             var bucket = node.bucket || msg.bucket;
             if (bucket === "") {
-                node.error(RED._("aws.errors.no-bucket-specified"),msg);
+                node.error(RED._("aws.error.no-bucket-specified"),msg);
                 return;
             }
             var filename = node.filename || msg.filename;
             if (filename === "") {
-                node.error(RED._("aws.errors.no-filename-specified"),msg);
+                node.error(RED._("aws.error.no-filename-specified"),msg);
                 return;
             }
             msg.bucket = bucket;
@@ -152,7 +152,7 @@ module.exports = function(RED) {
                 Key: filename,
             }, function(err, data) {
                 if (err) {
-                    node.error(RED._("aws.errors.download-failed",{err:err.toString()}),msg);
+                    node.error(RED._("aws.error.download-failed",{err:err.toString()}),msg);
                     return;
                 } else {
                     msg.payload = data.Body;
@@ -174,7 +174,7 @@ module.exports = function(RED) {
         var node = this;
         var AWS = this.awsConfig ? this.awsConfig.AWS : null;
         if (!AWS) {
-            node.warn(RED._("aws.warns.missing-credentials"));
+            node.warn(RED._("aws.warn.missing-credentials"));
             return;
         }
         if (AWS) {
@@ -182,7 +182,7 @@ module.exports = function(RED) {
             node.status({fill:"blue",shape:"dot",text:RED._("aws.status.checking-credentials")});
             s3.listObjects({ Bucket: node.bucket }, function(err) {
                 if (err) {
-                    node.error(RED._("aws.errors.aws-s3-error",{err:err}));
+                    node.error(RED._("aws.error.aws-s3-error",{err:err}));
                     node.status({fill:"red",shape:"ring",text:RED._("aws.status.error")});
                     return;
                 }
@@ -190,12 +190,12 @@ module.exports = function(RED) {
                 node.on("input", function(msg) {
                     var bucket = node.bucket || msg.bucket;
                     if (bucket === "") {
-                        node.error(RED._("aws.errors.no-bucket-specified"),msg);
+                        node.error(RED._("aws.error.no-bucket-specified"),msg);
                         return;
                     }
                     var filename = node.filename || msg.filename;
                     if (filename === "") {
-                        node.error(RED._("aws.errors.no-filename-specified"),msg);
+                        node.error(RED._("aws.error.no-filename-specified"),msg);
                         return;
                     }
                     var localFilename = node.localFilename || msg.localFilename;

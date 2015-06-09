@@ -19,11 +19,11 @@
             "api2": "<ol><li>click \"Create project\",</li><li>select \"API & auth\",</li><li>select \"Credentials\",</li><li>click \"Create new Key\",</li><li>select \"Server key\",</li><li>enter IP address(es) to limit access or leave blank,</li><li>click \"Create\"</li></ol>",
             "api3": "<p>The subsequent app page will contain the new API key to be copied here.</p>"
         },
-        "warns": {
+        "warn": {
             "token-expired": "trying to refresh token due to expiry",
             "refreshing-accesstoken": "refreshing access token after 401 error"
         },
-        "errors": {
+        "error": {
             "no-refresh-token": "No refresh token to regain Google access",
             "token-request-error": "refresh token request error: __err__",
             "refresh-token-error": "refresh token error: __message__",
@@ -36,7 +36,7 @@
             "apierror": "API error, __status__",
             "token-mismatch": "CSRF token mismatch, possible cross-site request forgery attempt."
         },
-        "messages": {
+        "message": {
             "authorized": "<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>"
         }
     }

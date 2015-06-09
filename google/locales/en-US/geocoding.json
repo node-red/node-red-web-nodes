@@ -30,7 +30,7 @@
         "status": {
             "failed": "failed"
         },
-        "errors": {
+        "error": {
             "no-lan_lon": "Please provide a longitude and latitude.",
             "no-address": "Please provide an address."
         }

@@ -22,14 +22,14 @@ module.exports = function(RED) {
         if (forecastioConfig && forecastioConfig.credentials && forecastioConfig.credentials.client_key) {
             node.apikey = forecastioConfig.credentials.client_key;
         } else {
-            return callback(RED._("forecastio.errors.no-credentials"));
+            return callback(RED._("forecastio.error.no-credentials"));
         }
 
         if(90 >= lat && 180 >= lon && lat >= -90 && lon >= -180){
             node.lat = lat;
             node.lon = lon;
         } else {
-            return callback(RED._("forecastio.errors.invalid-lat_lon"));
+            return callback(RED._("forecastio.error.invalid-lat_lon"));
         }
 
         if(date && time){ 
@@ -41,9 +41,9 @@ module.exports = function(RED) {
             node.hours = time.substring(0,2);
             node.minutes = time.substring(3);
         } else if (node.date){
-            return callback(RED._("forecastio.errors.invalid-time"));
+            return callback(RED._("forecastio.error.invalid-time"));
         } else if (node.time){
-            return callback(RED._("forecastio.errors.invalid-date"));
+            return callback(RED._("forecastio.error.invalid-date"));
         }
         callback();
     }
@@ -55,9 +55,9 @@ module.exports = function(RED) {
 
         var today = new Date();
         if(today.getFullYear() - node.year > 60){
-            node.warn(RED._("forecastio.warns.more-than-60-years"));
+            node.warn(RED._("forecastio.warn.more-than-60-years"));
         } else if (today.getFullYear() - node.year < -10){
-            node.warn(RED._("forecastio.warns.more-than-10-years"));
+            node.warn(RED._("forecastio.warn.more-than-10-years"));
         }
         
         //wipe clear the msg properties if they exist, or create it if it doesn't
@@ -83,7 +83,7 @@ module.exports = function(RED) {
                       
                 res.on('end', function() {
                     if(weather === "Forbidden"){
-                        return callback(RED._("forecastio.errors.incorrect-apikey"));
+                        return callback(RED._("forecastio.error.incorrect-apikey"));
                     } else {
                         var jsun = JSON.parse(weather);
                         msg.data = jsun;
@@ -103,8 +103,8 @@ module.exports = function(RED) {
                         msg.location.lat = jsun.latitude;
                         msg.location.lon = jsun.longitude;
                         msg.time = new Date(jsun.daily.data[when].time*1000);
-                        msg.title = RED._("forecastio.messages.weather-forecast");
-                        msg.description = RED._("forecastio.messages.weather-info", {time: msg.time.toLocaleString(), lat: msg.location.lat, lon: msg.location.lon});
+                        msg.title = RED._("forecastio.message.weather-forecast");
+                        msg.description = RED._("forecastio.message.weather-info", {time: msg.time.toLocaleString(), lat: msg.location.lat, lon: msg.location.lon});
                         callback();
                     } 
                 });
@@ -112,7 +112,7 @@ module.exports = function(RED) {
                 callback(e);
             });
         } else {
-            callback(RED._("forecastio.errors.invalid-url"));
+            callback(RED._("forecastio.error.invalid-url"));
         }
     }
 
@@ -171,7 +171,7 @@ module.exports = function(RED) {
                     lat = n.lat;
                     lon = n.lon;
                 } else {
-                    node.error(RED._("forecastio.errors.settings-invalid-lat_lon"));
+                    node.error(RED._("forecastio.error.settings-invalid-lat_lon"));
                     return;
                 }
             } else if(msg.location){
@@ -181,7 +181,7 @@ module.exports = function(RED) {
                         lat = msg.location.lat;
                         lon = msg.location.lon;
                     } else {
-                        node.error(RED._("forecastio.errors.msg-invalid-lat_lon"));
+                        node.error(RED._("forecastio.error.msg-invalid-lat_lon"));
                         return;
                     }
                 }

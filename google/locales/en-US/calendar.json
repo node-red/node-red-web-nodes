@@ -28,10 +28,10 @@
             "creating": "creating",
             "failed": "failed"
         },
-        "warns": {
+        "warn": {
             "no-credentials": "Missing google credentials"
         },
-        "errors": {
+        "error": {
             "invalid-calendar": "invalid calendar",
             "error": "Error: __error__",
             "no-event": "Error: no event found",

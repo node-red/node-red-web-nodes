@@ -34,7 +34,7 @@ module.exports = function(RED) {
                 msg.payload = body;
                 node.send(msg);
             } else {
-                node.warn(RED._("instagram.warns.image-not-sent", {error: error, response: response}));
+                node.warn(RED._("instagram.warn.image-not-sent", {error: error, response: response}));
             }
         });
     }
@@ -44,11 +44,11 @@ module.exports = function(RED) {
     function initializeQueryNode(node) {
         if(node.instagramConfig && node.instagramConfig.credentials) {
             if(!node.instagramConfig.credentials.access_token) {
-                node.warn(RED._("instagram.warns.missing-accesstoken"));
+                node.warn(RED._("instagram.warn.missing-accesstoken"));
                 return;
             }   
         } else {
-            node.warn(RED._("instagram.warns.missing-configuration"));
+            node.warn(RED._("instagram.warn.missing-configuration"));
             return;
         }
 
@@ -63,11 +63,11 @@ module.exports = function(RED) {
     function initializeInputNode(node) {
         if(node.instagramConfig && node.instagramConfig.credentials) {
             if(!node.instagramConfig.credentials.access_token) {
-                node.warn(RED._("instagram.warns.missing-accesstoken"));
+                node.warn(RED._("instagram.warn.missing-accesstoken"));
                 return;
             }   
         } else {
-            node.warn(RED._("instagram.warns.missing-configuration"));
+            node.warn(RED._("instagram.warn.missing-configuration"));
             return;
         }
 
@@ -78,7 +78,7 @@ module.exports = function(RED) {
         if (node.inputType === "photo") {
             node.ig.user_media_recent('self', { count : 1, min_id : null, max_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
-                   node.warn(RED._("instagram.warns.userphoto-fetch-fail", {err: err}));
+                   node.warn(RED._("instagram.warn.userphoto-fetch-fail", {err: err}));
                 }
                 
                 if(medias.length > 0) { // if the user has uploaded something to Instagram already
@@ -96,7 +96,7 @@ module.exports = function(RED) {
         } else if (node.inputType === "like") {
             node.ig.user_self_liked({ count : 1, max_like_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
-                    node.warn(RED._("instagram.warns.likedphoto-fetch-fail", {err: err}));
+                    node.warn(RED._("instagram.warn.likedphoto-fetch-fail", {err: err}));
                 }
                 
                 if(medias.length > 0) { // if the user has liked something to Instagram already
@@ -119,7 +119,7 @@ module.exports = function(RED) {
         if (node.inputType === "photo") {
             node.ig.user_media_recent('self', { count : 1, min_id : null, max_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
-                    node.warn(RED._("instagram.warns.userphoto-fetch-fail", {err: err}));
+                    node.warn(RED._("instagram.warn.userphoto-fetch-fail", {err: err}));
                 }
                 if(medias.length > 0) { // if the user has uploaded something to Instagram already
                     if(medias[0].type === IMAGE) {
@@ -147,7 +147,7 @@ module.exports = function(RED) {
                         if(medias[0].images && medias[0].images.standard_resolution && medias[0].images.standard_resolution.url) {
                             url = medias[0].images.standard_resolution.url;   
                         } else {
-                            node.warn(RED._("instagram.warns.ignoring-media"));
+                            node.warn(RED._("instagram.warn.ignoring-media"));
                             return;
                         }
                         
@@ -159,19 +159,19 @@ module.exports = function(RED) {
                         }
                         
                     } else {
-                        node.warn(RED._("instagram.warns.not-a-photo"));
+                        node.warn(RED._("instagram.warn.not-a-photo"));
                         return;
                     }
                 } else {
                     msg.payload = null;
                     node.send(msg);
-                    node.warn(RED._("instagram.warns.not-uploaded-yet"));
+                    node.warn(RED._("instagram.warn.not-uploaded-yet"));
                 }
             });
         } else if (node.inputType === "like") {
             node.ig.user_self_liked({ count : 1, max_like_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
-                    node.warn(RED._("instagram.warns.likedphoto-fetch-fail", {err: err}));
+                    node.warn(RED._("instagram.warn.likedphoto-fetch-fail", {err: err}));
                 }
                 if(medias.length > 0) { // if the user has liked something to Instagram already
                     if(medias[0].type === IMAGE) {
@@ -199,7 +199,7 @@ module.exports = function(RED) {
                         if(medias[0].images && medias[0].images.standard_resolution && medias[0].images.standard_resolution.url) {
                             url = medias[0].images.standard_resolution.url;   
                         } else {
-                            node.warn(RED._("instagram.warns.ignoring-media"));
+                            node.warn(RED._("instagram.warn.ignoring-media"));
                             return;
                         }
                         
@@ -211,13 +211,13 @@ module.exports = function(RED) {
                         }
                         
                     } else {
-                        node.warn(RED._("instagram.warns.not-liked-photo"));
+                        node.warn(RED._("instagram.warn.not-liked-photo"));
                         return;
                     }
                 } else {
                     msg.payload = null;
                     node.send(msg);
-                    node.warn(RED._("instagram.warns.not-liked-yet"));
+                    node.warn(RED._("instagram.warn.not-liked-yet"));
                 }
             });
         }
@@ -234,7 +234,7 @@ module.exports = function(RED) {
             var carryOnPaginating = true;
             
             if (err) {
-                node.warn(RED._("instagram.warns.latest-media-fetch-failed", {err: err}));
+                node.warn(RED._("instagram.warn.latest-media-fetch-failed", {err: err}));
             }
             
             if(medias) {
@@ -287,7 +287,7 @@ module.exports = function(RED) {
                     }
                 }   
             } else if(areWeInPaginationRecursion === false) {
-                node.warn(RED._("instagram.warns.media-fetch-failed"));
+                node.warn(RED._("instagram.warn.media-fetch-failed"));
                 return;
             }
             if(pagination && pagination.next && carryOnPaginating) {
@@ -323,7 +323,7 @@ module.exports = function(RED) {
         
         node.instagramConfig = RED.nodes.getNode(n.instagram);
         if (!node.instagramConfig) {
-            node.warn(RED._("instagram.warns.missing-credentials"));
+            node.warn(RED._("instagram.warn.missing-credentials"));
             return;
         }
         
@@ -352,7 +352,7 @@ module.exports = function(RED) {
         
         node.instagramConfig = RED.nodes.getNode(n.instagram);
         if (!node.instagramConfig) {
-            node.warn(RED._("instagram.warns.missing-credentials"));
+            node.warn(RED._("instagram.warn.missing-credentials"));
             return;
         }
         
@@ -387,7 +387,7 @@ module.exports = function(RED) {
         credentials.redirect_uri = req.query.redirect_uri;
         
         if (!credentials.client_id || !credentials.client_secret || ! credentials.redirect_uri) {
-            return res.send(RED._("instagram.errors.no-ui-credentials"));
+            return res.send(RED._("instagram.error.no-ui-credentials"));
         }
         
         var csrfToken = crypto.randomBytes(18).toString('base64').replace(/\//g, '-').replace(/\+/g, '_');
@@ -416,11 +416,11 @@ module.exports = function(RED) {
         var credentials = RED.nodes.getCredentials(node_id) || {};
 
         if (!credentials || !credentials.client_id || !credentials.client_secret || ! credentials.redirect_uri) {
-            return res.send(RED._("instagram.errors.no-credentials"));
+            return res.send(RED._("instagram.error.no-credentials"));
         }
         
         if (csrfToken !== credentials.csrfToken) {
-            return res.status(401).send(RED._("instagram.errors.csrf-token-mismatch"));
+            return res.status(401).send(RED._("instagram.error.csrf-token-mismatch"));
         }
         
         RED.nodes.deleteCredentials(node_id); // we don't want to keep the csrfToken
@@ -428,7 +428,7 @@ module.exports = function(RED) {
         delete credentials.csrfToken;
         
         if(!req.query.code) {
-            return res.status(400).send(RED._("instagram.errors.no-required-code"));
+            return res.status(400).send(RED._("instagram.error.no-required-code"));
         }
         
         credentials.code = req.query.code;
@@ -445,30 +445,30 @@ module.exports = function(RED) {
             },
         }, function(err, result, data) {
             if (err) {
-                return res.send(RED._("instagram.errors.request-error", {err: err}));
+                return res.send(RED._("instagram.error.request-error", {err: err}));
             }
             if (data.error) {
-                return res.send(RED._("instagram.errors.oauth-error", {error: data.error}));
+                return res.send(RED._("instagram.error.oauth-error", {error: data.error}));
             }
             
             if(result.statusCode !== 200) {
-                return res.send(RED._("instagram.errors.unexpected-statuscode", {statusCode: result.statusCode, data: data}));
+                return res.send(RED._("instagram.error.unexpected-statuscode", {statusCode: result.statusCode, data: data}));
             }
             
             if(data.user.username) {
                 credentials.username = data.user.username;
             } else {
-                return res.send(RED._("instagram.errors.username-fetch-fail"));
+                return res.send(RED._("instagram.error.username-fetch-fail"));
             }
             
             if(data.access_token) {
                 credentials.access_token = data.access_token;   
             } else {
-                return res.send(RED._("instagram.errors.accesstoken-fetch-fail"));
+                return res.send(RED._("instagram.error.accesstoken-fetch-fail"));
             }
             
             RED.nodes.addCredentials(node_id,credentials);
-            res.send(RED._("instagram.messages.authorized"));
+            res.send(RED._("instagram.message.authorized"));
         });
     });
 };

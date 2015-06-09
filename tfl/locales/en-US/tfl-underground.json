@@ -25,11 +25,11 @@
         "status": {
             "failed": "failed"
         },
-        "errors": {
+        "error": {
             "no-station": "No station in message input.",
             "invalid-tubeline": "Invalid tube line: __tubeline__"
         },
-        "messages": {
+        "message": {
             "description": "Status of the __linename__ line"
         }
     }

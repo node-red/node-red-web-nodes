@@ -20,11 +20,11 @@
             "failed": "failed",
             "querying": "querying"
         },
-        "warns": {
+        "warn": {
             "missing-credentials": "Missing fitbit credentials",
             "no-sleep-record": "no main sleep record found"
         },
-        "errors": {
+        "error": {
             "unsupported-data-type": "Unsupported data type",
             "missing-credentials": "Missing fitbit credentials",
             "oautherror": "<h2>Oh no!</h2><p>Something went wrong with the authentication process. The following error was returned:</p><p><b>__statusCode__</b>: __errorData__</p><p>One known cause of this type of failure is if the clock is wrong on system running Node-RED.</p>",
