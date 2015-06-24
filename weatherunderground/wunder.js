@@ -18,8 +18,8 @@ module.exports = function(RED) {
     "use strict";
     var Wunderground = require('wundergroundnode');
 
-    function assignmentFunction(node, msg, lat, lon, city, country, callback){
-        if (country && city){
+    function assignmentFunction(node, msg, lat, lon, city, country, callback) {
+        if (country && city) {
             node.country = country;
             node.city = city;
         } else if (lat && lon) {
@@ -45,13 +45,13 @@ module.exports = function(RED) {
         msg.payload = {};
         msg.location = {};
 
-        if (node.lat && node.lon){
-            node.wunder.conditions().forecast().request(node.lat+","+node.lon, function(err, response){
+        if (node.lat && node.lon) {
+            node.wunder.conditions().forecast().request(node.lat+","+node.lon, function(err, response) {
                 if (err) { callback(err); }
                 else { handleResponse(response); }
             });
         } else if (node.city && node.country) {
-            node.wunder.conditions().forecast().request(node.city+","+node.country, function(err, response){
+            node.wunder.conditions().forecast().request(node.city+","+node.country, function(err, response) {
                 if (err) { callback(err); }
                 else { handleResponse(response); }
             });
@@ -59,31 +59,35 @@ module.exports = function(RED) {
 
         var handleResponse = function(res) {
             if (res.response.hasOwnProperty("error")) {
-                console.log(res.response.error);
                 callback(res.response.error);
             }
             else {
-                var cur = res.current_observation;
-                var loc = cur.display_location;
-                msg.data = res;
-                msg.payload.weather = cur.weather;
-                msg.payload.tempk = Number(cur.temp_c) + 273.2;
-                msg.payload.humidity = cur.relative_humidity;
-                msg.payload.tempc = cur.temp_c;
-                msg.payload.windspeed = cur.wind_kph;
-                msg.payload.winddirection = cur.wind_degrees;
-                msg.payload.location = cur.observation_location.full;
-                msg.location.lon = Number(loc.longitude);
-                msg.location.lat = Number(loc.latitude);
-                msg.location.city = loc.city;
-                msg.location.country = loc.country;
-                msg.time = new Date(Number(cur.observation_epoch*1000));
-                msg.title = "Data supplied by The Weather Underground.";
-                msg.description = "Current weather information at coordinates: " + msg.location.lat + ", " + msg.location.lon;
-                msg.payload.description = ("The weather in " + msg.location.city + " at coordinates: " + msg.location.lat + ", " + msg.location.lon + " is " +  cur.weather);
-                var fcast = res.forecast.txt_forecast.forecastday[0];
-                msg.payload.forecast = loc.city+" : "+fcast.title+" : "+ fcast.fcttext_metric;
-                callback(null);
+                if (res.hasOwnProperty("current_observation")) {
+                    var cur = res.current_observation;
+                    var loc = cur.display_location;
+                    msg.data = res;
+                    msg.payload.weather = cur.weather;
+                    msg.payload.tempk = Number(cur.temp_c) + 273.2;
+                    msg.payload.humidity = cur.relative_humidity;
+                    msg.payload.tempc = cur.temp_c;
+                    msg.payload.windspeed = cur.wind_kph;
+                    msg.payload.winddirection = cur.wind_degrees;
+                    msg.payload.location = cur.observation_location.full;
+                    msg.location.lon = Number(loc.longitude);
+                    msg.location.lat = Number(loc.latitude);
+                    msg.location.city = loc.city;
+                    msg.location.country = loc.country;
+                    msg.time = new Date(Number(cur.observation_epoch*1000));
+                    msg.title = "Data supplied by The Weather Underground.";
+                    msg.description = "Current weather information at coordinates: " + msg.location.lat + ", " + msg.location.lon;
+                    msg.payload.description = ("The weather in " + msg.location.city + " at coordinates: " + msg.location.lat + ", " + msg.location.lon + " is " + cur.weather);
+                    var fcast = res.forecast.txt_forecast.forecastday[0];
+                    msg.payload.forecast = loc.city+" : "+fcast.title+" : "+ fcast.fcttext_metric;
+                    callback(null);
+                }
+                else {
+                    callback("Can't find city: "+node.city+", "+node.country+".");
+                }
             }
         };
     }
@@ -108,20 +112,20 @@ module.exports = function(RED) {
         }, this.repeat );
 
         this.on('input', function(msg) {
-            if (n.country && n.city){
+            if (n.country && n.city) {
                 country = n.country;
                 city = n.city;
-            } else if(n.lat && n.lon) {
+            } else if (n.lat && n.lon) {
                 lat = n.lat;
                 lon = n.lon;
             }
             assignmentFunction(node, msg, lat, lon, city, country, function() {
-                weatherPoll(node, msg, function(err){
+                weatherPoll(node, msg, function(err) {
                     if (err) {
                         node.error(err,msg);
                     } else {
                         var msgString = JSON.stringify(msg);
-                        if(msgString !== previousdata){
+                        if (msgString !== previousdata) {
                             previousdata = msgString;
                             node.send(msg);
                         }
@@ -154,14 +158,14 @@ module.exports = function(RED) {
         var lon;
 
         this.on ('input', function(msg) {
-            if (n.country && n.city){
+            if (n.country && n.city) {
                 country = n.country;
                 city = n.city;
             } else if (n.lat && n.lon) {
                 lat = n.lat;
                 lon = n.lon;
-            } else if (msg.location){
-                if(msg.location.lat && msg.location.lon){
+            } else if (msg.location) {
+                if (msg.location.lat && msg.location.lon) {
                     lat = msg.location.lat;
                     lon = msg.location.lon;
                 } else if (msg.location.city && msg.location.country) {
@@ -170,7 +174,7 @@ module.exports = function(RED) {
                 }
             }
             assignmentFunction(node, msg, lat, lon, city, country, function() {
-                weatherPoll(node, msg, function(err){
+                weatherPoll(node, msg, function(err) {
                     if (err) {
                         node.error(err,msg);
                     } else {
@@ -181,10 +185,10 @@ module.exports = function(RED) {
         });
     }
 
-RED.nodes.registerType("wunderground",WunderNode, {
+    RED.nodes.registerType("wunderground",WunderNode, {
         credentials: { apikey: {type: "password"} }
     });
-RED.nodes.registerType("wunderground in",WunderInputNode, {
+    RED.nodes.registerType("wunderground in",WunderInputNode, {
         credentials: { apikey: {type: "password"} }
     });
 
