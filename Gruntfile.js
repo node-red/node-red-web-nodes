@@ -64,7 +64,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-lint-inline');
 
-    grunt.registerTask('default',
-                       ['jshint:all', 'inlinelint:html', 'simplemocha:all']);
-
+    grunt.registerTask('default',['jshint:all', 'inlinelint:html', 'simplemocha:all']);
 };
