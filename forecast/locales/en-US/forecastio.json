@@ -1,0 +1,42 @@
+{
+    "forecastio": {
+        "label": {
+            "forecastio": "Forecastio",
+            "name": "Name",
+            "forecast": "Forecast",
+            "tomorrow": "Tomorrow",
+            "datetime": "Specific date and time",
+            "input": "Input defined",
+            "date": "Date",
+            "time": "Time (UTC)",
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "register": "Register to get your key at",
+            "copy": "Copy the key here and give it a name",
+            "key": "Key"
+        },
+        "placeholder": {
+            "name": "Name",
+            "latitude": "Latitude",
+            "longitude": "Longitude"
+        },
+        "warn": {
+            "more-than-60-years": "Date more than 60 years in the past. Results may be unreliable",
+            "more-than-10-years": "Date more than 10 years in the future. Results may be unreliable"
+        },
+        "error": {
+            "settings-invalid-lat_lon": "Invalid lat/lon in node settings",
+            "msg-invalid-lat_lon": "Invalid lat/lon in msg.location",
+            "no-credentials": "missing forecast.io credentials",
+            "invalid-lat_lon": "Invalid lat/lon provided",
+            "invalid-time": "Invalid time provided",
+            "invalid-date": "Invalid date provided",
+            "incorrect-apikey": "Incorrect API key provided",
+            "invalid-url": "invalid url"
+        },
+        "message": {
+            "weather-forecast": "Weather Forecast Information",
+            "weather-info": "Weather forecast information for: __time__ at coordinates: __lat__, __lon__"
+        }
+    }
+}

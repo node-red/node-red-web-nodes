@@ -1,0 +1,37 @@
+{
+    "weather": {
+        "label": {
+            "weather": "openweathermap",
+            "name": "Name",
+            "location": "Location",
+            "option_city": "City",
+            "option_coordinates": "Coordinates",
+            "city": "City",
+            "country": "Country",
+            "latitude": "Latitude",
+            "longitude": "Longitude"
+        },
+        "placeholder": {
+            "name": "Name",
+            "city": "City",
+            "country": "Country",
+            "latitude": "Latitude",
+            "longitude": "Longitude"
+        },
+        "status": {
+            "requesting": "requesting"
+        },
+        "error": {
+            "invalid-lat": "Invalid lat provided",
+            "invalid-lon": "Invalid lon provided",
+            "invalid-json": "The API call returned invalid JSON",
+            "invalid-city_country": "Invalid city/country",
+            "invalid-location": "Invalid location information provided"
+        },
+        "message": {
+            "title": "Current Weather Information",
+            "description": "Current weather information at coordinates: __lat__, __lon__",
+            "payload": "The weather in __name__ at coordinates: __lat__, __lon__ is __main__ (__description__)."
+        }
+    }
+}

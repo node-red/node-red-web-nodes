@@ -1,0 +1,38 @@
+{
+    "geocoding": {
+        "label": {
+            "geocoding": "Google Geocoding",
+            "geocodeby-address": "Geocode by Address",
+            "geocodeby-coordinates": "Geocode by Coordinates",
+            "name": "Name",
+            "geocodeby": "Geocode by",
+            "byaddress": "Address",
+            "bycoordinates": "Coordinates",
+            "address": "Address",
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "apikey": "Google API Key",
+            "bounds": "Bounds",
+            "language": "Language",
+            "region": "Region",
+            "components": "Components"
+        },
+        "placeholder": {
+            "name": "Name",
+            "address": "Address",
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "bounds": "Bounds",
+            "language": "Language",
+            "region": "Region",
+            "components": "Components"
+        },
+        "status": {
+            "failed": "failed"
+        },
+        "error": {
+            "no-lan_lon": "Please provide a longitude and latitude.",
+            "no-address": "Please provide an address."
+        }
+    }
+}

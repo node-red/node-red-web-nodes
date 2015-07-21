@@ -34,7 +34,7 @@ module.exports = function(RED) {
                 msg.payload = body;
                 node.send(msg);
             } else {
-                node.warn("Instagram node has failed to buffer up an image. Image was not sent.\n" + error + "\n" + response);
+                node.warn(RED._("instagram.warn.image-not-sent", {error: error, response: response}));
             }
         });
     }
@@ -44,11 +44,11 @@ module.exports = function(RED) {
     function initializeQueryNode(node) {
         if(node.instagramConfig && node.instagramConfig.credentials) {
             if(!node.instagramConfig.credentials.access_token) {
-                node.warn("Missing Instagram access token. Authorization has not been completed before node initialization.");
+                node.warn(RED._("instagram.warn.missing-accesstoken"));
                 return;
             }   
         } else {
-            node.warn("Missing Instagram configuration or credentials. Authorization has not been completed before node initialization.");
+            node.warn(RED._("instagram.warn.missing-configuration"));
             return;
         }
 
@@ -63,11 +63,11 @@ module.exports = function(RED) {
     function initializeInputNode(node) {
         if(node.instagramConfig && node.instagramConfig.credentials) {
             if(!node.instagramConfig.credentials.access_token) {
-                node.warn("Missing Instagram access token. Authorization has not been completed before node initialization.");
+                node.warn(RED._("instagram.warn.missing-accesstoken"));
                 return;
             }   
         } else {
-            node.warn("Missing Instagram configuration or credentials. Authorization has not been completed before node initialization.");
+            node.warn(RED._("instagram.warn.missing-configuration"));
             return;
         }
 
@@ -78,7 +78,7 @@ module.exports = function(RED) {
         if (node.inputType === "photo") {
             node.ig.user_media_recent('self', { count : 1, min_id : null, max_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
-                   node.warn('Instagram node has failed to fetch latest user photo : '+err);
+                   node.warn(RED._("instagram.warn.userphoto-fetch-fail", {err: err}));
                 }
                 
                 if(medias.length > 0) { // if the user has uploaded something to Instagram already
@@ -96,7 +96,7 @@ module.exports = function(RED) {
         } else if (node.inputType === "like") {
             node.ig.user_self_liked({ count : 1, max_like_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
-                    node.warn('Instagram node has failed to fetch latest liked photo : '+err);
+                    node.warn(RED._("instagram.warn.likedphoto-fetch-fail", {err: err}));
                 }
                 
                 if(medias.length > 0) { // if the user has liked something to Instagram already
@@ -119,7 +119,7 @@ module.exports = function(RED) {
         if (node.inputType === "photo") {
             node.ig.user_media_recent('self', { count : 1, min_id : null, max_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
-                    node.warn('Instagram node has failed to fetch latest user photo : '+err);
+                    node.warn(RED._("instagram.warn.userphoto-fetch-fail", {err: err}));
                 }
                 if(medias.length > 0) { // if the user has uploaded something to Instagram already
                     if(medias[0].type === IMAGE) {
@@ -147,7 +147,7 @@ module.exports = function(RED) {
                         if(medias[0].images && medias[0].images.standard_resolution && medias[0].images.standard_resolution.url) {
                             url = medias[0].images.standard_resolution.url;   
                         } else {
-                            node.warn("The Instagram API has not provided all the required data to establish the URL of the photo. Ignoring media.");
+                            node.warn(RED._("instagram.warn.ignoring-media"));
                             return;
                         }
                         
@@ -159,19 +159,19 @@ module.exports = function(RED) {
                         }
                         
                     } else {
-                        node.warn("The most recent media on Instagram is not a photo, therefore it has been ignored.");
+                        node.warn(RED._("instagram.warn.not-a-photo"));
                         return;
                     }
                 } else {
                     msg.payload = null;
                     node.send(msg);
-                    node.warn("The user has not uploaded any media to Instagram yet, null payload has been sent");
+                    node.warn(RED._("instagram.warn.not-uploaded-yet"));
                 }
             });
         } else if (node.inputType === "like") {
             node.ig.user_self_liked({ count : 1, max_like_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
-                    node.warn('Instagram node has failed to fetch latest liked photo : '+err);
+                    node.warn(RED._("instagram.warn.likedphoto-fetch-fail", {err: err}));
                 }
                 if(medias.length > 0) { // if the user has liked something to Instagram already
                     if(medias[0].type === IMAGE) {
@@ -199,7 +199,7 @@ module.exports = function(RED) {
                         if(medias[0].images && medias[0].images.standard_resolution && medias[0].images.standard_resolution.url) {
                             url = medias[0].images.standard_resolution.url;   
                         } else {
-                            node.warn("The Instagram API has not provided all the required data to establish the URL of the photo. Ignoring media.");
+                            node.warn(RED._("instagram.warn.ignoring-media"));
                             return;
                         }
                         
@@ -211,13 +211,13 @@ module.exports = function(RED) {
                         }
                         
                     } else {
-                        node.warn("The most recently liked media on Instagram is not a photo, therefore it has been ignored.");
+                        node.warn(RED._("instagram.warn.not-liked-photo"));
                         return;
                     }
                 } else {
                     msg.payload = null;
                     node.send(msg);
-                    node.warn("The user has not liked any media on Instagram yet, null payload has been sent");
+                    node.warn(RED._("instagram.warn.not-liked-yet"));
                 }
             });
         }
@@ -234,7 +234,7 @@ module.exports = function(RED) {
             var carryOnPaginating = true;
             
             if (err) {
-                node.warn('Instagram node has failed to fetch latest media : '+err);
+                node.warn(RED._("instagram.warn.latest-media-fetch-failed", {err: err}));
             }
             
             if(medias) {
@@ -287,7 +287,7 @@ module.exports = function(RED) {
                     }
                 }   
             } else if(areWeInPaginationRecursion === false) {
-                node.warn('Instagram node has failed to fetch any media');
+                node.warn(RED._("instagram.warn.media-fetch-failed"));
                 return;
             }
             if(pagination && pagination.next && carryOnPaginating) {
@@ -323,7 +323,7 @@ module.exports = function(RED) {
         
         node.instagramConfig = RED.nodes.getNode(n.instagram);
         if (!node.instagramConfig) {
-            node.warn("Missing Instagram credentials");
+            node.warn(RED._("instagram.warn.missing-credentials"));
             return;
         }
         
@@ -352,7 +352,7 @@ module.exports = function(RED) {
         
         node.instagramConfig = RED.nodes.getNode(n.instagram);
         if (!node.instagramConfig) {
-            node.warn("Missing Instagram credentials");
+            node.warn(RED._("instagram.warn.missing-credentials"));
             return;
         }
         
@@ -387,7 +387,7 @@ module.exports = function(RED) {
         credentials.redirect_uri = req.query.redirect_uri;
         
         if (!credentials.client_id || !credentials.client_secret || ! credentials.redirect_uri) {
-            return res.send('ERROR: Received query from UI without the needed credentials');
+            return res.send(RED._("instagram.error.no-ui-credentials"));
         }
         
         var csrfToken = crypto.randomBytes(18).toString('base64').replace(/\//g, '-').replace(/\+/g, '_');
@@ -416,11 +416,11 @@ module.exports = function(RED) {
         var credentials = RED.nodes.getCredentials(node_id) || {};
 
         if (!credentials || !credentials.client_id || !credentials.client_secret || ! credentials.redirect_uri) {
-            return res.send('ERROR: no credentials - should never happen');
+            return res.send(RED._("instagram.error.no-credentials"));
         }
         
         if (csrfToken !== credentials.csrfToken) {
-            return res.status(401).send('CSRF token mismatch, possible cross-site request forgery attempt.');
+            return res.status(401).send(RED._("instagram.error.csrf-token-mismatch"));
         }
         
         RED.nodes.deleteCredentials(node_id); // we don't want to keep the csrfToken
@@ -428,7 +428,7 @@ module.exports = function(RED) {
         delete credentials.csrfToken;
         
         if(!req.query.code) {
-            return res.status(400).send('The callback from Instagram did not contain a required code');
+            return res.status(400).send(RED._("instagram.error.no-required-code"));
         }
         
         credentials.code = req.query.code;
@@ -445,30 +445,30 @@ module.exports = function(RED) {
             },
         }, function(err, result, data) {
             if (err) {
-                return res.send("request error:" + err);
+                return res.send(RED._("instagram.error.request-error", {err: err}));
             }
             if (data.error) {
-                return res.send("oauth error: " + data.error);
+                return res.send(RED._("instagram.error.oauth-error", {error: data.error}));
             }
             
             if(result.statusCode !== 200) {
-                return res.send("Instagram replied with the unexpected HTTP status code of " + result.statusCode + "\nDetails:\n" + data);
+                return res.send(RED._("instagram.error.unexpected-statuscode", {statusCode: result.statusCode, data: data}));
             }
             
             if(data.user.username) {
                 credentials.username = data.user.username;
             } else {
-                return res.send('Error! Instagram node has failed to fetch the username.');
+                return res.send(RED._("instagram.error.username-fetch-fail"));
             }
             
             if(data.access_token) {
                 credentials.access_token = data.access_token;   
             } else {
-                return res.send('Error! Instagram node has failed to fetch a valid access token.');
+                return res.send(RED._("instagram.error.accesstoken-fetch-fail"));
             }
             
             RED.nodes.addCredentials(node_id,credentials);
-            res.send("<html><head></head><body>Successfully authorized with Instagram. You can close this window now.</body></html>");
+            res.send(RED._("instagram.message.authorized"));
         });
     });
 };

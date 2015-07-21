@@ -706,8 +706,8 @@ describe('fitbit nodes', function() {
                         var fitbit = helper.getNode("fitbit");
                         var output = helper.getNode("output");
                         var expected = [
-                            {"fill":"blue","shape":"dot","text":"querying"},
-                            {"fill":"red","shape":"ring","text":"failed"},
+                            {"fill":"blue","shape":"dot","text":"fitbit.status.querying"},
+                            {"fill":"red","shape":"ring","text":"fitbit.status.failed"},
                         ];
                         sinon.stub(fitbit, 'status', function(status) {
                             should.deepEqual(status, expected.shift());
@@ -736,7 +736,7 @@ describe('fitbit nodes', function() {
                             if (err) {
                             	return done(err);
                             }
-                            res.text.should.containEql('Oh no');
+                            res.text.should.containEql('fitbit.error.oautherror');
                             done();
                         });
                 });
@@ -785,8 +785,7 @@ describe('fitbit nodes', function() {
                                     if (err) {
                                     	return done(err);
                                     }
-                                    res.text.should.containEql('Oh no');
-                                    res.text.should.containEql('oauth_problem=permission_denied');
+                                    res.text.should.containEql('fitbit.error.oautherror');
                                     done();
                                 });
                         });
@@ -845,8 +844,7 @@ describe('fitbit nodes', function() {
                                     if (err) {
                                     	return done(err);
                                     }
-                                    res.text.should.containEql('Oh no');
-                                    res.text.should.containEql('No user found');
+                                    res.text.should.containEql('fitbit.error.oautherror');
                                     done();
                                 });
                         });

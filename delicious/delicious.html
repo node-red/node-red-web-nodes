@@ -17,32 +17,32 @@
 
 <script type="text/x-red" data-template-name="delicious-user">
     <div class="form-row">
-        <label for="node-config-input-username"><i class="fa fa-user"></i> User</label>
+        <label for="node-config-input-username"><i class="fa fa-user"></i> <span data-i18n="delicious.label.user"></span></label>
         <input type="text" id="node-config-input-username">
     </div>
     <div class="form-row">
-        <label for="node-config-input-password"><i class="fa fa-lock"></i> Password</label>
+        <label for="node-config-input-password"><i class="fa fa-lock"></i> <span data-i18n="delicious.label.password"></span></label>
         <input type="password" id="node-config-input-password">
     </div>
 </script>
 
 <script type="text/x-red" data-template-name="delicious out">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-user"></i> User</label>
+        <label for="node-input-name"><i class="fa fa-user"></i> <span data-i18n="delicious.label.user"></span></label>
         <input type="text" id="node-input-user">
     </div>
     <div class="form-row">
-        <label for="node-input-tags"><i class="fa fa-tags"></i> Tags</label>
-        <input type="text" id="node-input-tags" placeholder="comma-separated tags to add">
+        <label for="node-input-tags"><i class="fa fa-tags"></i> <span data-i18n="delicious.label.tags"></span></label>
+        <input type="text" id="node-input-tags" data-i18n="[placeholder]delicious.placeholder.tags">
     </div>
     <div class="form-row">
         <label>&nbsp;</label>
         <input type="checkbox" id="node-input-private" style="display: inline-block; width: auto; vertical-align: top;">
-        <label for="node-input-private" style="width: 70%;">Mark as private?</label>
+        <label for="node-input-private" style="width: 70%;"><span data-i18n="delicious.label.private"></span></label>
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="delicious.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]delicious.placeholder.name">
     </div>
 </script>
 
@@ -85,7 +85,7 @@
         icon: "delicious.png",
         align: "right",
         label: function() {
-            return this.name||"Delicious";
+            return this.name||this._("delicious.label.delicious");
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";

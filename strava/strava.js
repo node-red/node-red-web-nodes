@@ -60,7 +60,7 @@ module.exports = function(RED) {
                 if(data[0].id) {
                     activityIDToReturn = data[0].id;
                 } else {
-                    return callback(null,"No activity ID");
+                    return callback(null, RED._("strava.error.no-id"));
                 }
             }
             
@@ -175,11 +175,11 @@ module.exports = function(RED) {
         
         if(node.stravaConfig && node.stravaConfig.credentials) {
             if(!node.stravaConfig.credentials.access_token) {
-                node.warn("Missing Strava access token. Authorization has not been completed before node initialization.");
+                node.warn(RED._("strava.warn.no-acceesstoken"));
                 return;
             }   
         } else {
-            node.warn("Missing Strava configuration or credentials. Authorization has not been completed before node initialization.");
+            node.warn(RED._("strava.warn.no-configuration"));
             return;
         }
         
@@ -233,7 +233,7 @@ module.exports = function(RED) {
         credentials.redirect_uri = req.query.redirect_uri;
         
         if (!credentials.client_id || !credentials.client_secret || ! credentials.redirect_uri) {
-            return res.send('ERROR: Received query from UI without the needed credentials');
+            return res.send(RED._("strava.error.no-credentials-ui"));
         }
         
         var csrfToken = crypto.randomBytes(18).toString('base64').replace(/\//g, '-').replace(/\+/g, '_');
@@ -262,11 +262,11 @@ module.exports = function(RED) {
         var credentials = RED.nodes.getCredentials(node_id) || {};
 
         if (!credentials || !credentials.client_id || !credentials.client_secret || ! credentials.redirect_uri) {
-            return res.send('ERROR: no credentials - should never happen');
+            return res.send(RED._("strava.error.no-credentials"));
         }
         
         if (csrfToken !== credentials.csrfToken) {
-            return res.status(401).send('CSRF token mismatch, possible cross-site request forgery attempt.');
+            return res.status(401).send(RED._("strava.error.csrf-token-mismatch"));
         }
         
         RED.nodes.deleteCredentials(node_id); // we don't want to keep the csrfToken
@@ -274,7 +274,7 @@ module.exports = function(RED) {
         delete credentials.csrfToken;
         
         if(!req.query.code) {
-            return res.status(400).send('The callback from Strava did not contain a required code');
+            return res.status(400).send(RED._("strava.error.no-code"));
         }
         
         credentials.code = req.query.code;
@@ -289,31 +289,31 @@ module.exports = function(RED) {
             },
         }, function(err, result, data) {
             if (err) {
-                return res.send("request error:" + err);
+                return res.send(RED._("strava.error.request-error", {err: err}));
             }
             if (data.error) {
-                return res.send("oauth error: " + data.error);
+                return res.send(RED._("strava.error.oauth-error", {dataError: data.error}));
             }
             
             if(result.statusCode !== 200) {
                 console.log(data);
-                return res.send("Strava replied with the unexpected HTTP status code of " + result.statusCode);
+                return res.send(RED._("strava.error.unexpected-statuscode", {statusCode: result.statusCode}));
             }
             
             if(data.athlete && data.athlete.firstname && data.athlete.lastname) {
                 credentials.username = data.athlete.firstname + " " + data.athlete.lastname;
             } else {
-                return res.send('Error! Strava node has failed to fetch the authenticated user\'s name.');
+                return res.send(RED._("strava.error.username-error"));
             }
             
             if(data.access_token) {
                 credentials.access_token = data.access_token;
             } else {
-                return res.send('Error! Strava node has failed to fetch a valid access token.');
+                return res.send(RED._("strava.error.acceesstoken-error"));
             }
             
             RED.nodes.addCredentials(node_id,credentials);
-            res.send("<html><head></head><body>Successfully authorized with Strava. You can close this window now.</body></html>");
+            res.send(RED._("strava.message.authorized"));
         });
     });
 };

@@ -120,7 +120,7 @@ describe('jawboneup nodes', function() {
                                       if (err) {
                                     	  return done(err);
                                       }
-                                      res.text.should.containEql('Oh no');
+                                      res.text.should.containEql('jawboneup.error.oautherrorinfo');
                                       done();
                                   });
                             });
@@ -155,7 +155,7 @@ describe('jawboneup nodes', function() {
                                                 if (err) {
                                                 	return done(err);
                                                 }
-                                                res.text.should.containEql('Http return code');
+                                                res.text.should.containEql('jawboneup.error.oautherrorcode');
                                                 done();
                                             });
                                     });
@@ -187,7 +187,7 @@ describe('jawboneup nodes', function() {
                                             if (err) {
                                             	return done(err);
                                             }
-                                            res.text.should.containEql('CSRF token mismatch, possible cross-site request forgery attempt');
+                                            res.text.should.containEql('jawboneup.error.csrf-token-mismatch');
                                             done();
                                         });
                                 });
@@ -227,7 +227,7 @@ describe('jawboneup nodes', function() {
                               n2.should.have.property('id','n2');
                               
                               sinon.stub(n2, 'status', function(status){
-                                  var expected = {fill:"red",shape:"ring",text:"failed"};
+                                  var expected = {fill:"red",shape:"ring",text:"jawboneup.status.failed"};
                                   should.deepEqual(status, expected);
                                   done();
                               });

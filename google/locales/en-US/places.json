@@ -1,0 +1,68 @@
+{
+    "places": {
+        "label": {
+            "places": "Google Places",
+            "nearbysearch": "Places Nearby Search",
+            "textsearch": "Places Text Search",
+            "detailssearch": "Places Details Search",
+            "nodename": "Node Name",
+            "requesttype": "Request Type",
+            "nearby": "Places Nearby",
+            "text": "Places Text",
+            "details": "Places Details",
+            "apikey": "Google API Key",
+            "query": "Query",
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "placeid": "Place Id",
+            "radius": "Radius (m)",
+            "rankby": "Rank by",
+            "prominence": "Prominence",
+            "distance": "Distance",
+            "keyword": "Keyword",
+            "language": "Language",
+            "minprice": "Min Price",
+            "maxprice": "Max Price",
+            "name": "Name",
+            "types": "Types",
+            "extensions": "Extensions",
+            "opennow": "Open Now?",
+            "output": "Output",
+            "resultas": "result(s) as",
+            "multiple": "multiple messages",
+            "single": "a single message"
+        },
+        "placeholder": {
+            "nodename": "Node Name",
+            "query": "Query",
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "placeid": "Place Id",
+            "radius": "Radius",
+            "keyword": "Keyword",
+            "language": "Language",
+            "minprice": "Min Price",
+            "maxprice": "Max Price",
+            "name": "Name",
+            "types": "Types",
+            "extensions": "Extensions"
+        },
+        "status": {
+            "querying": "querying",
+            "failed": "failed"
+        },
+        "error": {
+            "no-apikey": "Please provide your application API key.",
+            "no-lat_lon": "Please provide a longitude and latitude.",
+            "radius-not-allowed": "If rankby is set to distance, then radius is not allowed in the request. Instead, you are required to provide at least one of keyword/name/types.",
+            "no-keyword_name_type": "If rankby is set to distance, you are required to provide at least one of keyword/name/types.",
+            "no-prominence_distance": "The allowed options for rankby are 'prominence'(default) and 'distance'",
+            "no-placeid": "Please provide a placeid.",
+            "no-text": "Please provide a query for the places text search.",
+            "invalid-placeid": "Please provide a valid placeid."
+        },
+        "message": {
+            "results-returned": "results returned"
+        }
+    }
+}

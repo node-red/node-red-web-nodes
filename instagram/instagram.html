@@ -18,34 +18,34 @@
 <script type="text/x-red" data-template-name="instagram-credentials">
     <div id="node-config-instagram-app-keys">
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>1.</b> Create your own app at <a href="http://instagram.com/developer/clients/register/" target="_blank" style="text-decoration:underline;">instagram.com</a></p>
+            <p style="margin-top: 10px;"><b>1.</b> <span data-i18n="instagram.label.create"></span> <a href="http://instagram.com/developer/clients/register/" target="_blank" style="text-decoration:underline;">instagram.com</a></p>
         </div>
         <div class="form-tips" id="node-config-tooltip">
             #
         </div>
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>2.</b> Copy the app details here:</p>
+            <p style="margin-top: 10px;"><b>2.</b> <span data-i18n="instagram.label.copy"></span>:</p>
         </div>
         <div class="form-row">
-          <label for="node-config-input-clientID"><i class="fa fa-user"></i> Client ID</label>
+          <label for="node-config-input-clientID"><i class="fa fa-user"></i> <span data-i18n="instagram.label.clientid"></span></label>
           <input type="text" id="node-config-input-clientID">
         </div>
         <div class="form-row" id="node-config-clientSecret">
-            <label for="node-config-input-clientSecret"><i class="fa fa-lock"></i>Client Secret</label>
+            <label for="node-config-input-clientSecret"><i class="fa fa-lock"></i><span data-i18n="instagram.label.clientsecret"></span></label>
             <input type="password" id="node-config-input-clientSecret">
         </div>
         <div class="form-row" id="node-config-redirectURI">
-            <label for="node-config-input-redirectURI"><i class="fa fa-user"></i>Redirect URI</label>
+            <label for="node-config-input-redirectURI"><i class="fa fa-user"></i><span data-i18n="instagram.label.redirecturi"></span></label>
             <input type="text" id="node-config-input-redirectURI">
         </div>
         <div class="form-row">
            <label>&nbsp;</label>
-           <a class="btn" id="node-config-start-auth" href="#" target="_blank">Authenticate with Instagram</a>
+           <a class="btn" id="node-config-start-auth" href="#" target="_blank"><span data-i18n="instagram.label.authenticate"></span></a>
         </div>
     </div>
     <div id="node-config-instagram-user">
         <div class="form-row">
-            <label><i class="fa fa-user"></i> Instagram User</label><span id="node-config-instagram-username" class="input-xlarge uneditable-input"></span>
+            <label><i class="fa fa-user"></i> <span data-i18n="instagram.label.instagramuser"></span></label><span id="node-config-instagram-username" class="input-xlarge uneditable-input"></span>
         </div>
         <input type="hidden" id="node-config-input-username">
     </div>
@@ -53,26 +53,26 @@
 
 <script type="text/x-red" data-template-name="instagram">
     <div class="form-row">
-        <label for="node-input-instagram"><i class="fa fa-user"></i> User</label>
+        <label for="node-input-instagram"><i class="fa fa-user"></i> <span data-i18n="instagram.label.user"></span></label>
         <input type="text" id="node-input-instagram">
     </div>
     <div class="form-row">
-        <label for="node-input-inputType"><i class="icon-search"></i> Type</label>
+        <label for="node-input-inputType"><i class="icon-search"></i> <span data-i18n="instagram.label.type"></span></label>
         <select type="text" id="node-input-inputType" style="display: inline-block; vertical-align: middle; width:60%;">
-            <option value="photo">User photos</option>
-            <option value="like">Liked photos</option>
+            <option value="photo" data-i18n="instagram.label.userphoto"></option>
+            <option value="like" data-i18n="instagram.label.likedphoto"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-outputType"><i class="icon-search"></i> Output</label>
+        <label for="node-input-outputType"><i class="icon-search"></i> <span data-i18n="instagram.label.output"></span></label>
         <select type="text" id="node-input-outputType" style="display: inline-block; vertical-align: middle; width:60%;">
-            <option value="buffer">the photo as a buffer</option>
-            <option value="link">the photo url</option>
+            <option value="buffer" data-i18n="instagram.label.buffer"></option>
+            <option value="link" data-i18n="instagram.label.url"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="instagram.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]instagram.placeholder.name">
     </div>
 </script>
 
@@ -94,26 +94,26 @@
 
 <script type="text/x-red" data-template-name="instagram in">
     <div class="form-row">
-        <label for="node-input-instagram"><i class="fa fa-user"></i> User</label>
+        <label for="node-input-instagram"><i class="fa fa-user"></i> <span data-i18n="instagram.label.user"></span></label>
         <input type="text" id="node-input-instagram">
     </div>
     <div class="form-row">
-        <label for="node-input-inputType"><i class="icon-search"></i> Type</label>
+        <label for="node-input-inputType"><i class="icon-search"></i> <span data-i18n="instagram.label.type"></span></label>
         <select type="text" id="node-input-inputType" style="display: inline-block; vertical-align: middle; width:60%;">
-            <option value="photo">User photos</option>
-            <option value="like">Liked photos</option>
+            <option value="photo" data-i18n="instagram.label.userphoto"></option>
+            <option value="like" data-i18n="instagram.label.likedphoto"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-outputType"><i class="icon-search"></i> Output</label>
+        <label for="node-input-outputType"><i class="icon-search"></i> <span data-i18n="instagram.label.output"></span></label>
         <select type="text" id="node-input-outputType" style="display: inline-block; vertical-align: middle; width:60%;">
-            <option value="buffer">the photo as a buffer</option>
-            <option value="link">the photo url</option>
+            <option value="buffer" data-i18n="instagram.label.buffer"></option>
+            <option value="link" data-i18n="instagram.label.url"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="instagram.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]instagram.placeholder.name">
     </div>
 </script>
 
@@ -152,6 +152,12 @@
         exportable: false,
         oneditprepare: function() {
             var id = this.id;
+            var pathname = document.location.pathname;
+            if (pathname.slice(-1) != "/") {
+                pathname += "/";
+            }
+            var constructedURI = location.protocol + '//' + location.hostname + (location.port ? ":"+location.port : "") + pathname + 'instagram-credentials/auth/callback';
+            var tip = this._("instagram.tip.redirect", {constructedURI: constructedURI});
                     
             function updateInstagramAuthButton() {
                 var v1 = $("#node-config-input-clientID").val();
@@ -192,21 +198,7 @@
             }
             
             function updateRedirectURI() {
-               var protocol = location.protocol;
-                var separator = '//';
-                var host = location.hostname;
-                
-                var pathname = document.location.pathname;
-                if (pathname.slice(-1) != "/") {
-                    pathname += "/";
-                }
-                var callbackPath = 'instagram-credentials/auth/callback';
-                
-                var constructedURI = protocol + separator + host + 
-                    (location.port?":"+location.port:"")+
-                    pathname + callbackPath;
-                
-                $("#node-config-tooltip").html('<p>Please configure Instagram to accept the following <b>Redirect URL</b> for authentication of your application: </p>\n<code>' + constructedURI + '</code>');
+                $("#node-config-tooltip").html(tip);
                 $("#node-config-input-redirectURI").val(constructedURI);
                 $("#node-config-input-redirectURI").hide();
                 $("#node-config-redirectURI").hide();
@@ -264,7 +256,7 @@
         outputs:1,
         icon: "instagram.png",
         label: function() {
-            return this.name||"Instagram";
+            return this.name||this._("instagram.label.instagram");
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
@@ -286,7 +278,7 @@
         outputs:1,
         icon: "instagram.png",
         label: function() {
-            return this.name||"Instagram";
+            return this.name||this._("instagram.label.instagram");
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";

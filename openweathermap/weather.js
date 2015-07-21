@@ -26,13 +26,13 @@ module.exports = function(RED) {
             if (90 >= lat && lat >= -90) {
                 node.lat = lat;
             } else {
-                node.error("Invalid lat provided",msg);
+                node.error(RED._("weather.error.invalid-lat"),msg);
                 return;
             }
             if (180 >= lon && lon >= -180) {
                 node.lon = lon;
             } else {
-                node.error("Invalid lon provided",msg);
+                node.error(RED._("weather.error.invalid-lon"),msg);
                 return;
             }
         }
@@ -55,7 +55,7 @@ module.exports = function(RED) {
         //If the URL is not initialised, there has been an error with the input data,
         //and a node.error is reported.
         if (url) {
-            node.status({fill:"blue",shape:"dot",text:"requesting"});
+            node.status({fill:"blue",shape:"dot",text:RED._("weather.status.requesting")});
             http.get(url, function(res) {
                 var weather = "";
                 res.on('data', function(d) {
@@ -67,7 +67,7 @@ module.exports = function(RED) {
                     try {
                         jsun = JSON.parse(weather);
                     } catch (e) {
-                        callback("The API call returned invalid JSON");
+                        callback(RED._("weather.error.invalid-json"));
                         return;
                     }
                     if (jsun) {
@@ -91,13 +91,13 @@ module.exports = function(RED) {
                             msg.location.city = jsun.name;
                             msg.location.country = jsun.sys.country;
                             if (jsun.hasOwnProperty("dt")) { msg.time = new Date(jsun.dt*1000); }
-                            msg.title = "Current Weather Information";
-                            msg.description = "Current weather information at coordinates: " + msg.location.lat + ", " + msg.location.lon;
-                            msg.payload.description = ("The weather in " + jsun.name + " at coordinates: " + jsun.coord.lat + ", " + jsun.coord.lon + " is " + jsun.weather[0].main + " (" + jsun.weather[0].description + ")." );
+                            msg.title = RED._("weather.message.title");
+                            msg.description = RED._("weather.message.description", {lat: msg.location.lat, lon: msg.location.lon});
+                            msg.payload.description = (RED._("weather.message.payload", {name: jsun.name, lat: jsun.coord.lat, lon: jsun.coord.lon, main: jsun.weather[0].main, description: jsun.weather[0].description}));
                             callback();
                         } else {
                             if (jsun.message === "Error: Not found city") {
-                                callback("Invalid city/country");
+                                callback(RED._("weather.error.invalid-city_country"));
                                 return;
                             } else {
                                 callback(jsun.cod + " " + jsun.message);
@@ -112,7 +112,7 @@ module.exports = function(RED) {
             });
             node.status({});
         } else {
-            callback("Invalid location information provided");
+            callback(RED._("weather.error.invalid-location"));
         }
     }
 

@@ -1,0 +1,36 @@
+{
+    "tfl-underground": {
+        "label": {
+            "tfl-underground": "TFL Underground",
+            "get": "Get",
+            "status": "the status information for the",
+            "bakerloo": "Bakerloo",
+            "central": "Central",
+            "circle": "Circle",
+            "district": "District",
+            "hammersmith": "Hammersmith and City",
+            "jubilee": "Jubilee",
+            "metropolitan": "Metropolitan",
+            "northern": "Northern",
+            "piccadilly": "Piccadilly",
+            "victoria": "Victoria",
+            "waterloo": "Waterloo and City",
+            "input": "Input Defined",
+            "line": "line",
+            "name": "Name"
+        },
+        "tip": {
+            "signup": "<p>Before using this node please sign up to <code><a href=https://api-portal.tfl.gov.uk/login target=\"_blank\" style=\"text-decoration:underline;\">Transport for London</a></code>\n and accept the terms and conditions to gain access to the live feeds.</p>"
+        },
+        "status": {
+            "failed": "failed"
+        },
+        "error": {
+            "no-station": "No station in message input.",
+            "invalid-tubeline": "Invalid tube line: __tubeline__"
+        },
+        "message": {
+            "description": "Status of the __linename__ line"
+        }
+    }
+}

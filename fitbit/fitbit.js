@@ -82,7 +82,7 @@ module.exports = function(RED) {
         this.fitbitConfig = RED.nodes.getNode(n.fitbit);
         this.dataType = n.dataType || 'badges';
         if (!this.fitbitConfig) {
-            this.warn("Missing fitbit credentials");
+            this.warn(RED._("fitbit.warn.missing-credentials"));
             return;
         }
         var credentials = this.fitbitConfig.credentials;
@@ -90,7 +90,7 @@ module.exports = function(RED) {
             credentials.access_token && credentials.access_token_secret) {
             var oa = getOAuth(credentials.client_key,credentials.client_secret);
             var node = this;
-            node.status({fill:"blue",shape:"dot",text:"initializing"});
+            node.status({fill:"blue",shape:"dot",text:RED._("fitbit.status.initializing")});
             var day = today();
             if (node.dataType === 'badges') {
                 oa.get('https://api.fitbit.com/1/user/-/badges.json',
@@ -99,20 +99,20 @@ module.exports = function(RED) {
                        function(err, body, response) {
                     if (err) {
                         node.error(formatError(err));
-                        node.status({fill:"red",shape:"ring",text:"failed"});
+                        node.status({fill:"red",shape:"ring",text:RED._("fitbit.status.failed")});
                         return;
                     }
                     node.state = JSON.parse(body).badges;
                     node.status({});
                     node.on('input', function(msg) {
-                        node.status({fill:"blue",shape:"dot",text:"querying"});
+                        node.status({fill:"blue",shape:"dot",text:RED._("fitbit.status.querying")});
                         oa.get('https://api.fitbit.com/1/user/-/badges.json',
                                credentials.access_token,
                                credentials.access_token_secret,
                                function(err, body, response) {
                             if (err) {
                                 node.error(formatError(err),msg);
-                                node.status({fill:"red",shape:"ring",text:"failed"});
+                                node.status({fill:"red",shape:"ring",text:RED._("fitbit.status.failed")});
                                 return;
                             }
                             var badges = JSON.parse(body).badges;
@@ -145,7 +145,7 @@ module.exports = function(RED) {
                        function(err, body, response) {
                     if (err) {
                         node.error(formatError(err));
-                        node.status({fill:"red",shape:"ring",text:"failed"});
+                        node.status({fill:"red",shape:"ring",text:RED._("fitbit.status.failed")});
                         return;
                     }
                     var data = JSON.parse(body);
@@ -155,7 +155,7 @@ module.exports = function(RED) {
                     };
                     node.status({});
                     node.on('input', function(msg) {
-                        node.status({fill:"blue",shape:"dot",text:"querying"});
+                        node.status({fill:"blue",shape:"dot",text:RED._("fitbit.status.querying")});
                         var day = today();
                         oa.get('https://api.fitbit.com/1/user/-/sleep/date/'+day+'.json',
                                credentials.access_token,
@@ -163,7 +163,7 @@ module.exports = function(RED) {
                                function(err, body, response) {
                             if (err) {
                                 node.error(formatError(err),msg);
-                                node.status({fill:"red",shape:"ring",text:"failed"});
+                                node.status({fill:"red",shape:"ring",text:RED._("fitbit.status.failed")});
                                 return;
                             }
                             var data = JSON.parse(body);
@@ -187,7 +187,7 @@ module.exports = function(RED) {
                        function(err, body, response) {
                     if (err) {
                         node.error(formatError(err));
-                        node.status({fill:"red",shape:"ring",text:"failed"});
+                        node.status({fill:"red",shape:"ring",text:RED._("fitbit.status.failed")});
                         return;
                     }
                     var data = JSON.parse(body);
@@ -197,7 +197,7 @@ module.exports = function(RED) {
                     };
                     node.status({});
                     node.on('input', function(msg) {
-                        node.status({fill:"blue",shape:"dot",text:"querying"});
+                        node.status({fill:"blue",shape:"dot",text:RED._("fitbit.status.querying")});
                         var day = today();
                         var fetchDay = day;
                         if (day !== node.state.day) {
@@ -211,7 +211,7 @@ module.exports = function(RED) {
                                function(err, body, response) {
                             if (err) {
                                 node.error(formatError(err),msg);
-                                node.status({fill:"red",shape:"ring",text:"failed"});
+                                node.status({fill:"red",shape:"ring",text:RED._("fitbit.status.failed")});
                                 return;
                             }
                             var data = JSON.parse(body);
@@ -273,11 +273,11 @@ module.exports = function(RED) {
         this.dataType = n.dataType || 'activities';
         var supportedTypes = ["activities","sleep","badges"];
         if (supportedTypes.indexOf(this.dataType) == -1) {
-            this.error("Unsupported data type");
+            this.error(RED._("fitbit.error.unsupported-data-type"));
             return;
         }
         if (!this.fitbitConfig) {
-            this.error("Missing fitbit credentials");
+            this.error(RED._("fitbit.error.missing-credentials"));
             return;
         }
         var credentials = this.fitbitConfig.credentials;
@@ -286,7 +286,7 @@ module.exports = function(RED) {
             var oa = getOAuth(credentials.client_key,credentials.client_secret);
             var node = this;
             this.on('input', function(msg) {
-                node.status({fill:"blue",shape:"dot",text:"querying"});
+                node.status({fill:"blue",shape:"dot",text:RED._("fitbit.status.querying")});
                 var url;
                 if (node.dataType === 'activities' ||
                     node.dataType === 'sleep') {
@@ -302,7 +302,7 @@ module.exports = function(RED) {
                        function(err, body, response) {
                     if (err) {
                         node.error(formatError(err),msg);
-                        node.status({fill:"red",shape:"ring",text:"failed"});
+                        node.status({fill:"red",shape:"ring",text:RED._("fitbit.status.failed")});
                         return;
                     }
                     var data = JSON.parse(body);
@@ -310,7 +310,7 @@ module.exports = function(RED) {
                     if (node.dataType === 'sleep') {
                         var sleep = mainSleep(data.sleep);
                         if (!sleep) {
-                            node.warn("no main sleep record found");
+                            node.warn(RED._("fitbit.warn.no-sleep-record"));
                             return;
                         } else {
                             msg.payload = sleep;
@@ -346,10 +346,7 @@ module.exports = function(RED) {
             oauth_callback: req.query.callback
         }, function(error, oauth_token, oauth_token_secret, results) {
             if (error) {
-                res.send('<h2>Oh no!</h2>'+
-                '<p>Something went wrong with the authentication process. The following error was returned:<p>'+
-                '<p><b>'+error.statusCode+'</b>: '+error.data+'</p>'+
-                '<p>One known cause of this type of failure is if the clock is wrong on system running Node-RED.</p>');
+                res.send(RED._("fitbit.error.oautherror",{statusCode: error.statusCode, errorData: error.data}));
             } else {
                 credentials.oauth_token = oauth_token;
                 credentials.oauth_token_secret = oauth_token_secret;
@@ -372,10 +369,7 @@ module.exports = function(RED) {
             credentials.oauth_verifier,
             function(error, oauth_access_token, oauth_access_token_secret, results){
                 if (error){
-                    res.send('<h2>Oh no!</h2>'+
-                             '<p>Something went wrong with the authentication process. The following error was returned:<p>'+
-                             '<p><b>'+error.statusCode+'</b>: '+error.data+'</p>'+
-                             '<p>One known cause of this type of failure is if the clock is wrong on system running Node-RED.</p>');
+                    res.send(RED._("fitbit.error.oautherror",{statusCode: error.statusCode, errorData: error.data}));
                 } else {
                     credentials = {};
                     credentials.client_key = client_key;
@@ -384,15 +378,12 @@ module.exports = function(RED) {
                     credentials.access_token_secret = oauth_access_token_secret;
                     oa.get('https://api.fitbit.com/1/user/-/profile.json', credentials.access_token, credentials.access_token_secret, function(err, body, response) {
                           if (err) {
-                            return res.send('<h2>Oh no!</h2>'+
-                             '<p>Something went wrong fetching the user profile. The following error was returned:<p>'+
-                             '<p><b>'+err.statusCode+'</b>: '+err.data+'</p>'+
-                             '<p>One known cause of this type of failure is if the clock is wrong on system running Node-RED.</p>');
+                            return res.send(RED._("fitbit.error.oautherror",{statusCode: err.statusCode, errorData: err.data}));
                         }
                         var data = JSON.parse(body);
                         credentials.username = data.user.fullName;
                         RED.nodes.addCredentials(req.params.id,credentials);
-                        res.send("<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>");
+                        res.send(RED._("fitbit.error.authorized"));
                     });
                 }
             }

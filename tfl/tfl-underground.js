@@ -32,7 +32,7 @@ module.exports = function(RED) {
                 if(msg.payload && msg.payload.tubeline){
                     line = msg.payload.tubeline;
                 } else {
-                    node.error("No station in message input.",msg);
+                    node.error(RED._("tfl-underground.error.no-station"),msg);
                 }
             } else {
                 line = node.line;
@@ -43,7 +43,7 @@ module.exports = function(RED) {
                 request.get(apiUrl,function(err, httpResponse, body) {
                     if (err) {
                         node.error(err.toString(),msg);
-                        node.status({fill:"red",shape:"ring",text:"failed"});
+                        node.status({fill:"red",shape:"ring",text:RED_("tfl-underground.status.failed")});
                     } else {
                         parseString(body, {strict:true,async:true}, function (err, result) {
                             if (err) { node.error(err,msg); }
@@ -53,7 +53,7 @@ module.exports = function(RED) {
                                     var linename = linestatus[i].Line[0].$.Name;
                                     if (linename.toLowerCase() === line.toLowerCase()) {
                                         msgMatched = true;
-                                        msg.description = "Status of the " + linename + " line";
+                                        msg.description = RED._("tfl-underground.message.description", {linename: linename});
                                         msg.payload = {};
                                         msg.payload.status = linestatus[i].Status[0].$.CssClass;
                                         if (msg.payload.status === "GoodService") {
@@ -77,7 +77,7 @@ module.exports = function(RED) {
                                     }
                                 }
                                 if(!msgMatched){
-                                    node.error("Invalid tube line: " + msg.payload.tubeline,msg);
+                                    node.error(RED._("tfl-underground.error.invalid-tubeline", {tubeline: msg.payload.tubeline}),msg);
                                 } else {
                                     node.send(msg);
                                 }

@@ -1,0 +1,44 @@
+{
+    "aws": {
+        "label": {
+            "aws": "AWS",
+            "bucket": "Bucket",
+            "pattern": "Filename Pattern",
+            "name": "Name",
+            "filename": "Filename",
+            "local": "Local Filename",
+            "keyid": "AccessKeyID",
+            "secret": "Secret Access Key"
+        },
+        "placeholder": {
+            "bucket": "bucket name",
+            "pattern": "Filepattern",
+            "name": "Name",
+            "filename": "Filename",
+            "local": "Local Filename"
+        },
+        "tip": {
+            "config1": "<p>To obtain these credentials, sign up to <a href='http://aws.amazon.com/'>Amazon Web Services</a>, Then either:</p>",
+            "config2": "<ul><li>click on your account name and select 'Security Credentials' then click 'Access Keys (Access Key ID and Secret Access Key)' or</li><li>select 'IAM' under 'Deployment & Management' from the AWS console and create an 'IAM' user with a suitable policy.</li></ul>"
+        },
+        "status": {
+            "initializing": "initializing",
+            "error": "error",
+            "checking-for-changes": "checking for changes",
+            "downloading": "downloading",
+            "checking-credentials": "checking credentials",
+            "uploading": "uploading",
+            "failed": "failed"
+        },
+        "warn": {
+            "missing-credentials": "Missing AWS credentials"
+        },
+        "error": {
+            "failed-to-fetch": "failed to fetch S3 state: __err__",
+            "no-bucket-specified": "No bucket specified",
+            "no-filename-specified": "No filename specified",
+            "download-failed": "download failed: __err__",
+            "aws-s3-error": "AWS S3 error: __err__"
+        }
+    }
+}

@@ -17,17 +17,17 @@
 <script type="text/x-red" data-template-name="forecastio-credentials">
     <div id="node-config-forecastio-app-keys">
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>1.</b> Register to get your key at <a href="https://developer.forecast.io/" target="_blank" style="text-decoration:underline;">forecast.io</a></p>
+            <p style="margin-top: 10px;"><b>1.</b> <span data-i18n="forecastio.label.register"></span> <a href="https://developer.forecast.io/" target="_blank" style="text-decoration:underline;">forecast.io</a></p>
         </div>
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>2.</b> Copy the key here and give it a name:</p>
+            <p style="margin-top: 10px;"><b>2.</b> <span data-i18n="forecastio.label.copy"></span>:</p>
         </div>
         <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-key_identifier"><i class="fa fa-user"></i> Name</label>
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-key_identifier"><i class="fa fa-user"></i> <span data-i18n="forecastio.label.name"></span></label>
             <input type="text" id="node-config-input-key_identifier">
         </div>
         <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_key"><i class="fa fa-key"></i> Key</label>
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_key"><i class="fa fa-key"></i> <span data-i18n="forecastio.label.key"></span></label>
             <input type="password" id="node-config-input-client_key">
         </div>
     </div>
@@ -62,29 +62,29 @@
 
 <script type="text/x-red" data-template-name="forecastio">
     <div class="form-row">
-        <label for="node-input-forecastio"><i class="fa fa-user"></i> Forecastio</label>
+        <label for="node-input-forecastio"><i class="fa fa-user"></i> <span data-i18n="forecastio.label.forecastio"></span></label>
         <input type="text" id="node-input-forecastio">
     </div>
     <div class="form-row" id="weather-name">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="forecastio.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]forecastio.placeholder.name">
     </div>   
     <div class="form-row">
-        <label for="weather-forecast-time-select"><i class="fa fa-globe"></i> Forecast</label>
-        <select id="weather-forecast-time-select"><option value="tomorrow">Tomorrow</option><option value="specific">Specific date and time</option><option value="message">Input defined</option></select>   
+        <label for="weather-forecast-time-select"><i class="fa fa-globe"></i> <span data-i18n="forecastio.label.forecast"></span></label>
+        <select id="weather-forecast-time-select"><option value="tomorrow" data-i18n="forecastio.label.tomorrow"></option><option value="specific" data-i18n="forecastio.label.datetime"></option><option value="message" data-i18n="forecastio.label.input"></option></select>   
     </div>  
 
     <div class="form-row weather-forecast-time" id="weather-forecast-time-specific">
-        <label for="weather-forecast-date"><i class="fa fa-calendar"></i> Date</label>
+        <label for="weather-forecast-date"><i class="fa fa-calendar"></i> <span data-i18n="forecastio.label.date"></span></label>
         <input id="node-input-date" class="weather-time-input" type="date" style="width:145px">
-        <label for="weather-forecast-time"><i class="fa fa-clock-o"></i> Time (UTC)</label>
+        <label for="weather-forecast-time"><i class="fa fa-clock-o"></i> <span data-i18n="forecastio.label.time"></span></label>
         <input id="node-input-time" class="weather-time-input" type="time" style="width:75px">   
     </div>
        
     <div class="form-row" id="weather-coordinates">
-        <label for=""><i class="fa fa-location-arrow"></i> Latitude</label><input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom: 7px" placeholder="Latitude">
+        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.latitude"></span></label><input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom: 7px" data-i18n="[placeholder]forecastio.placeholder.latitude">
         </br>
-        <label for=""><i class="fa fa-location-arrow"></i> Longitude</label><input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px" placeholder="Longitude">
+        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.longitude"></span></label><input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px" data-i18n="[placeholder]forecastio.placeholder.longitude">
     </div>
     
 </script>
@@ -194,29 +194,29 @@
 
 <script type="text/x-red" data-template-name="forecastio in">
     <div class="form-row">
-        <label for="node-input-forecastio"><i class="fa fa-user"></i> Forecastio</label>
+        <label for="node-input-forecastio"><i class="fa fa-user"></i> <span data-i18n="forecastio.label.forecastio"></span></label>
         <input type="text" id="node-input-forecastio">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="forecastio.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]forecastio.placeholder.name">
     </div>
     <div class="form-row">
-        <label for="weather-forecast-time-select"><i class="fa fa-globe"></i> Forecast</label>
-        <select id="weather-forecast-time-select"><option value="tomorrow">Tomorrow</option><option value="specific">Specific date and time</option></select>   
+        <label for="weather-forecast-time-select"><i class="fa fa-globe"></i> <span data-i18n="forecastio.label.forecast"></span></label>
+        <select id="weather-forecast-time-select"><option value="tomorrow" data-i18n="forecastio.label.tomorrow"></option><option value="specific" data-i18n="forecastio.label.datetime"></option></select>   
     </div>  
 
     <div class="form-row weather-forecast-time" id="weather-forecast-time-specific">
-        <label for="weather-forecast-date"><i class="fa fa-calendar"></i> Date</label>
+        <label for="weather-forecast-date"><i class="fa fa-calendar"></i> <span data-i18n="forecastio.label.date"></span></label>
         <input id="node-input-date" class="weather-time-input" type="date" style="width:145px">
-        <label for="weather-forecast-time"><i class="fa fa-clock-o"></i> Time (UTC)</label>
+        <label for="weather-forecast-time"><i class="fa fa-clock-o"></i> <span data-i18n="forecastio.label.time"></span></label>
         <input id="node-input-time" class="weather-time-input" type="time" style="width:75px">   
     </div>
        
     <div class="form-row" id="weather-coordinates">
-        <label for=""><i class="fa fa-location-arrow"></i> Latitude</label><input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom: 7px" placeholder="Latitude">
+        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.latitude"></span></label><input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom: 7px" data-i18n="[placeholder]forecastio.placeholder.latitude">
         </br>
-        <label for=""><i class="fa fa-location-arrow"></i> Longitude</label><input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px" placeholder="Longitude">
+        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.longitude"></span></label><input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px" data-i18n="[placeholder]forecastio.placeholder.longitude">
     </div>
 </script>
 

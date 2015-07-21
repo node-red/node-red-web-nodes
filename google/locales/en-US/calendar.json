@@ -1,0 +1,42 @@
+{
+    "calendar": {
+        "label": {
+            "google-calendar": "Google Calendar",
+            "google": "Google",
+            "calendar": "Calendar",
+            "inject-message": "Inject message",
+            "the": "the",
+            "each-event": "of each event.",
+            "option_at": "at",
+            "option_before": "before",
+            "option_after": "after",
+            "option_start": "start",
+            "option_end": "end",
+            "seconds": "seconds",
+            "minutes": "minutes",
+            "hours": "hours",
+            "days": "days",
+            "before": "before",
+            "start": "start",
+            "name": "Name"
+        },
+        "status": {
+            "querying": "querying",
+            "invalid-calendar": "invalid calendar",
+            "next-event": "querying next event",
+            "no-event": "no event",
+            "creating": "creating",
+            "failed": "failed"
+        },
+        "warn": {
+            "no-credentials": "Missing google credentials"
+        },
+        "error": {
+            "invalid-calendar": "invalid calendar",
+            "error": "Error: __error__",
+            "no-event": "Error: no event found",
+            "fetch-failed": "failed to fetch calendar list: __message__",
+            "error-details": "Error __code__: __message__"
+        }
+    }
+}

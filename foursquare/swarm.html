@@ -17,11 +17,11 @@
 <!-- Swarm input node -->
 <script type="text/x-red" data-template-name="swarm in">
     <div class="form-row">
-        <label for="node-input-foursquare"><i class="fa fa-user"></i> Log in as</label>
+        <label for="node-input-foursquare"><i class="fa fa-user"></i> <span data-i18n="swarm.label.loginas"></span></label>
         <input type="text" id="node-input-foursquare">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="swarm.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
 </script>
@@ -48,7 +48,7 @@
         outputs:1,
         icon: "swarm.png",
         label: function() {
-            return this.name||'swarm';
+            return this.name||this._("swarm.label.swarm");
         }
     });
 </script>
@@ -56,17 +56,17 @@
 <!-- swarm query node -->
 <script type="text/x-red" data-template-name="swarm">
     <div class="form-row">
-        <label for="node-input-foursquare"><i class="fa fa-user"></i> Log in as</label>
+        <label for="node-input-foursquare"><i class="fa fa-user"></i> <span data-i18n="swarm.label.loginas"></span></label>
         <input type="text" id="node-input-foursquare">
     </div>
     <div class="form-row">
-        <label for="node-input-request">&nbsp;<i class="fa fa-filter"></i> Request</label>
+        <label for="node-input-request">&nbsp;<i class="fa fa-filter"></i> <span data-i18n="swarm.label.request"></span></label>
         <select id="node-input-request" style="width:73% !important">
-             <option value="get-most-recent-checkin">get most recent check in</option>
+             <option value="get-most-recent-checkin" data-i18n="swarm.label.recent"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="swarm.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
 </script>
@@ -97,7 +97,7 @@
         outputs:1,
         icon: "swarm.png",
         label: function() {
-            return this.name||'swarm';
+            return this.name||this._("swarm.label.swarm");
         }
     });
 </script>

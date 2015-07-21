@@ -17,29 +17,29 @@
 <script type="text/x-red" data-template-name="box-credentials">
     <div id="node-config-box-client-keys">
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>1.</b> Create your own app at <a href="https://app.box.com/developers/" target="_blank" style="text-decoration:underline;">Box</a></p>
+            <p style="margin-top: 10px;"><b>1.</b> <span data-i18n="box.label.create"></span> <a href="https://app.box.com/developers/" target="_blank" style="text-decoration:underline;">Box</a></p>
         </div>
         <div class="form-tips" id="node-config-box-tooltip">
         </div>
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>2.</b> Copy the project credentials here:</p>
+            <p style="margin-top: 10px;"><b>2.</b> <span data-i18n="box.label.copy"></span>:</p>
         </div>
         <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientId"><i class="fa fa-user"></i> Client Id</label>
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientId"><i class="fa fa-user"></i> <span data-i18n="box.label.clientid"></span></label>
             <input type="password" id="node-config-input-clientId">
         </div>
         <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientSecret"><i class="fa fa-key"></i> Secret</label>
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientSecret"><i class="fa fa-key"></i> <span data-i18n="box.label.secret"></span></label>
             <input type="password" id="node-config-input-clientSecret">
         </div>
         <div class="form-row">
            <label>&nbsp;</label>
-           <a class="btn" id="node-config-start-auth" href="#" target="_blank">Authenticate with Box</a>
+           <a class="btn" id="node-config-start-auth" href="#" target="_blank"><span data-i18n="box.label.authenticate"></span></a>
         </div>
     </div>
     <div id="node-config-box">
         <div class="form-row">
-            <label><i class="fa fa-user"></i> Box User</label><span id="node-config-box-displayName" class="input-xlarge uneditable-input"></span>
+            <label><i class="fa fa-user"></i> <span data-i18n="box.label.boxuser"></span></label><span id="node-config-box-displayName" class="input-xlarge uneditable-input"></span>
         </div>
         <input type="hidden" id="node-config-input-displayName">
     </div>
@@ -71,7 +71,8 @@
                            location.hostname + 
                            (location.port? ":"+location.port:"")+
                            pathname + "box-credentials/auth/callback";
-            $("#node-config-box-tooltip").html("<p>Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>"+callback+"</code>");
+            var tip = this._("box.tip.redirect",{callback:callback});
+            $("#node-config-box-tooltip").html(tip);
 
             function updateBoxAuthButton() {
                 var v1 = $("#node-config-input-clientId").val();
@@ -143,16 +144,16 @@
 
 <script type="text/x-red" data-template-name="box in">
     <div class="form-row">
-        <label for="node-input-box"><i class="fa fa-user"></i> Box</label>
+        <label for="node-input-box"><i class="fa fa-user"></i> <span data-i18n="box.label.box"></span></label>
         <input type="text" id="node-input-box">
     </div>
     <div class="form-row node-input-filepattern">
-         <label for="node-input-filepattern"><i class="fa fa-file"></i> Filename Pattern</label>
-         <input type="text" id="node-input-filepattern" placeholder="Filepattern">
+         <label for="node-input-filepattern"><i class="fa fa-file"></i> <span data-i18n="box.label.pattern"></span></label>
+         <input type="text" id="node-input-filepattern" data-i18n="[placeholder]box.placeholder.pattern">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="box.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]box.placeholder.name">
     </div>
 </script>
 
@@ -188,16 +189,16 @@
 
 <script type="text/x-red" data-template-name="box">
     <div class="form-row">
-        <label for="node-input-box"><i class="fa fa-user"></i> Box</label>
+        <label for="node-input-box"><i class="fa fa-user"></i> <span data-i18n="box.label.box"></span></label>
         <input type="text" id="node-input-box">
     </div>
     <div class="form-row node-input-filename">
-         <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
-         <input type="text" id="node-input-filename" placeholder="Filename">
+         <label for="node-input-filename"><i class="fa fa-file"></i> <span data-i18n="box.label.filename"></span></label>
+         <input type="text" id="node-input-filename" data-i18n="[placeholder]box.placeholder.filename">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="box.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]box.placeholder.name">
     </div>
 </script>
 
@@ -225,20 +226,20 @@
 
 <script type="text/x-red" data-template-name="box out">
     <div class="form-row">
-        <label for="node-input-box"><i class="fa fa-user"></i> Box</label>
+        <label for="node-input-box"><i class="fa fa-user"></i> <span data-i18n="box.label.box"></span></label>
         <input type="text" id="node-input-box">
     </div>
     <div class="form-row node-input-filename">
-         <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
-         <input type="text" id="node-input-filename" placeholder="Filename">
+         <label for="node-input-filename"><i class="fa fa-file"></i> <span data-i18n="box.label.filename"></span></label>
+         <input type="text" id="node-input-filename" data-i18n="[placeholder]box.placeholder.filename">
     </div>
     <div class="form-row node-input-localFilename">
-         <label for="node-input-localFilename"><i class="fa fa-file"></i> Local Filename</label>
-         <input type="text" id="node-input-localFilename" placeholder="Local Filename">
+         <label for="node-input-localFilename"><i class="fa fa-file"></i> <span data-i18n="box.label.local"></span></label>
+         <input type="text" id="node-input-localFilename" data-i18n="[placeholder]box.placeholder.local">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="box.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]box.placeholder.name">
     </div>
 </script>
 

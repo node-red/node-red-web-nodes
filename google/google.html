@@ -17,29 +17,29 @@
 <script type="text/x-red" data-template-name="google-credentials">
     <div id="node-config-google-client-keys">
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>1.</b> Create your own project by following these <a href="https://developers.google.com/api-client-library/javascript/start/start-js#Getkeysforyourapplication" target="_blank" style="text-decoration:underline;">instructions</a></p>
+            <p style="margin-top: 10px;"><b>1.</b> <span data-i18n="google.label.create"></span> <a href="https://developers.google.com/api-client-library/javascript/start/start-js#Getkeysforyourapplication" target="_blank" style="text-decoration:underline;"><span data-i18n="google.label.instructions"></span></a></p>
         </div>
         <div class="form-tips" id="node-config-google-tooltip">
         </div>
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>2.</b> Copy the project credentials here:</p>
+            <p style="margin-top: 10px;"><b>2.</b> <span data-i18n="google.label.copy"></span>:</p>
         </div>
         <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientId"><i class="fa fa-user"></i> Client Id</label>
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientId"><i class="fa fa-user"></i> <span data-i18n="google.label.clientid"></span></label>
             <input type="password" id="node-config-input-clientId">
         </div>
         <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientSecret"><i class="fa fa-key"></i> Secret</label>
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientSecret"><i class="fa fa-key"></i> <span data-i18n="google.label.secret"></span></label>
             <input type="password" id="node-config-input-clientSecret">
         </div>
         <div class="form-row">
            <label>&nbsp;</label>
-           <a class="btn" id="node-config-start-auth" href="#" target="_blank">Authenticate with Google</a>
+           <a class="btn" id="node-config-start-auth" href="#" target="_blank"><span data-i18n="google.label.authenticate"></span></a>
         </div>
     </div>
     <div id="node-config-google">
         <div class="form-row">
-            <label><i class="fa fa-user"></i> Google User</label><span id="node-config-google-displayName" class="input-xlarge uneditable-input"></span>
+            <label><i class="fa fa-user"></i> <span data-i18n="google.label.googleuser"></span></label><span id="node-config-google-displayName" class="input-xlarge uneditable-input"></span>
         </div>
         <input type="hidden" id="node-config-input-displayName">
     </div>
@@ -58,7 +58,7 @@
             clientSecret: { type: "password"}
         },
         label: function() {
-            return this.displayName || 'Google'; // TODO: fix this
+            return this.displayName || this._("google.label.google"); // TODO: fix this
         },
         exportable: false,
         oneditprepare: function() {
@@ -70,6 +70,7 @@
             
             var privateIPRegex = /(^10\.)|(^172\.1[6-9]\.)|(^172\.2[0-9]\.)|(^172\.3[0-1]\.)|(^192\.168\.)/;
             var callback;
+            var tip;
             if(privateIPRegex.test(location.hostname)) { // if private IP has been detected
                 var dummyDomain = "node-red.example.com";
                 var actualIP = location.hostname;
@@ -77,13 +78,15 @@
                            dummyDomain +
                            (location.port?":"+location.port:"")+
                            pathname + "google-credentials/auth/callback";
-                $("#node-config-google-tooltip").html("<p>It appears you are running on a private IP address that the Google service cannot reach. Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>"+callback+"</code><p></p><p>You will need to edit your <u><a href=\"http://en.wikipedia.org/wiki/Hosts_(file)\">hosts file</a></u> and add an entry for "+dummyDomain +" that points to " +actualIP +" .</p><p>You also need to enable the Google+ API for your new project in the Google Developers Console.</p>");
+                tip = this._("google.tip.privateip", {callback: callback, dummyDomain: dummyDomain, actualIP: actualIP});
+                $("#node-config-google-tooltip").html(tip);
             } else {
                 callback = location.protocol + "//" +
                            location.hostname +
                            (location.port?":"+location.port:"")+
                            pathname + "google-credentials/auth/callback";
-                $("#node-config-google-tooltip").html("<p>Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>"+callback+"</code><p></p><p>You also need to enable the Google+ API for your new project in the Google Developers Console.</p>");
+                tip = this._("google.tip.configure", {callback: callback});
+                $("#node-config-google-tooltip").html(tip);
             }
 
             function updateGoogleAuthButton() {
@@ -156,24 +159,13 @@
 
 <script type="text/x-red" data-template-name="google-api-config">
     <div class="form-row">
-        <label for="node-config-input-key"><i class="fa fa-bookmark"></i>API key</label>
+        <label for="node-config-input-key"><i class="fa fa-bookmark"></i><span data-i18n="google.label.apikey"></span></label>
         <input class="input-append-left" type="password" id="node-config-input-key" style="width: 40%;" >
     </div>
     <div class="form-tips">
-        To obtain these credentials, visit the <a
-        href="https://console.developers.google.com/">Google Developer Console</a>.
-        Once signed up:
-        <ol>
-           <li>click "Create project",</li>
-           <li>select "API & auth",</li>
-           <li>select "Credentials",</li>
-           <li>click "Create new Key",</li>
-           <li>select "Server key",</li>
-           <li>enter IP address(es) to limit access or leave blank,</li>
-           <li>click "Create"</li>
-        </ol>
-        <p>The subsequent app page will contain the new API key to be copied
-        here.</p>
+        <span data-i18n="[html]google.tip.api1"></span>
+        <span data-i18n="[html]google.tip.api2"></span>
+        <span data-i18n="[html]google.tip.api3"></span>
     </div>
 </script>
 
@@ -186,7 +178,7 @@
             key: {type: "password",required:true},
         },
         label: function() {
-            return 'Google API';
+            return this._("google.label.googleapi");
         },
         exportable: false,
     });

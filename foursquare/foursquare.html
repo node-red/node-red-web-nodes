@@ -17,29 +17,29 @@
 <script type="text/x-red" data-template-name="foursquare-credentials">
     <div id="node-config-foursquare-app-keys">
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>1.</b> Create your own app at <a href="https://foursquare.com/developers/apps" target="_blank" style="text-decoration:underline;">foursquare.com</a></p>
+            <p style="margin-top: 10px;"><b>1.</b> <span data-i18n="foursquare.label.create"></span> <a href="https://foursquare.com/developers/apps" target="_blank" style="text-decoration:underline;">foursquare.com</a></p>
         </div>
         <div class="form-tips" id="node-config-foursquare-tooltip">
         </div>
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>2.</b> Copy the app details here:</p>
+            <p style="margin-top: 10px;"><b>2.</b> <span data-i18n="foursquare.label.copy"></span>:</p>
         </div>
         <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_id"><i class="fa fa-user"></i> Client ID</label>
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_id"><i class="fa fa-user"></i> <span data-i18n="foursquare.label.clientid"></span></label>
             <input type="password" id="node-config-input-client_id">
         </div>
         <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_secret"><i class="fa fa-key"></i> Client Secret</label>
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_secret"><i class="fa fa-key"></i> <span data-i18n="foursquare.label.clientsecret"></span></label>
             <input type="password" id="node-config-input-client_secret">
         </div>
         <div class="form-row">
             <label>&nbsp;</label>
-            <a class="btn" id="node-config-start-auth" href="#" target="_blank">Authenticate with Foursquare</a>
+            <a class="btn" id="node-config-start-auth" href="#" target="_blank"><span data-i18n="foursquare.label.authenticate"></span></a>
         </div>
     </div>
     <div id="node-config-foursquare-user">
         <div class="form-row">
-            <label><i class="fa fa-user"></i> Foursquare User</label><span id="node-config-foursquare-displayname" class="input-xlarge uneditable-input"></span>
+            <label><i class="fa fa-user"></i> <span data-i18n="foursquare.label.foursquareuser"></span></label><span id="node-config-foursquare-displayname" class="input-xlarge uneditable-input"></span>
         </div>
         <input type="hidden" id="node-config-input-displayname">
     </div>
@@ -73,7 +73,8 @@
                                   location.hostname + 
                                   (location.port?":"+location.port:"")+
                                   pathname + "foursquare-credentials";
-            $("#node-config-foursquare-tooltip").html("<p>Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>"+callback+"</code>");
+            var redirect = this._("foursquare.tip.redirect", {callback:callback});
+            $("#node-config-foursquare-tooltip").html(redirect);
             
             function updateFoursquareAuthButton() {
                 var v1 = $("#node-config-input-client_id").val();
@@ -156,39 +157,39 @@
 <!-- foursquare query node -->
 <script type="text/x-red" data-template-name="foursquare">
     <div class="form-row">
-        <label for="node-input-foursquare"><i class="fa fa-user"></i> Log in as</label>
+        <label for="node-input-foursquare"><i class="fa fa-user"></i> <span data-i18n="foursquare.label.loginas"></span></label>
         <input type="text" id="node-input-foursquare">
     </div>
     <div class="form-row">
-        <label for="node-input-section">&nbsp;<i class="fa fa-filter"></i> Explore</label>
-        recommended <select id="node-input-section" style="width:30% !important">
+        <label for="node-input-section">&nbsp;<i class="fa fa-filter"></i> <span data-i18n="foursquare.label.explore"></span></label>
+        <span data-i18n="foursquare.label.recommended"></span> <select id="node-input-section" style="width:30% !important">
              <option value="empty"></option>             
-             <option value="food">food venues</option>
-             <option value="drinks">drink venues</option>
-             <option value="coffee">coffee shops</option>
-             <option value="shops">shops</option>
-             <option value="arts">cultural venues</option>
-             <option value="outdoors">outdoor venues</option>
-             <option value="sights">sights</option>
-             <option value="all">venues</option>
-        </select>&nbsp;nearby 
+             <option value="food" data-i18n="foursquare.label.food"></option>
+             <option value="drinks" data-i18n="foursquare.label.drinks"></option>
+             <option value="coffee" data-i18n="foursquare.label.coffee"></option>
+             <option value="shops" data-i18n="foursquare.label.shops"></option>
+             <option value="arts" data-i18n="foursquare.label.arts"></option>
+             <option value="outdoors" data-i18n="foursquare.label.outdoors"></option>
+             <option value="sights" data-i18n="foursquare.label.sights"></option>
+             <option value="all" data-i18n="foursquare.label.all"></option>
+        </select>&nbsp;<span data-i18n="foursquare.label.nearby"></span>
      </div>
     <div class="form-row">
-        <label>&nbsp;</label>which are open
+        <label>&nbsp;</label><span data-i18n="foursquare.label.open"></span>
         <select id="node-input-openday" style='width:50% !important'>
-          <option value="today">today</option>
-          <option value="any">on any day of the week</option></select>
+          <option value="today" data-i18n="foursquare.label.today"></option>
+          <option value="any" data-i18n="foursquare.label.anyday"></option></select>
     </div>
     <div class="form-row">
-        <label>&nbsp;</label>at
+        <label>&nbsp;</label><span data-i18n="foursquare.label.at"></span>
           <select id="node-input-opentime" style='width:50% !important'>
-          <option value="currenttime">the current time of day</option>
-          <option value="any">any time of day</option>
+          <option value="currenttime" data-i18n="foursquare.label.currenttime"></option>
+          <option value="any" data-i18n="foursquare.label.anytime"></option>
         </select>
     </div>
 
     <div class="form-row">
-        <label for="node-input-outputnumber"><i class="fa fa-sign-out"></i> Output</label>
+        <label for="node-input-outputnumber"><i class="fa fa-sign-out"></i> <span data-i18n="foursquare.label.output"></span></label>
         <select id="node-input-outputnumber" style="width:15% !important">
              <option value="1">1</option>             
              <option value="10">10</option>
@@ -197,14 +198,14 @@
              <option value="40">40</option>
              <option value="50">50</option>
         </select>
-        result<span id="node-input-outputnumber-plural">s</span>
-        as <select id="node-input-outputas" style='width:40% !important'>
-          <option value="multiple">multiple messages</option>
-          <option value="single">a single message</option>
+        <span data-i18n="foursquare.label.resultas"></span>&nbsp;
+        <select id="node-input-outputas" style='width:40% !important'>
+          <option value="multiple" data-i18n="foursquare.label.multiple"></option>
+          <option value="single" data-i18n="foursquare.label.single"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="foursquare.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
 </script>
@@ -282,19 +283,7 @@
         outputs:1,
         icon: "foursquare.png",
         label: function() {
-            return this.name||'foursquare';
-        },
-        oneditprepare: function() {
-            var updateOptions = function() {
-                var outputnumber = $("#node-input-outputnumber option:selected").val();
-                if (outputnumber == "1") {
-                    $("#node-input-outputnumber-plural").hide();
-                } else {
-                    $("#node-input-outputnumber-plural").show();
-                }
-            };
-            updateOptions();
-            $("#node-input-outputnumber").change(updateOptions);
+            return this.name||this._("foursquare.label.foursquare");
         }
     });
 })();

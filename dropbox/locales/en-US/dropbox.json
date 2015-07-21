@@ -1,0 +1,44 @@
+{
+    "dropbox": {
+        "label": {
+            "dropbox": "Dropbox",
+            "pattern": "Filename Pattern",
+            "name": "Name",
+            "filename": "Filename",
+            "local": "Local Filename",
+            "appkey": "App Key",
+            "appsecret": "App Secret",
+            "accesstoken": "Access Token"
+        },
+        "placeholder": {
+            "pattern": "Filepattern",
+            "name": "Name",
+            "filename": "Filename",
+            "local": "Local Filename"
+        },
+        "tip": {
+            "cred1": "To obtain these credentials, visit the <i><a href='https://www.dropbox.com/developers' target='_new'>Dropbox developer home</a></i>.<br><br>Once signed up:",
+            "cred2": "<ol><li>click 'Create app',</li><li>select 'Dropbox API app',</li><li>select 'Files and datastores',</li><li>choose an appropriate answer as to whether your node should be limited to its own folder or given full access. (This can be changed later so choose 'Yes' to restrict the application while testing might be a good idea.)</li><li>choose an app name</li><li>click 'Create app'.</li></ol>",
+            "cred3": "The subsequent app page will contain the App key, App secret and a 'Generate' button to produce a suitable 'access token'."
+        },
+        "status": {
+            "initializing": "initializing",
+            "failed": "failed",
+            "checking-for-changes": "checking for changes",
+            "downloading": "downloading",
+            "checking-credentials": "checking credentials",
+            "access-denied": "access denied",
+            "uploading": "uploading"
+        },
+        "warn": {
+            "missing-credentials": "Missing dropbox credentials"
+        },
+        "error": {
+            "initialization-failed": "initialization failed __err__",
+            "change-fetch-failed": "failed to fetch changes __err__",
+            "no-filename": "No filename specified",
+            "download-failed": "download failed __err__",
+            "credentials-error": "Error verifying credentials: __err__"
+        }
+    }
+}

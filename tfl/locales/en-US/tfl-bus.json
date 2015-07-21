@@ -1,0 +1,45 @@
+{
+    "tfl-bus": {
+        "label": {
+            "tfl-bus": "TfL Bus",
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "radius": "Radius (m)",
+            "find": "Find bus stops",
+            "select": "Select Stop",
+            "findfirst": "Please find a bus stop first",
+            "line": "Line",
+            "selectfirst": "Please select a bus stop first",
+            "name": "Name"
+        },
+        "placeholder": {
+            "latitude": "Latitude of stop",
+            "longitude": "Longitude of stop",
+            "radius": "Search radius in metres",
+            "name": "Name"
+        },
+        "tip": {
+            "signup": "<p>Before using this node please sign up to <code><a href=https://api-portal.tfl.gov.uk/login target=\"_blank\" style=\"text-decoration:underline;\">Transport for London</a></code><br> and accept the terms and conditions to gain access to the live feeds.</p>"
+        },
+        "html": {
+            "no-buses-departing": "No buses currently departing from the above stop. Please find alternative options.",
+            "to": "to",
+            "towards": "towards"
+        },
+        "uiwarn": {
+            "server-error": "TfL's servers have returned an error to us. The node might not work correctly. For more details, please check the console.",
+            "connection-error": "An error occurred when connecting to TfL. The node might not work correctly. For more details, please check the console.",
+            "latitude-not-a-number": "Latitude provided is not a number, please provide a valid number.",
+            "longitude-not-a-number": "Longitude provided is not a number, please provide a valid number.",
+            "radius-not-a-number": "Radius provided is not a number, please provide a valid number.",
+            "invalid-radius": "Radius provided is invalid. Please use a positive whole number.",
+            "latitude-out-of-range": "Latitude provided is out of range. Please revise your values.",
+            "longitude-out-of-range": "Latitude provided is out of range. Please revise your values.",
+            "no-bus-stops": "No bus stops found with the given parameters, please provide different values."
+        },
+        "error": {
+            "error": "ERROR: __error__",
+            "no-bus-stops": "No bus stops or bus line numbers have been configured."
+        }
+    }
+}

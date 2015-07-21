@@ -64,7 +64,7 @@ module.exports = function(RED) {
         this.on("input", function(msg) {
             var credentials = nodeCredentials && nodeCredentials.accesstoken ? nodeCredentials : msg.credentials || {};
             if (!credentials.accesstoken) {
-                node.error("No access token available",msg);
+                node.error(RED._("foursquare.error.no-accesstoken"),msg);
                 return;
             }
             if (msg.location.lat && msg.location.lon) {
@@ -82,12 +82,12 @@ module.exports = function(RED) {
                         node.send(msg);
                     });
                 } else {
-                    node.error("problem with node input: section is not defined correctly",msg);
-                    node.status({fill:"red",shape:"ring",text:"failed"});
+                    node.error(RED._("foursquare.error.section-not-defined"),msg);
+                    node.status({fill:"red",shape:"ring",text:RED._("foursquare.status.failed")});
                 }
             } else {
-                node.error("problem with node input: latitude and/or longitude not set",msg);
-                node.status({fill:"red",shape:"ring",text:"failed"});
+                node.error(RED._("foursquare.error.lat_lon-not-set"),msg);
+                node.status({fill:"red",shape:"ring",text:RED._("foursquare.status.failed")});
             }
         });
      }
@@ -98,7 +98,7 @@ module.exports = function(RED) {
         if (credentials && credentials.clientid && credentials.clientsecret && credentials.accesstoken) {
             return true;
         } else {
-            node.warn("no credentials for node");
+            node.warn(RED._("foursquare.warn.no-credentials"));
             return false;
         }
     }
@@ -119,12 +119,12 @@ module.exports = function(RED) {
         request.get(apiUrl,function(err, httpResponse, body) {
             if (err) {
                 node.error(err.toString());
-                node.status({fill:"red",shape:"ring",text:"failed"});
+                node.status({fill:"red",shape:"ring",text:RED._("foursquare.status.failed")});
             } else {
                 var result = JSON.parse(body);
                 if (result.meta.code != 200) {
-                    node.error("Error code: " + result.meta.code + ", errorDetail: " + result.meta.errorDetail,msg);
-                    node.status({fill:"red",shape:"ring",text:"failed"});
+                    node.error(RED._("foursquare.error.errorcode", {metaCode: result.meta.code, errorDetail: result.meta.errorDetail}), msg);
+                    node.status({fill:"red",shape:"ring",text:RED._("foursquare.status.failed")});
                     return;
                 } else {
                     if (result.response.groups[0].items.length !== 0) {
@@ -159,8 +159,8 @@ module.exports = function(RED) {
                             callback([msgs]);
                         } else {
                             // shouldn't ever get here
-                            node.error("Incorrect number of messages to output or incorrect choice of how to output them",msg);
-                            node.status({fill:"red",shape:"ring",text:"failed"});
+                            node.error(RED._("foursquare.error.incorrect-number"),msg);
+                            node.status({fill:"red",shape:"ring",text:RED._("foursquare.status.failed")});
                         }
                     
                   } else {
@@ -193,7 +193,7 @@ module.exports = function(RED) {
     
     RED.httpAdmin.get('/foursquare-credentials/auth', function(req, res){
         if (!req.query.clientid || !req.query.clientsecret || !req.query.id || !req.query.callback) {
-            return res.status(400).send('ERROR: request does not contain the required parameters');
+            return res.status(400).send(RED._("foursquare.error.no-parameters"));
         }
         var nodeid = req.query.id;
         
@@ -202,7 +202,7 @@ module.exports = function(RED) {
         credentials.clientsecret = req.query.clientsecret || credentials.clientsecret;
 
         if (!credentials.clientid || !credentials.clientsecret) {
-            return res.status(400).send('ERROR: client ID and client secret are not defined');
+            return res.status(400).send(RED._("foursquare.error.id_secret-not-defined"));
         }
         var csrfToken = crypto.randomBytes(18).toString('base64').replace(/\//g, '-').replace(/\+/g, '_');
         res.cookie('csrf', csrfToken);
@@ -217,7 +217,7 @@ module.exports = function(RED) {
 
     RED.httpAdmin.get('/foursquare-credentials/auth/callback', function(req, res){
         if (req.query.error) {
-            return res.send("ERROR: " + req.query.error + ": " + req.query.error_description);
+            return res.send(RED._("foursquare.error.querry-error", {queryError: req.query.error, description: req.query.error_description}));
         }
         var state = req.query.state.split(":");
         var nodeid = state[0];
@@ -225,10 +225,10 @@ module.exports = function(RED) {
         var credentials = RED.nodes.getCredentials(nodeid);
         
         if (!credentials || !credentials.clientid || !credentials.clientsecret) {
-            return res.status(400).send('ERROR: no credentials - should never happen');
+            return res.status(400).send(RED._("foursquare.error.no-credentials"));
         }
         if(state[1]  !== credentials.csrftoken) {
-            return res.status(401).send('CSRF token mismatch, possible cross-site request forgery attempt');
+            return res.status(401).send(RED._("foursquare.error.token-mismatch"));
         }
         
         var clientid = credentials.clientid;
@@ -244,24 +244,18 @@ module.exports = function(RED) {
                      {redirect_uri: callback, grant_type : 'authorization_code'},
                      function(error, oauth_access_token, oauth_refresh_token, results){
                          if (error) {
-                             var resp = '<h2>Oh no!</h2>'+
-                             '<p>Something went wrong with the authentication process. The following error was returned:</p>'+
-                             '<p><b>'+error.statusCode+'</b>: '+error.data+'</p>';
+                             var resp = RED._("foursquare.error.oauth-error-status", {statusCode: error.statusCode, errorData: error.data});
                              res.send(resp);
                          } else {
                              var apiUrl = "https://api.foursquare.com/v2/users/self?oauth_token=" + oauth_access_token  + "&v=20141016";
                              var r = request.get(apiUrl,function(err, httpResponse, body) {
                                  if (err) {
-                                     var resp = '<h2>Oh no!</h2>'+
-                                     '<p>Something went wrong with the authentication process. The following error was returned:</p>'+
-                                     '<p><b>'+err.statusCode+'</b>: '+err.data+'</p>';
+                                     var resp = RED._("foursquare.error.oauth-error-status", {statusCode: error.statusCode, errorData: error.data});
                                      res.send(resp);
                                  } else {
                                      var result = JSON.parse(body);
                                      if (result.meta.code != 200) {
-                                         var message = '<h2>Oh no!</h2>'+
-                                         '<p>Something went wrong with the authentication process. Http return code:</p>'+
-                                         '<p><b>'+result.meta.code+'</b></p>';
+                                         var message = RED._("foursquare.error.oauth-error-meta", {metaCode: result.meta.code});
                                          res.send(message);
                                      } else {
                                          credentials = {};
@@ -270,7 +264,7 @@ module.exports = function(RED) {
                                          credentials.clientsecret = clientsecret;
                                          credentials.accesstoken = oauth_access_token;
                                          RED.nodes.addCredentials(nodeid,credentials);
-                                         res.send("<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>");                                         
+                                         res.send(RED._("foursquare.message.authorized"));
                                      }
                                  }
                              });              

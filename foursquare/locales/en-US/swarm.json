@@ -1,0 +1,21 @@
+{
+    "swarm": {
+        "label": {
+            "swarm": "swarm",
+            "loginas": "Log in as",
+            "request": "Request",
+            "recent": "get most recent check in",
+            "name": "Name"
+        },
+        "status": {
+            "failed": "failed"
+        },
+        "warn": {
+            "no-credentials": "no credentials for node"
+        },
+        "error": {
+            "no-accesstoken": "No access token available",
+            "errorcode": "Error code: __metaCode__, errorDetail: __errorDetail__"
+        }
+    }
+}

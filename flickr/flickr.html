@@ -17,27 +17,27 @@
 <script type="text/x-red" data-template-name="flickr-credentials">
     <div id="node-config-flickr-app-keys">
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>1.</b> Create your own app at <a href="https://www.flickr.com/services/apps/create/apply/" target="_blank" style="text-decoration:underline;">flickr.com</a></p>
+            <p style="margin-top: 10px;"><b>1.</b> <span data-i18n="flickr.label.create"></span> <a href="https://www.flickr.com/services/apps/create/apply/" target="_blank" style="text-decoration:underline;">flickr.com</a></p>
         </div>
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>2.</b> Copy the app details here:</p>
+            <p style="margin-top: 10px;"><b>2.</b> <span data-i18n="flickr.label.copy"></span>:</p>
         </div>
         <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_key"><i class="fa fa-user"></i> Key</label>
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_key"><i class="fa fa-user"></i> <span data-i18n="flickr.label.key"></span></label>
             <input type="password" id="node-config-input-client_key">
         </div>
         <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_secret"><i class="fa fa-key"></i> Secret</label>
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_secret"><i class="fa fa-key"></i> <span data-i18n="flickr.label.secret"></span></label>
             <input type="password" id="node-config-input-client_secret">
         </div>
         <div class="form-row">
            <label>&nbsp;</label> 
-           <a class="btn" id="node-config-start-auth" href="#" target="_blank">Authenticate with Flickr</a>
+           <a class="btn" id="node-config-start-auth" href="#" target="_blank"><span data-i18n="flickr.label.authenticate"></span></a>
         </div>
     </div>
     <div id="node-config-flickr-user">
         <div class="form-row">
-            <label><i class="fa fa-user"></i> Flickr ID</label><span id="node-config-flickr-username" class="input-xlarge uneditable-input"></span>
+            <label><i class="fa fa-user"></i> <span data-i18n="flickr.label.flickrid"></span></label><span id="node-config-flickr-username" class="input-xlarge uneditable-input"></span>
         </div>
         <input type="hidden" id="node-config-input-username">
     </div>
@@ -148,28 +148,28 @@
 
 <script type="text/x-red" data-template-name="flickr out">
     <div class="form-row">
-        <label for="node-input-flickr"><i class="fa fa-user"></i> Flickr</label>
+        <label for="node-input-flickr"><i class="fa fa-user"></i> <span data-i18n="flickr.label.flickr"></span></label>
         <input type="text" id="node-input-flickr">
     </div>
     <div class="form-row">
-        <label for="node-input-tags"><i class="fa fa-tags"></i> Tags</label>
-        <input type="text" id="node-input-tags" placeholder="space-separated tags to add">
+        <label for="node-input-tags"><i class="fa fa-tags"></i> <span data-i18n="flickr.label.tags"></span></label>
+        <input type="text" id="node-input-tags" data-i18n="[placeholder]flickr.placeholder.tags">
     </div>
     <div class="form-row">
-        <label for="node-input-privacy"><i class="fa fa-unlock-alt"></i> Privacy</label>
+        <label for="node-input-privacy"><i class="fa fa-unlock-alt"></i> <span data-i18n="flickr.label.privacy"></span></label>
         <select id="node-input-privacy">
-            <option value="">User default</option>
-            <option value="p">Public</option>
-            <option value="pr">Private</option>
-            <option value="fr">Friends</option>
-            <option value="fa">Family</option>
-            <option value="frfa">Friends &amp; Family</option>
+            <option value="" data-i18n="flickr.label.default"></option>
+            <option value="p" data-i18n="flickr.label.public"></option>
+            <option value="pr" data-i18n="flickr.label.private"></option>
+            <option value="fr" data-i18n="flickr.label.friends"></option>
+            <option value="fa" data-i18n="flickr.label.family"></option>
+            <option value="frfa" data-i18n="flickr.label.frfa"></option>
         </select>
     </div>
     
     
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="flickr.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
 </script>
@@ -202,7 +202,7 @@
         icon: "flickr.png",
         align: "right",
         label: function() {
-            return this.name||"Flickr";
+            return this.name||this._("flickr.label.flickr");
         }
     });
 </script>

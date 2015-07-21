@@ -13,75 +13,75 @@
 
 <script type="text/x-red" data-template-name="google plus">
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="plus.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
     <div class="form-row">
-        <label for="node-input-google"><i class="fa fa-user"></i> Google Credentials</label>
+        <label for="node-input-google"><i class="fa fa-user"></i> <span data-i18n="plus.label.credentials"></span></label>
         <input type="text" id="node-input-google">
     </div>
     <br />
     <div class="form-row">
-        <label for="node-input-reqType"><i class="fa fa-tasks"></i> Request Type </label>
+        <label for="node-input-reqType"><i class="fa fa-tasks"></i> <span data-i18n="plus.label.requesttype"></span> </label>
         <select type="text" id="node-input-reqType" style="width:72%;">
-            <option value="people">People</option>
-            <option value="activities">Activities</option>
-            <option value="comments">Comments</option>
+            <option value="people" data-i18n="plus.label.people"></option>
+            <option value="activities" data-i18n="plus.label.activities"></option>
+            <option value="comments" data-i18n="plus.label.comments"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-action"><i class="fa fa-check"></i> Action</label>
+        <label for="node-input-action"><i class="fa fa-check"></i> <span data-i18n="plus.label.action"></span></label>
         <select type="text" id="node-input-action" style="width:72%;">
-            <option class="hideable people activities comments" value="get">Get</option>
-            <option class="hideable people activities" value="search">Search</option>
-            <option class="hideable people activities comments" value="list">List</option>
+            <option class="hideable people activities comments" value="get" data-i18n="plus.label.get"></option>
+            <option class="hideable people activities" value="search" data-i18n="plus.label.search"></option>
+            <option class="hideable people activities comments" value="list" data-i18n="plus.label.list"></option>
         </select>
     </div>
     <br />
     <div class="form-row hideable peopleSearch activitiesSearch">
-        <label for="node-input-query"><i class="fa fa-question"></i> Query</label>
+        <label for="node-input-query"><i class="fa fa-question"></i> <span data-i18n="plus.label.query"></span></label>
         <input type="text" id="node-input-query">
     </div>
     <div class="form-row hideable peopleList activitiesList">
-        <label for="node-input-collection"><i class="fa fa-database"></i> Collection</label>
+        <label for="node-input-collection"><i class="fa fa-database"></i> <span data-i18n="plus.label.collection"></span></label>
         <input type="text" id="node-input-collection">
     </div>
     <div class="form-row hideable peopleGet peopleList activitiesList">
-        <label for="node-input-userId"><i class="fa fa-at"></i> User Id</label>
+        <label for="node-input-userId"><i class="fa fa-at"></i> <span data-i18n="plus.label.userid"></span></label>
         <input type="text" id="node-input-userId">
     </div>
     <div class="form-row hideable activitiesGet commentsList">
-        <label for="node-input-activityId"><i class="fa fa-plane"></i> Activity Id</label>
+        <label for="node-input-activityId"><i class="fa fa-plane"></i> <span data-i18n="plus.label.activityid"></span></label>
         <input type="text" id="node-input-activityId">
     </div>
     <div class="form-row hideable commentsGet">
-        <label for="node-input-commentId"><i class="fa fa-comment"></i> Comment Id</label>
+        <label for="node-input-commentId"><i class="fa fa-comment"></i> <span data-i18n="plus.label.commentid"></span></label>
         <input type="text" id="node-input-commentId">
     </div>
     <div class="form-row hideable peopleSearch activitiesSearch">
-        <label for="node-input-language"><i class="fa fa-language"></i> Language</label>
+        <label for="node-input-language"><i class="fa fa-language"></i> <span data-i18n="plus.label.language"></span></label>
         <input type="text" id="node-input-language">
     </div>
     <div class="form-row hideable peopleSearch peopleList activitiesList activitiesSearch commentsList">
-        <label for="node-input-maxResults"><i class="fa fa-list"></i> Max Results</label>
+        <label for="node-input-maxResults"><i class="fa fa-list"></i> <span data-i18n="plus.label.maxresults"></span></label>
         <input type="text" id="node-input-maxResults">
     </div>
     <div class="form-row hideable peopleList activitiesSearch">
-        <label for="node-input-orderBy"><i class="fa fa-sort"></i> Order by</label>
+        <label for="node-input-orderBy"><i class="fa fa-sort"></i> <span data-i18n="plus.label.orderby"></span></label>
         <select type="text" id="node-input-orderBy" style="width:72%;">
-            <option value="alphabetical">Alphabetical</option>
-            <option value="best">Best</option>
+            <option value="alphabetical" data-i18n="plus.label.alphabetical"></option>
+            <option value="best" data-i18n="plus.label.best"></option>
         </select>
     </div>
     <div class="form-row hideable commentsList">
-        <label for="node-input-sortOrder"><i class="fa fa-sort"></i> Sort Order</label>
+        <label for="node-input-sortOrder"><i class="fa fa-sort"></i> <span data-i18n="plus.label.sortorder"></span></label>
         <select type="text" id="node-input-sortOrder" style="width:72%;">
-            <option value="ascending">Ascending</option>
-            <option value="descending">Descending</option>
+            <option value="ascending" data-i18n="plus.label.ascending"></option>
+            <option value="descending" data-i18n="plus.label.descending"></option>
         </select>
     </div>
     <div class="form-row hideable peopleSearch activitiesList activitiesSearch commentsList">
-        <label for="node-input-pageToken"><i class="fa fa-file-text"></i> Page Token</label>
+        <label for="node-input-pageToken"><i class="fa fa-file-text"></i> <span data-i18n="plus.label.pagetoken"></span></label>
         <input type="text" id="node-input-pageToken">
     </div>
 </script>
@@ -129,7 +129,7 @@
         outputs:1,
         icon: "logo_plus.png",
         label: function() {
-            return this.name||"Google Plus";
+            return this.name||this._("plus.label.plus");
         },
         oneditprepare: function() {
             $("#node-input-reqType").change(function() {

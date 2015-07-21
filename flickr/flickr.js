@@ -54,7 +54,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         this.flickrConfig = RED.nodes.getNode(n.flickr);
         if (!this.flickrConfig) {
-            this.error("Missing flickr credentials");
+            this.error(RED._("flickr.error.missing-credentials"));
             return;
         }
         this.tags = n.tags;
@@ -98,7 +98,7 @@ module.exports = function(RED) {
                         options.is_family = node.is_family;
                     }
                     
-                    node.status({fill:"blue",shape:"dot",text:"uploading"});
+                    node.status({fill:"blue",shape:"dot",text:RED._("flickr.status.uploading")});
 
                     var apiUrl = "https://up.flickr.com/services/upload/";
                     var signedUrl = oa.signUrl(apiUrl+'?'+querystring.stringify(options),
@@ -111,14 +111,14 @@ module.exports = function(RED) {
                     var r = request.post(apiUrl,function(err, httpResponse, body) {
                         if (err) {
                             node.error(err.toString());
-                            node.status({fill:"red",shape:"ring",text:"failed"});
+                            node.status({fill:"red",shape:"ring",text:RED._("flickr.status.failed")});
                         } else {
                             if (body.indexOf('stat="ok"') != -1) {
                                 node.status({});
                             } else {
                                 //TODO: This API only returns XML. Need to parse out error messages
                                 node.error(body,msg);
-                                node.status({fill:"red",shape:"ring",text:"failed"});
+                                node.status({fill:"red",shape:"ring",text:RED._("flickr.status.failed")});
                             }
                         }
                     });
@@ -156,10 +156,7 @@ module.exports = function(RED) {
                 oauth_callback: req.query.callback
         },function(error, oauth_token, oauth_token_secret, results){
             if (error) {
-                var resp = '<h2>Oh no!</h2>'+
-                '<p>Something went wrong with the authentication process. The following error was returned:<p>'+
-                '<p><b>'+error.statusCode+'</b>: '+error.data+'</p>'+
-                '<p>One known cause of this type of failure is if the clock is wrong on system running Node-RED.';
+                var resp = RED._("flickr.error.oautherror",{statusCode: error.statusCode, errorData: error.data});
                 res.send(resp);
             } else {
                 credentials.oauth_token = oauth_token;
@@ -184,7 +181,7 @@ module.exports = function(RED) {
             function(error, oauth_access_token, oauth_access_token_secret, results){
                 if (error){
                     console.log(error);
-                    res.send("Something broke.");
+                    res.send(RED._("flickr.error.something-broke"));
                 } else {
                     credentials = {};
                     credentials.client_key = client_key;
@@ -194,7 +191,7 @@ module.exports = function(RED) {
                     credentials.username = results.username;
                     credentials.user_nsid = results.user_nsid;
                     RED.nodes.addCredentials(req.params.id,credentials);
-                    res.send("<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>");
+                    res.send(RED._("flickr.error.authorized"));
                 }
             }
         );
