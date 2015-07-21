@@ -1,0 +1,35 @@
+{
+    "flickr": {
+        "label": {
+            "flickr": "Flickr",
+            "tags": "Tags",
+            "privacy": "Privacy",
+            "default": "User default",
+            "public": "Public",
+            "private": "Private",
+            "friends": "Friends",
+            "family": "Family",
+            "frfa": "Friends & Family",
+            "name": "Name",
+            "create": "Create your own app at",
+            "copy": "Copy the app details here",
+            "key": "Key",
+            "secret": "Secret",
+            "authenticate": "Authenticate with Flickr",
+            "flickrid": "Flickr ID"
+        },
+        "placeholder": {
+            "tags": "space-separated tags to add"
+        },
+        "status": {
+            "uploading": "uploading",
+            "failed": "failed"
+        },
+        "error": {
+            "missing-credentials": "Missing flickr credentials",
+            "something-broke": "Something went wrong in the authentication process. Please try again.",
+            "oautherror": "<p>Something went wrong with the authentication process. The following error was returned:</p><p><b>__statusCode__</b>: __errorData__</p><p>One known cause of this type of failure is if the clock is wrong on system running Node-RED.</p>",
+            "authorized": "<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>"
+        }
+    }
+}

@@ -17,31 +17,34 @@
 <script type="text/x-red" data-template-name="jawboneup-credentials">
     <div id="node-config-jawboneup-app-keys">
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>1.</b> Create an account on <a href="https://jawbone.com/up/developer/auth/login" target="_blank" style="text-decoration:underline;">Jawbone.com</a>,
-            then sign in via the link under "Account" on the left side of the developer portal 
-            (see <a href="https://jawbone.com/up/developer/faq" target="_blank" style="text-decoration:underline;">Developer FAQ</a>).</p>
+            <p style="margin-top: 10px;">
+                <b>1.</b> <span data-i18n="jawboneup.label.create"></span> <a href="https://jawbone.com/up/developer/auth/login" target="_blank" style="text-decoration:underline;">Jawbone.com</a>
+                <span data-i18n="jawboneup.label.signin"></span><br>
+                <span data-i18n="jawboneup.label.under"></span><br>
+                (<span data-i18n="jawboneup.label.see"></span> <a href="https://jawbone.com/up/developer/faq" target="_blank" style="text-decoration:underline;">Developer FAQ</a>).
+            </p>
         </div>
         <div class="form-tips" id="node-config-jawboneup-tooltip">
         </div>
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>2.</b> Copy the app details here:</p>
+            <p style="margin-top: 10px;"><b>2.</b> <span data-i18n="jawboneup.label.copy"></span>:</p>
         </div>
         <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_id"><i class="fa fa-user"></i> Client Id</label>
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_id"><i class="fa fa-user"></i> <span data-i18n="jawboneup.label.clientid"></span></label>
             <input type="password" id="node-config-input-client_id">
         </div>
         <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-app_secret"><i class="fa fa-key"></i> App Secret</label>
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-app_secret"><i class="fa fa-key"></i> <span data-i18n="jawboneup.label.appsecret"></span></label>
             <input type="password" id="node-config-input-app_secret">
         </div>
         <div class="form-row">
             <label>&nbsp;</label>
-            <a class="btn" id="node-config-start-auth" href="#" target="_blank">Authenticate with Jawbone</a>
+            <a class="btn" id="node-config-start-auth" href="#" target="_blank"><span data-i18n="jawboneup.label.authenticate"></span></a>
         </div>
     </div>
     <div id="node-config-jawboneup-user">
         <div class="form-row">
-            <label><i class="fa fa-user"></i> Jawbone User</label><span id="node-config-jawboneup-displayname" class="input-xlarge uneditable-input"></span>
+            <label><i class="fa fa-user"></i> <span data-i18n="jawboneup.label.jawboneuser"></span></label><span id="node-config-jawboneup-displayname" class="input-xlarge uneditable-input"></span>
         </div>
         <input type="hidden" id="node-config-input-displayname">
     </div>
@@ -75,7 +78,8 @@
                                   location.hostname + 
                                   (location.port?":"+location.port:"")+
                                   pathname + "jawboneup-credentials";
-            $("#node-config-jawboneup-tooltip").html("<p>Please configure the authorized <b>OAuth Redirect URIs</b> of your app to include the following url:</p>\n<code>"+callback+"</code>");
+            var tip = this._("jawboneup.tip.redirect", {callback: callback});
+            $("#node-config-jawboneup-tooltip").html(tip);
             
             function updateJawboneupAuthButton() {
                 var v1 = $("#node-config-input-client_id").val();
@@ -158,31 +162,30 @@
 
 <script type="text/x-red" data-template-name="jawboneup">
     <div class="form-row">
-        <label for="node-input-jawboneup"><i class="fa fa-user"></i> Log in as</label>
+        <label for="node-input-jawboneup"><i class="fa fa-user"></i> <span data-i18n="jawboneup.label.loginas"></span></label>
         <input type="text" id="node-input-jawboneup">
     </div>
     <div class="form-row">
-        <label for="node-input-get">&nbsp;<i class="fa fa-filter"></i> Get</label>
-        the workouts completed since 
+        <label for="node-input-get">&nbsp;<i class="fa fa-filter"></i> <span data-i18n="jawboneup.label.get"></span></label>
+        <span data-i18n="jawboneup.label.workouts"></span>&nbsp;
     </div>
     <div class="form-row">
         <label>&nbsp;</label>
-         <input type="text" id="node-input-starttime" style="width:200px"> (epoch)
+         <input type="text" id="node-input-starttime" style="width:200px"> <span data-i18n="jawboneup.label.epoch"></span>
     </div>
     <div class="form-row">
-        <label for="node-input-outputnumber"><i class="fa fa-sign-out"></i> Output</label>
+        <label for="node-input-outputnumber"><i class="fa fa-sign-out"></i> <span data-i18n="jawboneup.label.output"></span></label>
         <select id="node-input-outputnumber" style="width:15% !important">
              <option value="1">1</option>             
              <option value="10">10</option>
         </select>
-        result<span id="node-input-outputnumber-plural">s</span>
-        as <select id="node-input-outputas" style='width:40% !important'>
-          <option value="multiple">multiple messages</option>
-          <option value="single">a single message</option>
+        <span data-i18n="jawboneup.label.resultas"></span> <select id="node-input-outputas" style='width:40% !important'>
+          <option value="multiple" data-i18n="jawboneup.label.multiple"></option>
+          <option value="single" data-i18n="jawboneup.label.single"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="jawboneup.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
 </script>
@@ -243,19 +246,7 @@ The value set on the node will take precedence over the contents of incoming mes
         outputs:1,
         icon: "up.png",
         label: function() {
-            return this.name||'jawbone up';
-        },
-        oneditprepare: function() {
-            var updateOptions = function() {
-                var outputnumber = $("#node-input-outputnumber option:selected").val();
-                if (outputnumber == "1") {
-                    $("#node-input-outputnumber-plural").hide();
-                } else {
-                    $("#node-input-outputnumber-plural").show();
-                }
-            };
-            updateOptions();
-            $("#node-input-outputnumber").change(updateOptions);
+            return this.name||this._("jawboneup.label.jawboneup");
         }
     });
 </script>

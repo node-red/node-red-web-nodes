@@ -13,50 +13,50 @@
 
 <script type="text/x-red" data-template-name="google geocoding">
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="geocoding.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]geocoding.placeholder.name">
     </div>
     <br />
     <div class="form-row">
-        <label for="node-input-geocodeBy"><i class="fa fa-tasks"></i> Geocode by </label>
+        <label for="node-input-geocodeBy"><i class="fa fa-tasks"></i> <span data-i18n="geocoding.label.geocodeby"></span> </label>
         <select type="text" id="node-input-geocodeBy" style="width:72%;">
-        <option value="address">Address</option>
-        <option value="coordinates">Coordinates</option>
+        <option value="address" data-i18n="geocoding.label.byaddress"></option>
+        <option value="coordinates" data-i18n="geocoding.label.bycoordinates"></option>
         </select>
     </div>
     <br>
     <div class="form-row node-input-geocodeBy-row-address">
-        <label for="node-input-address"><i class="fa fa-globe"></i> Address</label>
-        <input type="text" id="node-input-address" placeholder="Address">
+        <label for="node-input-address"><i class="fa fa-globe"></i> <span data-i18n="geocoding.label.address"></span></label>
+        <input type="text" id="node-input-address" data-i18n="[placeholder]geocoding.placeholder.address">
     </div>
     <div class="form-row node-input-geocodeBy-row-coordinates">
-        <label for="node-input-lat"><i class="fa fa-globe"></i> Latitude</label>
-        <input type="text" id="node-input-lat" placeholder="Latitude">
+        <label for="node-input-lat"><i class="fa fa-globe"></i> <span data-i18n="geocoding.label.latitude"></span></label>
+        <input type="text" id="node-input-lat"  data-i18n="[placeholder]geocoding.placeholder.latitude">
     </div>
     <div class="form-row node-input-geocodeBy-row-coordinates">
-        <label for="node-input-lon"><i class="fa fa-globe"></i> Longitude</label>
-        <input type="text" id="node-input-lon" placeholder="Longitude">
+        <label for="node-input-lon"><i class="fa fa-globe"></i> <span data-i18n="geocoding.label.longitude"></span></label>
+        <input type="text" id="node-input-lon"  data-i18n="[placeholder]geocoding.placeholder.longitude">
     </div>
     <br />
     <div class="form-row">
-        <label for="node-input-googleAPI"><i class="fa fa-user"></i> Google API Key</label>
+        <label for="node-input-googleAPI"><i class="fa fa-user"></i> <span data-i18n="geocoding.label.apikey"></span></label>
         <input type="text" id="node-input-googleAPI">
     </div>
     <div class="form-row">
-        <label for="node-input-bounds"><i class="fa fa-flag"></i> Bounds</label>
-        <input type="text" id="node-input-bounds" placeholder="Bounds">
+        <label for="node-input-bounds"><i class="fa fa-flag"></i> <span data-i18n="geocoding.label.bounds"></span></label>
+        <input type="text" id="node-input-bounds"  data-i18n="[placeholder]geocoding.placeholder.bounds">
     </div>
     <div class="form-row">
-        <label for="node-input-language"><i class="fa fa-language"></i> Language</label>
-        <input type="text" id="node-input-language" placeholder="Language">
+        <label for="node-input-language"><i class="fa fa-language"></i> <span data-i18n="geocoding.label.language"></span></label>
+        <input type="text" id="node-input-language"  data-i18n="[placeholder]geocoding.placeholder.language">
     </div>
     <div class="form-row">
-        <label for="node-input-region"><i class="fa fa-globe"></i> Region</label>
-        <input type="text" id="node-input-region" placeholder="Region">
+        <label for="node-input-region"><i class="fa fa-globe"></i> <span data-i18n="geocoding.label.region"></span></label>
+        <input type="text" id="node-input-region"  data-i18n="[placeholder]geocoding.placeholder.region">
     </div>
     <div class="form-row">
-        <label for="node-input-components">Components</label>
-        <input type="text" id="node-input-components" placeholder="Components">
+        <label for="node-input-components"><span data-i18n="geocoding.label.components"></span></label>
+        <input type="text" id="node-input-components"  data-i18n="[placeholder]geocoding.placeholder.components">
     </div>
 </script>
 
@@ -109,11 +109,11 @@
         icon: "logo_maps.png",
         label: function() {
             if (this.geocodeBy === 'address') {
-                return this.name || "Geocode by Address";
+                return this.name || this._("geocoding.label.geocodeby-address");
             } else if (this.geocodeBy === 'coordinates') {
-                return this.name || "Geocode by Coordinates";
+                return this.name || this._("geocoding.label.geocodeby-coordinates");
             } else {
-                return this.name || "Google Geocoding";
+                return this.name || this._("geocoding.label.geocoding");
             }
         },
         oneditprepare: function() {

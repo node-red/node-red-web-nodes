@@ -16,42 +16,41 @@
 
 <script type="text/x-red" data-template-name="google calendar in">
     <div class="form-row">
-        <label for="node-input-google"><i class="fa fa-user"></i> Google</label>
+        <label for="node-input-google"><i class="fa fa-user"></i> <span data-i18n="calendar.label.google"></span></label>
         <input type="text" id="node-input-google">
     </div>
     <div class="form-row">
-        <label for="node-input-calendar"><i class="fa fa-tag"></i> Calendar</label>
+        <label for="node-input-calendar"><i class="fa fa-tag"></i> <span data-i18n="calendar.label.calendar"></span></label>
         <input type="text" id="node-input-calendar">
     </div>
     <div class="form-row">
-        Inject message
+        <span data-i18n="calendar.label.inject-message"></span>
         <select id="node-input-offsetType" style="width:6em;">
-            <option value="at">at</option>
-            <option value="before">before</option>
-            <option value="after">after</option>
+            <option value="at" data-i18n="calendar.label.option_at"></option>
+            <option value="before" data-i18n="calendar.label.option_before"></option>
+            <option value="after" data-i18n="calendar.label.option_after"></option>
         </select>
-        the
+        <span data-i18n="calendar.label.the"></span>
         <select id="node-input-offsetFrom" style="width:5em;">
-            <option value="start">start</option>
-            <option value="end">end</option>
+            <option value="start" data-i18n="calendar.label.option_start"></option>
+            <option value="end" data-i18n="calendar.label.option_end"></option>
         </select>
-        of each event.
+        <span data-i18n="calendar.label.each-event"></span>
     </div>
 
     <div id="node-row-offset" class="form-row hidden">
-        Inject message <input type="text" id="node-input-offset"
-                            style="width: 3em;" />
+        <span data-i18n="calendar.label.inject-message"></span> <input type="text" id="node-input-offset" style="width: 3em;"/>
         <select id="node-input-offsetUnits" style="width:7em;">
-            <option value="seconds">seconds</option>
-            <option value="minutes" selected="true">minutes</option>
-            <option value="hours">hours</option>
-            <option value="days">days</option>
+            <option value="seconds" data-i18n="calendar.label.seconds"></option>
+            <option value="minutes" selected="true" data-i18n="calendar.label.minutes"></option>
+            <option value="hours" data-i18n="calendar.label.hours"></option>
+            <option value="days" data-i18n="calendar.label.days"></option>
         </select>
-        <span id="node-input-type">before</span> the <span id="node-input-from">start</span> of each event.
+        <span id="node-input-type"><span data-i18n="calendar.label.before"></span></span> <span data-i18n="calendar.label.the"></span> <span id="node-input-from"><span data-i18n="calendar.label.start"></span></span> <span data-i18n="calendar.label.each-event"></span>
     </div>
 
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="calendar.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
 </script>
@@ -97,7 +96,7 @@
         outputs:1,
         icon: "google-calendar.png",
         label: function() {
-            return this.name||"Google Calendar";
+            return this.name||this._("calendar.label.google-calendar");
         },
         oneditprepare: function() {
             var type = this.offsetType || "at";
@@ -134,15 +133,15 @@
 
 <script type="text/x-red" data-template-name="google calendar">
     <div class="form-row">
-        <label for="node-input-google"><i class="fa fa-user"></i> Google</label>
+        <label for="node-input-google"><i class="fa fa-user"></i> <span data-i18n="calendar.label.google"></span></label>
         <input type="text" id="node-input-google">
     </div>
     <div class="form-row">
-        <label for="node-input-calendar"><i class="fa fa-tag"></i> Calendar</label>
+        <label for="node-input-calendar"><i class="fa fa-tag"></i> <span data-i18n="calendar.label.calendar"></span></label>
         <input type="text" id="node-input-calendar">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="calendar.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
 </script>
@@ -191,22 +190,22 @@
         icon: "google-calendar.png",
         align: "right",
         label: function() {
-            return this.name||"Google Calendar";
+            return this.name||this._("calendar.label.google-calendar");
         }
     });
 </script>
 
 <script type="text/x-red" data-template-name="google calendar out">
     <div class="form-row">
-        <label for="node-input-google"><i class="fa fa-user"></i> Google</label>
+        <label for="node-input-google"><i class="fa fa-user"></i> <span data-i18n="calendar.label.google"></span></label>
         <input type="text" id="node-input-google">
     </div>
     <div class="form-row">
-        <label for="node-input-calendar"><i class="fa fa-tag"></i> Calendar</label>
+        <label for="node-input-calendar"><i class="fa fa-tag"></i> <span data-i18n="calendar.label.calendar"></span></label>
         <input type="text" id="node-input-calendar">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="calendar.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
 </script>
@@ -236,7 +235,7 @@
         icon: "google-calendar.png",
         align: "right",
         label: function() {
-            return this.name||"Google Calendar";
+            return this.name||this._("calendar.label.google-calendar");
         }
     });
 </script>

@@ -17,19 +17,19 @@
 <script type="text/x-red" data-template-name="tfl bus">
     <div id="node-input-stop-finder">
         <div class="form-row">
-            <label for="node-input-lat"><i class="icon-search"></i> Latitude</label>
-            <input type="text" id="node-input-lat" placeholder="Latitude of stop">
+            <label for="node-input-lat"><i class="icon-search"></i> <span data-i18n="tfl-bus.label.latitude"></span></label>
+            <input type="text" id="node-input-lat" data-i18n="[placeholder]tfl-bus.placeholder.latitude">
         </div>
         <div class="form-row">
-            <label for="node-input-lon"><i class="icon-search"></i> Longitude</label>
-            <input type="text" id="node-input-lon" placeholder="Longitude of stop">
+            <label for="node-input-lon"><i class="icon-search"></i> <span data-i18n="tfl-bus.label.longitude"></span></label>
+            <input type="text" id="node-input-lon" data-i18n="[placeholder]tfl-bus.placeholder.longitude">
         </div>
         <div class="form-row">
-            <label for="node-input-radius"><i class="icon-search"></i> Radius (m)</label>
-            <input type="text" id="node-input-radius" placeholder="Search radius in metres">
+            <label for="node-input-radius"><i class="icon-search"></i> <span data-i18n="tfl-bus.label.radius"></span></label>
+            <input type="text" id="node-input-radius" data-i18n="[placeholder]tfl-bus.placeholder.radius">
         </div>
         <div class="form-row">
-            <a class="btn" id="node-input-stopsearch" href="#">Find bus stops</a>
+            <a class="btn" id="node-input-stopsearch" href="#"><span data-i18n="tfl-bus.label.find"></span></a>
         </div>
     </div>
     <div id="node-input-stop-selector">
@@ -37,30 +37,30 @@
                 <tr>
                     <td>
                         <div class="form-row">
-                            <label for="node-input-stopCode1"><i class="icon-search"></i> Select Stop</label>
+                            <label for="node-input-stopCode1"><i class="icon-search"></i> <span data-i18n="tfl-bus.label.select"></span></label>
                             <select type="text" id="node-input-stopCode1" style="display: inline-block; vertical-align: middle; width:60%;">
-                                <option value="unset" selected>Please find a bus stop first</option>
+                                <option value="unset" selected data-i18n="tfl-bus.label.findfirst"></option>
                             </select>
                         </div>
                     </td>
                     <td rowspan="2">
-                        <a class="btn" id="node-input-findStops" href="#">Find bus stops</a>
+                        <a class="btn" id="node-input-findStops" href="#"><span data-i18n="tfl-bus.label.find"></span></a>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <div class="form-row">
-                            <label for="node-input-lineID"><i class="icon-search"></i> Line</label>
+                            <label for="node-input-lineID"><i class="icon-search"></i> <span data-i18n="tfl-bus.label.line"></span></label>
                             <select type="text" id="node-input-lineID" style="display: inline-block; vertical-align: middle; width:60%;">
-                                <option value="unset" selected>Please select a bus stop first</option>
+                                <option value="unset" selected data-i18n="tfl-bus.label.selectfirst"></option>
                             </select>
                         </div>
                     </td>
                 </tr>
             </table>
         <div class="form-row">
-            <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-            <input type="text" id="node-input-name" placeholder="Name">
+            <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="tfl-bus.label.name"></span></label>
+            <input type="text" id="node-input-name" data-i18n="[placeholder]tfl-bus.placeholder.name">
         </div>
     </div>
     <div id="node-input-dropdowns">
@@ -77,7 +77,7 @@
         #
     </div>
     <div class="form-tips">
-        <p>Before using this node please sign up to <code><a href=https://api-portal.tfl.gov.uk/login target=\"_blank\" style=\"text-decoration:underline;\">Transport for London</a></code><br> and accept the terms and conditions to gain access to the live feeds.</p>
+        <span data-i18n="[html]tfl-bus.tip.signup"></span>
     </div>
 </script>
 
@@ -132,13 +132,26 @@
         outputs:1,
         icon: "tfl-bus.png",
         label: function() {
-            return this.name||"TfL Bus";
+            return this.name||this._("tfl-bus.label.tfl-bus");
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
         },
         oneditprepare: function() {
             var node = this; // need to access this within JQuery event of drop down update ($("#node-input-stopCode1").change()) so that the UI doesn't get auto-refreshed/loaded at init.
+            var serverError = this._("tfl-bus.uiwarn.server-error");
+            var connectionError = this._("tfl-bus.uiwarn.connection-error");
+            var latNotNum = this._("tfl-bus.uiwarn.latitude-not-a-number");
+            var lonNotNum = this._("tfl-bus.uiwarn.longitude-not-a-number");
+            var radNotNum = this._("tfl-bus.uiwarn.radius-not-a-number");
+            var invalidRad = this._("tfl-bus.uiwarn.invalid-radius");
+            var latOutOfRange = this._("tfl-bus.uiwarn.latitude-out-of-range");
+            var lonOutOfRange = this._("tfl-bus.uiwarn.longitude-out-of-range");
+            var noBusStops = this._("tfl-bus.uiwarn.no-bus-stops");
+            var noBusDeparting = this._("tfl-bus.html.no-buses-departing");
+            var to = this._("tfl-bus.html.to");
+            var towards = this._("tfl-bus.html.towards");
+            var findFirst = this._("tfl-bus.label.findfirst");
 
             // restore drop-down UI state
             if(this.lineName && this.lineID) {
@@ -177,22 +190,22 @@
                     dataType: "json"
                 }).done (function (data) {
                     if(data.statusCode) { // this is actually an error from the TfL server
-                        setWarningInUI("TfL's servers have returned an error to us. The node might not work correctly. For more details, please check the console.");
+                        setWarningInUI(serverError);
                     } else if (data.indexOf("ERROR") === 0) { // some connection error
-                        setWarningInUI("An error occurred when connecting to TfL. The node might not work correctly. For more details, please check the console.");
+                        setWarningInUI(connectionError);
                     } else { // good path case
                         var htmlDropDown = "";
                         var foundLine = false;
                         for(var i = 0; i < data.length; i++) {
                             if(data[i]) {
-                                htmlDropDown = htmlDropDown + "<option value=\"" +data[i][0] + "\">" + data[i][0] + " to " + data[i][1] + "</option>";
+                                htmlDropDown = htmlDropDown + "<option value=\"" +data[i][0] + "\">" + data[i][0] + " " + to + " " + data[i][1] + "</option>";
                                 foundLine = true;
                             } else {
                                 continue;
                             }
                         }
                         if(foundLine === false) {
-                            htmlDropDown = htmlDropDown + "<option value=\"" + "NODEPARTURE" + "\">" + "No buses currently departing from the above stop. Please find alternative options." + "</option>";
+                            htmlDropDown = htmlDropDown + "<option value=\"" + "NODEPARTURE" + "\">" + noBusDeparting + "</option>";
                         }
                         $("#node-input-lineID").html(htmlDropDown);
                     }
@@ -211,22 +224,22 @@
 
                 if(lat && lon && radius) {
                     if(isNaN(lat)) {
-                        setWarningInUI("Latitude provided is not a number, please provide a valid number.");
+                        setWarningInUI(latNotNum);
                         $('#node-input-stopsearch').attr("disabled", true);
                     } else if(isNaN(lon)) {
-                        setWarningInUI("Longitude provided is not a number, please provide a valid number.");
+                        setWarningInUI(lonNotNum);
                         $('#node-input-stopsearch').attr("disabled", true);
                     } else if(isNaN(radius)) {
-                        setWarningInUI("Radius provided is not a number, please provide a valid number.");
+                        setWarningInUI(radNotNum);
                         $('#node-input-stopsearch').attr("disabled", true);
                     } else if(radius < 1 || radius.toString().indexOf(".") !== -1) {
-                       setWarningInUI("Radius provided is invalid. Please use a positive whole number.");
+                       setWarningInUI(invalidRad);
                        $('#node-input-stopsearch').attr("disabled", true);
                     } else if(lat < -90 || lat > 90) {
-                       setWarningInUI("Latitude provided is out of range. Please revise your values.");
+                       setWarningInUI(latOutOfRange);
                        $('#node-input-stopsearch').attr("disabled", true);
                     } else if(lon < -180 || lon > 180) {
-                       setWarningInUI("Latitude provided is out of range. Please revise your values.");
+                       setWarningInUI(lonOutOfRange);
                        $('#node-input-stopsearch').attr("disabled", true);
                     } else {
                         $("#node-config-errortip").hide();
@@ -261,17 +274,17 @@
                     }).done (function (data) {
                         if(data.statusCode) { // this is actually an error from the TfL server
                             if(data.statusCode === 416) {
-                                setWarningInUI("No bus stops found with the given parameters, please provide different values.");
+                                setWarningInUI(noBusStops);
                             } else {
-                                setWarningInUI("TfL's servers have returned an error to us. The node might not work correctly. For more details, please check the console.");
+                                setWarningInUI(serverError);
                             }
                         } else if (data.indexOf("ERROR") === 0) { // some connection error
-                            setWarningInUI("An error occurred when connecting to TfL. The node might not work correctly. For more details, please check the console.");
+                            setWarningInUI(connectionError);
                         } else { // good path case
                             var htmlDropDown = "";
                             for(var i = 0; i < data.length; i++) {
                                 if(data[i][2] !== null && data[i][4] !== null) {
-                                    htmlDropDown = htmlDropDown + "<option value=\"" +data[i][2] + "\">" + data[i][1] + " towards " + data[i][4] + "</option>";
+                                    htmlDropDown = htmlDropDown + "<option value=\"" +data[i][2] + "\">" + data[i][1] + " " + towards + " " + data[i][4] + "</option>";
                                 } else {
                                     continue;
                                 }
@@ -285,7 +298,7 @@
             });
 
             $("#node-input-stopCode1").change(function() {
-                if($("#node-input-stopCode1").html().indexOf("Please find a bus stop first") === -1 && $("#node-input-stopCode1").html().indexOf(node.stopCode1) === -1 ) {
+                if($("#node-input-stopCode1").html().indexOf(findFirst) === -1 && $("#node-input-stopCode1").html().indexOf(node.stopCode1) === -1 ) {
                     setLinesDropDown();
                 } else {
                 }

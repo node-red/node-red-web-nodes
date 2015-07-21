@@ -166,7 +166,7 @@ describe('weather nodes', function() {
                 var weatherNode1 = helper.getNode("weatherNode1");
                 var n3 = helper.getNode("n3");
                 var stub = sinon.stub(weatherNode1, 'error', function(msg) {
-                    msg.should.equal("Invalid lat provided");
+                    msg.should.equal("weather.error.invalid-lat");
                     stub.restore();
                     done();
                 });
@@ -185,7 +185,7 @@ describe('weather nodes', function() {
                 var weatherNode1 = helper.getNode("weatherNode1");
                 var n3 = helper.getNode("n3");
                 var stub = sinon.stub(weatherNode1, 'error', function(msg) {
-                    msg.should.equal("Invalid lon provided");
+                    msg.should.equal("weather.error.invalid-lon");
                     stub.restore();
                     done();
                 });
@@ -322,7 +322,7 @@ describe('weather nodes', function() {
                     var weatherNode1 = helper.getNode("weatherNode1");
                     var n3 = helper.getNode("n3");
                     var stub = sinon.stub(weatherNode1, 'error', function(msg) {
-                            msg.should.equal("Invalid city/country");
+                            msg.should.equal("weather.error.invalid-city_country");
                             stub.restore();
                             done();
                     });
@@ -342,7 +342,7 @@ describe('weather nodes', function() {
                     var weatherNode1 = helper.getNode("weatherNode1");
                     var n3 = helper.getNode("n3");
                     var stub = sinon.stub(weatherNode1, 'error', function(msg) {
-                            msg.should.equal("Invalid city/country");
+                            msg.should.equal("weather.error.invalid-city_country");
                             stub.restore();
                             done();
                     });

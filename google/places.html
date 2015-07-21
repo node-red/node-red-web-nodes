@@ -13,89 +13,89 @@
 
 <script type="text/x-red" data-template-name="google places">
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i>Node Name</label>
-        <input type="text" id="node-input-name" placeholder="Node Name">
+        <label for="node-input-name"><i class="icon-tag"></i><span data-i18n="places.label.nodename"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]places.placeholder.nodename">
     </div>
     <br />
     <div class="form-row">
-        <label for="node-input-reqType"><i class="fa fa-tasks"></i> Request Type </label>
+        <label for="node-input-reqType"><i class="fa fa-tasks"></i> <span data-i18n="places.label.requesttype"></span> </label>
         <select type="text" id="node-input-reqType" style="width:72%;">
-        <option value="placesNearby">Places Nearby</option>
-        <option value="placesText"> Places Text</option>
-        <option value="placesDetails">Place Details</option>
+        <option value="placesNearby" data-i18n="places.label.nearby"></option>
+        <option value="placesText" data-i18n="places.label.text"></option>
+        <option value="placesDetails" data-i18n="places.label.details"></option>
         </select>
     </div>
     <br />
     <div class="form-row">
-        <label for="node-input-googleAPI"><i class="fa fa-user"></i> Google API Key</label>
+        <label for="node-input-googleAPI"><i class="fa fa-user"></i> <span data-i18n="places.label.apikey"></span></label>
         <input type="text" id="node-input-googleAPI">
     </div>
     <br />
     <div class="form-row node-input-geocodeBy-row-coordinates placesText">
-        <label for="node-input-query"><i class="fa fa-question"></i> Query</label>
-        <input type="text" id="node-input-query" placeholder="Query">
+        <label for="node-input-query"><i class="fa fa-question"></i> <span data-i18n="places.label.query"></span></label>
+        <input type="text" id="node-input-query" data-i18n="[placeholder]places.placeholder.query">
     </div>
     <br class="placesText">
     <div class="form-row node-input-geocodeBy-row-coordinates placesNearby placesText">
-        <label for="node-input-lat"><i class="fa fa-globe"></i> Latitude</label>
-        <input type="text" id="node-input-lat" placeholder="Latitude">
+        <label for="node-input-lat"><i class="fa fa-globe"></i> <span data-i18n="places.label.latitude"></span></label>
+        <input type="text" id="node-input-lat" data-i18n="[placeholder]places.placeholder.latitude">
     </div>
     <div class="form-row node-input-geocodeBy-row-coordinates placesNearby placesText">
-        <label for="node-input-lon"><i class="fa fa-globe"></i> Longitude</label>
-        <input type="text" id="node-input-lon" placeholder="Longitude">
+        <label for="node-input-lon"><i class="fa fa-globe"></i> <span data-i18n="places.label.longitude"></span></label>
+        <input type="text" id="node-input-lon" data-i18n="[placeholder]places.placeholder.longitude">
     </div>
     <div class="form-row placesDetails">
-        <label for="node-input-placeId"><i class="fa fa-barcode"></i> Place Id</label>
-        <input type="text" id="node-input-placeId" placeholder="Place Id">
+        <label for="node-input-placeId"><i class="fa fa-barcode"></i> <span data-i18n="places.label.placeid"></span></label>
+        <input type="text" id="node-input-placeId" data-i18n="[placeholder]places.placeholder.placeid">
     </div>
     <br class="placesNearby placesDetails">
     <div class="form-row placesNearby placesRadius placesText">
-        <label for="node-input-radius"><i class="fa fa-flag"></i> Radius (m)</label>
-        <input type="text" id="node-input-radius" placeholder="Radius">
+        <label for="node-input-radius"><i class="fa fa-flag"></i> <span data-i18n="places.label.radius"></span></label>
+        <input type="text" id="node-input-radius" data-i18n="[placeholder]places.placeholder.radius">
     </div>
     <div class="form-row placesNearby">
-        <label for="node-input-rankBy"><i class="fa fa-tasks"></i> Rank by </label>
+        <label for="node-input-rankBy"><i class="fa fa-tasks"></i> <span data-i18n="places.label.rankby"></span> </label>
         <select type="text" id="node-input-rankBy" style="width:72%;">
-        <option value="prominence">Prominence</option>
-        <option value="distance">Distance</option>
+        <option value="prominence" data-i18n="places.label.prominence"></option>
+        <option value="distance" data-i18n="places.label.distance"></option>
         </select>
     </div>
     <div class="form-row placesNearby">
-        <label for="node-input-keyword"><i class="fa fa-info"></i> Keyword</label>
-        <input type="text" id="node-input-keyword" placeholder="Keyword">
+        <label for="node-input-keyword"><i class="fa fa-info"></i> <span data-i18n="places.label.keyword"></span></label>
+        <input type="text" id="node-input-keyword" data-i18n="[placeholder]places.placeholder.keyword">
     </div>
     <div class="form-row placesNearby placesDetails placesText">
-        <label for="node-input-language"><i class="fa fa-language"></i> Language</label>
-        <input type="text" id="node-input-language" placeholder="Language">
+        <label for="node-input-language"><i class="fa fa-language"></i> <span data-i18n="places.label.language"></span></label>
+        <input type="text" id="node-input-language" data-i18n="[placeholder]places.placeholder.language">
     </div>
     <div class="form-row placesNearby placesText">
-        <label for="node-input-minPrice"><i class="fa fa-usd"></i> Min Price</label>
-        <input type="text" id="node-input-minPrice" placeholder="Min Price">
+        <label for="node-input-minPrice"><i class="fa fa-usd"></i> <span data-i18n="places.label.minprice"></span></label>
+        <input type="text" id="node-input-minPrice" data-i18n="[placeholder]places.placeholder.minprice">
     </div>
     <div class="form-row placesNearby placesText">
-        <label for="node-input-maxPrice"><i class="fa fa-usd"></i> Max Price</label>
-        <input type="text" id="node-input-maxPrice" placeholder="Max Price">
+        <label for="node-input-maxPrice"><i class="fa fa-usd"></i> <span data-i18n="places.label.maxprice"></span></label>
+        <input type="text" id="node-input-maxPrice" data-i18n="[placeholder]places.placeholder.maxprice">
     </div>
     <div class="form-row placesNearby">
-        <label for="node-input-placeName"><i class="fa fa-building"></i> Name</label>
-        <input type="text" id="node-input-placeName" placeholder="Name">
+        <label for="node-input-placeName"><i class="fa fa-building"></i> <span data-i18n="places.label.name"></span></label>
+        <input type="text" id="node-input-placeName" data-i18n="[placeholder]places.placeholder.name">
     </div>
     <div class="form-row placesNearby placesText">
-        <label for="node-input-types"><i class="fa fa-check-square-o"></i> Types</label>
-        <input type="text" id="node-input-types" placeholder="Types">
+        <label for="node-input-types"><i class="fa fa-check-square-o"></i> <span data-i18n="places.label.types"></span></label>
+        <input type="text" id="node-input-types" data-i18n="[placeholder]places.placeholder.types">
     </div>
 
     <div class="form-row placesDetails">
-        <label for="node-input-extensions"><i class="fa fa-code"></i> Extensions</label>
-        <input type="text" id="node-input-extensions" placeholder="Extensions">
+        <label for="node-input-extensions"><i class="fa fa-code"></i> <span data-i18n="places.label.extensions"></span></label>
+        <input type="text" id="node-input-extensions" data-i18n="[placeholder]places.placeholder.extensions">
     </div>
     <div class="form-row placesNearby placesText">
         <label>&nbsp;</label>
         <input type="checkbox" id="node-input-openNow" style="display: inline-block; width: auto; vertical-align: top;">
-        <label for="node-input-openNow" style="width: 70%;">Open Now?</label>
+        <label for="node-input-openNow" style="width: 70%;"><span data-i18n="places.label.opennow"></span></label>
     </div>
     <div class="form-row placesNearby placesText">
-        <label for="node-input-outputnumber"><i class="fa fa-sign-out"></i> Output</label>
+        <label for="node-input-outputnumber"><i class="fa fa-sign-out"></i> <span data-i18n="places.label.output"></span></label>
         <select id="node-input-outputnumber" style="width:15% !important">
              <option value=1>1</option>
              <option value=5>5</option>
@@ -104,10 +104,10 @@
              <option value=20>20</option>
 
         </select>
-        result<span id="node-input-outputnumber-plural">s</span>
-        as <select id="node-input-outputas" style='width:40% !important'>
-          <option value="multiple">multiple messages</option>
-          <option value="single">a single message</option>
+        <span data-i18n="places.label.resultas"></span>
+        &nbsp;<select id="node-input-outputas" style='width:40% !important'>
+          <option value="multiple" data-i18n="places.label.multiple"></option>
+          <option value="single" data-i18n="places.label.single"></option>
         </select>
     </div>
 </script>
@@ -258,13 +258,13 @@
         icon: "logo_maps.png",
         label: function() {
             if(this.reqType === 'placesNearby') {
-                return this.name || "Places Nearby Search";
+                return this.name || this._("places.label.nearbysearch");
             } else if(this.reqType === 'placesText') {
-                return this.name || "Places Text Search";
+                return this.name || this._("places.label.textsearch");
             } else if(this.reqType === 'placesDetails') {
-                return this.name || "Places Details Search";
+                return this.name || this._("places.label.detailssearch");
             } else {
-                return this.name || "Google Places";
+                return this.name || this._("places.label.places");
             }
         },
         oneditprepare: function() {
@@ -291,17 +291,6 @@
                     $(".placesRadius").hide();
                 }
             });
-
-            var updateOptions = function() {
-                var outputnumber = $("#node-input-outputnumber option:selected").val();
-                if (outputnumber === 1) {
-                    $("#node-input-outputnumber-plural").hide();
-                } else {
-                    $("#node-input-outputnumber-plural").show();
-                }
-            };
-            updateOptions();
-            $("#node-input-outputnumber").change(updateOptions);
         }
     });
 </script>

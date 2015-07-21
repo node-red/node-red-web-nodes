@@ -17,27 +17,27 @@
 <script type="text/x-red" data-template-name="fitbit-credentials">
     <div id="node-config-fitbit-app-keys">
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>1.</b> Create your own app at <a href="https://dev.fitbit.com/apps/new" target="_blank" style="text-decoration:underline;">fitbit.com</a></p>
+            <p style="margin-top: 10px;"><b>1.</b> <span data-i18n="fitbit.label.create"></span> <a href="https://dev.fitbit.com/apps/new" target="_blank" style="text-decoration:underline;">fitbit.com</a></p>
         </div>
         <div class="form-row">
-            <p style="margin-top: 10px;"><b>2.</b> Copy the app details here:</p>
+            <p style="margin-top: 10px;"><b>2.</b> <span data-i18n="fitbit.label.copy"></span>:</p>
         </div>
         <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_key"><i class="fa fa-user"></i> Key</label>
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_key"><i class="fa fa-user"></i> <span data-i18n="fitbit.label.key"></span></label>
             <input type="password" id="node-config-input-client_key">
         </div>
         <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_secret"><i class="fa fa-key"></i> Secret</label>
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_secret"><i class="fa fa-key"></i> <span data-i18n="fitbit.label.secret"></span></label>
             <input type="password" id="node-config-input-client_secret">
         </div>
         <div class="form-row">
            <label>&nbsp;</label>
-           <a class="btn" id="node-config-start-auth" href="#" target="_blank">Authenticate with Fitbit</a>
+           <a class="btn" id="node-config-start-auth" href="#" target="_blank"><span data-i18n="fitbit.label.authenticate"></span></a>
         </div>
     </div>
     <div id="node-config-fitbit-user">
         <div class="form-row">
-            <label><i class="fa fa-user"></i> Fitbit ID</label><span id="node-config-fitbit-username" class="input-xlarge uneditable-input"></span>
+            <label><i class="fa fa-user"></i> <span data-i18n="fitbit.label.fitbitid"></span></label><span id="node-config-fitbit-username" class="input-xlarge uneditable-input"></span>
         </div>
         <input type="hidden" id="node-config-input-username">
     </div>
@@ -146,19 +146,19 @@
 
 <script type="text/x-red" data-template-name="fitbit in">
     <div class="form-row">
-        <label for="node-input-fitbit"><i class="fa fa-user"></i> Fitbit</label>
+        <label for="node-input-fitbit"><i class="fa fa-user"></i> <span data-i18n="fitbit.label.fitbit"></span></label>
         <input type="text" id="node-input-fitbit">
     </div>
     <div class="form-row">
-        <label for="node-input-dataType"><i class="fa fa-tag"></i> Type</label>
+        <label for="node-input-dataType"><i class="fa fa-tag"></i> <span data-i18n="fitbit.label.type"></span></label>
         <select id="node-input-dataType" style="width:125px !important">
-            <option value="goals">goals</option>
-            <option value="sleep">sleep</option>
-            <option value="badges">badges</option>
+            <option value="goals" data-i18n="fitbit.label.goals"></option>
+            <option value="sleep" data-i18n="fitbit.label.sleep"></option>
+            <option value="badges" data-i18n="fitbit.label.badges"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="fitbit.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
 </script>
@@ -195,7 +195,7 @@
         outputs:1,
         icon: "fitbit.png",
         label: function() {
-            return this.name || ("Fitbit " + this.dataType);
+            return this.name || (this._("fitbit.label.fitbit") + " " + this.dataType);
         },
         oneditprepare: function() {
             $("#node-input-dataType").val(this.dataType);
@@ -205,19 +205,19 @@
 
 <script type="text/x-red" data-template-name="fitbit">
     <div class="form-row">
-        <label for="node-input-fitbit"><i class="fa fa-user"></i> Fitbit</label>
+        <label for="node-input-fitbit"><i class="fa fa-user"></i> <span data-i18n="fitbit.label.fitbit"></span></label>
         <input type="text" id="node-input-fitbit">
     </div>
     <div class="form-row">
-        <label for="node-input-dataType"><i class="fa fa-tag"></i> Type</label>
+        <label for="node-input-dataType"><i class="fa fa-tag"></i> <span data-i18n="fitbit.label.type"></span></label>
         <select id="node-input-dataType" style="width:125px !important">
-            <option value="activities">activities</option>
-            <option value="sleep">sleep</option>
-            <option value="badges">badges</option>
+            <option value="activities" data-i18n="fitbit.label.activities"></option>
+            <option value="sleep" data-i18n="fitbit.label.sleep"></option>
+            <option value="badges" data-i18n="fitbit.label.badges"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="fitbit.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
 </script>
@@ -262,7 +262,7 @@
         icon: "fitbit.png",
         align: "right",
         label: function() {
-            return this.name || ("Fitbit " + this.dataType);
+            return this.name || (this._("fitbit.label.fitbit") + " " + this.dataType);
         },
         oneditprepare: function() {
             $("#node-input-dataType").val(this.dataType);

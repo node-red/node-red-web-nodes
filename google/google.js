@@ -40,8 +40,8 @@ module.exports = function(RED) {
         var node = this;
         //console.log("refreshing token: " + credentials.refreshToken);
         if (!credentials.refreshToken) {
-            node.error("No refresh token to regain Google access");
-            return cb('No refresh token to regain Google access');
+            node.error(RED._("google.error.no-refresh-token"));
+            return cb(RED._("google.error.no-refresh-token"));
         }
         request.post({
             url: 'https://accounts.google.com/o/oauth2/token',
@@ -54,11 +54,11 @@ module.exports = function(RED) {
             },
         }, function(err, result, data) {
             if (err) {
-                node.error("refresh token request error:" + err);
+                node.error(RED._("google.error.token-request-error", {err: err}));
                 return;
             }
             if (data.error) {
-                node.error("refresh token error: " + data.error.message);
+                node.error(RED._("google.error.refresh-token-error", {message: data.error.message}));
                 return;
             }
             // console.log("refreshed: " + require('util').inspect(data));
@@ -96,11 +96,11 @@ module.exports = function(RED) {
         if (!this.credentials.expireTime ||
             this.credentials.expireTime < (new Date().getTime()/1000)) {
             if (retries === 0) {
-                node.error("too many refresh attempts, giving up");
-                cb('too many refresh attempts, giving up');
+                node.error(RED._("google.error.too-many-refresh-attempts"));
+                cb(RED._("google.error.too-many-refresh-attempts"));
                 return;
             }
-            node.warn("trying to refresh token due to expiry");
+            node.warn(RED._("google.warn.token-expired"));
             node.refreshToken(function (err) {
                 if (err) {
                     return;
@@ -122,7 +122,7 @@ module.exports = function(RED) {
             } else if (data.error) {
                 if (data.error.code === 401 && retries > 0) {
                     retries--;
-                    node.warn("refreshing access token after 401 error");
+                    node.warn(RED._("google.warn.refreshing-accesstoken"));
                     node.refreshToken(function (err) {
                         if (err) {
                             return cb(err, null);
@@ -173,18 +173,18 @@ module.exports = function(RED) {
 
     RED.httpAdmin.get('/google-credentials/auth/callback', function(req, res) {
         if (req.query.error) {
-            return res.send('ERROR: '+ req.query.error + ': ' + req.query.error_description);
+            return res.send(RED._("google.error.error", {error: req.query.error, description: req.query.error_description}));
         }
         var state = req.query.state.split(':');
         var node_id = state[0];
         var credentials = RED.nodes.getCredentials(node_id);
         if (!credentials || !credentials.clientId || !credentials.clientSecret) {
             console.log("credentials not present?");
-            return res.send('ERROR: no credentials - should never happen');
+            return res.send(RED._("google.error.no-credentials"));
         }
         if (state[1] !== credentials.csrfToken) {
             return res.status(401).send(
-                'CSRF token mismatch, possible cross-site request forgery attempt.'
+                RED._("google.error.token-mismatch")
             );
         }
 
@@ -201,11 +201,11 @@ module.exports = function(RED) {
         }, function(err, result, data) {
             if (err) {
                 console.log("request error:" + err);
-                return res.send("yeah something broke.");
+                return res.send(RED._("google.error.something-broke"));
             }
             if (data.error) {
                 console.log("oauth error: " + data.error);
-                return res.send("yeah something broke.");
+                return res.send(RED._("google.error.something-broke"));
             }
             credentials.accessToken = data.access_token;
             credentials.refreshToken = data.refresh_token;
@@ -228,11 +228,11 @@ module.exports = function(RED) {
                 if (data.error) {
                     console.log('fetching google profile failed: ' +
                                 data.error.message);
-                    return res.send("auth worked but profile fetching failed");
+                    return res.send(RED._("google.error.profile-fetch-failed"));
                 }
                 credentials.displayName = data.displayName;
                 RED.nodes.addCredentials(node_id, credentials);
-                res.send("<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>");
+                res.send(RED._("google.message.authorized"));
             });
         });
     });
@@ -262,10 +262,10 @@ module.exports = function(RED) {
                 return cb(err.toString(), null);
             }
             if (result.statusCode >= 400) {
-                return cb("HTTP Error " + result.statusCode, data);
+                return cb(RED._("google.error.httperror", {statusCode: result.statusCode}), data);
             }
             if (data && data.status !== 'OK') {
-                var error = "API error, " + data.status;
+                var error = RED._("google.error.apierror", {status: data.status});
                 if (data.error_message) {
                     error += ": " + data.error_message;
                 }

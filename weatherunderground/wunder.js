@@ -26,14 +26,14 @@ module.exports = function(RED) {
             if (90 >= lat && lat >= -90) {
                 node.lat = lat;
             } else {
-                node.error("Invalid lat provided",msg);
+                node.error(RED._("wunder.error.invalid-lat"),msg);
                 return;
             }
 
             if (180 >= lon && lon >= -180) {
                 node.lon = lon;
             } else {
-                node.error("Invalid lon provided",msg);
+                node.error(RED._("wunder.error.invalid-lon"),msg);
                 return;
             }
         }
@@ -78,16 +78,15 @@ module.exports = function(RED) {
                     msg.location.city = loc.city;
                     msg.location.country = loc.country;
                     msg.time = new Date(Number(cur.observation_epoch*1000));
-                    msg.title = "Data supplied by The Weather Underground.";
-                    msg.description = "Current weather information at coordinates: " + msg.location.lat + ", " + msg.location.lon;
-                    msg.payload.description = ("The weather in " + msg.location.city + " at coordinates: " + msg.location.lat + ", " + msg.location.lon + " is " + cur.weather);
+                    msg.title = RED._("wunder.message.title");
+                    msg.description = RED._("wunder.message.description", {lat: msg.location.lat, lon: msg.location.lon});
+                    msg.payload.description = (RED._("wunder.message.payload", {city: msg.location.city, lat: msg.location.lat, lon: msg.location.lon, weather: cur.weather}));
                     var fcast = res.forecast.txt_forecast.forecastday[0];
                     msg.payload.forecast = loc.city+" : "+fcast.title+" : "+ fcast.fcttext_metric;
                     callback(null);
-                }
-                else {
-                    callback("Can't find city: "+node.city+", "+node.country+".");
-                }
+                    else {
+                        callback("Can't find city: "+node.city+", "+node.country+".");
+                    }
             }
         };
     }
@@ -96,7 +95,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this, n);
         var credentials = this.credentials;
         if ((credentials) && (credentials.hasOwnProperty("apikey"))) { this.apikey = credentials.apikey; }
-        else { this.error("No Wunderground API key set"); }
+        else { this.error(RED._("wunder.error.no-apikey")); }
         this.wunder = new Wunderground(this.apikey);
         this.repeat = 300000;
         this.interval_id = null;
@@ -149,7 +148,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         var credentials = this.credentials;
         if ((credentials) && (credentials.hasOwnProperty("apikey"))) { this.apikey = credentials.apikey; }
-        else { this.error("No Wunderground API key set"); }
+        else { this.error(RED._("wunder.error.no-apikey")); }
         this.wunder = new Wunderground(this.apikey);
         var node = this;
         var city;

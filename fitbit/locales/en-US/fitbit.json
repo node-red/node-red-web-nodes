@@ -1,0 +1,34 @@
+{
+    "fitbit": {
+        "label": {
+            "fitbit": "Fitbit",
+            "type": "Type",
+            "goals": "goals",
+            "sleep": "sleep",
+            "badges": "badges",
+            "activities": "activities",
+            "name": "Name",
+            "create": "Create your own app at",
+            "copy": "Copy the app details here",
+            "key": "Key",
+            "secret": "Secret",
+            "authenticate": "Authenticate with Fitbit",
+            "fitbitid": "Fitbit ID"
+        },
+        "status": {
+            "initializing": "initializing",
+            "failed": "failed",
+            "querying": "querying"
+        },
+        "warn": {
+            "missing-credentials": "Missing fitbit credentials",
+            "no-sleep-record": "no main sleep record found"
+        },
+        "error": {
+            "unsupported-data-type": "Unsupported data type",
+            "missing-credentials": "Missing fitbit credentials",
+            "oautherror": "<p>Something went wrong with the authentication process. The following error was returned:</p><p><b>__statusCode__</b>: __errorData__</p><p>One known cause of this type of failure is if the clock is wrong on system running Node-RED.</p>",
+            "authorized": "<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>"
+        }
+    }
+}

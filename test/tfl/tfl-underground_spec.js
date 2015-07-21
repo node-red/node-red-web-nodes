@@ -50,7 +50,7 @@ describe('tfl-underground nodes', function() {
                   var n1 = helper.getNode("n1");
                   var n2 = helper.getNode("n2");
                   var stub = sinon.stub(n2, 'error', function(msg) {
-                    msg.should.equal("No station in message input.");
+                    msg.should.equal("tfl-underground.error.no-station");
                     stub.restore();
                     done();
                   });
@@ -73,7 +73,7 @@ describe('tfl-underground nodes', function() {
                         var n1 = helper.getNode("n1");
                         var n2 = helper.getNode("n2");
                         var stub = sinon.stub(n2, 'error', function(msg) {
-                          msg.should.equal("Invalid tube line: failure");
+                          msg.should.equal("tfl-underground.error.invalid-tubeline");
                           stub.restore();
                           done();
                         });
@@ -130,7 +130,7 @@ describe('tfl-underground nodes', function() {
                                   n2.should.have.property('id','n2');
                                   n1.send({payload:"foo"});
                                   n3.on('input', function(msg){
-                                      msg.should.have.property('description', "Status of the Bakerloo line");
+                                      msg.should.have.property('description', "tfl-underground.message.description");
                                       msg.payload.should.have.property('status', "GoodService");
                                       msg.payload.should.have.property('description', "Good Service");
                                       msg.payload.should.have.property('details', "");

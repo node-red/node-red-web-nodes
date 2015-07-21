@@ -39,11 +39,11 @@ module.exports = function(RED) {
         if (this.user) {
             this.on("input", function(msg) {
                 if (!msg.payload) {
-                    node.error("url must be provided in msg.payload",msg);
+                    node.error(RED._("pinboard.error.no-url"),msg);
                     return;
                 }
                 if (!msg.title) {
-                    node.error("msg.title must be provided",msg);
+                    node.error(RED._("pinboard.error.no-title"),msg);
                     return;
                 }
                 var options = {
@@ -58,16 +58,16 @@ module.exports = function(RED) {
                     headers: {
                         "Accept":"application/json"
                     }
-                };
+                }
                 // TODO: allow tags to be added by the message 
                 if (node.tags) {
-                    options.path += "&tags="+encodeURIComponent(node.tags);
+                    options.path += "&tags="+encodeURIComponent(node.tags)
                 }
                 if (msg.description) {
-                    options.path += "&extended="+encodeURIComponent(msg.description);
+                    options.path += "&extended="+encodeURIComponent(msg.description)
                 }
                 
-                node.status({fill:"blue",shape:"dot",text:"saving"});
+                node.status({fill:"blue",shape:"dot",text:"pinboard.status.saving"});
 
                 https.get(options, function(res) {
                     var m = "";
@@ -90,9 +90,9 @@ module.exports = function(RED) {
                 
             });
         } else {
-            this.error("missing api token");
+            this.error(RED._("pinboard.error.no-apitoken"));
         }
         
     }
     RED.nodes.registerType("pinboard out",PinboardOutNode);
-};
+}

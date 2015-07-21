@@ -113,7 +113,7 @@ describe('foursquare nodes', function() {
                                       if (err) {
                                     	  return done(err);
                                       }
-                                      res.text.should.containEql('Oh no');
+                                      res.text.should.containEql('foursquare.error.oauth-error-status');
                                       done();
                                   });
                             });
@@ -150,7 +150,7 @@ describe('foursquare nodes', function() {
                                                 if (err) {
                                                 	return done(err);
                                                 }
-                                                res.text.should.containEql('Http return code');
+                                                res.text.should.containEql('foursquare.error.oauth-error-meta');
                                                 done();
                                             });
                                     });
@@ -182,7 +182,7 @@ describe('foursquare nodes', function() {
                                             if (err) {
                                             	return done(err);
                                             }
-                                            res.text.should.containEql('CSRF token mismatch, possible cross-site request forgery attempt');
+                                            res.text.should.containEql('foursquare.error.token-mismatch');
                                             done();
                                         });
                                 });
@@ -216,7 +216,7 @@ describe('foursquare nodes', function() {
                           n2.should.have.property('id','n2');
                           
                           sinon.stub(n2, 'status', function(status){
-                              var expected = {fill:"red",shape:"ring",text:"failed"};
+                              var expected = {fill:"red",shape:"ring",text:"foursquare.status.failed"};
                               should.deepEqual(status, expected);
                               done();
                           });
@@ -246,7 +246,7 @@ describe('foursquare nodes', function() {
                           n2.should.have.property('id','n2');
                           
                           sinon.stub(n2, 'status', function(status){
-                              var expected = {fill:"red",shape:"ring",text:"failed"};
+                              var expected = {fill:"red",shape:"ring",text:"foursquare.status.failed"};
                               should.deepEqual(status, expected);
                               done();
                           });
@@ -276,7 +276,7 @@ describe('foursquare nodes', function() {
                           n2.should.have.property('id','n2');
                           
                           sinon.stub(n2, 'status', function(status){
-                              var expected = {fill:"red",shape:"ring",text:"failed"};
+                              var expected = {fill:"red",shape:"ring",text:"foursquare.status.failed"};
                               should.deepEqual(status, expected);
                               done();
                           });
@@ -312,7 +312,7 @@ describe('foursquare nodes', function() {
                               n2.should.have.property('id','n2');
                               
                               sinon.stub(n2, 'status', function(status){
-                                  var expected = {fill:"red",shape:"ring",text:"failed"};
+                                  var expected = {fill:"red",shape:"ring",text:"foursquare.status.failed"};
                                   should.deepEqual(status, expected);
                                   done();
                               });

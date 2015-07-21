@@ -1,0 +1,62 @@
+{
+    "foursquare": {
+        "label": {
+            "foursquare": "foursquare",
+            "loginas": "Log in as",
+            "explore": "Explore",
+            "recommended": "recommended",
+            "food": "food venues",
+            "drinks": "drink venues",
+            "coffee": "coffee shops",
+            "shops": "shops",
+            "arts": "cultural venues",
+            "outdoors": "outdoor venues",
+            "sights": "sights",
+            "all": "venues",
+            "nearby": "nearby",
+            "open": "which are open",
+            "today": "today",
+            "anyday": "on any day of the week",
+            "at": "at",
+            "currenttime": "the current time of day",
+            "anytime": "any time of day",
+            "output": "Output",
+            "resultas": "result(s) as",
+            "multiple": "multiple messages",
+            "single": "a single message",
+            "name": "Name",
+            "create": "Create your own app at",
+            "copy": "Copy the app details here",
+            "clientid": "Client Id",
+            "clientsecret": "Client Secret",
+            "authenticate": "Authenticate with Foursquare",
+            "foursquareuser": "Foursquare User"
+        },
+        "tip": {
+            "redirect": "<p>Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>__callback__</code>"
+        },
+        "status": {
+            "failed": "failed"
+        },
+        "warn": {
+            "no-credentials": "no credentials for node"
+        },
+        "error": {
+            "no-accesstoken": "No access token available",
+            "section-not-defined": "problem with node input: section is not defined correctly",
+            "lat_lon-not-set": "problem with node input: latitude and/or longitude not set",
+            "errorcode": "Error code: __metaCode__, errorDetail: __errorDetail__",
+            "incorrect-number": "Incorrect number of messages to output or incorrect choice of how to output them",
+            "no-parameters": "ERROR: request does not contain the required parameters",
+            "id_secret-not-defined": "ERROR: client ID and client secret are not defined",
+            "query-error": "ERROR: __queryError__: __description__",
+            "no-credentials": "ERROR: no credentials - should never happen",
+            "oauth-error-status": "<p>Something went wrong with the authentication process. The following error was returned:</p><p><b>__statusCode__</b>: __errorData__</p>",
+            "oauth-error-meta": "<p>Something went wrong with the authentication process. Http return code:</p><p><b>__metaCode__</b></p>",
+            "token-mismatch": "CSRF token mismatch, possible cross-site request forgery attempt."
+        },
+        "message": {
+            "authorized": "<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>"
+        }
+    }
+}

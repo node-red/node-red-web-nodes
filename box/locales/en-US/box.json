@@ -1,0 +1,61 @@
+{
+    "box": {
+        "label": {
+            "box": "Box",
+            "pattern": "Filename Pattern",
+            "name": "Name",
+            "filename": "Filename",
+            "local": "Local Filename",
+            "create": "Create your own app at",
+            "copy": "Copy the project credentials here",
+            "clientid": "Client Id",
+            "secret": "Secret",
+            "authenticate": "Authenticate with Box",
+            "boxuser": "Box User"
+        },
+        "placeholder": {
+            "pattern": "Filepattern",
+            "name": "Name",
+            "filename": "Filename",
+            "local": "Local Filename"
+        },
+        "tip": {
+            "redirect": "<p>Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>__callback__</code>"
+        },
+        "status": {
+            "initializing": "initializing",
+            "failed": "failed",
+            "error": "error",
+            "checking-for-events": "checking for events",
+            "resolving-path": "resolving path",
+            "downloading": "downloading",
+            "uploading": "uploading",
+            "overwriting": "overwriting"
+        },
+        "warn": {
+            "refresh-token": "trying to refresh token due to expiry",
+            "refresh-401": "refreshing access token after 401 error",
+            "missing-credentials": "Missing box credentials",
+            "old-path-failed": "failed to resolve old path: __err__"
+        },
+        "error": {
+            "not-found": "not found",
+            "missing-filename": "missing filename?",
+            "no-credentials": "ERROR: no credentials - should never happen",
+            "profile-fetch-failed": "auth worked but profile fetching failed",
+            "authorized": "<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>",
+            "token-mismatch": "CSRF token mismatch, possible cross-site request forgery attempt.",
+            "no-refresh-token": "No refresh token to regain Box access",
+            "token-request-error": "refresh token request error: __err__",
+            "refresh-token-error": "refresh token error: __message__",
+            "too-many-refresh-attempts": "too many refresh attempts, giving up",
+            "something-broke": "Something went wrong in the authentication process. Please try again.",
+            "event-stream-initialize-failed": "failed to initialize event stream: __err__",
+            "events-fetch-failed": "failed to fetch events: __err__",
+            "no-filename-specified": "No filename specified",
+            "path-resolve-failed": "failed to resolve path: __err__",
+            "download-failed": "download failed: __err__",
+            "upload-failed": "failed upload: __err__"
+        }
+    }
+}

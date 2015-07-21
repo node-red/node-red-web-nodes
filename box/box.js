@@ -44,8 +44,8 @@ module.exports = function(RED) {
             // TODO: add a timeout to make sure we make a request
             // every so often (if no flows trigger one) to ensure the
             // refresh token does not expire
-            node.error("No refresh token to regain Box access");
-            return cb('No refresh token to regain Box access');
+            node.error(RED._("box.error.no-refresh-token"));
+            return cb(RED._("box.error.no-refresh-token"));
         }
         request.post({
             url: 'https://api.box.com/oauth2/token',
@@ -58,11 +58,11 @@ module.exports = function(RED) {
             },
         }, function(err, result, data) {
             if (err) {
-                node.error("refresh token request error:" + err);
+                node.error(RED._("box.error.token-request-error",{err:err}));
                 return;
             }
             if (data.error) {
-                node.error("refresh token error: " + data.error.message);
+                node.error(RED._("box.error.refresh-token-error",{message:data.error.message}));
                 return;
             }
             // console.log("refreshed: " + require('util').inspect(data));
@@ -99,11 +99,11 @@ module.exports = function(RED) {
         if (!this.credentials.expireTime ||
             this.credentials.expireTime < (new Date().getTime()/1000)) {
             if (retries === 0) {
-                node.error("too many refresh attempts, giving up");
-                cb('too many refresh attempts, giving up');
+                node.error(RED._("box.error.too-many-refresh-attempts"));
+                cb(RED._("box.error.too-many-refresh-attempts"));
                 return;
             }
-            node.warn("trying to refresh token due to expiry");
+            node.warn(RED._("box.warn.refresh-token"));
             node.refreshToken(function (err) {
                 if (err) {
                     return;
@@ -119,7 +119,7 @@ module.exports = function(RED) {
             }
             if (result.statusCode === 401 && retries > 0) {
                 retries--;
-                node.warn("refreshing access token after 401 error");
+                node.warn(RED._("box.warn.refresh-401"));
                 node.refreshToken(function (err) {
                     if (err) {
                         return cb(err, null);
@@ -167,7 +167,7 @@ module.exports = function(RED) {
                     return node.resolvePath(path, entries[i].id, cb);
                 }
             }
-            return cb("not found", -1);
+            return cb(RED._("box.error.not-found"), -1);
         });
     };
 
@@ -185,7 +185,7 @@ module.exports = function(RED) {
             path = path.filter(function(e) { return e !== ""; });
         }
         if (path.length === 0) {
-            return cb("missing filename?", -1);
+            return cb(RED._("box.error.missing-filename"), -1);
         }
         var file = path.pop();
         node.resolvePath(path, function(err, parent_id) {
@@ -204,7 +204,7 @@ module.exports = function(RED) {
                         return cb(null, entries[i].id);
                     }
                 }
-                return cb("not found", -1);
+                return cb(RED._("box.error.not-found"), -1);
             });
         });
     };
@@ -256,11 +256,11 @@ module.exports = function(RED) {
         var node_id = state[0];
         var credentials = RED.nodes.getCredentials(node_id);
         if (!credentials || !credentials.clientId || !credentials.clientSecret) {
-            return res.send('ERROR: no credentials - should never happen');
+            return res.send(RED._("box.error.no-credentials"));
         }
         if (state[1] !== credentials.csrfToken) {
             return res.status(401).send(
-                'CSRF token mismatch, possible cross-site request forgery attempt.'
+                RED._("box.error.token-mismatch")
             );
         }
 
@@ -277,11 +277,11 @@ module.exports = function(RED) {
         }, function(err, result, data) {
             if (err) {
                 console.log("request error:" + err);
-                return res.send("yeah something broke.");
+                return res.send(RED._("box.error.something-broke"));
             }
             if (data.error) {
                 console.log("oauth error: " + data.error);
-                return res.send("yeah something broke.");
+                return res.send(RED._("box.error.something-broke"));
             }
             //console.log("data: " + require('util').inspect(data));
             credentials.accessToken = data.access_token;
@@ -300,20 +300,20 @@ module.exports = function(RED) {
             }, function(err, result, data) {
                 if (err) {
                     console.log('fetching box profile failed: ' + err);
-                    return res.send("auth worked but profile fetching failed");
+                    return res.send(RED._("box.error.profile-fetch-failed"));
                 }
                 if (result.statusCode >= 400) {
                     console.log('fetching box profile failed: ' +
                                 result.statusCode + ": " + data.message);
-                    return res.send("auth worked but profile fetching failed");
+                    return res.send(RED._("box.error.profile-fetch-failed"));
                 }
                 if (!data.name) {
                     console.log('fetching box profile failed: no name found');
-                    return res.send("auth worked but profile fetching failed");
+                    return res.send(RED._("box.error.profile-fetch-failed"));
                 }
                 credentials.displayName = data.name;
                 RED.nodes.addCredentials(node_id, credentials);
-                res.send("<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>");
+                res.send(RED._("box.error.authorized"));
             });
         });
     });
@@ -324,27 +324,27 @@ module.exports = function(RED) {
         this.box = RED.nodes.getNode(n.box);
         var node = this;
         if (!this.box || !this.box.credentials.accessToken) {
-            this.warn("Missing box credentials");
+            this.warn(RED._("box.warn.missing-credentials"));
             return;
         }
-        node.status({fill:"blue",shape:"dot",text:"initializing"});
+        node.status({fill:"blue",shape:"dot",text:"box.status.initializing"});
         this.box.request({
             url: 'https://api.box.com/2.0/events?stream_position=now&stream_type=changes',
         }, function (err, data) {
             if (err) {
-                node.error("failed to initialize event stream: " + err.toString());
-                node.status({fill:"red",shape:"ring",text:"failed"});
+                node.error(RED._("box.error.event-stream-initialize-failed",{err:err.toString()}));
+                node.status({fill:"red",shape:"ring",text:"box.status.failed"});
                 return;
             }
             node.state = data.next_stream_position;
             node.status({});
             node.on("input", function(msg) {
-                node.status({fill:"blue",shape:"dot",text:"checking for events"});
+                node.status({fill:"blue",shape:"dot",text:"box.status.checking-for-events"});
                 node.box.request({
                     url: 'https://api.box.com/2.0/events?stream_position='+node.state+'&stream_type=changes',
                 }, function(err, data) {
                     if (err) {
-                        node.error("failed to fetch events: " + err.toString(),msg);
+                        node.error(RED._("box.error.events-fetch-failed",{err:err.toString()}),msg);
                         node.status({});
                         return;
                     }
@@ -411,12 +411,12 @@ module.exports = function(RED) {
 
     BoxInNode.prototype.lookupOldPath = function (msg, entry, event) {
         var source = entry.source;
-        this.status({fill:"blue",shape:"dot",text:"resolving path"});
+        this.status({fill:"blue",shape:"dot",text:"box.status.resolving-path"});
         var node = this;
         node.box.folderInfo(source.parent.id, function(err, folder) {
             if (err) {
-                node.warn("failed to resolve old path: " + err.toString());
-                node.status({fill:"red",shape:"ring",text:"failed"});
+                node.warn(RED._("box.warn.old-path-failed",{err:err.toString()}));
+                node.status({fill:"red",shape:"ring",text:"box.status.failed"});
                 return;
             }
             node.status({});
@@ -433,25 +433,25 @@ module.exports = function(RED) {
         this.box = RED.nodes.getNode(n.box);
         var node = this;
         if (!this.box || !this.box.credentials.accessToken) {
-            this.warn("Missing box credentials");
+            this.warn(RED._("box.warn.missing-credentials"));
             return;
         }
 
         node.on("input", function(msg) {
             var filename = node.filename || msg.filename;
             if (filename === "") {
-                node.error("No filename specified");
+                node.error(RED._("box.error.no-filename-specified"));
                 return;
             }
             msg.filename = filename;
-            node.status({fill:"blue",shape:"dot",text:"resolving path"});
+            node.status({fill:"blue",shape:"dot",text:"box.status.resolving-path"});
             node.box.resolveFile(filename, function(err, file_id) {
                 if (err) {
-                    node.error("failed to resolve path: " + err.toString(),msg);
-                    node.status({fill:"red",shape:"ring",text:"failed"});
+                    node.error(RED._("box.error.path-resolve-failed",{err:err.toString()}),msg);
+                    node.status({fill:"red",shape:"ring",text:"box.status.failed"});
                     return;
                 }
-                node.status({fill:"blue",shape:"dot",text:"downloading"});
+                node.status({fill:"blue",shape:"dot",text:"box.status.downloading"});
                 node.box.request({
                     url: 'https://api.box.com/2.0/files/'+file_id+'/content',
                     json: false,
@@ -460,8 +460,8 @@ module.exports = function(RED) {
                     encoding: null,
                 }, function(err, data) {
                     if (err) {
-                        node.error("download failed: " + err.toString(),msg);
-                        node.status({fill:"red",shape:"ring",text:"failed"});
+                        node.error(RED._("box.error.download-failed",{err:err.toString()}),msg);
+                        node.status({fill:"red",shape:"ring",text:"box.status.failed"});
                     } else {
                         msg.payload = data;
                         delete msg.error;
@@ -481,30 +481,30 @@ module.exports = function(RED) {
         this.box = RED.nodes.getNode(n.box);
         var node = this;
         if (!this.box || !this.box.credentials.accessToken) {
-            this.warn("Missing box credentials");
+            this.warn(RED._("box.warn.missing-credentials"));
             return;
         }
 
         node.on("input", function(msg) {
             var filename = node.filename || msg.filename;
             if (filename === "") {
-                node.error("No filename specified");
+                node.error(RED._("box.error.no-filename-specified"));
                 return;
             }
             var path = filename.split("/");
             var basename = path.pop();
-            node.status({fill:"blue",shape:"dot",text:"resolving path"});
+            node.status({fill:"blue",shape:"dot",text:"box.status.resolving-path"});
             var localFilename = node.localFilename || msg.localFilename;
             if (!localFilename && typeof msg.payload === "undefined") {
                 return;
             }
             node.box.resolvePath(path, function(err, parent_id) {
                 if (err) {
-                    node.error("failed to resolve path: " + err.toString(),msg);
-                    node.status({fill:"red",shape:"ring",text:"failed"});
+                    node.error(RED._("box.error.path-resolve-failed",{err:err.toString()}),msg);
+                    node.status({fill:"red",shape:"ring",text:"box.status.failed"});
                     return;
                 }
-                node.status({fill:"blue",shape:"dot",text:"uploading"});
+                node.status({fill:"blue",shape:"dot",text:"box.status.uploading"});
                 var r = node.box.request({
                     method: 'POST',
                     url: 'https://upload.box.com/api/2.0/files/content',
@@ -513,15 +513,15 @@ module.exports = function(RED) {
                         if (data && data.status === 409 &&
                             data.context_info && data.context_info.conflicts) {
                             // existing file, attempt to overwrite it
-                            node.status({fill:"blue",shape:"dot",text:"overwriting"});
+                            node.status({fill:"blue",shape:"dot",text:"box.status.overwriting"});
                             var r = node.box.request({
                                 method: 'POST',
                                 url: 'https://upload.box.com/api/2.0/files/'+
                                     data.context_info.conflicts.id+'/content',
                             }, function(err, data) {
                                 if (err) {
-                                    node.error("failed upload: " + err.toString(),msg);
-                                    node.status({fill:"red",shape:"ring",text:"failed"});
+                                    node.error(RED._("box.error.upload-failed",{err:err.toString()}),msg);
+                                    node.status({fill:"red",shape:"ring",text:"box.status.failed"});
                                     return;
                                 }
                                 node.status({});
@@ -535,8 +535,8 @@ module.exports = function(RED) {
                                 { filename: basename });
                             }
                         } else {
-                            node.error("failed upload: " + err.toString(),msg);
-                            node.status({fill:"red",shape:"ring",text:"failed"});
+                            node.error(RED._("box.error.upload-failed",{err:err.toString()}),msg);
+                            node.status({fill:"red",shape:"ring",text:"box.status.failed"});
                         }
                         return;
                     }

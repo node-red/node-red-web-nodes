@@ -1,0 +1,43 @@
+{
+    "google": {
+        "label": {
+            "google": "Google",
+            "googleapi": "Google API",
+            "create": "Create your own project by following these",
+            "instructions": "instructions",
+            "copy": "Copy the project credentials here",
+            "clientid": "Client Id",
+            "secret": "Secret",
+            "authenticate": "Authenticate with Google",
+            "googleuser": "Google User",
+            "apikey": "API key"
+        },
+        "tip": {
+            "privateip": "<p>It appears you are running on a private IP address that the Google service cannot reach. Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>__callback__</code><p></p><p>You will need to edit your <u><a href=\"http://en.wikipedia.org/wiki/Hosts_(file)\">hosts file</a></u> and add an entry for __dummyDomain__ that points to __actualIP__ .</p><p>You also need to enable the Google+ API for your new project in the Google Developers Console.</p>",
+            "configure": "<p>Please configure the authorized <b>Redirect URIs</b> of your app to include the following url:</p>\n<code>__callback__</code><p></p><p>You also need to enable the Google+ API for your new project in the Google Developers Console.</p>",
+            "api1": "To obtain these credentials, visit the <a href=\"https://console.developers.google.com/\">Google Developer Console</a>. Once signed up:",
+            "api2": "<ol><li>click \"Create project\",</li><li>select \"API & auth\",</li><li>select \"Credentials\",</li><li>click \"Create new Key\",</li><li>select \"Server key\",</li><li>enter IP address(es) to limit access or leave blank,</li><li>click \"Create\"</li></ol>",
+            "api3": "<p>The subsequent app page will contain the new API key to be copied here.</p>"
+        },
+        "warn": {
+            "token-expired": "trying to refresh token due to expiry",
+            "refreshing-accesstoken": "refreshing access token after 401 error"
+        },
+        "error": {
+            "no-refresh-token": "No refresh token to regain Google access",
+            "token-request-error": "refresh token request error: __err__",
+            "refresh-token-error": "refresh token error: __message__",
+            "too-many-refresh-attempts": "too many refresh attempts, giving up",
+            "error": "ERROR: __error__: __description__",
+            "no-credentials": "ERROR: no credentials - should never happen",
+            "something-broke": "Something went wrong in the authentication process. Please try again.",
+            "profile-fetch-failed": "auth worked but profile fetching failed",
+            "httperror": "HTTP Error __statusCode__",
+            "apierror": "API error, __status__",
+            "token-mismatch": "CSRF token mismatch, possible cross-site request forgery attempt."
+        },
+        "message": {
+            "authorized": "<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>"
+        }
+    }
+}

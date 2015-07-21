@@ -1,0 +1,25 @@
+{
+    "delicious": {
+        "label": {
+            "delicious": "Delicious",
+            "user": "User",
+            "password": "Password",
+            "tags": "Tags",
+            "name": "Name",
+            "private": "Mark as private?"
+        },
+        "placeholder": {
+            "tags": "comma-separated tags to add",
+            "name": "Name"
+        },
+        "status": {
+            "saving": "saving",
+            "failed": "failed"
+        },
+        "error": {
+            "missing-url": "url must be provided in msg.payload",
+            "missing-title": "msg.title must be provided",
+            "missing-credentials": "missing credentials"
+        }
+    }
+}

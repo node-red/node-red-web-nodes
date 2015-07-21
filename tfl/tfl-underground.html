@@ -18,29 +18,29 @@
 
 
     <div class="form-row">
-        <label>&nbsp;<i class="fa fa-filter"></i> Get</label>
-        the status information for the
+        <label>&nbsp;<i class="fa fa-filter"></i> <span data-i18n="tfl-underground.label.get"></span></label>
+        <span data-i18n="tfl-underground.label.status"></span>
     </div>
     <div class="form-row">
             <label>&nbsp;</label>
             <select id="node-input-line" style="width:50% !important">
-                <option value="Bakerloo">Bakerloo</option>             
-                <option value="Central">Central</option>
-                <option value="Circle">Circle</option>
-                <option value="District">District</option>
-                <option value="Hammersmith and City">Hammersmith and City</option>
-                <option value="Jubilee">Jubilee</option>
-                <option value="Metropolitan">Metropolitan</option>
-                <option value="Northern">Northern</option>
-                <option value="Piccadilly">Piccadilly</option>
-                <option value="Victoria">Victoria</option>
-                <option value="Waterloo and City">Waterloo and City</option>
-                <option value="Input Defined">Input Defined</option>
-            </select>&nbsp;line 
+                <option value="Bakerloo" data-i18n="tfl-underground.label.bakerloo"></option>             
+                <option value="Central" data-i18n="tfl-underground.label.central"></option>
+                <option value="Circle" data-i18n="tfl-underground.label.circle"></option>
+                <option value="District" data-i18n="tfl-underground.label.district"></option>
+                <option value="Hammersmith and City" data-i18n="tfl-underground.label.hammersmith"></option>
+                <option value="Jubilee" data-i18n="tfl-underground.label.jubilee"></option>
+                <option value="Metropolitan" data-i18n="tfl-underground.label.metropolitan"></option>
+                <option value="Northern" data-i18n="tfl-underground.label.northern"></option>
+                <option value="Piccadilly" data-i18n="tfl-underground.label.piccadilly"></option>
+                <option value="Victoria" data-i18n="tfl-underground.label.victoria"></option>
+                <option value="Waterloo and City" data-i18n="tfl-underground.label.waterloo"></option>
+                <option value="Input Defined" data-i18n="tfl-underground.label.input"></option>
+            </select>&nbsp;<span data-i18n="tfl-underground.label.line"></span>
     </div>
 
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="tfl-underground.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
 
@@ -85,10 +85,10 @@
         outputs:1,
         icon: "train.png",
         label: function() {
-            return this.name||'TFL Underground';
+            return this.name||this._("tfl-underground.label.tfl-underground");
         },
         oneditprepare: function() {
-            $("#node-config-tfl-tooltip").html("<p>Before using this node please sign up to <code><a href=https://api-portal.tfl.gov.uk/login target=\"_blank\" style=\"text-decoration:underline;\">Transport for London</a></code>\n and accept the terms and conditions to gain access to the live feeds.</p>");
+            $("#node-config-tfl-tooltip").html(this._("tfl-underground.tip.signup"));
         }
     });
 })();

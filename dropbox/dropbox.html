@@ -16,33 +16,21 @@
 
 <script type="text/x-red" data-template-name="dropbox-config">
     <div class="form-row">
-        <label for="node-config-input-appkey" style="width:120px;"><i class="fa fa-key"></i> App Key</label>
+        <label for="node-config-input-appkey" style="width:120px;"><i class="fa fa-key"></i> <span data-i18n="dropbox.label.appkey"></span></label>
         <input class="input-append-left" type="text" id="node-config-input-appkey" style="width: 60%;" >
     </div>
     <div class="form-row">
-        <label for="node-config-input-appsecret" style="width:120px;"><i class="fa fa-lock"></i> App Secret</label>
+        <label for="node-config-input-appsecret" style="width:120px;"><i class="fa fa-lock"></i> <span data-i18n="dropbox.label.appsecret"></span></label>
         <input class="input-append-left" type="password" id="node-config-input-appsecret" style="width: 60%;" >
     </div>
     <div class="form-row">
-        <label for="node-config-input-accesstoken" style="width:120px;"><i class="fa fa-bookmark"></i> Access Token</label>
+        <label for="node-config-input-accesstoken" style="width:120px;"><i class="fa fa-bookmark"></i> <span data-i18n="dropbox.label.accesstoken"></span></label>
         <input class="input-append-left" type="password" id="node-config-input-accesstoken" style="width: 60%;" >
     </div>
     <div class="form-tips">
-        To obtain these credentials, visit the <i><a href="https://www.dropbox.com/developers" target="_new">Dropbox developer home</a></i>.<br/>
-        Once signed up:
-        <ol>
-           <li>click "Create app",</li>
-           <li>select "Dropbox API app",</li>
-           <li>select "Files and datastores",</li>
-           <li>choose an appropriate answer as to whether your node should be
-               limited to its own folder or given full access. (This can be
-               changed later so choose "Yes" to restrict the application
-               while testing might be a good idea.)</li>
-           <li>choose an app name</li>
-           <li>click "Create app".</li>
-        </ol>
-        The subsequent app page will contain the App key, App secret and a
-        "Generate" button to produce a suitable "access token".
+        <span data-i18n="[html]dropbox.tip.cred1"></span>
+        <span data-i18n="[html]dropbox.tip.cred2"></span>
+        <span data-i18n="[html]dropbox.tip.cred3"></span>
     </div>
 </script>
 
@@ -57,7 +45,7 @@
             accesstoken: {type: "password",required:true},
         },
         label: function() {
-            return 'Dropbox'; // TODO: get display_name from account info?
+            return this._("dropbox.label.dropbox"); // TODO: get display_name from account info?
         },
         exportable: false,
     });
@@ -66,16 +54,16 @@
 
 <script type="text/x-red" data-template-name="dropbox in">
     <div class="form-row">
-        <label for="node-input-dropbox"><i class="fa fa-user"></i> Dropbox</label>
+        <label for="node-input-dropbox"><i class="fa fa-user"></i> <span data-i18n="dropbox.label.dropbox"></span></label>
         <input type="text" id="node-input-dropbox">
     </div>
     <div class="form-row node-input-filepattern">
-         <label for="node-input-filepattern"><i class="fa fa-file"></i> Filename Pattern</label>
-         <input type="text" id="node-input-filepattern" placeholder="Filepattern">
+         <label for="node-input-filepattern"><i class="fa fa-file"></i> <span data-i18n="dropbox.label.pattern"></span></label>
+         <input type="text" id="node-input-filepattern" data-i18n="[placeholder]dropbox.placeholder.pattern">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="dropbox.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]dropbox.placeholder.name">
     </div>
 </script>
 
@@ -105,23 +93,23 @@
         outputs: 1,
         icon: "dropbox.png",
         label: function() {
-            return this.name||this.filepattern||'Dropbox';
+            return this.name||this.filepattern||this._("dropbox.label.dropbox");
         }
     });
 </script>
 
 <script type="text/x-red" data-template-name="dropbox">
     <div class="form-row">
-        <label for="node-input-dropbox"><i class="fa fa-user"></i> Dropbox</label>
+        <label for="node-input-dropbox"><i class="fa fa-user"></i> <span data-i18n="dropbox.label.dropbox"></span></label>
         <input type="text" id="node-input-dropbox">
     </div>
     <div class="form-row node-input-filename">
-         <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
-         <input type="text" id="node-input-filename" placeholder="Filename">
+         <label for="node-input-filename"><i class="fa fa-file"></i> <span data-i18n="dropbox.label.filename"></span></label>
+         <input type="text" id="node-input-filename" data-i18n="[placeholder]dropbox.placeholder.filename">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="dropbox.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]dropbox.placeholder.name">
     </div>
 </script>
 
@@ -147,27 +135,27 @@
         icon: "dropbox.png",
         align: "right",
         label: function() {
-            return this.name||this.filename||'Dropbox';
+            return this.name||this.filename||this._("dropbox.label.dropbox");
         }
     });
 </script>
 
 <script type="text/x-red" data-template-name="dropbox out">
     <div class="form-row">
-        <label for="node-input-dropbox"><i class="fa fa-user"></i> Dropbox</label>
+        <label for="node-input-dropbox"><i class="fa fa-user"></i> <span data-i18n="dropbox.label.dropbox"></span></label>
         <input type="text" id="node-input-dropbox">
     </div>
     <div class="form-row node-input-filename">
-         <label for="node-input-filename"><i class="fa fa-file"></i> Filename</label>
-         <input type="text" id="node-input-filename" placeholder="Filename">
+         <label for="node-input-filename"><i class="fa fa-file"></i> <span data-i18n="dropbox.label.filename"></span></label>
+         <input type="text" id="node-input-filename" data-i18n="[placeholder]dropbox.placeholder.filename">
     </div>
     <div class="form-row node-input-localFilename">
-         <label for="node-input-localFilename"><i class="fa fa-file"></i> Local Filename</label>
-         <input type="text" id="node-input-localFilename" placeholder="Local Filename">
+         <label for="node-input-localFilename"><i class="fa fa-file"></i> <span data-i18n="dropbox.label.local"></span></label>
+         <input type="text" id="node-input-localFilename" data-i18n="[placeholder]dropbox.placeholder.local">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="dropbox.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]dropbox.placeholder.name">
     </div>
 </script>
 
@@ -195,7 +183,7 @@
         icon: "dropbox.png",
         align: "right",
         label: function() {
-            return this.name||this.filename||this.localFilename||'Dropbox';
+            return this.name||this.filename||this.localFilename||this._("dropbox.label.dropbox");
         }
     });
 </script>

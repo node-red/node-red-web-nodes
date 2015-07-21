@@ -101,7 +101,7 @@ describe('Strava node', function() {
                     if (err) {
                     	return done(err);
                     }
-                    res.text.should.equal("ERROR: Received query from UI without the needed credentials");
+                    res.text.should.equal("strava.error.no-credentials-ui");
                     done();
                 });
             });
@@ -176,7 +176,7 @@ describe('Strava node', function() {
                                 .get('/strava-credentials/auth/callback?code=' + sessionCode + '&state=n2:' + csrfToken)
                                 .expect(function(res) {
                                     try {
-                                        res.text.indexOf("Successfully authorized with Strava.").should.not.equal(-1); // should succeed
+                                        res.text.indexOf("strava.message.authorized").should.not.equal(-1); // should succeed
                                     } catch (err) {
                                         done(err);
                                     }
@@ -195,7 +195,7 @@ describe('Strava node', function() {
                                     if (err) {
                                     	return done(err);
                                     }
-                                    res.text.should.equal("Error! Strava node has failed to fetch a valid access token.");
+                                    res.text.should.equal("strava.error.accesstoken-error");
                                     done();
                                 }); 
                             }
@@ -206,7 +206,7 @@ describe('Strava node', function() {
                                     if (err) {
                                     	return done(err);
                                     }
-                                    res.text.should.equal("Error! Strava node has failed to fetch the authenticated user\'s name.");
+                                    res.text.should.equal("strava.error.username-error");
                                     done();
                                 }); 
                             } else {
@@ -216,7 +216,7 @@ describe('Strava node', function() {
                                     if (err) {
                                     	return done(err);
                                     }
-                                    res.text.should.equal("Strava replied with the unexpected HTTP status code of 404");
+                                    res.text.should.equal("strava.error.unexpected-statuscode");
                                     done();
                                 }); 
                             } 
@@ -227,7 +227,7 @@ describe('Strava node', function() {
                                 if (err) {
                                 	return done(err);
                                 }
-                                res.text.should.equal("CSRF token mismatch, possible cross-site request forgery attempt.");
+                                res.text.should.equal("strava.error.csrf-token-mismatch");
                                 done();
                             });   
                         }

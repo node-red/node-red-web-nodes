@@ -1,0 +1,33 @@
+{
+    "wunder": {
+        "label": {
+            "wunder": "wunderground",
+            "location": "Location",
+            "option_city": "City",
+            "option_coordinates": "Coordinates",
+            "city": "City",
+            "country": "Country",
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "apikey": "API Key",
+            "name": "Name"
+        },
+        "placeholder": {
+            "city": "City",
+            "country": "Country or US State",
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "name": "Name"
+        },
+        "error": {
+            "invalid-lat": "Invalid latitude (lat) provided",
+            "invalid-lon": "Invalid longitude (lon) provided",
+            "no-apikey": "No Wunderground API key set"
+        },
+        "message": {
+            "title": "Data supplied by The Weather Underground.",
+            "description": "Current weather information at coordinates: __lat__, __lon__",
+            "payload": "The weather in __city__ at coordinates: __lat__, __lon__ is __weather__"
+        }
+    }
+}

@@ -21,7 +21,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         this.google = RED.nodes.getNode(n.google);
         if (!this.google || !this.google.credentials.accessToken) {
-            this.warn("Missing google credentials");
+            this.warn(RED._("calendar.warn.no-credentials"));
             return;
         }
         this.calendar = n.calendar || 'primary';
@@ -48,21 +48,21 @@ module.exports = function(RED) {
             eventsBetween = eventsEndingBetween;
         }
         var node = this;
-        node.status({fill:"blue",shape:"dot",text:"querying"});
+        node.status({fill:"blue",shape:"dot",text:"calendar.status.querying"});
         calendarList(node, function(err) {
             if (err) {
                 node.error(err,{});
-                node.status({fill:"red",shape:"ring",text:"failed"});
+                node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
                 return;
             }
             var cal = calendarByNameOrId(node, node.calendar);
             if (!cal) {
-                node.status({fill:"red",shape:"ring",text:"invalid calendar"});
+                node.status({fill:"red",shape:"ring",text:"calendar.status.invalid-calendar"});
                 return;
             }
             node.status({});
             node.on('input', function(msg) {
-                node.status({fill:"blue",shape:"dot",text:"querying"});
+                node.status({fill:"blue",shape:"dot",text:"calendar.status.querying"});
                 var now = new Date();
                 eventsBetween(node, cal, {}, node.last, now, function(err,events) {
                     setNextTimeout(node, cal, now, function() {
@@ -70,7 +70,7 @@ module.exports = function(RED) {
                     });
                     if (err) {
                         node.error(err,msg);
-                        node.status({fill:"blue",shape:"dot",text:"failed"});
+                        node.status({fill:"blue",shape:"dot",text:"calendar.status.failed"});
                     } else {
                         node.status({});
                         events.forEach(function (ev) {
@@ -93,7 +93,7 @@ module.exports = function(RED) {
     RED.nodes.registerType("google calendar in", GoogleCalendarInputNode);
 
     function setNextStartingTimeout(node, cal, after, cb) {
-        node.status({fill:"blue",shape:"dot",text:"querying next event"});
+        node.status({fill:"blue",shape:"dot",text:"calendar.status.next-event"});
         node.last = new Date(after.getTime());
         after = new Date(after.getTime()+node.offset); // apply offset
         nextStartingEvent(node, cal, {}, after, function(err, ev) {
@@ -115,7 +115,7 @@ module.exports = function(RED) {
     }
 
     function setNextEndingTimeout(node, cal, after, cb) {
-        node.status({fill:"blue",shape:"dot",text:"querying next event"});
+        node.status({fill:"blue",shape:"dot",text:"calendar.status.next-event"});
         node.last = new Date(after.getTime());
         after = new Date(after.getTime()+node.offset); // apply offset
         nextEndingEvent(node, cal, {}, after, function(err, ev) {
@@ -142,38 +142,38 @@ module.exports = function(RED) {
         this.calendar = n.calendar || 'primary';
 
         if (!this.google || !this.google.credentials.accessToken) {
-            this.warn("Missing google credentials");
+            this.warn(RED._("calendar.warn.no-credentials"));
             return;
         }
 
         var node = this;
-        node.status({fill:"blue",shape:"dot",text:"querying"});
+        node.status({fill:"blue",shape:"dot",text:"calendar.status.querying"});
         calendarList(node, function(err) {
             if (err) {
                 node.error(err,{});
-                node.status({fill:"red",shape:"ring",text:"failed"});
+                node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
                 return;
             }
             node.status({});
 
             node.on('input', function(msg) {
-                node.status({fill:"blue",shape:"dot",text:"querying"});
+                node.status({fill:"blue",shape:"dot",text:"calendar.status.querying"});
                 var cal = calendarByNameOrId(node, msg.calendar) ||
                     calendarByNameOrId(node, node.calendar);
                 if (!cal) {
-                    node.error("invalid calendar",msg);
-                    node.status({fill:"red",shape:"ring",text:"invalid calendar"});
+                    node.error(RED._("calendar.error.invalid-calendar"),msg);
+                    node.status({fill:"red",shape:"ring",text:"calendar.status.invalid-calendar"});
                     return;
                 }
                 nextStartingEvent(node, cal, msg, function(err, ev) {
                     if (err) {
-                        node.error("Error: " + err.toString(),msg);
-                        node.status({fill:"red",shape:"ring",text:"failed"});
+                        node.error(RED._("calendar.error.error", {error:err.toString()}),msg);
+                        node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
                         return;
                     }
                     if (!ev) {
-                        node.error("Error: no event found",msg);
-                        node.status({fill:"red",shape:"ring",text:"no event"});
+                        node.error(RED._("calendar.error.no-event"),msg);
+                        node.status({fill:"red",shape:"ring",text:"calendar.status.no-event"});
                     } else {
                         sendEvent(node, ev, msg);
                         node.status({});
@@ -208,11 +208,11 @@ module.exports = function(RED) {
         node.calendars = {};
         node.google.request('https://www.googleapis.com/calendar/v3/users/me/calendarList', function(err, data) {
             if (err) {
-                cb("failed to fetch calendar list: " + err.toString());
+                cb(RED._("calendar.error.fetch-failed", {message:err.toString()}));
                 return;
             }
             if (data.error) {
-                cb("failed to fetch calendar list: " + data.error.message);
+                cb(RED._("calendar.error.fetch-failed", {message:data.error.message}));
                 return;
             }
             for (var i = 0; i < data.items.length; i++) {
@@ -247,10 +247,9 @@ module.exports = function(RED) {
         }
         var handle_response = function(err, data) {
             if (err) {
-                cb("Error: " + err.toString(), null);
+                cb(RED._("calendar.error.error", {error:err.toString()}), null);
             } else if (data.error) {
-                cb("Error " + data.error.code + ": " +
-                        JSON.stringify(data.error.message), null);
+                cb(RED._("calendar.error.error-details", {code:data.error.code, message:JSON.stringify(data.error.message)}), null);
             } else {
                 var ev;
                 /* 0 - 10 events ending after now ordered by startTime
@@ -302,10 +301,9 @@ module.exports = function(RED) {
         }
         var handle_response = function(err, data) {
             if (err) {
-                cb("Error: " + err.toString(), null);
+                cb(RED._("calendar.error.error", {error:err.toString()}), null);
             } else if (data.error) {
-                cb("Error " + data.error.code + ": " +
-                        JSON.stringify(data.error.message), null);
+                cb(RED._("calendar.error.error-details", {code:data.error.code, message:JSON.stringify(data.error.message)}), null);
             } else {
                 var ev;
                 /* 0 - 10 events ending after now ordered by startTime
@@ -359,10 +357,9 @@ module.exports = function(RED) {
         }
         node.google.request(request, function(err, data) {
             if (err) {
-                cb("Error: " + err.toString(), null);
+                cb(RED._("calendar.error.error", {error:err.toString()}), null);
             } else if (data.error) {
-                cb("Error " + data.error.code + ": " +
-                        JSON.stringify(data.error.message), null);
+                cb(RED._("calendar.error.error-details", {code:data.error.code, message:JSON.stringify(data.error.message)}), null);
             } else {
                 /* 0 - 10 events ending after now ordered by startTime
                  * so we find the first that starts after now to
@@ -423,10 +420,9 @@ module.exports = function(RED) {
         }
         node.google.request(request, function(err, data) {
             if (err) {
-                cb("Error: " + err.toString(), null);
+                cb(RED._("calendar.error.error", {error:err.toString()}), null);
             } else if (data.error) {
-                cb("Error " + data.error.code + ": " +
-                        JSON.stringify(data.error.message), null);
+                cb(RED._("calendar.error.error-details", {code:data.error.code, message:JSON.stringify(data.error.message)}), null);
             } else {
                 /* 0 - 10 events ending after now ordered by startTime
                  * so we find the first that starts after now to
@@ -530,27 +526,27 @@ module.exports = function(RED) {
         this.calendar = n.calendar || 'primary';
 
         if (!this.google || !this.google.credentials.accessToken) {
-            this.warn("Missing google credentials");
+            this.warn(RED._("calendar.warn.no-credentials"));
             return;
         }
 
         var node = this;
-        node.status({fill:"blue",shape:"dot",text:"querying"});
+        node.status({fill:"blue",shape:"dot",text:"calendar.status.querying"});
         calendarList(node, function(err) {
             if (err) {
                 node.error(err);
-                node.status({fill:"red",shape:"ring",text:"failed"});
+                node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
                 return;
             }
             node.status({});
 
             node.on('input', function(msg) {
-                node.status({fill:"blue",shape:"dot",text:"creating"});
+                node.status({fill:"blue",shape:"dot",text:"calendar.status.creating"});
                 var cal = calendarByNameOrId(node, msg.calendar) ||
                     calendarByNameOrId(node, node.calendar);
                 if (!cal) {
-                    node.error("invalid calendar",msg);
-                    node.status({fill:"red",shape:"ring",text:"invalid calendar"});
+                    node.error(RED._("calendar.error.invalid-calendar"),msg);
+                    node.status({fill:"red",shape:"ring",text:"calendar.status.invalid-calendar"});
                     return;
                 }
                 var request = {
@@ -573,10 +569,10 @@ module.exports = function(RED) {
                 node.google.request(request, function(err, data) {
                     if (err) {
                         node.error(err.toString(),msg);
-                        node.status({fill:"red",shape:"ring",text:"failed"});
+                        node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
                     } else if (data.error) {
                         node.error(data.error.message,msg);
-                        node.status({fill:"red",shape:"ring",text:"failed"});
+                        node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
                     } else {
                         node.status({});
                     }

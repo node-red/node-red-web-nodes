@@ -40,11 +40,11 @@ module.exports = function(RED) {
         if (this.user) {
             this.on("input", function(msg) {
                 if (!msg.payload) {
-                    node.error("url must be provided in msg.payload",msg);
+                    node.error(RED._("delicious.error.missing-url"),msg);
                     return;
                 }
                 if (!msg.title) {
-                    node.error("msg.title must be provided",msg);
+                    node.error(RED._("delicious.error.missing-title"),msg);
                     return;
                 }
                 var options = {
@@ -66,19 +66,19 @@ module.exports = function(RED) {
                     options.url += "&extended="+encodeURIComponent(msg.description);
                 }
                 
-                node.status({fill:"blue",shape:"dot",text:"saving"});
+                node.status({fill:"blue",shape:"dot",text:"delicious.status.saving"});
 
                 request.get(options, function(err,res,body) {
                     if (err) {
                         node.error(err,msg);
-                        node.status({fill:"red",shape:"ring",text:"failed"});
+                        node.status({fill:"red",shape:"ring",text:"delicious.status.failed"});
                     } else {
                         if (body.indexOf('code="done"') != -1) {
                             node.status({});
                         } else {
                             //TODO: This API only returns XML. Need to parse out error messages
                             node.error(body,msg);
-                            node.status({fill:"red",shape:"ring",text:"failed"});
+                            node.status({fill:"red",shape:"ring",text:"delicious.status.failed"});
                         }
                     }
                 }).on('error',function(err) {
@@ -88,7 +88,7 @@ module.exports = function(RED) {
                 
             });
         } else {
-            this.error("missing credentials");
+            this.error(RED._("delicious.error.missing-credentials"));
         }
         
     }

@@ -13,75 +13,75 @@
 
 <script type="text/x-red" data-template-name="google directions">
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="directions.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]directions.placeholder.name">
     </div>
     <br />
     <div class="form-row">
-        <label for="node-input-googleAPI"><i class="fa fa-user"></i> Google API Key</label>
+        <label for="node-input-googleAPI"><i class="fa fa-user"></i> <span data-i18n="directions.label.apikey"></span></label>
         <input type="text" id="node-input-googleAPI">
     </div>
     <br />
     <div class="form-row">
-        <label for="node-input-origin"><i class="fa fa-map-marker"></i> Origin</label>
+        <label for="node-input-origin"><i class="fa fa-map-marker"></i> <span data-i18n="directions.label.origin"></span></label>
         <input type="text" id="node-input-origin">
     </div>
     <div class="form-row">
-        <label for="node-input-destination"><i class="fa fa-map-marker"></i> Destination</label>
+        <label for="node-input-destination"><i class="fa fa-map-marker"></i> <span data-i18n="directions.label.destination"></span></label>
         <input type="text" id="node-input-destination">
     </div>
     <div class="form-row">
-        <label for="node-input-mode"><i class="fa fa-tasks"></i> Mode</label>
+        <label for="node-input-mode"><i class="fa fa-tasks"></i> <span data-i18n="directions.label.mode"></span></label>
         <select type="text" id="node-input-mode" style="width:72%;">
             <option value=""></option>
-            <option value="driving">Driving</option>
-            <option value="walking">Walking</option>
-            <option value="bicycling">Bicycling</option>
-            <option value="transit">Transit</option>
+            <option value="driving" data-i18n="directions.label.driving"></option>
+            <option value="walking" data-i18n="directions.label.walking"></option>
+            <option value="bicycling" data-i18n="directions.label.bicycling"></option>
+            <option value="transit" data-i18n="directions.label.transit"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-waypoints"><i class="fa fa-road"></i> Waypoints</label>
+        <label for="node-input-waypoints"><i class="fa fa-road"></i> <span data-i18n="directions.label.waypoints"></span></label>
         <input type="text" id="node-input-waypoints">
     </div>
     <div class="form-row">
-        <label for="node-input-alternatives"><i class="fa fa-random"></i> Alternatives</label>
+        <label for="node-input-alternatives"><i class="fa fa-random"></i> <span data-i18n="directions.label.alternatives"></span></label>
         <input type="checkbox" id="node-input-alternatives">
     </div>
     <div class="form-row">
-        <label for="node-input-avoid"><i class="fa fa-exclamation-triangle"></i> Avoid</label>
+        <label for="node-input-avoid"><i class="fa fa-exclamation-triangle"></i> <span data-i18n="directions.label.avoid"></span></label>
         <input type="text" id="node-input-avoid">
     </div>
     <div class="form-row">
-        <label for="node-input-language"><i class="fa fa-language"></i> Language</label>
+        <label for="node-input-language"><i class="fa fa-language"></i> <span data-i18n="directions.label.language"></span></label>
         <input type="text" id="node-input-language">
     </div>
     <div class="form-row">
-        <label for="node-input-units"><i class="fa fa-wrench"></i> Units</label>
+        <label for="node-input-units"><i class="fa fa-wrench"></i> <span data-i18n="directions.label.units"></span></label>
         <select type="text" id="node-input-units" style="width:72%;">
             <option value=""></option>
-            <option value="metric">Metric</option>
-            <option value="imperial">Imperial</option>
+            <option value="metric" data-i18n="directions.label.metric"></option>
+            <option value="imperial" data-i18n="directions.label.imperial"></option>
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-region"><i class="fa fa-globe"></i> Region</label>
+        <label for="node-input-region"><i class="fa fa-globe"></i> <span data-i18n="directions.label.region"></span></label>
         <input type="text" id="node-input-region">
     </div>
     <div class="form-row">
-        <label for="node-input-departure_time"><i class="fa fa-clock-o"></i> Departure Time</label>
+        <label for="node-input-departure_time"><i class="fa fa-clock-o"></i> <span data-i18n="directions.label.departuretime"></span></label>
         <input type="text" id="node-input-departure_time">
     </div>
     <div class="form-row">
-        <label for="node-input-arrival_time"><i class="fa fa-clock-o"></i> Arrival Time</label>
+        <label for="node-input-arrival_time"><i class="fa fa-clock-o"></i> <span data-i18n="directions.label.arraivaltime"></span></label>
         <input type="text" id="node-input-arrival_time">
     </div>
     <div class="form-row">
-        <label for="node-input-transit_mode"><i class="fa fa-plane"></i> Transit Mode</label>
+        <label for="node-input-transit_mode"><i class="fa fa-plane"></i> <span data-i18n="directions.label.transitmode"></span></label>
         <input type="text" id="node-input-transit_mode">
     </div>
     <div class="form-row">
-        <label for="node-input-transit_routing_preferences"><i class="fa fa-question"></i> Transit Routing Preferences</label>
+        <label for="node-input-transit_routing_preferences"><i class="fa fa-question"></i> <span data-i18n="directions.label.transitpref"></span></label>
         <input type="text" id="node-input-transit_routing_preferences">
     </div>
 </script>
@@ -93,10 +93,10 @@
     <p><code>Name</code> - Name of the node</p>
     <p>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</p>
     <p><code>msg.key</code> - Your application's API key. This key identifies your application for purposes of quota management.</p>
-    <p><code>msg.origin</code> - The address or textual <i>latitude,longitude</i> value from which you wish to calculate directions. If you pass an address as a string, the Directions service will geocode the string and convert it to a latitude,longitude coordinate to calculate directions. If you pass coordinates, ensure that no space exists between the latitude and longitude values.</p>
-    <p><code>msg.destination</code> - The address or textual <i>latitude,longitude</i> value from which you wish to calculate directions. If you pass an address as a string, the Directions service will geocode the string and convert it to a latitude,longitude coordinate to calculate directions. If you pass coordinates, ensure that no space exists between the latitude and longitude values.</p>
+    <p><code>msg.origin</code> - The address or textual latitude/longitude value from which you wish to calculate directions. If you pass an address as a string, the Directions service will geocode the string and convert it to a latitude/longitude coordinate to calculate directions. If you pass coordinates, ensure that no space exists between the latitude and longitude values.</p>
+    <p><code>msg.destination</code> - The address or textual latitude/longitude value from which you wish to calculate directions. If you pass an address as a string, the Directions service will geocode the string and convert it to a latitude/longitude coordinate to calculate directions. If you pass coordinates, ensure that no space exists between the latitude and longitude values.</p>
     <p><code>msg.mode</code> - (Defaults to driving). Specifies the mode of transport to use when calculating directions. Valid values and other request details are specified in <a href="https://developers.google.com/maps/documentation/directions/?csw=1#TravelModes">Travel Modes</a>.</p>
-    <p><code>msg.waypoints</code> - Specifies an array of waypoints. Waypoints alter a route by routing it through the specified location(s). A waypoint is specified as either a <i>latitude,longitude</i> coordinate or as an address which will be geocoded. Waypoints are only supported for driving, walking and bicycling directions. (For more information on waypoints, see <a href="https://developers.google.com/maps/documentation/directions/?csw=1#Waypoints">Using Waypoints in Routes</a>.)</p>
+    <p><code>msg.waypoints</code> - Specifies an array of waypoints. Waypoints alter a route by routing it through the specified location(s). A waypoint is specified as either a latitude/longitude coordinate or as an address which will be geocoded. Waypoints are only supported for driving, walking and bicycling directions. (For more information on waypoints, see <a href="https://developers.google.com/maps/documentation/directions/?csw=1#Waypoints">Using Waypoints in Routes</a>.)</p>
     <p><code>msg.alternatives</code> - If set to true, specifies that the Directions service may provide more than one route alternative in the response. Note that providing route alternatives may increase the response time from the server.</p>
     <p><code>msg.avoid</code> -  Indicates that the calculated route(s) should avoid the indicated features. This parameter supports the following arguments:
         <ul>
@@ -234,7 +234,7 @@
         outputs:1,
         icon: "logo_maps.png",
         label: function() {
-            return this.name || "Google Directions";
+            return this.name || this._("directions.label.directions");
         },
         oneditprepare: function() {
 
