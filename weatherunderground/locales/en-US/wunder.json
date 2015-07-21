@@ -20,8 +20,8 @@
             "name": "Name"
         },
         "error": {
-            "invalid-lat": "Invalid lat provided",
-            "invalid-lon": "Invalid lon provided",
+            "invalid-lat": "Invalid latitude (lat) provided",
+            "invalid-lon": "Invalid longitude (lon) provided",
             "no-apikey": "No Wunderground API key set"
         },
         "message": {

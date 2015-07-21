@@ -48,7 +48,7 @@ module.exports = function(RED) {
             //setup and clear vars on new input
             var url, key, lat, lon, radius, rankBy, keyword, language, minPrice, maxPrice, name, types, query, placeId, extensions, openNow;
             var queryParams = {}, error = {};
-            node.status({fill:"blue",shape:"dot",text:RED._("places.status.querying")});
+            node.status({fill:"blue",shape:"dot",text:"places.status.querying"});
             if(this.googleAPI && this.googleAPI.credentials && this.googleAPI.credentials.key){
                 key = this.googleAPI.credentials.key;
             } else{
@@ -283,7 +283,7 @@ module.exports = function(RED) {
                                 msg.status = 'BAD_REQUEST';
                                 msg.error = RED._("places.error.invalid-placeid");
                             }
-                            node.status({fill:"red",shape:"ring",text:RED._("places.status.failed")});
+                            node.status({fill:"red",shape:"ring",text:"places.status.failed"});
                             throwNodeError(node, msg, {
                                 code: msg.statusCode,
                                 status: msg.status,
@@ -562,7 +562,7 @@ module.exports = function(RED) {
     
     function throwNodeError(node, msg, error){
         msg.error = error;
-        node.status({fill:"red",shape:"ring",text:RED._("places.status.failed")});
+        node.status({fill:"red",shape:"ring",text:"places.status.failed"});
         node.error(error, msg);
     }
 };

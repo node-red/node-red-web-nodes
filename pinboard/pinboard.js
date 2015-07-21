@@ -67,7 +67,7 @@ module.exports = function(RED) {
                     options.path += "&extended="+encodeURIComponent(msg.description)
                 }
                 
-                node.status({fill:"blue",shape:"dot",text:RED._("pinboard.status.saving")});
+                node.status({fill:"blue",shape:"dot",text:"pinboard.status.saving"});
 
                 https.get(options, function(res) {
                     var m = "";

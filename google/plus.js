@@ -749,7 +749,7 @@ module.exports = function(RED) {
         });
         
         function throwNodeError(err, msg){
-            node.status({fill:"red",shape:"ring",text:RED._("plus.status.failed")});
+            node.status({fill:"red",shape:"ring",text:"plus.status.failed"});
             msg.error = err;
             node.error(err, msg);
             return;

@@ -36,8 +36,8 @@
             "error": "ERROR: __error__: __description__",
             "no-credentials": "ERROR: no credentials - should never happen",
             "csrf-token-mismatch": "CSRF token mismatch, possible cross-site request forgery attempt",
-            "oautherrorinfo": "<h2>Oh no!</h2><p>Something went wrong with the authentication process. The following error was returned:</p><p><b>__statusCode__</b>: __errorData__</p>",
-            "oautherrorcode": "<h2>Oh no!</h2><p>Something went wrong with the authentication process. Http return code:</p><p><b>__metaCode__</b></p>"
+            "oautherrorinfo": "<p>Something went wrong with the authentication process. The following error was returned:</p><p><b>__statusCode__</b>: __errorData__</p>",
+            "oautherrorcode": "<p>Something went wrong with the authentication process. Http return code:</p><p><b>__metaCode__</b></p>"
         },
         "message": {
             "authorized": "<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>"

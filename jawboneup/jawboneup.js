@@ -71,12 +71,12 @@ module.exports = function(RED) {
               var r = request.get(options,function(err, httpResponse, body) {
                   if (err) {
                       node.error(err.toString(),msg);
-                      node.status({fill:"red",shape:"ring",text:RED._("jawboneup.status.failed")});
+                      node.status({fill:"red",shape:"ring",text:"jawboneup.status.failed"});
                   } else {
                       var result = JSON.parse(body);
                       if (result.meta.code != 200) {
                           node.error(RED._("jawboneup.error.errorinfo", {code: result.meta.code, type: result.meta.error_type, detail: result.meta.error_detail, message: result.meta.message}));
-                          node.status({fill:"red",shape:"ring",text:RED._("jawboneup.status.failed")});
+                          node.status({fill:"red",shape:"ring",text:"jawboneup.status.failed"});
                       } else {
                           if (result.data.items.length !== 0) {
                               if (node.outputNumber === 1) {
@@ -100,7 +100,7 @@ module.exports = function(RED) {
                               } else {
                                   // shouldn't ever get here
                                   node.error(RED._("jawboneup.error.incorrect-output"),msg);
-                                  node.status({fill:"red",shape:"ring",text:RED._("jawboneup.status.failed")});
+                                  node.status({fill:"red",shape:"ring",text:"jawboneup.status.failed"});
                               }
                          } else {
                               msg.payload = null; 
@@ -120,7 +120,7 @@ module.exports = function(RED) {
            return true;
         } else {
             node.error(RED._("jawboneup.error.credentials-error", {credentials: credentials}));
-            node.status({fill:"red",shape:"ring",text:RED._("jawboneup.status.failed")});      
+            node.status({fill:"red",shape:"ring",text:"jawboneup.status.failed"});      
             return false;
         }
     }

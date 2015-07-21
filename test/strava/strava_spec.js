@@ -195,7 +195,7 @@ describe('Strava node', function() {
                                     if (err) {
                                     	return done(err);
                                     }
-                                    res.text.should.equal("strava.error.acceesstoken-error");
+                                    res.text.should.equal("strava.error.accesstoken-error");
                                     done();
                                 }); 
                             }

@@ -30,7 +30,7 @@
             "too-many-refresh-attempts": "too many refresh attempts, giving up",
             "error": "ERROR: __error__: __description__",
             "no-credentials": "ERROR: no credentials - should never happen",
-            "something-broke": "yeah something broke.",
+            "something-broke": "Something went wrong in the authentication process. Please try again.",
             "profile-fetch-failed": "auth worked but profile fetching failed",
             "httperror": "HTTP Error __statusCode__",
             "apierror": "API error, __status__",

@@ -98,7 +98,7 @@ module.exports = function(RED) {
                         options.is_family = node.is_family;
                     }
                     
-                    node.status({fill:"blue",shape:"dot",text:RED._("flickr.status.uploading")});
+                    node.status({fill:"blue",shape:"dot",text:"flickr.status.uploading"});
 
                     var apiUrl = "https://up.flickr.com/services/upload/";
                     var signedUrl = oa.signUrl(apiUrl+'?'+querystring.stringify(options),
@@ -111,14 +111,14 @@ module.exports = function(RED) {
                     var r = request.post(apiUrl,function(err, httpResponse, body) {
                         if (err) {
                             node.error(err.toString());
-                            node.status({fill:"red",shape:"ring",text:RED._("flickr.status.failed")});
+                            node.status({fill:"red",shape:"ring",text:"flickr.status.failed"});
                         } else {
                             if (body.indexOf('stat="ok"') != -1) {
                                 node.status({});
                             } else {
                                 //TODO: This API only returns XML. Need to parse out error messages
                                 node.error(body,msg);
-                                node.status({fill:"red",shape:"ring",text:RED._("flickr.status.failed")});
+                                node.status({fill:"red",shape:"ring",text:"flickr.status.failed"});
                             }
                         }
                     });

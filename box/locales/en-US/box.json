@@ -49,7 +49,7 @@
             "token-request-error": "refresh token request error: __err__",
             "refresh-token-error": "refresh token error: __message__",
             "too-many-refresh-attempts": "too many refresh attempts, giving up",
-            "something-broke": "yeah something broke.",
+            "something-broke": "Something went wrong in the authentication process. Please try again.",
             "event-stream-initialize-failed": "failed to initialize event stream: __err__",
             "events-fetch-failed": "failed to fetch events: __err__",
             "no-filename-specified": "No filename specified",

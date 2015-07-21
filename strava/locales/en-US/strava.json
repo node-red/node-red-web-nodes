@@ -21,14 +21,14 @@
             "redirect": "<p>Please configure Strava to accept the following <b>Authorization Callback Domain</b> for authentication of your application: </p>\n<code>__constructedURIToShow__</code>"
         },
         "warn": {
-            "no-acceesstoken": "Missing Strava access token. Authorization has not been completed before node initialization.",
+            "no-accesstoken": "Missing Strava access token. Authorization has not been completed before node initialization.",
             "no-configuration": "Missing Strava configuration or credentials. Authorization has not been completed before node initialization."
         },
         "error": {
             "no-credentials-ui": "ERROR: Received query from UI without the needed credentials",
             "no-credentials": "ERROR: no credentials - should never happen",
             "username-error": "Error! Strava node has failed to fetch the authenticated user's name.",
-            "acceesstoken-error": "Error! Strava node has failed to fetch a valid access token.",
+            "accesstoken-error": "Error! Strava node has failed to fetch a valid access token.",
             "no-id": "No activity ID",
             "csrf-token-mismatch": "CSRF token mismatch, possible cross-site request forgery attempt.",
             "no-code": "The callback from Strava did not contain a required code",

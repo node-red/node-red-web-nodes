@@ -66,19 +66,19 @@ module.exports = function(RED) {
                     options.url += "&extended="+encodeURIComponent(msg.description);
                 }
                 
-                node.status({fill:"blue",shape:"dot",text:RED._("delicious.status.saving")});
+                node.status({fill:"blue",shape:"dot",text:"delicious.status.saving"});
 
                 request.get(options, function(err,res,body) {
                     if (err) {
                         node.error(err,msg);
-                        node.status({fill:"red",shape:"ring",text:RED._("delicious.status.failed")});
+                        node.status({fill:"red",shape:"ring",text:"delicious.status.failed"});
                     } else {
                         if (body.indexOf('code="done"') != -1) {
                             node.status({});
                         } else {
                             //TODO: This API only returns XML. Need to parse out error messages
                             node.error(body,msg);
-                            node.status({fill:"red",shape:"ring",text:RED._("delicious.status.failed")});
+                            node.status({fill:"red",shape:"ring",text:"delicious.status.failed"});
                         }
                     }
                 }).on('error',function(err) {

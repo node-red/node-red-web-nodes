@@ -108,13 +108,13 @@ module.exports = function(RED) {
         request.get(apiUrl,function(err, httpResponse, body) {
             if (err) {
                 node.error(err.toString(),msg);
-                node.status({fill:"red",shape:"ring",text:RED._("swarm.status.failed")});
+                node.status({fill:"red",shape:"ring",text:"swarm.status.failed"});
                 return;
             } else {
                 var result = JSON.parse(body);
                 if (result.meta.code != 200) {
                     node.error(RED._("swarm.error.errorcode", {metaCode: result.meta.code, errorDetail: result.meta.errorDetail}), msg);
-                    node.status({fill:"red",shape:"ring",text:RED._("swarm.status.failed")});
+                    node.status({fill:"red",shape:"ring",text:"swarm.status.failed"});
                     return;
                 } else {
                     if (result.response.checkins.items.length !== 0) {

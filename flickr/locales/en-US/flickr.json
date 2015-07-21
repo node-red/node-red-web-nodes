@@ -27,8 +27,8 @@
         },
         "error": {
             "missing-credentials": "Missing flickr credentials",
-            "something-broke": "Something broke.",
-            "oautherror": "<h2>Oh no!</h2><p>Something went wrong with the authentication process. The following error was returned:</p><p><b>__statusCode__</b>: __errorData__</p><p>One known cause of this type of failure is if the clock is wrong on system running Node-RED.</p>",
+            "something-broke": "Something went wrong in the authentication process. Please try again.",
+            "oautherror": "<p>Something went wrong with the authentication process. The following error was returned:</p><p><b>__statusCode__</b>: __errorData__</p><p>One known cause of this type of failure is if the clock is wrong on system running Node-RED.</p>",
             "authorized": "<html><head></head><body>Authorised - you can close this window and return to Node-RED</body></html>"
         }
     }

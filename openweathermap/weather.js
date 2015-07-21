@@ -55,7 +55,7 @@ module.exports = function(RED) {
         //If the URL is not initialised, there has been an error with the input data,
         //and a node.error is reported.
         if (url) {
-            node.status({fill:"blue",shape:"dot",text:RED._("weather.status.requesting")});
+            node.status({fill:"blue",shape:"dot",text:"weather.status.requesting"});
             http.get(url, function(res) {
                 var weather = "";
                 res.on('data', function(d) {

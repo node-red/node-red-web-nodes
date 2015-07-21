@@ -51,18 +51,18 @@ module.exports = function(RED) {
             return;
         }
         var s3 = new AWS.S3();
-        node.status({fill:"blue",shape:"dot",text:RED._("aws.status.initializing")});
+        node.status({fill:"blue",shape:"dot",text:"aws.status.initializing"});
         s3.listObjects({ Bucket: node.bucket }, function(err, data) {
             if (err) {
                 node.error(RED._("aws.error.failed-to-fetch", {err:err}));
-                node.status({fill:"red",shape:"ring",text:RED._("aws.status.error")});
+                node.status({fill:"red",shape:"ring",text:"aws.status.error"});
                 return;
             }
             var contents = node.filterContents(data.Contents);
             node.state = contents.map(function (e) { return e.Key; });
             node.status({});
             node.on("input", function(msg) {
-                node.status({fill:"blue",shape:"dot",text:RED._("aws.status.checking-for-changes")});
+                node.status({fill:"blue",shape:"dot",text:"aws.status.checking-for-changes"});
                 s3.listObjects({ Bucket: node.bucket }, function(err, data) {
                     if (err) {
                         node.error(RED._("aws.error.failed-to-fetch", {err:err}),msg);
@@ -146,7 +146,7 @@ module.exports = function(RED) {
             }
             msg.bucket = bucket;
             msg.filename = filename;
-            node.status({fill:"blue",shape:"dot",text:RED._("aws.status.downloading")});
+            node.status({fill:"blue",shape:"dot",text:"aws.status.downloading"});
             s3.getObject({
                 Bucket: bucket,
                 Key: filename,
@@ -179,11 +179,11 @@ module.exports = function(RED) {
         }
         if (AWS) {
             var s3 = new AWS.S3();
-            node.status({fill:"blue",shape:"dot",text:RED._("aws.status.checking-credentials")});
+            node.status({fill:"blue",shape:"dot",text:"aws.status.checking-credentials"});
             s3.listObjects({ Bucket: node.bucket }, function(err) {
                 if (err) {
                     node.error(RED._("aws.error.aws-s3-error",{err:err}));
-                    node.status({fill:"red",shape:"ring",text:RED._("aws.status.error")});
+                    node.status({fill:"red",shape:"ring",text:"aws.status.error"});
                     return;
                 }
                 node.status({});
@@ -201,7 +201,7 @@ module.exports = function(RED) {
                     var localFilename = node.localFilename || msg.localFilename;
                     if (localFilename) {
                         // TODO: use chunked upload for large files
-                        node.status({fill:"blue",shape:"dot",text:RED._("aws.status.uploading")});
+                        node.status({fill:"blue",shape:"dot",text:"aws.status.uploading"});
                         var stream = fs.createReadStream(localFilename);
                         s3.putObject({
                             Bucket: bucket,
@@ -210,13 +210,13 @@ module.exports = function(RED) {
                         }, function(err) {
                             if (err) {
                                 node.error(err.toString(),msg);
-                                node.status({fill:"red",shape:"ring",text:RED._("aws.status.failed")});
+                                node.status({fill:"red",shape:"ring",text:"aws.status.failed"});
                                 return;
                             }
                             node.status({});
                         });
                     } else if (typeof msg.payload !== "undefined") {
-                        node.status({fill:"blue",shape:"dot",text:RED._("aws.status.uploading")});
+                        node.status({fill:"blue",shape:"dot",text:"aws.status.uploading"});
                         s3.putObject({
                             Bucket: bucket,
                             Body: RED.util.ensureBuffer(msg.payload),
@@ -224,7 +224,7 @@ module.exports = function(RED) {
                         }, function(err) {
                             if (err) {
                                 node.error(err.toString(),msg);
-                                node.status({fill:"red",shape:"ring",text:RED._("aws.status.failed")});
+                                node.status({fill:"red",shape:"ring",text:"aws.status.failed"});
                                 return;
                             }
                             node.status({});

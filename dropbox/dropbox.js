@@ -49,17 +49,17 @@ module.exports = function(RED) {
             secret: credentials.appsecret,
             token: credentials.accesstoken,
         });
-        node.status({fill:"blue",shape:"dot",text:RED._("dropbox.status.initializing")});
+        node.status({fill:"blue",shape:"dot",text:"dropbox.status.initializing"});
         dropbox.pullChanges(function(err, data) {
             if (err) {
                 node.error(RED._("dropbox.error.initialization-failed",{err:err.toString()}));
-                node.status({fill:"red",shape:"ring",text:RED._("dropbox.status.failed")});
+                node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
                 return;
             }
             node.status({});
             node.state = data.cursor();
             node.on("input", function(msg) {
-                node.status({fill:"blue",shape:"dot",text:RED._("dropbox.status.checking-for-changes")});
+                node.status({fill:"blue",shape:"dot",text:"dropbox.status.checking-for-changes"});
                 dropbox.pullChanges(node.state, function(err, data) {
                     if (err) {
                         node.error(RED._("dropbox.error.change-fetch-failed",{err:err.toString()}),msg);
@@ -120,11 +120,11 @@ module.exports = function(RED) {
                 return;
             }
             msg.filename = filename;
-            node.status({fill:"blue",shape:"dot",text:RED._("dropbox.status.downloading")});
+            node.status({fill:"blue",shape:"dot",text:"dropbox.status.downloading"});
             dropbox.readFile(filename, function(err, data) {
                     if (err) {
                         node.error(RED._("dropbox.error.download-failed",{err:err.toString()}),msg);
-                        node.status({fill:"red",shape:"ring",text:RED._("dropbox.status.failed")});
+                        node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
                     } else {
                         msg.payload = data;
                         node.status({});
@@ -153,11 +153,11 @@ module.exports = function(RED) {
             secret: credentials.appsecret,
             token: credentials.accesstoken,
         });
-        node.status({fill:"blue",shape:"dot",text:RED._("dropbox.status.checking-credentials")});
+        node.status({fill:"blue",shape:"dot",text:"dropbox.status.checking-credentials"});
         dropbox.getAccountInfo(function (err) {
             if (err) {
                 node.error(RED._("dropbox.error.credentials-error",{err:err}));
-                node.status({fill:"red",shape:"ring",text:RED._("dropbox.status.access-denied")});
+                node.status({fill:"red",shape:"ring",text:"dropbox.status.access-denied"});
                     return;
             }
             node.status({});
@@ -165,24 +165,24 @@ module.exports = function(RED) {
                 var filename = this.filename || msg.filename;
                 if (filename === "") {
                     node.error(RED._("dropbox.error.no-filename"),msg);
-                    node.status({fill:"red",shape:"ring",text:RED._("dropbox.status.failed")});
+                    node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
                     return;
                 }
                 var localFilename = this.localFilename || msg.localFilename;
                 if (localFilename) {
                     // TODO: use chunked upload for files larger than 150M
-                    node.status({fill:"blue",shape:"dot",text:RED._("dropbox.status.uploading")});
+                    node.status({fill:"blue",shape:"dot",text:"dropbox.status.uploading"});
                     fs.readFile(localFilename, function read(err, data) {
                         if (err) {
                             node.error(err.toString(),msg);
-                            node.status({fill:"red",shape:"ring",text:RED._("dropbox.status.failed")});
+                            node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
                             return;
                         }
 
                         dropbox.writeFile(filename, data, function(err) {
                             if (err) {
                                 node.error(err.toString(),msg);
-                                node.status({fill:"red",shape:"ring",text:RED._("dropbox.status.failed")});
+                                node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
                                 return;
                             }
                             node.status({});
@@ -190,11 +190,11 @@ module.exports = function(RED) {
                     });
                 } else if (typeof msg.payload !== "undefined") {
                     var data = RED.util.ensureBuffer(msg.payload);
-                    node.status({fill:"blue",shape:"dot",text:RED._("dropbox.status.uploading")});
+                    node.status({fill:"blue",shape:"dot",text:"dropbox.status.uploading"});
                     dropbox.writeFile(filename, data, function(err) {
                         if (err) {
                             node.error(err.toString(),msg);
-                            node.status({fill:"red",shape:"ring",text:RED._("dropbox.status.failed")});
+                            node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
                             return;
                         }
                         node.status({});

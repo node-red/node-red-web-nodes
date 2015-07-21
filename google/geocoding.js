@@ -180,7 +180,7 @@ module.exports = function(RED) {
         });
         
         function throwNodeError(err, msg){
-            node.status({fill:"red",shape:"ring",text:RED._("geocoding.status.failed")});
+            node.status({fill:"red",shape:"ring",text:"geocoding.status.failed"});
             msg.error = err;
             node.error(err, msg);
             return;

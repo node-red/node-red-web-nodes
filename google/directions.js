@@ -294,7 +294,7 @@ module.exports = function(RED) {
         });
 
         function throwNodeError(err, msg){
-            node.status({fill:"red",shape:"ring",text:RED._("directions.status.failed")});
+            node.status({fill:"red",shape:"ring",text:"directions.status.failed"});
             msg.error = err;
             node.error(err, msg);
             return;

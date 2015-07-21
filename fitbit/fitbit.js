@@ -90,7 +90,7 @@ module.exports = function(RED) {
             credentials.access_token && credentials.access_token_secret) {
             var oa = getOAuth(credentials.client_key,credentials.client_secret);
             var node = this;
-            node.status({fill:"blue",shape:"dot",text:RED._("fitbit.status.initializing")});
+            node.status({fill:"blue",shape:"dot",text:"fitbit.status.initializing"});
             var day = today();
             if (node.dataType === 'badges') {
                 oa.get('https://api.fitbit.com/1/user/-/badges.json',
@@ -99,20 +99,20 @@ module.exports = function(RED) {
                        function(err, body, response) {
                     if (err) {
                         node.error(formatError(err));
-                        node.status({fill:"red",shape:"ring",text:RED._("fitbit.status.failed")});
+                        node.status({fill:"red",shape:"ring",text:"fitbit.status.failed"});
                         return;
                     }
                     node.state = JSON.parse(body).badges;
                     node.status({});
                     node.on('input', function(msg) {
-                        node.status({fill:"blue",shape:"dot",text:RED._("fitbit.status.querying")});
+                        node.status({fill:"blue",shape:"dot",text:"fitbit.status.querying"});
                         oa.get('https://api.fitbit.com/1/user/-/badges.json',
                                credentials.access_token,
                                credentials.access_token_secret,
                                function(err, body, response) {
                             if (err) {
                                 node.error(formatError(err),msg);
-                                node.status({fill:"red",shape:"ring",text:RED._("fitbit.status.failed")});
+                                node.status({fill:"red",shape:"ring",text:"fitbit.status.failed"});
                                 return;
                             }
                             var badges = JSON.parse(body).badges;
@@ -145,7 +145,7 @@ module.exports = function(RED) {
                        function(err, body, response) {
                     if (err) {
                         node.error(formatError(err));
-                        node.status({fill:"red",shape:"ring",text:RED._("fitbit.status.failed")});
+                        node.status({fill:"red",shape:"ring",text:"fitbit.status.failed"});
                         return;
                     }
                     var data = JSON.parse(body);
@@ -155,7 +155,7 @@ module.exports = function(RED) {
                     };
                     node.status({});
                     node.on('input', function(msg) {
-                        node.status({fill:"blue",shape:"dot",text:RED._("fitbit.status.querying")});
+                        node.status({fill:"blue",shape:"dot",text:"fitbit.status.querying"});
                         var day = today();
                         oa.get('https://api.fitbit.com/1/user/-/sleep/date/'+day+'.json',
                                credentials.access_token,
@@ -163,7 +163,7 @@ module.exports = function(RED) {
                                function(err, body, response) {
                             if (err) {
                                 node.error(formatError(err),msg);
-                                node.status({fill:"red",shape:"ring",text:RED._("fitbit.status.failed")});
+                                node.status({fill:"red",shape:"ring",text:"fitbit.status.failed"});
                                 return;
                             }
                             var data = JSON.parse(body);
@@ -187,7 +187,7 @@ module.exports = function(RED) {
                        function(err, body, response) {
                     if (err) {
                         node.error(formatError(err));
-                        node.status({fill:"red",shape:"ring",text:RED._("fitbit.status.failed")});
+                        node.status({fill:"red",shape:"ring",text:"fitbit.status.failed"});
                         return;
                     }
                     var data = JSON.parse(body);
@@ -197,7 +197,7 @@ module.exports = function(RED) {
                     };
                     node.status({});
                     node.on('input', function(msg) {
-                        node.status({fill:"blue",shape:"dot",text:RED._("fitbit.status.querying")});
+                        node.status({fill:"blue",shape:"dot",text:"fitbit.status.querying"});
                         var day = today();
                         var fetchDay = day;
                         if (day !== node.state.day) {
@@ -211,7 +211,7 @@ module.exports = function(RED) {
                                function(err, body, response) {
                             if (err) {
                                 node.error(formatError(err),msg);
-                                node.status({fill:"red",shape:"ring",text:RED._("fitbit.status.failed")});
+                                node.status({fill:"red",shape:"ring",text:"fitbit.status.failed"});
                                 return;
                             }
                             var data = JSON.parse(body);
@@ -286,7 +286,7 @@ module.exports = function(RED) {
             var oa = getOAuth(credentials.client_key,credentials.client_secret);
             var node = this;
             this.on('input', function(msg) {
-                node.status({fill:"blue",shape:"dot",text:RED._("fitbit.status.querying")});
+                node.status({fill:"blue",shape:"dot",text:"fitbit.status.querying"});
                 var url;
                 if (node.dataType === 'activities' ||
                     node.dataType === 'sleep') {
@@ -302,7 +302,7 @@ module.exports = function(RED) {
                        function(err, body, response) {
                     if (err) {
                         node.error(formatError(err),msg);
-                        node.status({fill:"red",shape:"ring",text:RED._("fitbit.status.failed")});
+                        node.status({fill:"red",shape:"ring",text:"fitbit.status.failed"});
                         return;
                     }
                     var data = JSON.parse(body);

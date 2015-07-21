@@ -22,8 +22,8 @@
             "requesting": "requesting"
         },
         "error": {
-            "invalid-lat": "Invalid lat provided",
-            "invalid-lon": "Invalid lon provided",
+            "invalid-lat": "Invalid latitude (lat) provided",
+            "invalid-lon": "Invalid longitude (lon) provided",
             "invalid-json": "The API call returned invalid JSON",
             "invalid-city_country": "Invalid city/country",
             "invalid-location": "Invalid location information provided"
