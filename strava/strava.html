@@ -70,10 +70,10 @@
 
 <script type="text/x-red" data-help-name="strava">
     <p>Get your most recent activity on Strava.</p>
-    
+
     <p>This node returns the most recent activity in the authenticated user's account
     whenever it receives a message.</p>
-    
+
     <p>Should an activity be available, the following is set on the message:</p>
         <ul>
             <li>msg.payload is being set to the JavaScript Activity object as served by Strava.</li>
@@ -81,9 +81,9 @@
             <li>msg.time is a JavaScript date object representing the start of the activity, if such data is available. The date is set in UTC (zulu) time.</li>
         </ul>
     </p>
-    
+
     <p>If there are no available activities or if an error occurs, the node simply forwards the incoming message.</p>
-    
+
     <p>Data provided by <a href ="http://www.strava.com">Strava</a>.</p>
 </script>
 
@@ -94,7 +94,7 @@
         category: 'config',
         defaults: {
             username: {value:""}
-        },  
+        },
         credentials: {
             username: {type:"text"},
             clientID: {type:"text"},
@@ -118,24 +118,24 @@
             } else {
                 constructedURIToShow = location.protocol + '//' + location.hostname;
             }
-            var tip = this._("strava.tip.redirect", {constructedURIToShow: constructedURIToShow})
-            
+            var tip = this._("strava.tip.redirect", {constructedURIToShow: constructedURIToShow});
+
             function updateStravaAuthButton() {
                 var v1 = $("#node-config-input-clientID").val();
                 var v2 = $("#node-config-input-clientSecret").val();
-                
+
                 $("#node-config-start-auth").toggleClass("disabled",(v1.length === 0 || v2.length === 0));
             }
             $("#node-config-input-clientID").on('change keydown paste input',updateStravaAuthButton);
             $("#node-config-input-clientSecret").on('change keydown paste input',updateStravaAuthButton);
-            
+
             function updateStravaScreenName(sn) {
                 $("#node-config-strava-app-keys").hide();
                 $("#node-config-strava-user").show();
                 $("#node-config-input-username").val(sn);
                 $("#node-config-strava-username").html(sn);
             }
-            
+
             function pollStravaCredentials() {
                 $.getJSON('credentials/strava-credentials/'+id,function(data) {
                     if (data.username) {
@@ -147,9 +147,9 @@
                     }
                 });
             }
-            
+
             updateStravaAuthButton();
-            
+
             if (this.username) {
                 updateStravaScreenName(this.username);
             } else {
@@ -157,27 +157,27 @@
                 $("#node-config-strava-user").hide();
                 $("#node-config-dialog-ok").button("disable");
             }
-            
+
             function updateRedirectURI() {
                 $("#node-config-tooltip").html(tip);
                 $("#node-config-input-redirectURI").val(constructedURI);
                 $("#node-config-input-redirectURI").hide();
                 $("#node-config-redirectURI").hide();
             }
-            
+
             updateRedirectURI();
-            
+
             $("#node-config-start-auth").mousedown(function() {
                 var clientID = $("#node-config-input-clientID").val();
                 var clientSecret = $("#node-config-input-clientSecret").val();
                 var redirectURI = $("#node-config-input-redirectURI").val();
-                
+
                 var query = "node_id=" + id + "&client_id=" + clientID + "&client_secret=" + clientSecret + "&redirect_uri=" + redirectURI;
                 var url = 'strava-credentials/auth/?' + query;
                 $(this).attr("href",url);
                 window.stravaConfigNodeIntervalId = window.setTimeout(pollStravaCredentials,2000);
             });
-            
+
             $("#node-config-start-auth").click(function(e) {
                 var clientID = $("#node-config-input-clientID").val();
                 var redirectURI = $("#node-config-input-redirectURI").val();
