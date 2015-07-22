@@ -84,9 +84,10 @@ module.exports = function(RED) {
                     var fcast = res.forecast.txt_forecast.forecastday[0];
                     msg.payload.forecast = loc.city+" : "+fcast.title+" : "+ fcast.fcttext_metric;
                     callback(null);
-                    else {
-                        callback("Can't find city: "+node.city+", "+node.country+".");
-                    }
+                }
+                else {
+                    callback("Can't find city: "+node.city+", "+node.country+".");
+                }
             }
         };
     }
