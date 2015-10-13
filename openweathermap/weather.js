@@ -126,7 +126,7 @@ module.exports = function(RED) {
         var country;
         var lat;
         var lon;
-        if ((!node.credentials) || (!node.credentials.hasOwnProperty("apikey"))) { this.error("No API Key set"); }
+        if ((!node.credentials) || (!node.credentials.hasOwnProperty("apikey"))) { node.error(RED._("weather.error.no-api-key")); }
 
         this.interval_id = setInterval( function() {
             node.emit("input",{});
@@ -171,7 +171,7 @@ module.exports = function(RED) {
         var country;
         var lat;
         var lon;
-        if ((!node.credentials) || (!node.credentials.hasOwnProperty("apikey"))) { this.error("No API Key set"); }
+        if ((!node.credentials) || (!node.credentials.hasOwnProperty("apikey"))) { node.error(RED._("weather.error.no-api-key"));; }
 
         this.on('input', function(msg) {
             if (n.country && n.city) {
