@@ -9,7 +9,8 @@
             "city": "City",
             "country": "Country",
             "latitude": "Latitude",
-            "longitude": "Longitude"
+            "longitude": "Longitude",
+            "apikey": "API Key"
         },
         "placeholder": {
             "name": "Name",

@@ -17,6 +17,9 @@ Usage
 
 Two nodes that get the weather report and forecast from OpenWeatherMap.
 
+**Note:** An API key is required to use these nodes. To obtain an API key
+go to <a href="http://openweathermap.org/appid" target="_new">OpenWeatherMap</a>.
+
 
 ### Input Node
 

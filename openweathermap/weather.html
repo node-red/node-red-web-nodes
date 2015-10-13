@@ -16,8 +16,8 @@
 
 <script type="text/x-red" data-template-name="openweathermap">
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="weather.label.name"></span></label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]weather.placeholder.name">
+        <label for="node-input-apikey"><i class="fa fa-key"></i> <span data-i18n="weather.label.apikey"></span></label>
+        <input type="password" id="node-input-apikey">
     </div>
     <div class="form-row">
         <label for="weather-location-type-select"><i class="fa fa-globe"></i> <span data-i18n="weather.label.location"></span></label>
@@ -35,6 +35,10 @@
         </br>
         <label for=""><i class="weather-location-type"></i> <span data-i18n="weather.label.longitude"></span></label><input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px; margin-bottom:7px" data-i18n="[placeholder]weather.placeholder.longitude">
     </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="weather.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]weather.placeholder.name">
+    </div>
 </script>
 
 <script type="text/javascript">
@@ -47,6 +51,9 @@
             lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
             city: {value:""},
             country: {value:""},
+        },
+        credentials: {
+            apikey: {type:"password", required:true}
         },
         inputs:1,
         outputs:1,

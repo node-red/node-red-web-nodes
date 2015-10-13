@@ -47,9 +47,9 @@ module.exports = function(RED) {
         var url;
         //If there is a value missing, the URL is not initialised.
         if (node.lat && node.lon) {
-            url = "http://api.openweathermap.org/data/2.5/weather?lat=" + node.lat + "&lon=" + node.lon;
+            url = "http://api.openweathermap.org/data/2.5/weather?lat=" + node.lat + "&lon=" + node.lon + "&APPID=" + node.credentials.apikey;
         } else if (node.city && node.country) {
-            url = "http://api.openweathermap.org/data/2.5/weather?q=" + node.city + "," + node.country;
+            url = "http://api.openweathermap.org/data/2.5/weather?q=" + node.city + "," + node.country + "&APPID=" + node.credentials.apikey;
         }
 
         //If the URL is not initialised, there has been an error with the input data,
@@ -126,6 +126,7 @@ module.exports = function(RED) {
         var country;
         var lat;
         var lon;
+        if ((!node.credentials) || (!node.credentials.hasOwnProperty("apikey"))) { this.error("No API Key set"); }
 
         this.interval_id = setInterval( function() {
             node.emit("input",{});
@@ -170,6 +171,7 @@ module.exports = function(RED) {
         var country;
         var lat;
         var lon;
+        if ((!node.credentials) || (!node.credentials.hasOwnProperty("apikey"))) { this.error("No API Key set"); }
 
         this.on('input', function(msg) {
             if (n.country && n.city) {
@@ -199,7 +201,15 @@ module.exports = function(RED) {
         });
     }
 
-    RED.nodes.registerType("openweathermap",OpenWeatherMapQueryNode);
-    RED.nodes.registerType("openweathermap in",OpenWeatherMapInputNode);
+    RED.nodes.registerType("openweathermap",OpenWeatherMapQueryNode,{
+        credentials: {
+            apikey: {type:"password"}
+        }
+    });
+    RED.nodes.registerType("openweathermap in",OpenWeatherMapInputNode,{
+        credentials: {
+            apikey: {type:"password"}
+        }
+    });
 
 };
