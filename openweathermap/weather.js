@@ -64,6 +64,10 @@ module.exports = function(RED) {
 
                 res.on('end', function() {
                     var jsun;
+                    if (weather.indexOf("Invalid API key") > -1) {
+                        callback(RED._("weather.error.invalid-key"));
+                        return;
+                    }
                     try {
                         jsun = JSON.parse(weather);
                     } catch (e) {

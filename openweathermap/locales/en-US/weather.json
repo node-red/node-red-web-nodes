@@ -25,7 +25,8 @@
         "error": {
             "invalid-lat": "Invalid latitude (lat) provided",
             "invalid-lon": "Invalid longitude (lon) provided",
-            "invalid-json": "The API call returned invalid JSON. Is the API Key valid ?",
+            "invalid-json": "The API call returned invalid JSON",
+            "invalid-key": "Invalid API Key provided",
             "invalid-city_country": "Invalid city/country",
             "invalid-location": "Invalid location information provided",
             "no-api-key": "No API key set"
