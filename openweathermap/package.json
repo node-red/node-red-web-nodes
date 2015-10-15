@@ -1,6 +1,6 @@
 {
     "name"          : "node-red-node-openweathermap",
-    "version"       : "0.1.4",
+    "version"       : "0.1.5",
     "description"   : "A Node-RED node that gets the weather report from openweathermap",
     "dependencies"  : {
     },
@@ -11,6 +11,7 @@
     "license": "Apache-2.0",
     "keywords": [ "node-red", "weather", "openweathermap" ],
     "node-red"      : {
+        "version": ">=0.11.0",
         "nodes"     : {
             "openweathermap": "weather.js"
         }
