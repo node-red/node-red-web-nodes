@@ -303,7 +303,7 @@ module.exports = function(RED) {
     };
 
     FitbitInNode.prototype.setInterval = function(repeat) {
-        repeat = repeat || 300000; // 15 minutes
+        repeat = repeat || 900000; // 15 minutes
         var node = this;
         var interval = setInterval(function() {
             node.emit("input", {});
