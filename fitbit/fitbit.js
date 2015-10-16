@@ -180,7 +180,55 @@ module.exports = function(RED) {
                     });
                     node.setInterval();
                 });
-            } else if (node.dataType === 'goals') {
+            } else if (node.dataType === 'weight') {
+                oa.get('https://api.fitbit.com/1/user/-/body/log/weight/date/'+day+'.json',
+                       credentials.access_token,
+                       credentials.access_token_secret,
+                       function(err, body, response) {
+                    if (err) {
+                        node.error(formatError(err));
+                        node.status({fill:"red",shape:"ring",text:"fitbit.status.failed"});
+                        return;
+                    }
+                    var data = JSON.parse(body);
+                    if( data.weight.length > 0){
+                        node.state = {
+                        logId: data.weight[data.weight.length-1].logId,
+                        };
+                    }
+                    else {
+                        node.state = {
+                        logId: null,
+                        };
+                    }
+                    node.status({});
+                    node.on('input', function(msg) {
+                        node.status({fill:"blue",shape:"dot",text:"fitbit.status.querying"});
+                        var day = today();
+                        oa.get('https://api.fitbit.com/1/user/-/body/log/weight/date/'+day+'.json',
+                               credentials.access_token,
+                               credentials.access_token_secret,
+                               function(err, body, response) {
+                            if (err) {
+                                node.error(formatError(err),msg);
+                                node.status({fill:"red",shape:"ring",text:"fitbit.status.failed"});
+                                return;
+                            }
+                            var data = JSON.parse(body);
+                            if( data.weight.length > 0){
+                                if(data.weight[data.weight.length-1].logId != node.state.logId){
+                                 node.send({  payload: data.weight[data.weight.length-1] });
+                                 node.state = { 
+                                    logId: data.weight[data.weight.length-1].logId,
+                                    };
+                                }
+                        }
+                        node.status({});
+                        });
+                    });
+                    node.setInterval();
+                });
+            }else if (node.dataType === 'goals') {
                 oa.get('https://api.fitbit.com/1/user/-/activities/date/'+day+'.json',
                        credentials.access_token,
                        credentials.access_token_secret,
@@ -255,7 +303,7 @@ module.exports = function(RED) {
     };
 
     FitbitInNode.prototype.setInterval = function(repeat) {
-        repeat = repeat || 900000; // 15 minutes
+        repeat = repeat || 300000; // 15 minutes
         var node = this;
         var interval = setInterval(function() {
             node.emit("input", {});
@@ -271,7 +319,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         this.fitbitConfig = RED.nodes.getNode(n.fitbit);
         this.dataType = n.dataType || 'activities';
-        var supportedTypes = ["activities","sleep","badges"];
+        var supportedTypes = ["activities","sleep","weight","badges"];
         if (supportedTypes.indexOf(this.dataType) == -1) {
             this.error(RED._("fitbit.error.unsupported-data-type"));
             return;
@@ -281,8 +329,7 @@ module.exports = function(RED) {
             return;
         }
         var credentials = this.fitbitConfig.credentials;
-        if (credentials &&
-            credentials.access_token && credentials.access_token_secret) {
+        if (credentials && credentials.access_token && credentials.access_token_secret) {
             var oa = getOAuth(credentials.client_key,credentials.client_secret);
             var node = this;
             this.on('input', function(msg) {
@@ -295,6 +342,9 @@ module.exports = function(RED) {
                         node.dataType + '/date/' + day + '.json';
                 } else if (node.dataType === 'badges') {
                     url = 'https://api.fitbit.com/1/user/-/badges.json';
+                } else if (node.dataType === 'weight') {
+                    var day = msg.date || today();
+                    url = 'https://api.fitbit.com/1/user/-/body/log/weight/date/' + day + '.json';
                 }
                 oa.get(url,
                        credentials.access_token,
@@ -311,10 +361,21 @@ module.exports = function(RED) {
                         var sleep = mainSleep(data.sleep);
                         if (!sleep) {
                             node.warn(RED._("fitbit.warn.no-sleep-record"));
+                            node.status({});
                             return;
                         } else {
                             msg.payload = sleep;
                             delete msg.error;
+                        }
+                    } else if (node.dataType === 'weight') {
+                        if( data.weight.length > 0) {
+                            msg.payload = data.weight.reverse();
+                            msg.data = data.weight[data.weight.length-1];
+                            delete msg.error;
+                        } else {
+                            node.warn(RED._("fitbit.warn.no-weight-record")+" "+day);
+                            node.status({});
+                            return;
                         }
                     } else {
                         msg.payload = data;

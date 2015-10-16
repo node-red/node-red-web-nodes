@@ -5,6 +5,7 @@
             "type": "Type",
             "goals": "goals",
             "sleep": "sleep",
+            "weight": "weight",
             "badges": "badges",
             "activities": "activities",
             "name": "Name",
@@ -22,7 +23,8 @@
         },
         "warn": {
             "missing-credentials": "Missing fitbit credentials",
-            "no-sleep-record": "no main sleep record found"
+            "no-sleep-record": "No main sleep record found",
+            "no-weight-record": "No weight record returned for"
         },
         "error": {
             "unsupported-data-type": "Unsupported data type",
