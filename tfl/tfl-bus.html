@@ -182,7 +182,7 @@
                 var stopCode1 = $("#node-input-stopCode1").val();
 
                 var query = "stopCode1=" + stopCode1;
-                var url = '/tfl-bus/linesquery/?' + query;
+                var url = 'tfl-bus/linesquery/?' + query;
 
                 $.ajax({
                     type: "GET",
@@ -266,7 +266,7 @@
                     var radius = $("#node-input-radius").val();
 
                     var query = "lat=" + lat + "&lon=" + lon + "&radius=" + radius;
-                    var url = '/tfl-bus/stopsquery/?' + query;
+                    var url = 'tfl-bus/stopsquery/?' + query;
                     $.ajax({
                         type: "GET",
                         url: url,
