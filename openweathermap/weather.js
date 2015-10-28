@@ -45,79 +45,82 @@ module.exports = function(RED) {
         msg.location = {};
 
         var url;
-        //If there is a value missing, the URL is not initialised.
-        node.credentials = node.credentials || {};
-        if (node.lat && node.lon) {
-            url = "http://api.openweathermap.org/data/2.5/weather?lat=" + node.lat + "&lon=" + node.lon + "&APPID=" + node.credentials.apikey;
-        } else if (node.city && node.country) {
-            url = "http://api.openweathermap.org/data/2.5/weather?q=" + node.city + "," + node.country + "&APPID=" + node.credentials.apikey;
-        }
+        if (node.hasOwnProperty("credentials") && node.credentials.hasOwnProperty("apikey")) {
+            //If there is a value missing, the URL is not initialised.
+            if (node.lat && node.lon) {
+                url = "http://api.openweathermap.org/data/2.5/weather?lat=" + node.lat + "&lon=" + node.lon + "&APPID=" + node.credentials.apikey;
+            } else if (node.city && node.country) {
+                url = "http://api.openweathermap.org/data/2.5/weather?q=" + node.city + "," + node.country + "&APPID=" + node.credentials.apikey;
+            }
 
-        //If the URL is not initialised, there has been an error with the input data,
-        //and a node.error is reported.
-        if (url) {
-            node.status({fill:"blue",shape:"dot",text:"weather.status.requesting"});
-            http.get(url, function(res) {
-                var weather = "";
-                res.on('data', function(d) {
-                    weather += d;
-                });
+            //If the URL is not initialised, there has been an error with the input data,
+            //and a node.error is reported.
+            if (url) {
+                node.status({fill:"blue",shape:"dot",text:"weather.status.requesting"});
+                http.get(url, function(res) {
+                    var weather = "";
+                    res.on('data', function(d) {
+                        weather += d;
+                    });
 
-                res.on('end', function() {
-                    var jsun;
-                    if (weather.indexOf("Invalid API key") > -1) {
-                        callback(RED._("weather.error.invalid-key"));
-                        return;
-                    }
-                    try {
-                        jsun = JSON.parse(weather);
-                    } catch (e) {
-                        callback(RED._("weather.error.invalid-json"));
-                        return;
-                    }
-                    if (jsun) {
-                        if (jsun.hasOwnProperty("weather") && jsun.hasOwnProperty("main")) {
-                            msg.data = jsun;
-                            msg.payload.weather = jsun.weather[0].main;
-                            msg.payload.detail = jsun.weather[0].description;
-                            msg.payload.tempk = jsun.main.temp;
-                            if (jsun.main.hasOwnProperty("temp")) { msg.payload.tempc = parseInt(10 * (Number(jsun.main.temp) - 273.2))/10; }
-                            msg.payload.humidity = jsun.main.humidity;
-                            msg.payload.maxtemp = jsun.main.temp_max;
-                            msg.payload.mintemp = jsun.main.temp_min;
-                            msg.payload.windspeed = jsun.wind.speed;
-                            msg.payload.winddirection = jsun.wind.deg;
-                            msg.payload.location = jsun.name;
-                            msg.payload.sunrise = jsun.sys.sunrise;
-                            msg.payload.sunset = jsun.sys.sunset;
-                            msg.payload.clouds = jsun.clouds.all;
-                            msg.location.lon = jsun.coord.lon;
-                            msg.location.lat = jsun.coord.lat;
-                            msg.location.city = jsun.name;
-                            msg.location.country = jsun.sys.country;
-                            if (jsun.hasOwnProperty("dt")) { msg.time = new Date(jsun.dt*1000); }
-                            msg.title = RED._("weather.message.title");
-                            msg.description = RED._("weather.message.description", {lat: msg.location.lat, lon: msg.location.lon});
-                            msg.payload.description = (RED._("weather.message.payload", {name: jsun.name, lat: jsun.coord.lat, lon: jsun.coord.lon, main: jsun.weather[0].main, description: jsun.weather[0].description}));
-                            callback();
-                        } else {
-                            if (jsun.message === "Error: Not found city") {
-                                callback(RED._("weather.error.invalid-city_country"));
-                                return;
+                    res.on('end', function() {
+                        var jsun;
+                        if (weather.indexOf("Invalid API key") > -1) {
+                            callback(RED._("weather.error.invalid-key"));
+                            return;
+                        }
+                        try {
+                            jsun = JSON.parse(weather);
+                        } catch (e) {
+                            callback(RED._("weather.error.invalid-json"));
+                            return;
+                        }
+                        if (jsun) {
+                            if (jsun.hasOwnProperty("weather") && jsun.hasOwnProperty("main")) {
+                                msg.data = jsun;
+                                msg.payload.weather = jsun.weather[0].main;
+                                msg.payload.detail = jsun.weather[0].description;
+                                msg.payload.tempk = jsun.main.temp;
+                                if (jsun.main.hasOwnProperty("temp")) { msg.payload.tempc = parseInt(10 * (Number(jsun.main.temp) - 273.2))/10; }
+                                msg.payload.humidity = jsun.main.humidity;
+                                msg.payload.maxtemp = jsun.main.temp_max;
+                                msg.payload.mintemp = jsun.main.temp_min;
+                                msg.payload.windspeed = jsun.wind.speed;
+                                msg.payload.winddirection = jsun.wind.deg;
+                                msg.payload.location = jsun.name;
+                                msg.payload.sunrise = jsun.sys.sunrise;
+                                msg.payload.sunset = jsun.sys.sunset;
+                                msg.payload.clouds = jsun.clouds.all;
+                                msg.location.lon = jsun.coord.lon;
+                                msg.location.lat = jsun.coord.lat;
+                                msg.location.city = jsun.name;
+                                msg.location.country = jsun.sys.country;
+                                if (jsun.hasOwnProperty("dt")) { msg.time = new Date(jsun.dt*1000); }
+                                msg.title = RED._("weather.message.title");
+                                msg.description = RED._("weather.message.description", {lat: msg.location.lat, lon: msg.location.lon});
+                                msg.payload.description = (RED._("weather.message.payload", {name: jsun.name, lat: jsun.coord.lat, lon: jsun.coord.lon, main: jsun.weather[0].main, description: jsun.weather[0].description}));
+                                callback();
                             } else {
-                                callback(jsun.cod + " " + jsun.message);
-                                return;
+                                if (jsun.message === "Error: Not found city") {
+                                    callback(RED._("weather.error.invalid-city_country"));
+                                    return;
+                                } else {
+                                    callback(jsun.cod + " " + jsun.message);
+                                    return;
+                                }
                             }
                         }
-                    }
+                    });
+                }).on('error', function(e) {
+                    callback(e);
+                    return;
                 });
-            }).on('error', function(e) {
-                callback(e);
-                return;
-            });
-            node.status({});
+                node.status({});
+            } else {
+                callback(RED._("weather.error.invalid-location"));
+            }
         } else {
-            callback(RED._("weather.error.invalid-location"));
+            node.error(RED._("weather.error.no-api-key"));
         }
     }
 
@@ -176,7 +179,7 @@ module.exports = function(RED) {
         var country;
         var lat;
         var lon;
-        if ((!node.credentials) || (!node.credentials.hasOwnProperty("apikey"))) { node.error(RED._("weather.error.no-api-key"));; }
+        if ((!node.credentials) || (!node.credentials.hasOwnProperty("apikey"))) { node.error(RED._("weather.error.no-api-key")); }
 
         this.on('input', function(msg) {
             if (n.country && n.city) {
@@ -211,10 +214,10 @@ module.exports = function(RED) {
             apikey: {type:"password"}
         }
     });
+
     RED.nodes.registerType("openweathermap in",OpenWeatherMapInputNode,{
         credentials: {
             apikey: {type:"password"}
         }
     });
-
 };
