@@ -46,6 +46,7 @@ module.exports = function(RED) {
 
         var url;
         //If there is a value missing, the URL is not initialised.
+        node.credentials = node.credentials || {};
         if (node.lat && node.lon) {
             url = "http://api.openweathermap.org/data/2.5/weather?lat=" + node.lat + "&lon=" + node.lon + "&APPID=" + node.credentials.apikey;
         } else if (node.city && node.country) {
