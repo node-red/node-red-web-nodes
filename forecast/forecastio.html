@@ -1,12 +1,12 @@
 <!--
-  Copyright 2014 IBM Corp.
-  
+  Copyright 2014,2015 IBM Corp.
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,6 @@
 
 <script type="text/javascript">
 (function() {
-
     RED.nodes.registerType('forecastio-credentials',{
         category: 'config',
         defaults: {
@@ -45,7 +44,7 @@
             key_identifier: {type:"text"},
             client_key: { type: "password"}
         },
-            
+
         label: function() {
             return this.key_identifier;
         },
@@ -65,28 +64,37 @@
         <label for="node-input-forecastio"><i class="fa fa-user"></i> <span data-i18n="forecastio.label.forecastio"></span></label>
         <input type="text" id="node-input-forecastio">
     </div>
+    <div class="form-row">
+        <label for="weather-forecast-time-select"><i class="fa fa-globe"></i> <span data-i18n="forecastio.label.forecast"></span></label>
+        <select id="weather-forecast-time-select"><option value="tomorrow" data-i18n="forecastio.label.tomorrow"></option><option value="specific" data-i18n="forecastio.label.datetime"></option><option value="message" data-i18n="forecastio.label.input"></option></select>
+    </div>
+    <div class="form-row weather-forecast-time" id="weather-forecast-time-specific">
+        <label for="weather-forecast-date"><i class="fa fa-calendar"></i> <span data-i18n="forecastio.label.date"></span></label>
+        <input id="node-input-date" class="weather-time-input" type="date" style="width:140px">
+        <label for="weather-forecast-time"><i class="fa fa-clock-o"></i> <span data-i18n="forecastio.label.time"></span></label>
+        <input id="node-input-time" class="weather-time-input" type="time" style="width:70px">
+    </div>
+    <div class="form-row" id="weather-coordinates">
+        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.latitude"></span></label>
+        <input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom: 7px" data-i18n="[placeholder]forecastio.placeholder.latitude">
+        </br>
+        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.longitude"></span></label>
+        <input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px" data-i18n="[placeholder]forecastio.placeholder.longitude">
+    </div>
+    <div class="form-row">
+        <label for="node-input-units"><i class="fa fa-cog"></i> <span data-i18n="forecastio.label.units"></span></label>
+        <select id="node-input-units" style="width:70%">
+            <option value="us" data-i18n="forecastio.units.us"></option></option>
+            <option value="si" data-i18n="forecastio.units.si"></option></option>
+            <option value="ca" data-i18n="forecastio.units.ca"></option></option>
+            <option value="uk2" data-i18n="forecastio.units.uk"></option></option>
+            <option value="auto" data-i18n="forecastio.units.auto"></option></option>
+        </select>
+    </div>
     <div class="form-row" id="weather-name">
         <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="forecastio.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]forecastio.placeholder.name">
-    </div>   
-    <div class="form-row">
-        <label for="weather-forecast-time-select"><i class="fa fa-globe"></i> <span data-i18n="forecastio.label.forecast"></span></label>
-        <select id="weather-forecast-time-select"><option value="tomorrow" data-i18n="forecastio.label.tomorrow"></option><option value="specific" data-i18n="forecastio.label.datetime"></option><option value="message" data-i18n="forecastio.label.input"></option></select>   
-    </div>  
-
-    <div class="form-row weather-forecast-time" id="weather-forecast-time-specific">
-        <label for="weather-forecast-date"><i class="fa fa-calendar"></i> <span data-i18n="forecastio.label.date"></span></label>
-        <input id="node-input-date" class="weather-time-input" type="date" style="width:145px">
-        <label for="weather-forecast-time"><i class="fa fa-clock-o"></i> <span data-i18n="forecastio.label.time"></span></label>
-        <input id="node-input-time" class="weather-time-input" type="time" style="width:75px">   
     </div>
-       
-    <div class="form-row" id="weather-coordinates">
-        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.latitude"></span></label><input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom: 7px" data-i18n="[placeholder]forecastio.placeholder.latitude">
-        </br>
-        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.longitude"></span></label><input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px" data-i18n="[placeholder]forecastio.placeholder.longitude">
-    </div>
-    
 </script>
 
 <script type="text/javascript">
@@ -100,7 +108,8 @@
             lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
             date: {value:""},
             time: {value:""},
-            mode: {value:"node"}
+            mode: {value:"node"},
+            units: {value:"us"}
         },
         inputs:1,
         outputs:1,
@@ -114,7 +123,7 @@
                 $(".weather-forecast-time").hide();
                 $("#weather-forecast-time-"+id).show();
                 console.log(id);
-            });  
+            });
             if(this.date !== ""||this.time !== ""){
                 $("#weather-forecast-time-select").val("specific");
             } else if (this.mode === "node"){
@@ -127,7 +136,7 @@
             $("#weather-forecast-time-"+id).show();
         },
         oneditsave: function() {
-            var type = $("#weather-forecast-time-select option:selected").val();        
+            var type = $("#weather-forecast-time-select option:selected").val();
             if (type == "tomorrow" || type == "message") {
                 $("#node-input-date").val("");
                 $("#node-input-time").val("");
@@ -145,20 +154,15 @@
 </script>
 
 <script type="text/x-red" data-help-name="forecastio">
-    <p>A node which polls forecast.io for weather forecast data when an input is received.</p> 
-
+    <p>A node which polls forecast.io for weather forecast data when an input is received.</p>
     <p> This is done using a latitude and longitude set of coordinates and a date/time combination.</p>
-    
     <p>These can be passed in as settings on the node, or as the:</p>
     <ul>
        <li> <b>msg.location.lat</b>, <b>msg.location.lon</b> and <b>msg.time</b>. </li>
     </ul>
     <p>of the message input. </p>
-    
     <p>The user also has the option of making the node return data for the next day instead of providing a date.</p>
-
     <p>The node will always prioritise the node settings if they are present.</p>
-
     <p>The node sets the following properties of <b>msg.payload</b>:</p>
     <ul>
         <li><b>weather</b> - a single word representation of the current weather forecast.</li><br>
@@ -174,23 +178,20 @@
         <li><b>precipitation</b> - the current forecast precipitation chance</li><br>
         <li><b>sunrise</b> - the time at which the is forecast to rise in Unix UTC format.</li><br>
         <li><b>sunset</b> - the time at which the sun is forecast to set in Unix UTC format.</li><br>
+        <li><b>units</b> - the units of the results as requested.</li><br>
     </ul>
-
     <p>The node also sets:</p>
     <ul>
         <li><b>msg.location.lat</b> - the longitude of the location from which the data was sourced.</li><br>
         <li><b>msg.location.lon</b> - the latitude of the location from which the data was sourced.</li><br>
     </ul>
-
     <p>Finally, the node sets: <b>msg.title</b>, <b>msg.description</b> and</p>
     <ul>
         <li><b>msg.time</b> - the time at which the weather data was received by forecast.io.</li><br>
         <li><b>msg.data</b> - the full JSON returned by the API. </li>
     </ul>
-
     <p>Powered by <a href="http://forecast.io" target="_blank">Forecast</a></p>
 </script>
-
 
 <script type="text/x-red" data-template-name="forecastio in">
     <div class="form-row">
@@ -198,25 +199,35 @@
         <input type="text" id="node-input-forecastio">
     </div>
     <div class="form-row">
-        <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="forecastio.label.name"></span></label>
-        <input type="text" id="node-input-name" data-i18n="[placeholder]forecastio.placeholder.name">
-    </div>
-    <div class="form-row">
         <label for="weather-forecast-time-select"><i class="fa fa-globe"></i> <span data-i18n="forecastio.label.forecast"></span></label>
-        <select id="weather-forecast-time-select"><option value="tomorrow" data-i18n="forecastio.label.tomorrow"></option><option value="specific" data-i18n="forecastio.label.datetime"></option></select>   
-    </div>  
-
+        <select id="weather-forecast-time-select"><option value="tomorrow" data-i18n="forecastio.label.tomorrow"></option><option value="specific" data-i18n="forecastio.label.datetime"></option></select>
+    </div>
     <div class="form-row weather-forecast-time" id="weather-forecast-time-specific">
         <label for="weather-forecast-date"><i class="fa fa-calendar"></i> <span data-i18n="forecastio.label.date"></span></label>
-        <input id="node-input-date" class="weather-time-input" type="date" style="width:145px">
+        <input id="node-input-date" class="weather-time-input" type="date" style="width:140px">
         <label for="weather-forecast-time"><i class="fa fa-clock-o"></i> <span data-i18n="forecastio.label.time"></span></label>
-        <input id="node-input-time" class="weather-time-input" type="time" style="width:75px">   
+        <input id="node-input-time" class="weather-time-input" type="time" style="width:70px">
     </div>
-       
     <div class="form-row" id="weather-coordinates">
-        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.latitude"></span></label><input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom: 7px" data-i18n="[placeholder]forecastio.placeholder.latitude">
+        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.latitude"></span></label>
+        <input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom: 7px" data-i18n="[placeholder]forecastio.placeholder.latitude">
         </br>
-        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.longitude"></span></label><input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px" data-i18n="[placeholder]forecastio.placeholder.longitude">
+        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.longitude"></span></label>
+        <input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px" data-i18n="[placeholder]forecastio.placeholder.longitude">
+    </div>
+    <div class="form-row">
+        <label for="node-input-units"><i class="fa fa-cog"></i> <span data-i18n="forecastio.label.units"></span></label>
+        <select id="node-input-units" style="width:70%">
+            <option value="us" data-i18n="forecastio.units.us"></option></option>
+            <option value="si" data-i18n="forecastio.units.si"></option></option>
+            <option value="ca" data-i18n="forecastio.units.ca"></option></option>
+            <option value="uk2" data-i18n="forecastio.units.uk"></option></option>
+            <option value="auto" data-i18n="forecastio.units.auto"></option></option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="forecastio.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]forecastio.placeholder.name">
     </div>
 </script>
 
@@ -231,7 +242,8 @@
             lon: {value:"", validate:function(v) {return ((v>=-180) && (v<=180));} },
             lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
             date: {value:""},
-            time: {value:""}
+            time: {value:""},
+            units: {value:"us"}
         },
         inputs:0,
         outputs:1,
@@ -244,7 +256,7 @@
                 var id = $("#weather-forecast-time-select option:selected").val();
                 $(".weather-forecast-time").hide();
                 $("#weather-forecast-time-"+id).show();
-            });  
+            });
             if(this.date !== ""||this.time !== ""){
                 $("#weather-forecast-time-select").val("specific");
             } else {
@@ -255,7 +267,7 @@
             $("#weather-forecast-time-"+id).show();
         },
         oneditsave: function() {
-            var type = $("#weather-forecast-time-select option:selected").val();        
+            var type = $("#weather-forecast-time-select option:selected").val();
             if (type == "tomorrow") {
                 $("#node-input-date").val("");
                 $("#node-input-time").val("");
@@ -268,12 +280,9 @@
 </script>
 
 <script type="text/x-red" data-help-name="forecastio in">
-    <p>A node which periodically polls forecast.io for weather forecast data and outputs when a change is detected.</p> 
-
+    <p>A node which periodically polls forecast.io for weather forecast data and outputs when a change is detected.</p>
     <p> This is done using a latitude and longitude set of coordinates and a date/time combination.</p>
-
     <p>The user also has the option of making the node return data for the next day instead of providing a date.</p>
-
     <p>The node sets the following properties of <b>msg.payload</b>:</p>
     <ul>
         <li><b>weather</b> - a single word representation of the current weather forecast.</li><br>
@@ -289,19 +298,17 @@
         <li><b>precipitation</b> - the current forecast precipitation chance</li><br>
         <li><b>sunrise</b> - the time at which the is forecast to rise in Unix UTC format.</li><br>
         <li><b>sunset</b> - the time at which the sun is forecast to set in Unix UTC format.</li><br>
+        <li><b>units</b> - the units of the results as requested.</li><br>
     </ul>
-
     <p>The node also sets:</p>
     <ul>
         <li><b>msg.location.lat</b> - the longitude of the location from which the data was sourced.</li><br>
         <li><b>msg.location.lon</b> - the latitude of the location from which the data was sourced.</li><br>
     </ul>
-
     <p>Finally, the node sets: <b>msg.title</b>, <b>msg.description</b> and</p>
     <ul>
         <li><b>msg.time</b> - the time at which the weather data was received by forecast.io.</li><br>
         <li><b>msg.data</b> - the full JSON returned by the API. </li>
     </ul>
-
     <p>Powered by <a href="http://forecast.io" target="_blank">Forecast</a></p>
 </script>

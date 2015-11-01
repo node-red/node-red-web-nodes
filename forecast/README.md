@@ -16,7 +16,6 @@ Run the following command in the root directory of your Node-RED install
 
         npm install node-red-node-forecastio
 
-
 Usage
 -----
 
@@ -56,6 +55,7 @@ Both will return
   - **precipitation** - the current forecast precipitation chance
   - **sunrise** - the time at which the is forecast to rise in Unix UTC format.
   - **sunset** - the time at which the sun is forecast to set in Unix UTC format.
+  - **units** - the units of the returned data, as requested.
 
 The node also sets the following properties of **msg.location**.
 

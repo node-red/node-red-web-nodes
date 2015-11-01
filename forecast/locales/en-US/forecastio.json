@@ -13,7 +13,8 @@
             "longitude": "Longitude",
             "register": "Register to get your key at",
             "copy": "Copy the key here and give it a name",
-            "key": "Key"
+            "key": "Key",
+            "units": "Units"
         },
         "placeholder": {
             "name": "Name",
@@ -37,6 +38,13 @@
         "message": {
             "weather-forecast": "Weather Forecast Information",
             "weather-info": "Weather forecast information for: __time__ at coordinates: __lat__, __lon__"
+        },
+        "units": {
+            "us": "us - imperial us units",
+            "si": "si - SI metric units",
+            "ca": "ca - SI units, wind in km/h",
+            "uk": "uk - SI units, wind in mph, distances in miles",
+            "auto": "auto - automatic, based on location"
         }
     }
 }
