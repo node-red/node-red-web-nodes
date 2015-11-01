@@ -7,12 +7,15 @@ weather forecast from Forecast.io.
 Pre-requisites
 --------------
 
-You will need an API key from  <a href="https://developer.forecast.io/" target="_blank">forecast.io</a>
+You will need an API key from  <a href="https://developer.forecast.io/" target="_blank">forecast.io</a>.
+
+This allows 1000 requests per day. The polling node makes a request every 5 minutes = 288 requests.
 
 Install
 -------
 
-Run the following command in the root directory of your Node-RED install
+Run the following command in the root directory of your Node-RED install.
+This is usually `~/.node-red`
 
         npm install node-red-node-forecastio
 
@@ -21,22 +24,23 @@ Usage
 
 Two nodes that get the weather forecast from Forecast.io.
 
-The user has the option of making the node return data for the next day instead of providing a date.
+One node polls forecast.io every 5 minutes, the other is triggered
+to request weather forecast data when an input is received.
+
+The user has the option of providing a date to the node instead of returning data for the next day.
 The node will always prioritise the node settings if they are present.
 
-### Input Node
+The node is configured using a latitude and longitude set of coordinates, an
+optional date/time combination, and a set of units with which to format the response.
 
-Fetches the weather forecast at a location specified by name or
-lat,lon every 5 minutes - and outputs a **msg** if something has changed.
+These can be passed in as settings on the node, or as:
 
-### Query node
+ - **msg.location.lat**, **msg.location.lon** and **msg.time** or **msg.payload**.
 
-Accepts an input to trigger fetching the weather forecast either
-from a specified location name or lat,lon or passed in on
+If using *msg.time* it should be a javascript Date object. If using *msg.payload*
+it must be a string or number of milliseconds since 1970 (epoch time in mS.)
 
-        msg.location.city and msg.location.country
-        or
-        msg.location.lat and msg.location.lon
+The node sets the following properties of **msg.payload**:
 
 ### Results
 

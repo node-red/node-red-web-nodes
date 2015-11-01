@@ -69,10 +69,10 @@
         <select id="weather-forecast-time-select"><option value="tomorrow" data-i18n="forecastio.label.tomorrow"></option><option value="specific" data-i18n="forecastio.label.datetime"></option><option value="message" data-i18n="forecastio.label.input"></option></select>
     </div>
     <div class="form-row weather-forecast-time" id="weather-forecast-time-specific">
-        <label for="weather-forecast-date"><i class="fa fa-calendar"></i> <span data-i18n="forecastio.label.date"></span></label>
+        <label for="node-input-date"><i class="fa fa-calendar"></i> <span data-i18n="forecastio.label.date"></span></label>
         <input id="node-input-date" class="weather-time-input" type="date" style="width:140px">
-        <label for="weather-forecast-time"><i class="fa fa-clock-o"></i> <span data-i18n="forecastio.label.time"></span></label>
-        <input id="node-input-time" class="weather-time-input" type="time" style="width:70px">
+        <span style="float:right;"><i class="fa fa-clock-o"></i> <span data-i18n="forecastio.label.time"></span>
+        <input id="node-input-time" class="weather-time-input" type="time" style="width:70px"></span>
     </div>
     <div class="form-row" id="weather-coordinates">
         <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.latitude"></span></label>
@@ -155,42 +155,44 @@
 
 <script type="text/x-red" data-help-name="forecastio">
     <p>A node which polls forecast.io for weather forecast data when an input is received.</p>
-    <p> This is done using a latitude and longitude set of coordinates and a date/time combination.</p>
-    <p>These can be passed in as settings on the node, or as the:</p>
+    <p> This is done using a latitude and longitude set of coordinates and an optional date/time combination.</p>
+    <p>These can be passed in as settings on the node, or as:</p>
     <ul>
-       <li> <b>msg.location.lat</b>, <b>msg.location.lon</b> and <b>msg.time</b>. </li>
+       <li> <b>msg.location.lat</b>, <b>msg.location.lon</b> and <b>msg.time</b> or <b>msg.payload</b>. </li>
     </ul>
-    <p>of the message input. </p>
-    <p>The user also has the option of making the node return data for the next day instead of providing a date.</p>
+    <p>if using <i>msg.time</i> it should be a javascript Date object. If using <i>msg.payload</i>
+    it must be a string or number of milliseconds since 1970 (epoch time in mS).
+    If neither specified the forecast defaults to tomorrow.</p>
+    <p>The user also has the option of providing a date instead of returning data for the next day.</p>
     <p>The node will always prioritise the node settings if they are present.</p>
     <p>The node sets the following properties of <b>msg.payload</b>:</p>
     <ul>
-        <li><b>weather</b> - a single word representation of the current weather forecast.</li><br>
-        <li><b>detail</b> - a more detailed explanation of what the weather is forecast to be.</li><br>
-        <li><b>humidity</b> - a current humidity forecast in decimal (0-1).</li><br>
-        <li><b>maxtemp</b> - the current forecast max temperature for the location in Fahrenheit.</li><br>
-        <li><b>mintemp</b> - the current forecast minimum temperature for the location in Fahrenheit.</li><br>
-        <li><b>windspeed</b> - the current forecast windspeed at the location in metres per second</li><br>
-        <li><b>winddirection</b> - the current forecast wind direction for the location in degrees.</li><br>
-        <li><b>lon</b> - the longitude of the location from which the forecast was sourced.</li><br>
-        <li><b>lat</b> - the latitude of the location from which the forecast was sourced.</li><br>
-        <li><b>clouds</b> - the current forecast cloud coverage of the location in percent.</li><br>
-        <li><b>precipitation</b> - the current forecast precipitation chance</li><br>
-        <li><b>sunrise</b> - the time at which the is forecast to rise in Unix UTC format.</li><br>
-        <li><b>sunset</b> - the time at which the sun is forecast to set in Unix UTC format.</li><br>
-        <li><b>units</b> - the units of the results as requested.</li><br>
+        <li><b>weather</b> - a single word representation of the current weather forecast.</li>
+        <li><b>detail</b> - a more detailed explanation of what the weather is forecast to be.</li>
+        <li><b>humidity</b> - a current humidity forecast in decimal (0-1).</li>
+        <li><b>maxtemp</b> - the current forecast max temperature for the location in Fahrenheit.</li>
+        <li><b>mintemp</b> - the current forecast minimum temperature for the location in Fahrenheit.</li>
+        <li><b>windspeed</b> - the current forecast windspeed at the location in metres per second</li>
+        <li><b>winddirection</b> - the current forecast wind direction for the location in degrees.</li>
+        <li><b>lon</b> - the longitude of the location from which the forecast was sourced.</li>
+        <li><b>lat</b> - the latitude of the location from which the forecast was sourced.</li>
+        <li><b>clouds</b> - the current forecast cloud coverage of the location in percent.</li>
+        <li><b>precipitation</b> - the current forecast precipitation chance</li>
+        <li><b>sunrise</b> - the time at which the is forecast to rise in Unix UTC format.</li>
+        <li><b>sunset</b> - the time at which the sun is forecast to set in Unix UTC format.</li>
+        <li><b>units</b> - the units of the results as requested.</li>
     </ul>
     <p>The node also sets:</p>
     <ul>
-        <li><b>msg.location.lat</b> - the longitude of the location from which the data was sourced.</li><br>
-        <li><b>msg.location.lon</b> - the latitude of the location from which the data was sourced.</li><br>
+        <li><b>msg.location.lat</b> - the longitude of the location from which the data was sourced.</li>
+        <li><b>msg.location.lon</b> - the latitude of the location from which the data was sourced.</li>
     </ul>
     <p>Finally, the node sets: <b>msg.title</b>, <b>msg.description</b> and</p>
     <ul>
-        <li><b>msg.time</b> - the time at which the weather data was received by forecast.io.</li><br>
+        <li><b>msg.time</b> - the time at which the weather data was received by forecast.io.</li>
         <li><b>msg.data</b> - the full JSON returned by the API. </li>
     </ul>
-    <p>Powered by <a href="http://forecast.io" target="_blank">Forecast</a></p>
+    <p>Powered by the <a href="https://developer.forecast.io/" target="_blank">Dark Sky Forecast API</a>.</p>
 </script>
 
 <script type="text/x-red" data-template-name="forecastio in">
@@ -203,10 +205,10 @@
         <select id="weather-forecast-time-select"><option value="tomorrow" data-i18n="forecastio.label.tomorrow"></option><option value="specific" data-i18n="forecastio.label.datetime"></option></select>
     </div>
     <div class="form-row weather-forecast-time" id="weather-forecast-time-specific">
-        <label for="weather-forecast-date"><i class="fa fa-calendar"></i> <span data-i18n="forecastio.label.date"></span></label>
+        <label for="node-input-date"><i class="fa fa-calendar"></i> <span data-i18n="forecastio.label.date"></span></label>
         <input id="node-input-date" class="weather-time-input" type="date" style="width:140px">
-        <label for="weather-forecast-time"><i class="fa fa-clock-o"></i> <span data-i18n="forecastio.label.time"></span></label>
-        <input id="node-input-time" class="weather-time-input" type="time" style="width:70px">
+        <span style="float:right;"><i class="fa fa-clock-o"></i> <span data-i18n="forecastio.label.time"></span>
+        <input id="node-input-time" class="weather-time-input" type="time" style="width:70px"></span>
     </div>
     <div class="form-row" id="weather-coordinates">
         <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.latitude"></span></label>
@@ -280,35 +282,35 @@
 </script>
 
 <script type="text/x-red" data-help-name="forecastio in">
-    <p>A node which periodically polls forecast.io for weather forecast data and outputs when a change is detected.</p>
-    <p> This is done using a latitude and longitude set of coordinates and a date/time combination.</p>
-    <p>The user also has the option of making the node return data for the next day instead of providing a date.</p>
+    <p>A node which polls forecast.io every 5 minutes for weather forecast data and outputs when a change is detected.</p>
+    <p>This is done using a latitude and longitude set of coordinates and an optional date/time combination.</p>
+    <p>The user also has the option of providing a date instead of returning data for the next day.</p>
     <p>The node sets the following properties of <b>msg.payload</b>:</p>
     <ul>
-        <li><b>weather</b> - a single word representation of the current weather forecast.</li><br>
-        <li><b>detail</b> - a more detailed explanation of what the weather is forecast to be.</li><br>
-        <li><b>humidity</b> - a current humidity forecast in decimal (0-1).</li><br>
-        <li><b>maxtemp</b> - the current forecast max temperature for the location in Fahrenheit.</li><br>
-        <li><b>mintemp</b> - the current forecast minimum temperature for the location in Fahrenheit.</li><br>
-        <li><b>windspeed</b> - the current forecast windspeed at the location in metres per second</li><br>
-        <li><b>winddirection</b> - the current forecast wind direction for the location in degrees.</li><br>
-        <li><b>lon</b> - the longitude of the location from which the forecast was sourced.</li><br>
-        <li><b>lat</b> - the latitude of the location from which the forecast was sourced.</li><br>
-        <li><b>clouds</b> - the current forecast cloud coverage of the location in percent.</li><br>
-        <li><b>precipitation</b> - the current forecast precipitation chance</li><br>
-        <li><b>sunrise</b> - the time at which the is forecast to rise in Unix UTC format.</li><br>
-        <li><b>sunset</b> - the time at which the sun is forecast to set in Unix UTC format.</li><br>
-        <li><b>units</b> - the units of the results as requested.</li><br>
+        <li><b>weather</b> - a single word representation of the current weather forecast.</li>
+        <li><b>detail</b> - a more detailed explanation of what the weather is forecast to be.</li>
+        <li><b>humidity</b> - a current humidity forecast in decimal (0-1).</li>
+        <li><b>maxtemp</b> - the current forecast max temperature for the location in Fahrenheit.</li>
+        <li><b>mintemp</b> - the current forecast minimum temperature for the location in Fahrenheit.</li>
+        <li><b>windspeed</b> - the current forecast windspeed at the location in metres per second</li>
+        <li><b>winddirection</b> - the current forecast wind direction for the location in degrees.</li>
+        <li><b>lon</b> - the longitude of the location from which the forecast was sourced.</li>
+        <li><b>lat</b> - the latitude of the location from which the forecast was sourced.</li>
+        <li><b>clouds</b> - the current forecast cloud coverage of the location in percent.</li>
+        <li><b>precipitation</b> - the current forecast precipitation chance</li>
+        <li><b>sunrise</b> - the time at which the is forecast to rise in Unix UTC format.</li>
+        <li><b>sunset</b> - the time at which the sun is forecast to set in Unix UTC format.</li>
+        <li><b>units</b> - the units of the results as requested.</li>
     </ul>
     <p>The node also sets:</p>
     <ul>
-        <li><b>msg.location.lat</b> - the longitude of the location from which the data was sourced.</li><br>
-        <li><b>msg.location.lon</b> - the latitude of the location from which the data was sourced.</li><br>
+        <li><b>msg.location.lat</b> - the longitude of the location from which the data was sourced.</li>
+        <li><b>msg.location.lon</b> - the latitude of the location from which the data was sourced.</li>
     </ul>
     <p>Finally, the node sets: <b>msg.title</b>, <b>msg.description</b> and</p>
     <ul>
-        <li><b>msg.time</b> - the time at which the weather data was received by forecast.io.</li><br>
+        <li><b>msg.time</b> - the time at which the weather data was received by forecast.io.</li>
         <li><b>msg.data</b> - the full JSON returned by the API. </li>
     </ul>
-    <p>Powered by <a href="http://forecast.io" target="_blank">Forecast</a></p>
+    <p>Powered by the <a href="https://developer.forecast.io/" target="_blank">Dark Sky Forecast API</a>.</p>
 </script>
