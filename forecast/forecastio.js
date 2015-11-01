@@ -195,12 +195,23 @@ module.exports = function(RED) {
             if (n.date && n.time) {
                 date = n.date;
                 time = n.time;
-            } else if (msg.time && n.mode === "message") {
-                date = msg.time.toISOString().substring(0,10);
-                time = msg.time.toISOString().substring(11,16);
-            } else if (n.mode === "message" && msg.payload && typeof(msg.payload === "string") && !isNaN(parseInt(msg.payload)) ) {
-                date = (new Date(msg.payload)).toISOString().substring(0,10);
-                time = (new Date(msg.payload)).toISOString().substring(11,16);
+            }
+            else if (msg.time && n.mode === "message") {
+                if (msg.time.toISOstring) {
+                    date = msg.time.toISOString().substring(0,10);
+                    time = msg.time.toISOString().substring(11,16);
+                } else if (typeof(msg.time === "string") && !isNaN(parseInt(msg.time))) {
+                    date = (new Date(msg.time)).toISOString().substring(0,10);
+                    time = (new Date(msg.time)).toISOString().substring(11,16);
+                }
+            }
+            //else if (n.mode === "message" && msg.payload && typeof(msg.payload === "string") && !isNaN(parseInt(msg.payload)) ) {
+                //date = (new Date(msg.payload)).toISOString().substring(0,10);
+                //time = (new Date(msg.payload)).toISOString().substring(11,16);
+            //}
+            else {
+                date = (new Date()).toISOString().substring(0,10);
+                time = (new Date()).toISOString().substring(11,16);
             }
 
             assignmentFunction(node, date, time, lat, lon, RED.nodes.getNode(n.forecastio), function(err) {

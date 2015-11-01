@@ -155,14 +155,14 @@
 
 <script type="text/x-red" data-help-name="forecastio">
     <p>A node which polls forecast.io for weather forecast data when an input is received.</p>
-    <p> This is done using a latitude and longitude set of coordinates and an optional date/time combination.</p>
+    <p>This is done using a latitude and longitude set of coordinates and an optional date/time combination.</p>
     <p>These can be passed in as settings on the node, or as:</p>
     <ul>
-       <li> <b>msg.location.lat</b>, <b>msg.location.lon</b> and <b>msg.time</b> or <b>msg.payload</b>. </li>
+       <li> <b>msg.location.lat</b>, <b>msg.location.lon</b> and optionally <b>msg.time</b></li>
     </ul>
-    <p>if using <i>msg.time</i> it should be a javascript Date object. If using <i>msg.payload</i>
-    it must be a string or number of milliseconds since 1970 (epoch time in mS).
-    If neither specified the forecast defaults to tomorrow.</p>
+    <p>if using <i>msg.time</i> it can either be a javascript Date object or a
+    string or number of milliseconds since 1970 (epoch time in mS).
+    If neither is specified the forecast defaults to tomorrow.</p>
     <p>The user also has the option of providing a date instead of returning data for the next day.</p>
     <p>The node will always prioritise the node settings if they are present.</p>
     <p>The node sets the following properties of <b>msg.payload</b>:</p>
