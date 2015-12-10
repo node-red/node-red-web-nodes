@@ -45,13 +45,15 @@ Both will return
 
   - **description** - a brief verbal description of the current weather for human reading.
   - **weather** - a very short description of the current weather.
-  - **tempc** - the current gorund temperature at that location in Celcius.
-  - **tempk** - the current gorund temperature at that location in Kelvin.
+  - **tempc** - the current ground temperature at that location in Celsius.
+  - **tempf** - the current ground temperature at that location in Fahrenheit.
+  - **tempk** - the current ground temperature at that location in Kelvin.
   - **humidity** - the current relative humidity at the location in percent.
   - **windspeed** - the current wind speed at the location in Metres per second.
   - **winddirection** - the current wind direction at the location in meteorological degrees.
   - **location** - the name of the location from which the data was sourced.
   - **forecast** - the forecast for the next 12 hours.
+  - **epoch** - the time of the observation in epoch format.
 
 The node also sets the following properties of **msg.location**.
 

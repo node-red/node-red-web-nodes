@@ -110,13 +110,15 @@
     <ul>
         <li><b>description</b> - a brief verbal description of the current weather for human reading.</li><br>
         <li><b>weather</b> - a very short description of the current weather.</li><br>
-        <li><b>tempc</b> - the current gorund temperature at that location in Celcius.</li><br>
-        <li><b>tempk</b> - the current gorund temperature at that location in Kelvin.</li><br>
+        <li><b>tempc</b> - the current ground temperature at that location in Celsius.</li><br>
+        <li><b>tempf</b> - the current ground temperature at that location in Fahrenheit.</li><br>
+        <li><b>tempk</b> - the current ground temperature at that location in Kelvin.</li><br>
         <li><b>humidity</b> - the current relative humidity at the location in percent.</li><br>
-        <li><b>windspeed</b> - the current wind speed at the location in Metres per second.</li><br>
+        <li><b>windspeed</b> - the current wind speed at the location in metres per second.</li><br>
         <li><b>winddirection</b> - the current wind direction at the location in meteorological degrees.</li><br>
         <li><b>location</b> - the name of the location from which the data was sourced.</li><br>
         <li><b>forecast</b> - the forecast for the next 12 hours.</li><br>
+        <li><b>epoch</b> - the time of the observation in epoch format.</li><br>
     </ul>
     <p>The node also sets the following properties of <b>msg.location</b>.</p>
     <ul>
@@ -128,7 +130,7 @@
     <p>Finally, the node sets:</p>
     <ul>
         <li><b>msg.time</b> - the time at which the weather data was received by The Weather Underground.</li><br>
-        <li><b>msg.data</b> - the full JSON returned by the API. </li>
+        <li><b>msg.data</b> - the full JSON returned by the API.</li>
     </ul>
     <p>Weather data provided by <a href="http://www.wunderground.com/" target="_blank">The Weather Underground</a></p>
 </script>
