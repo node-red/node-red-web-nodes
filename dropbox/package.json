@@ -1,10 +1,11 @@
 {
     "name"          : "node-red-node-dropbox",
-    "version"       : "0.1.0",
+    "version"       : "0.1.2",
     "description"   : "Node-RED nodes to watch and download files from Dropbox",
     "dependencies"  : {
         "dropbox":"0.10.3",
-        "minimatch":"2.0.*"
+        "minimatch":"2.0.*",
+        "is-utf8":"0.2.0"
     },
     "repository" : {
         "type":"git",

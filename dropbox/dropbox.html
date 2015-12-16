@@ -117,8 +117,10 @@
     <p>Dropbox input node. Downloads content from Dropbox.</p>
     <p>The filename on Dropbox is taken from the node <b>filename</b>
     property or the <b>msg.filename</b> property.</p>
-    <p>The downloaded content is sent as <b>msg.payload</b> property. If the download
-    fails <b>msg.error</b> will contain an error object.</p>
+    <p>The downloaded content is sent as <b>msg.payload</b> property. The node
+    tries to detect if the file is purely UTF8 text and if so returns a string object.
+    Otherwise it return a binary buffer.</p>
+    <p>If the download fails <b>msg.error</b> will contain an error object.</p>
 </script>
 
 <script type="text/javascript">

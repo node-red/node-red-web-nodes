@@ -19,6 +19,7 @@ module.exports = function(RED) {
     var Dropbox = require("dropbox");
     var fs = require("fs");
     var minimatch = require("minimatch");
+    var isUtf8 = require('is-utf8');
 
     function DropboxNode(n) {
         RED.nodes.createNode(this,n);
@@ -121,15 +122,16 @@ module.exports = function(RED) {
             }
             msg.filename = filename;
             node.status({fill:"blue",shape:"dot",text:"dropbox.status.downloading"});
-            dropbox.readFile(filename, function(err, data) {
-                    if (err) {
-                        node.error(RED._("dropbox.error.download-failed",{err:err.toString()}),msg);
-                        node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
-                    } else {
-                        msg.payload = data;
-                        node.status({});
-                        node.send(msg);
-                    }
+            dropbox.readFile(filename, { buffer: true }, function(err, data) {
+                if (err) {
+                    node.error(RED._("dropbox.error.download-failed",{err:err.toString()}),msg);
+                    node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
+                } else {
+                    if (isUtf8(data)) { data = data.toString(); }
+                    msg.payload = data;
+                    node.status({});
+                    node.send(msg);
+                }
             });
         });
     }
