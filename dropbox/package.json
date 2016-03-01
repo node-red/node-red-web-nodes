@@ -1,6 +1,6 @@
 {
     "name"          : "node-red-node-dropbox",
-    "version"       : "0.1.2",
+    "version"       : "0.1.3",
     "description"   : "Node-RED nodes to watch and download files from Dropbox",
     "dependencies"  : {
         "dropbox":"0.10.3",

@@ -35,6 +35,7 @@ module.exports = function(RED) {
     function DropboxInNode(n) {
         RED.nodes.createNode(this,n);
         this.filepattern = n.filepattern || "";
+        this.checkInterval = n.checkInterval || 600000;
         this.dropboxConfig = RED.nodes.getNode(n.dropbox);
         var credentials = this.dropboxConfig ? this.dropboxConfig.credentials : {};
         if (!credentials.appkey || !credentials.appsecret ||
@@ -51,24 +52,19 @@ module.exports = function(RED) {
             token: credentials.accesstoken,
         });
         node.status({fill:"blue",shape:"dot",text:"dropbox.status.initializing"});
-        dropbox.pullChanges(function(err, data) {
-            if (err) {
-                node.error(RED._("dropbox.error.initialization-failed",{err:err.toString()}));
-                node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
-                return;
-            }
-            node.status({});
-            node.state = data.cursor();
-            node.on("input", function(msg) {
-                node.status({fill:"blue",shape:"dot",text:"dropbox.status.checking-for-changes"});
-                dropbox.pullChanges(node.state, function(err, data) {
-                    if (err) {
-                        node.error(RED._("dropbox.error.change-fetch-failed",{err:err.toString()}),msg);
-                        node.status({}); // clear status since poll retries anyway
-                        return;
-                    }
+        node.on("input", function(msg) {
+            node.status({fill:"blue",shape:"dot",text:"dropbox.status.checking-for-changes"});
+            dropbox.pullChanges(node.state, function(err, data) {
+                if (err) {
+                    node.error(RED._("dropbox.error.change-fetch-failed",{err:err.toString()}),msg);
+                    node.status({}); // clear status since poll retries anyway
+                    return;
+                }
+                node.status({});
+                if (!node.state) {
                     node.state = data.cursor();
-                    node.status({});
+                }
+                else {
                     var changes = data.changes;
                     for (var i = 0; i < changes.length; i++) {
                         var change = changes[i];
@@ -82,16 +78,21 @@ module.exports = function(RED) {
                         msg.data = change;
                         node.send(msg);
                     }
-                });
-            });
-            var interval = setInterval(function() {
-                node.emit("input", {});
-            }, 900000); // 15 minutes
-            node.on("close", function() {
-                if (interval !== null) {
-                    clearInterval(interval);
                 }
             });
+        });
+
+        var tout = setTimeout(function() {
+            node.emit("input", {});
+        }, 5000); // do first check after 5 secs
+
+        var interval = setInterval(function() {
+            node.emit("input", {});
+        }, node.checkInterval); // default 10 minutes
+
+        node.on("close", function() {
+            if (tout) { clearTimeout(tout); }
+            if (interval) { clearInterval(interval); }
         });
     }
     RED.nodes.registerType("dropbox in",DropboxInNode);

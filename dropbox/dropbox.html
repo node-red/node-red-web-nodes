@@ -68,16 +68,15 @@
 </script>
 
 <script type="text/x-red" data-help-name="dropbox in">
-    <p>Dropbox watch node. Watches for file events on Dropbox.</p>
+    <p>Dropbox watch node. Checks for file changes on Dropbox every 10 minutes.</p>
     <p>By default all file events are reported, but the filename pattern can
     be supplied to limit the events to files which have full filenames
     that match the glob pattern.</p>
     <p>The event messages consist of the
-    full filename in <b>msg.payload</b> property, the filename
-    in <b>msg.file</b>, the event type in <b>msg.event</b> and
+    full filename in <code>msg.payload</code> property, the filename
+    in <code>msg.file</code>, the event type in <code>msg.event</code> and
     the <a href="https://github.com/dropbox/dropbox-js">dropbox.js</a>
-    API <a href="http://coffeedoc.info/github/dropbox/dropbox-js/master/classes/Dropbox/Http/PulledChange.html">PulledChange</a>
-    object in <b>msg.data</b>.</p>
+    <i>PulledChange</i> object in <code>msg.data</code>.</p>
 </script>
 
 <script type="text/javascript">
@@ -115,12 +114,12 @@
 
 <script type="text/x-red" data-help-name="dropbox">
     <p>Dropbox input node. Downloads content from Dropbox.</p>
-    <p>The filename on Dropbox is taken from the node <b>filename</b>
-    property or the <b>msg.filename</b> property.</p>
-    <p>The downloaded content is sent as <b>msg.payload</b> property. The node
+    <p>The filename on Dropbox is taken from the node <b>Filename</b>
+    field or the <code>msg.filename</code> property.</p>
+    <p>The downloaded content is sent as <code>msg.payload</code>. The node
     tries to detect if the file is purely UTF8 text and if so returns a string object.
     Otherwise it return a binary buffer.</p>
-    <p>If the download fails <b>msg.error</b> will contain an error object.</p>
+    <p>If the download fails <code>msg.error</code> will contain an error object.</p>
 </script>
 
 <script type="text/javascript">
@@ -163,11 +162,12 @@
 
 <script type="text/x-red" data-help-name="dropbox out">
     <p>Dropbox out node. Uploads content to Dropbox.</p>
-    <p>The filename on Dropbox is taken from the node <b>filename</b> property or the <b>msg.filename</b> property.</p>
-    <p>You can pass in content either as a filename by setting the <b>localFilename</b> field or
-    <b>msg.localFilename</b> property, or you can pass in content directly using <b>msg.payload</b>.</p>
-    <p>The file will be uploaded to a directory on Dropbox called Apps/{appname}/{appfolder}
-    where {appname} and {appfolder} are set when you set up the Dropbox application key and token.</p>
+    <p>The filename on Dropbox is taken from the node <b>filename</b>
+    property or the <code>msg.filename</code> property.</p>
+    <p>You can upload a file by passing in a filename using the <b>Local Filename</b> field or
+    <code>msg.localFilename</code> property, or you can pass in content directly using <code>msg.payload</code>.</p>
+    <p>The file will be uploaded to a directory on Dropbox called <i>Apps/{appname}/{appfolder}</i>
+    where <i>{appname}</i> and <i>{appfolder}</i> are set when you set up the Dropbox application key and token.</p>
 </script>
 
 <script type="text/javascript">
