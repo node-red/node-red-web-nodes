@@ -201,8 +201,9 @@ module.exports = function(RED) {
                     date = msg.time.toISOString().substring(0,10);
                     time = msg.time.toISOString().substring(11,16);
                 } else if (typeof(msg.time === "string") && !isNaN(parseInt(msg.time))) {
-                    date = (new Date(msg.time)).toISOString().substring(0,10);
-                    time = (new Date(msg.time)).toISOString().substring(11,16);
+                    var epoch = new Date(parseInt(msg.time)).toISOString();
+                    date = epoch.substring(0,10);
+                    time = epoch.substring(11,16);
                 }
             }
             //else if (n.mode === "message" && msg.payload && typeof(msg.payload === "string") && !isNaN(parseInt(msg.payload)) ) {
