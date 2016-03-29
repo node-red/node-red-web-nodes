@@ -6,14 +6,14 @@ A <a href="http://nodered.org" target="_new">Node-RED</a> node to save bookmarks
 Install
 -------
 
-Run the following command in the root directory of your Node-RED install
+Run the following command in your Node-RED user directory - typically `~/.node-red`
 
-        npm install node-red-node-pinboard
+        npm i node-red-node-pinboard
 
 Usage
 -----
 
-Saves bookmarks to <a href="http://http://pinboard.in">Pinboard.in</a>.
+Saves bookmarks to <a href="http://pinboard.in" target="_new">Pinboard.in</a>.
 
 The incoming message can provide the following properties:
 

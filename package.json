@@ -1,6 +1,6 @@
 {
     "name"          : "node-red-node-web-nodes",
-    "version"       : "0.3.2",
+    "version"       : "0.3.3",
     "description"   : "A collection of Node-RED nodes for popular web services.",
     "dependencies"  : {
         "aws-sdk": "^2.0.15",
@@ -10,7 +10,8 @@
         "request":"~2.40.0",
         "instagram-node":"0.5.1",
         "clone": "0.1.11",
-        "xml2js":"0.4.4"
+        "xml2js":"0.4.4",
+        "is-utf8":"0.2.1"
     },
     "repository" : {
         "type":"git",
