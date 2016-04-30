@@ -20,7 +20,7 @@ var dropboxNode = require("../../dropbox/dropbox.js");
 var helper = require('../helper.js');
 var nock = helper.nock;
 
-// Force dropbox api server name to be api.dropbox.com
+// Force dropbox api server name to be api.dropboxapi.com
 var Dropbox = require('dropbox');
 Dropbox.Client.prototype._defaultMaxApiServer = function() {
     return 0;
@@ -44,7 +44,7 @@ describe('dropbox nodes', function() {
         	return;
         }
         it('should report file add event', function(done) {
-            nock('https://api.dropbox.com:443')
+            nock('https://api.dropboxapi.com:443')
                 .post('/1/delta')
                 .reply(200, {
                     "has_more":false,
@@ -106,7 +106,7 @@ describe('dropbox nodes', function() {
         });
 
         it('should report file delete event', function(done) {
-            nock('https://api.dropbox.com:443')
+            nock('https://api.dropboxapi.com:443')
                 .post('/1/delta')
                 .reply(200, {
                     "has_more":false,
@@ -168,7 +168,7 @@ describe('dropbox nodes', function() {
         });
 
         it('should report no event when filepattern does not match', function(done) {
-            nock('https://api.dropbox.com:443')
+            nock('https://api.dropboxapi.com:443')
                 .post('/1/delta')
                 .reply(200, {
                     "has_more":false,
@@ -232,7 +232,7 @@ describe('dropbox nodes', function() {
         });
 
         it('should report event when filepattern matches', function(done) {
-            nock('https://api.dropbox.com:443')
+            nock('https://api.dropboxapi.com:443')
                 .post('/1/delta')
                 .reply(200, {
                     "has_more":false,
@@ -294,7 +294,7 @@ describe('dropbox nodes', function() {
         });
 
         it('should report file delete event', function(done) {
-            nock('https://api.dropbox.com:443')
+            nock('https://api.dropboxapi.com:443')
                 .post('/1/delta')
                 .reply(200, {
                     "has_more":false,
@@ -407,7 +407,7 @@ describe('dropbox nodes', function() {
         	return;
         }
         it('should upload msg.payload', function(done) {
-            nock('https://api.dropbox.com:443')
+            nock('https://api.dropboxapi.com:443')
                 .get('/1/account/info')
                 .reply(200, {"referral_link":"https://example.com/foo","display_name":"Fred Bar","uid":5,"email_verified":true,"team":null,"quota_info":{"datastores":0,"shared":0,"quota":1024,"normal":512},"country":"GB","email":"junk@example.com"}, {
                     date: 'Tue, 28 Oct 2014 21:53:52 GMT',
