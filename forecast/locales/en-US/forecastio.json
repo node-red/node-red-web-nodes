@@ -33,7 +33,8 @@
             "invalid-time": "Invalid time provided",
             "invalid-date": "Invalid date provided",
             "incorrect-apikey": "Incorrect API key provided",
-            "invalid-url": "invalid url"
+            "invalid-url": "invalid url",
+            "api-response": "Error parsing response from API: __response__"
         },
         "message": {
             "weather-forecast": "Weather Forecast Information",
