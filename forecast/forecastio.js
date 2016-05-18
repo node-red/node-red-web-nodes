@@ -85,8 +85,9 @@ module.exports = function(RED) {
                     if (weather === "Forbidden") {
                         return callback(RED._("forecastio.error.incorrect-apikey"));
                     } else {
+                        var jsun;
                         try {
-                            var jsun = JSON.parse(weather);
+                            jsun = JSON.parse(weather);
                         } catch (err) {
                             return callback(RED._("forecastio.error.api-response", { response: weather }));
                         }
