@@ -41,19 +41,22 @@ module.exports = function(RED) {
     function AmazonS3InNode(n) {
         RED.nodes.createNode(this,n);
         this.awsConfig = RED.nodes.getNode(n.aws);
-        this.region = n.region;
+		// eu-west-1||us-east-1||us-west-1||us-west-2||eu-central-1||ap-northeast-1||ap-northeast-2||ap-southeast-1||ap-southeast-2||sa-east-1
+        this.region = n.region; 
         this.bucket = n.bucket;
         this.filepattern = n.filepattern || "";
         var node = this;
         var AWS = this.awsConfig ? this.awsConfig.AWS : null;
+		
         if (!AWS) {
             node.warn(RED._("aws.warn.missing-credentials"));
             return;
         }
-        var s3 = new AWS.S3();
+        var s3 = new AWS.S3({"region": node.region});
         node.status({fill:"blue",shape:"dot",text:"aws.status.initializing"});
         s3.listObjects({ Bucket: node.bucket }, function(err, data) {
             if (err) {
+				//console.log(err);
                 node.error(RED._("aws.error.failed-to-fetch", {err:err}));
                 node.status({fill:"red",shape:"ring",text:"aws.status.error"});
                 return;
@@ -123,16 +126,17 @@ module.exports = function(RED) {
     function AmazonS3QueryNode(n) {
         RED.nodes.createNode(this,n);
         this.awsConfig = RED.nodes.getNode(n.aws);
-        this.region = n.region;
+        this.region = n.region; // || "eu-west-1";
         this.bucket = n.bucket;
         this.filename = n.filename || "";
         var node = this;
         var AWS = this.awsConfig ? this.awsConfig.AWS : null;
+		
         if (!AWS) {
             node.warn(RED._("aws.warn.missing-credentials"));
             return;
         }
-        var s3 = new AWS.S3();
+        var s3 = new AWS.S3({"region": node.region});
         node.on("input", function(msg) {
             var bucket = node.bucket || msg.bucket;
             if (bucket === "") {
@@ -141,6 +145,7 @@ module.exports = function(RED) {
             }
             var filename = node.filename || msg.filename;
             if (filename === "") {
+				node.warn("No filename");
                 node.error(RED._("aws.error.no-filename-specified"),msg);
                 return;
             }
@@ -152,6 +157,7 @@ module.exports = function(RED) {
                 Key: filename,
             }, function(err, data) {
                 if (err) {
+					node.warn(err);
                     node.error(RED._("aws.error.download-failed",{err:err.toString()}),msg);
                     return;
                 } else {
@@ -173,15 +179,17 @@ module.exports = function(RED) {
         this.localFilename = n.localFilename || "";
         var node = this;
         var AWS = this.awsConfig ? this.awsConfig.AWS : null;
+		
         if (!AWS) {
             node.warn(RED._("aws.warn.missing-credentials"));
             return;
         }
         if (AWS) {
-            var s3 = new AWS.S3();
+            var s3 = new AWS.S3({"region": node.region});
             node.status({fill:"blue",shape:"dot",text:"aws.status.checking-credentials"});
             s3.listObjects({ Bucket: node.bucket }, function(err) {
                 if (err) {
+					node.warn(err);
                     node.error(RED._("aws.error.aws-s3-error",{err:err}));
                     node.status({fill:"red",shape:"ring",text:"aws.status.error"});
                     return;
