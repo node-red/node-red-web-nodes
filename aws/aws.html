@@ -28,6 +28,21 @@
          <input type="text" id="node-input-filepattern" data-i18n="[placeholder]aws.placeholder.pattern">
     </div>
     <div class="form-row">
+        <label for="node-input-region"><i class="fa fa-tag"></i> <span data-i18n="aws.label.region"></span></label>
+        <select type="text" id="node-input-region" style="width:72%;">
+            <option selected value="us-west-1">us-west-1</option>
+            <option value="us-west-2">us-west-2</option>
+            <option value="us-east-1">us-east-1</option>
+            <option value="eu-west-1">eu-west-1</option>
+            <option value="eu-central-1">eu-central-1</option>
+            <option value="ap-norteast-1">ap-northeast-1</option>
+            <option value="ap-norteast-2">ap-northeast-2</option>
+            <option value="ap-southeast-1">ap-southeast-1</option>
+            <option value="ap-southeast-2">ap-southeast-2</option>
+            <option value="sa-east-1">sa-east-1</option>
+        </select>
+    </div>
+    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="aws.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]aws.placeholder.name">
     </div>
@@ -49,6 +64,7 @@
         defaults: {
             aws: {type:"aws-config",required:true},
             bucket: {required:true},
+            region: {value:"", required:true},
             filepattern: {value:""},
             name: {value:""},
         },
@@ -75,6 +91,21 @@
          <input type="text" id="node-input-filename" data-i18n="[placeholder]aws.placeholder.filename">
     </div>
     <div class="form-row">
+        <label for="node-input-region"><i class="fa fa-tag"></i> <span data-i18n="aws.label.region"></span></label>
+        <select type="text" id="node-input-region" style="width:72%;">
+            <option selected value="us-west-1">us-west-1</option>
+            <option value="us-west-2">us-west-2</option>
+            <option value="us-east-1">us-east-1</option>
+            <option value="eu-west-1">eu-west-1</option>
+            <option value="eu-central-1">eu-central-1</option>
+            <option value="ap-norteast-1">ap-northeast-1</option>
+            <option value="ap-norteast-2">ap-northeast-2</option>
+            <option value="ap-southeast-1">ap-southeast-1</option>
+            <option value="ap-southeast-2">ap-southeast-2</option>
+            <option value="sa-east-1">sa-east-1</option>
+        </select>
+    </div>
+    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="aws.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]aws.placeholder.name">
     </div>
@@ -92,6 +123,7 @@
             aws: {type:"aws-config",required:true},
             bucket: {required:true},
             filename: {value:""},
+            region: {value:"", required:true},
             name: {value:""},
         },
         inputs:1,
@@ -122,6 +154,21 @@
          <input type="text" id="node-input-localFilename" data-i18n="[placeholder]aws.placeholder.local">
     </div>
     <div class="form-row">
+        <label for="node-input-region"><i class="fa fa-tag"></i> <span data-i18n="aws.label.region"></span></label>
+        <select type="text" id="node-input-region" style="width:72%;">
+            <option selected value="us-west-1">us-west-1</option>
+            <option value="us-west-2">us-west-2</option>
+            <option value="us-east-1">us-east-1</option>
+            <option value="eu-west-1">eu-west-1</option>
+            <option value="eu-central-1">eu-central-1</option>
+            <option value="ap-norteast-1">ap-northeast-1</option>
+            <option value="ap-norteast-2">ap-northeast-2</option>
+            <option value="ap-southeast-1">ap-southeast-1</option>
+            <option value="ap-southeast-2">ap-southeast-2</option>
+            <option value="sa-east-1">sa-east-1</option>
+        </select>
+    </div>
+    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="aws.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]aws.placeholder.name">
     </div>
@@ -140,7 +187,8 @@
             bucket: {required:true},
             filename: {value:""},
             localFilename: {value:""},
-            name: {value:""},
+            region: {value:"", required:true},
+            name: {value:""}
         },
         inputs:1,
         outputs:0,

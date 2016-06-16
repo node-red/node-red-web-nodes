@@ -6,6 +6,7 @@
             "pattern": "Filename Pattern",
             "name": "Name",
             "filename": "Filename",
+            "region": "Region",
             "local": "Local Filename",
             "keyid": "AccessKeyID",
             "secret": "Secret Access Key"
@@ -15,6 +16,7 @@
             "pattern": "Filepattern",
             "name": "Name",
             "filename": "Filename",
+            "region": "Region",
             "local": "Local Filename"
         },
         "tip": {
