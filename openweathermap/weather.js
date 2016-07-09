@@ -47,10 +47,18 @@ module.exports = function(RED) {
         var url;
         if (node.hasOwnProperty("credentials") && node.credentials.hasOwnProperty("apikey")) {
             //If there is a value missing, the URL is not initialised.
-            if (node.lat && node.lon) {
-                url = "http://api.openweathermap.org/data/2.5/weather?lat=" + node.lat + "&lon=" + node.lon + "&APPID=" + node.credentials.apikey;
-            } else if (node.city && node.country) {
-                url = "http://api.openweathermap.org/data/2.5/weather?q=" + node.city + "," + node.country + "&APPID=" + node.credentials.apikey;
+            if (node.wtype === "forecast") {
+                if (node.lat && node.lon) {
+                    url = "http://api.openweathermap.org/data/2.5/forecast/daily?cnt=5&units=metric&lat=" + node.lat + "&lon=" + node.lon + "&APPID=" + node.credentials.apikey;
+                } else if (node.city && node.country) {
+                    url = "http://api.openweathermap.org/data/2.5/forecast/daily?cnt=5&units=metric&q=" + node.city + "," + node.country + "&APPID=" + node.credentials.apikey;
+                }
+            } else {
+                if (node.lat && node.lon) {
+                    url = "http://api.openweathermap.org/data/2.5/weather?lat=" + node.lat + "&lon=" + node.lon + "&APPID=" + node.credentials.apikey;
+                } else if (node.city && node.country) {
+                    url = "http://api.openweathermap.org/data/2.5/weather?q=" + node.city + "," + node.country + "&APPID=" + node.credentials.apikey;
+                }
             }
 
             //If the URL is not initialised, there has been an error with the input data,
@@ -100,6 +108,15 @@ module.exports = function(RED) {
                                 msg.description = RED._("weather.message.description", {lat: msg.location.lat, lon: msg.location.lon});
                                 msg.payload.description = (RED._("weather.message.payload", {name: jsun.name, lat: jsun.coord.lat, lon: jsun.coord.lon, main: jsun.weather[0].main, description: jsun.weather[0].description}));
                                 callback();
+                            } else if (jsun.hasOwnProperty("list")) {
+                                msg.location.lon = jsun.city.coord.lon;
+                                msg.location.lat = jsun.city.coord.lat;
+                                msg.location.city = jsun.city.name;
+                                msg.location.country = jsun.city.country;
+                                msg.payload = jsun.list;
+                                msg.data = jsun;
+                                msg.title = RED._("weather.message.forecast");
+                                callback();
                             } else {
                                 if (jsun.message === "Error: Not found city") {
                                     callback(RED._("weather.error.invalid-city_country"));
@@ -127,7 +144,7 @@ module.exports = function(RED) {
     function OpenWeatherMapInputNode(n) {
         RED.nodes.createNode(this, n);
         var node = this;
-        this.repeat = 300000;
+        this.repeat = 600000;  // every 10 minutes
         this.interval_id = null;
         var previousdata = null;
         var city;
@@ -174,6 +191,7 @@ module.exports = function(RED) {
 
     function OpenWeatherMapQueryNode(n) {
         RED.nodes.createNode(this,n);
+        this.wtype = n.wtype;
         var node = this;
         var city;
         var country;

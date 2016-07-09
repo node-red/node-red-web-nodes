@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014,2015 IBM Corp.
+  Copyright 2014,2016 IBM Corp.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,8 +20,18 @@
         <input type="password" id="node-input-apikey">
     </div>
     <div class="form-row">
+        <label><span> </span></label>
+        <select id="node-input-wtype" style="width:300px">
+            <option value="current" data-i18n="weather.label.option_current"></option>
+            <option value="forecast" data-i18n="weather.label.option_5dayforecast"></option>
+        </select>
+    </div>
+    <div class="form-row">
         <label for="weather-location-type-select"><i class="fa fa-globe"></i> <span data-i18n="weather.label.location"></span></label>
-        <select id="weather-location-type-select"  style="width: 288px"><option value="city" data-i18n="weather.label.option_city"></option><option value="coordinates" data-i18n="weather.label.option_coordinates"></option></select>
+        <select id="weather-location-type-select" style="width:300px">
+            <option value="city" data-i18n="weather.label.option_city"></option>
+            <option value="coordinates" data-i18n="weather.label.option_coordinates"></option>
+        </select>
     </div>
     <div class="form-row weather-location-type" id="weather-location-type-city">
         <label for=""><i class="weather-location-type"></i> <span data-i18n="weather.label.city"></span></label>
@@ -47,6 +57,7 @@
         color: '#FFCC66',
         defaults: {
             name: {value:""},
+            wtype: {value:"current"},
             lon: {value:"", validate:function(v) {return ((v>=-180) && (v<=180));} },
             lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
             city: {value:""},
@@ -67,7 +78,7 @@
                 $(".weather-location-type").hide();
                 $("#weather-location-type-"+id).show();
             });
-            if(this.lon !== ""||this.lat !== ""){
+            if (this.lon !== ""||this.lat !== "") {
                 $("#weather-location-type-select").val("coordinates");
             } else {
                 $("#weather-location-type-select").val("city");
@@ -78,7 +89,7 @@
         },
         oneditsave: function() {
             var type = $("#weather-location-type-select option:selected").val();
-            if(type == "coordinates"){
+            if (type == "coordinates") {
                 $("#node-input-city").val("");
                 $("#node-input-country").val("");
             } else if (type == "city") {
@@ -95,55 +106,62 @@
 <script type="text/x-red" data-help-name="openweathermap">
     <p>A node which polls openweathermap.org for current weather data when an input is received.</p>
     <p>An API Key required to use this node can be obtained from <a href="http://openweathermap.org/appid" target="_new">OpenWeatherMap</a>.</p>
-
-    <p> The location can be specified by either:</p>
+    <p> This is done using either:</p>
     <ul>
         <li> a city and the country in which that city lies</li>
         <li> a latitude and longitude set of coordinates </li>
     </ul>
     <p>These can be passed in as settings on the node, or as the:</p>
     <ul>
-       <li> <b>msg.location.lat</b> and <b>msg.location.lon</b>, or </li>
-       <li> <b>msg.location.city</b> and <b>msg.location.country</b> </li>
+       <li> <code>msg.location.lat</code> and <code>msg.location.lon</code>, or </li>
+       <li> <code>msg.location.city</code> and <code>msg.location.country</code> </li>
     </ul>
     <p>of the message input. </p>
     <p>The node will always prioritise its settings over the msg properties.</p>
-
-    <p>The node sets the following properties of <b>msg.payload</b>:</p>
+    <p>The current weather report sets the following properties of <code>msg.payload</code>:</p>
     <ul>
-        <li><b>description</b> - a brief verbal description of the current weather for human reading.</li><br>
-        <li><b>weather</b> - a short description of the current weather.</li><br>
-        <li><b>detail</b> - a more detailed expansion on <b>weather</b>.</li><br>
-        <li><b>tempk</b> - the current gorund temperature at that location in Kelvin.</li><br>
-        <li><b>tempc</b> - the current gorund temperature at that location in Celsius.</li><br>
-        <li><b>humidity</b> - the current humidity at the location in percent.</li><br>
-        <li><b>maxtemp</b> - the current maximum temperature at the location in Kelvin.</li><br>
-        <li><b>mintemp</b> - the current minimum temperature at the location in Kelvin.</li><br>
-        <li><b>windspeed</b> - the current wind speed at the location in Metres per second.</li><br>
-        <li><b>winddirection</b> - the current wind direction at the location in meteorological degrees.</li><br>
-        <li><b>town</b> - the name of the location from which the data was sourced.</li><br>
-        <li><b>sunrise</b> - the time at which the sun rose in Unix UTC format.</li><br>
-        <li><b>sunset</b> - the time at which the sun will set in Unix UTC format.</li><br>
-        <li><b>clouds</b> - the current cloud coverage of the location in percent.</li><br>
+        <li><code>description</code> - a brief verbal description of the current weather for human reading.</li>
+        <li><code>weather</code> - a short description of the current weather.</li>
+        <li><code>detail</code> - a more detailed version of <code>weather</code>.</li>
+        <li><code>tempk</code> - the current ground temperature at that location in Kelvin.</li>
+        <li><code>tempc</code> - the current ground temperature at that location in Celsius.</li>
+        <li><code>humidity</code> - the current humidity at the location in percent.</li>
+        <li><code>maxtemp</code> - the current maximum temperature at the location in Kelvin.</li>
+        <li><code>mintemp</code> - the current minimum temperature at the location in Kelvin.</li>
+        <li><code>windspeed</code> - the current wind speed at the location in metres per second.</li>
+        <li><code>winddirection</code> - the current wind direction at the location in meteorological degrees.</li>
+        <li><code>location</code> - the name of the location from which the data was sourced.</li>
+        <li><code>sunrise</code> - the time at which the sun rose in Unix UTC format.</li>
+        <li><code>sunset</code> - the time at which the sun will set in Unix UTC format.</li>
+        <li><code>clouds</code> - the current cloud coverage of the location in percent.</li>
     </ul>
-
-    <p>The node also sets the following properties of <b>msg.location</b>.</p>
+    <p>The 5 day forecast sets the following properties of <code>msg.payload</code>:</p>
     <ul>
-        <li><b>lat</b> - the longitude of the location from which the data was sourced.</li><br>
-        <li><b>lon</b> - the latitude of the location from which the data was sourced.</li><br>
-        <li><b>city</b> - the city from which the data was sourced.</li><br>
-        <li><b>country</b> - the country from which the data was sourced.</li><br>
+        <li><code>dt</code> - epoch timestamp
+        <li><code>pressure</code> - in hPa
+        <li><code>hunidity</code> - in %
+        <li><code>speed</code> - wind speed in metres per second
+        <li><code>deg</code> - wind direction in degrees
+        <li><code>clouds</code> - cloudiness in %
+        <li><code>temp</code> - an object with various temperatures in degC,
+        <ul><li>day, min, max, night, eve, morn</li></ul>
+        <li><code>weathe</code> - an object with some miscellaneous data,
+        <ul><li>description, icon, main, id</li></ul>
     </ul>
-
+    <p>The node also sets the following properties of <code>msg.location</code>.</p>
+    <ul>
+        <li><code>lat</code> - the longitude of the location from which the data was sourced.</li>
+        <li><code>lon</code> - the latitude of the location from which the data was sourced.</li>
+        <li><code>city</code> - the city from which the data was sourced.</li>
+        <li><code>country</code> - the country from which the data was sourced.</li>
+    </ul>
     <p>Finally, the node sets:</p>
     <ul>
-        <li><b>msg.time</b> - the time at which the weather data was received by openweathermap.org.</li><br>
-        <li><b>msg.data</b> - the full JSON returned by the API. </li>
+        <li><code>msg.time</code> - the time at which the weather data was received by openweathermap.org.</li>
+        <li><code>msg.data</code> - the full JSON returned by the API. </li>
     </ul>
-
     <p>Weather data provided by <a href="http://openweathermap.org/" target="_blank">openweathermap.org/</a></p>
 </script>
-
 
 
 <script type="text/x-red" data-template-name="openweathermap in">
@@ -152,8 +170,18 @@
         <input type="password" id="node-input-apikey">
     </div>
     <div class="form-row">
+        <label><span> </span></label>
+        <select id="node-input-wtype" style="width:300px">
+            <option value="current" data-i18n="weather.label.option_current"></option>
+            <option value="forecast" data-i18n="weather.label.option_5dayforecast"></option>
+        </select>
+    </div>
+    <div class="form-row">
         <label for="weather-location-type-select"><i class="fa fa-globe"></i> <span data-i18n="weather.label.location"></span></label>
-        <select id="weather-location-type-select"  style="width: 288px"><option value="city" data-i18n="weather.label.option_city"></option><option value="coordinates" data-i18n="weather.label.option_coordinates"></option></select>
+        <select id="weather-location-type-select" style="width:300px">
+            <option value="city" data-i18n="weather.label.option_city"></option>
+            <option value="coordinates" data-i18n="weather.label.option_coordinates"></option>
+        </select>
     </div>
     <div class="form-row weather-location-type" id="weather-location-type-city">
         <label for=""><i class="weather-location-type"></i> <span data-i18n="weather.label.city"></span></label>
@@ -199,7 +227,7 @@
                 $(".weather-location-type").hide();
                 $("#weather-location-type-"+id).show();
             });
-            if(this.lon !== ""||this.lat !== ""){
+            if (this.lon !== ""||this.lat !== "") {
                 $("#weather-location-type-select").val("coordinates");
             } else {
                 $("#weather-location-type-select").val("city");
@@ -207,12 +235,10 @@
             var id = $("#weather-location-type-select option:selected").val();
             $(".weather-location-type").hide();
             $("#weather-location-type-"+id).show();
-
-
         },
         oneditsave: function() {
             var type = $("#weather-location-type-select option:selected").val();
-            if(type == "coordinates"){
+            if (type == "coordinates") {
                 $("#node-input-city").val("");
                 $("#node-input-country").val("");
             } else if (type == "city") {
@@ -229,44 +255,53 @@
 <script type="text/x-red" data-help-name="openweathermap in">
     <p>A node which polls openweathermap.org for current weather data periodically and returns when a change is detected.</p>
     <p>An API Key required to use this node can be obtained from <a href="http://openweathermap.org/appid" target="_new">OpenWeatherMap</a>.</p>
-
-    <p> The location can be specified by either:</p>
+    <p> This is done using either:</p>
     <ul>
         <li> a city and the country in which that city lies</li>
         <li> a latitude and longitude set of coordinates </li>
     </ul>
-
-    <p>The node sets the following properties of <b>msg.payload</b>:</p>
+    <p>The current report sets the following properties of <code>msg.payload</code>:</p>
     <ul>
-        <li><b>description</b> - a brief verbal description of the current weather for human reading.</li><br>
-        <li><b>weather</b> - a short description of the current weather.</li><br>
-        <li><b>detail</b> - a more detailed expansion on <b>weather</b>.</li><br>
-        <li><b>tempk</b> - the current gorund temperature at that location in Kelvin.</li><br>
-        <li><b>tempc</b> - the current gorund temperature at that location in Celsius.</li><br>
-        <li><b>humidity</b> - the current humidity at the location in percent.</li><br>
-        <li><b>maxtemp</b> - the current maximum temperature at the location in Kelvin.</li><br>
-        <li><b>mintemp</b> - the current minimum temperature at the location in Kelvin.</li><br>
-        <li><b>windspeed</b> - the current wind speed at the location in Metres per second.</li><br>
-        <li><b>winddirection</b> - the current wind direction at the location in meteorological degrees.</li><br>
-        <li><b>town</b> - the name of the location from which the data was sourced.</li><br>
-        <li><b>sunrise</b> - the time at which the sun rose in Unix UTC format.</li><br>
-        <li><b>sunset</b> - the time at which the sun will set in Unix UTC format.</li><br>
-        <li><b>clouds</b> - the current cloud coverage of the location in percent.</li><br>
+        <li><code>description</code> - a brief verbal description of the current weather for human reading.</li>
+        <li><code>weather</code> - a short description of the current weather.</li>
+        <li><code>detail</code> - a more detailed version of <code>weather</code>.</li>
+        <li><code>tempk</code> - the current ground temperature at that location in Kelvin.</li>
+        <li><code>tempc</code> - the current ground temperature at that location in Celsius.</li>
+        <li><code>humidity</code> - the current humidity at the location in percent.</li>
+        <li><code>maxtemp</code> - the current maximum temperature at the location in Kelvin.</li>
+        <li><code>mintemp</code> - the current minimum temperature at the location in Kelvin.</li>
+        <li><code>windspeed</code> - the current wind speed at the location in metres per second.</li>
+        <li><code>winddirection</code> - the current wind direction at the location in meteorological degrees.</li>
+        <li><code>location</code> - the name of the location from which the data was sourced.</li>
+        <li><code>sunrise</code> - the time at which the sun rose in Unix UTC format.</li>
+        <li><code>sunset</code> - the time at which the sun will set in Unix UTC format.</li>
+        <li><code>clouds</code> - the current cloud coverage of the location in percent.</li>
     </ul>
-    <p>The node also sets the following properties of <b>msg.location</b>.</p>
+    <p>The 5 day forecast sets the following properties of <code>msg.payload</code>:</p>
     <ul>
-        <li><b>lat</b> - the longitude of the location from which the data was sourced.</li><br>
-        <li><b>lon</b> - the latitude of the location from which the data was sourced.</li><br>
-        <li><b>city</b> - the city from which the data was sourced.</li><br>
-        <li><b>country</b> - the country from which the data was sourced.</li><br>
+        <li><code>dt</code> - epoch timestamp
+        <li><code>pressure</code> - in hPa
+        <li><code>hunidity</code> - in %
+        <li><code>speed</code> - wind speed in metres per second
+        <li><code>deg</code> - wind direction in degrees
+        <li><code>clouds</code> - cloudiness in %
+        <li><code>temp</code> - an object with various temperatures in degC,
+        <ul><li>day, min, max, night, eve, morn</li></ul>
+        <li><code>weathe</code> - an object with some miscellaneous data,
+        <ul><li>description, icon, main, id</li></ul>
     </ul>
-
+    <p>The node also sets the following properties of <code>msg.location</code>.</p>
+    <ul>
+        <li><code>lat</code> - the longitude of the location from which the data was sourced.</li>
+        <li><code>lon</code> - the latitude of the location from which the data was sourced.</li>
+        <li><code>city</code> - the city from which the data was sourced.</li>
+        <li><code>country</code> - the country from which the data was sourced.</li>
+    </ul>
     <p>Finally, the node sets:</p>
     <ul>
-        <li><b>msg.time</b> - the time at which the weather data was received by openweathermap.org.</li><br>
-        <li><b>msg.data</b> - the full JSON returned by the API. </li>
+        <li><code>msg.time</code> - the time at which the weather data was received by openweathermap.org.</li>
+        <li><code>msg.data</code> - the full JSON returned by the API. </li>
     </ul>
-
     <p>Weather data provided by <a href="http://openweathermap.org/" target="_blank">openweathermap.org/</a></p>
 </script>
 
@@ -274,7 +309,6 @@
     .weather-location-type {
         padding-left: 110px;
     }
-
     .weather-location-input{
         margin-bottom: 10px;
     }

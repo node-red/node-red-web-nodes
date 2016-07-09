@@ -11,7 +11,6 @@ Run the following command in the root directory of your Node-RED install
 
         npm install node-red-node-openweathermap
 
-
 Usage
 -----
 
@@ -23,30 +22,45 @@ go to <a href="http://openweathermap.org/appid" target="_new">OpenWeatherMap</a>
 
 ### Input Node
 
-Fetches the current weather and forecast at a location specified by name or
-lat,lon every 5 minutes - and outputs a **msg** if something has changed.
+Fetches the current weather or 5 day forecast at a location specified by `city and country` or
+`latitude and longitude` every 10 minutes - and outputs a **msg** if something has changed.
 
 ### Query node
 
 Accepts an input to trigger fetching the current weather either
-from a specified location name or lat,lon or passed in on
+from a specified `city and country` or `latitude and longitude` or passed in on
 
-        msg.location.city and msg.location.country
+    msg.location.city and msg.location.country
         or
-        msg.location.lat and msg.location.lon
+    msg.location.lat and msg.location.lon
 
 ### Results
 
-Both will return
+Current conditions will return
 
   - **description** - a brief verbal description of the current weather for human reading.
   - **weather** - a very short description of the current weather.
-  - **tempc** - the current gorund temperature at that location in Celcius.
-  - **tempk** - the current gorund temperature at that location in Kelvin.
+  - **tempc** - the current ground temperature at that location in Celsius.
+  - **tempk** - the current ground temperature at that location in Kelvin.
   - **humidity** - the current relative humidity at the location in percent.
-  - **windspeed** - the current wind speed at the location in Metres per second.
+  - **windspeed** - the current wind speed at the location in metres per second.
   - **winddirection** - the current wind direction at the location in meteorological degrees.
   - **location** - the name of the location from which the data was sourced.
+
+5 day Forecast will return a 5 part array, each with
+
+ - **dt** - epoch timestamp
+ - **pressure** - in hPa
+ - **hunidity** - in %
+ - **speed** - wind speed in metres per second
+ - **deg** - wind direction in degrees
+ - **clouds** - cloudiness in %
+ - **temp** - an object with various temperatures in degC,
+   - day, min, max, night, eve, morn
+ - **weather** - an object with some misc. data,
+   - description, icon, main, id
+
+
 
 The node also sets the following properties of **msg.location**.
 
