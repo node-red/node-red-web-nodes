@@ -20,7 +20,7 @@ module.exports = function(RED) {
 
     function assignmentFunction(node, date, time, lat, lon, forecastioConfig, callback) {
         if (forecastioConfig && forecastioConfig.credentials && forecastioConfig.credentials.client_key) {
-            node.apikey = forecastioConfig.credentials.client_key;
+            node.apikey = forecastioConfig.credentials.client_key.trim();
         } else {
             return callback(RED._("forecastio.error.no-credentials"));
         }
@@ -85,7 +85,12 @@ module.exports = function(RED) {
                     if (weather === "Forbidden") {
                         return callback(RED._("forecastio.error.incorrect-apikey"));
                     } else {
-                        var jsun = JSON.parse(weather);
+                        var jsun;
+                        try {
+                            jsun = JSON.parse(weather);
+                        } catch (err) {
+                            return callback(RED._("forecastio.error.api-response", { response: weather }));
+                        }
                         msg.data = jsun;
                         msg.payload.weather = jsun.daily.data[when].icon;
                         msg.payload.detail = jsun.daily.data[when].summary;
