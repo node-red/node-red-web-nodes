@@ -135,7 +135,7 @@
         <li><code>sunset</code> - the time at which the sun will set in Unix UTC format.</li>
         <li><code>clouds</code> - the current cloud coverage of the location in percent.</li>
     </ul>
-    <p>The 5 day forecast sets the following properties of <code>msg.payload</code>:</p>
+    <p>The 5 day forecast creates a 5 part array in <code>msg.payload</code> of objects with the following properties:</p>
     <ul>
         <li><code>dt</code> - epoch timestamp
         <li><code>pressure</code> - in hPa
@@ -145,7 +145,7 @@
         <li><code>clouds</code> - cloudiness in %
         <li><code>temp</code> - an object with various temperatures in degC,
         <ul><li>day, min, max, night, eve, morn</li></ul>
-        <li><code>weathe</code> - an object with some miscellaneous data,
+        <li><code>weather</code> - an object with some miscellaneous data,
         <ul><li>description, icon, main, id</li></ul>
     </ul>
     <p>The node also sets the following properties of <code>msg.location</code>.</p>
@@ -277,7 +277,7 @@
         <li><code>sunset</code> - the time at which the sun will set in Unix UTC format.</li>
         <li><code>clouds</code> - the current cloud coverage of the location in percent.</li>
     </ul>
-    <p>The 5 day forecast sets the following properties of <code>msg.payload</code>:</p>
+    <p>The 5 day forecast creates a 5 part array in <code>msg.payload</code> of objects with the following properties:</p>
     <ul>
         <li><code>dt</code> - epoch timestamp
         <li><code>pressure</code> - in hPa
@@ -287,7 +287,7 @@
         <li><code>clouds</code> - cloudiness in %
         <li><code>temp</code> - an object with various temperatures in degC,
         <ul><li>day, min, max, night, eve, morn</li></ul>
-        <li><code>weathe</code> - an object with some miscellaneous data,
+        <li><code>weather</code> - an object with some miscellaneous data,
         <ul><li>description, icon, main, id</li></ul>
     </ul>
     <p>The node also sets the following properties of <code>msg.location</code>.</p>
