@@ -61,10 +61,11 @@ module.exports = function(RED) {
                     return;
                 }
                 node.status({});
-                if (!node.state) {
+                if (!node.state) { // when executed for the first time only save cursor
                     node.state = data.cursor();
                 }
-                else {
+                else { 
+                    node.state = data.cursor(); // reset cursor to get only changes since last poll
                     var changes = data.changes;
                     for (var i = 0; i < changes.length; i++) {
                         var change = changes[i];
