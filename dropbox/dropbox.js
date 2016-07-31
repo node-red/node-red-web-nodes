@@ -35,7 +35,7 @@ module.exports = function(RED) {
     function DropboxInNode(n) {
         RED.nodes.createNode(this,n);
         this.filepattern = n.filepattern || "";
-        this.checkInterval = n.checkInterval || 600000;
+        this.checkInterval = n.checkInterval || 60000;
         this.dropboxConfig = RED.nodes.getNode(n.dropbox);
         var credentials = this.dropboxConfig ? this.dropboxConfig.credentials : {};
         if (!credentials.appkey || !credentials.appsecret ||
