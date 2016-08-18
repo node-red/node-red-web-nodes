@@ -27,7 +27,7 @@ describe('TfL Bus Node', function() {
     });
 
     afterEach(function(done) {
-        if(nock) {
+        if (nock) {
             nock.cleanAll();
         }
         try {
@@ -52,15 +52,15 @@ describe('TfL Bus Node', function() {
                 .get('/tfl-bus/stopsquery?lat=51.507268&lon=-0.16573&radius=600')
                 .expect(200)
                 .expect(function(res) {
-                    try {
-                        res.text.should.equal('[\n  [\n    0,\n    "Hyde Park Street",\n    "71355",\n    "STBC",\n    "Hyde Park Corner or Oxford Circus",\n    78,\n    "D",\n    51.512573\n  ]\n]');
-                    } catch(err) {
-                        done(err);
-                    }
+                    //try {
+                    res.text.should.equal('[[0,"Hyde Park Street","71355","STBC","Hyde Park Corner or Oxford Circus",78,"D",51.512573]]');
+                    //} catch(err) {
+                    //    return done(err);
+                    //}
                 })
                 .end(function(err, res) {
                     if (err) {
-                    	return done(err);
+                        return done(err);
                     }
                     done();
                 });
@@ -78,15 +78,15 @@ describe('TfL Bus Node', function() {
                 .get('/tfl-bus/linesquery?stopCode1=71355')
                 .expect(200)
                 .expect(function(res) {
-                    try {
-                        res.text.should.equal('[\n  [\n    "390",\n    "Archway"\n  ],\n  [\n    "94",\n    "Piccadilly Cir"\n  ]\n]');
-                    } catch(err) {
-                        done(err);
-                    }
+                    //try {
+                    res.text.should.equal('[["390","Archway"],["94","Piccadilly Cir"]]');
+                    //} catch(err) {
+                    //    done(err);
+                    //}
                 })
                 .end(function(err, res) {
                     if (err) {
-                    	return done(err);
+                        return done(err);
                     }
                     done();
                 });

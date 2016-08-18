@@ -4,7 +4,9 @@
             "weather": "openweathermap",
             "name": "Name",
             "location": "Location",
-            "option_city": "City",
+            "option_current": "Current weather for",
+            "option_5dayforecast": "5 day forecast for",
+            "option_city": "City, Country",
             "option_coordinates": "Coordinates",
             "city": "City",
             "country": "Country",
@@ -33,6 +35,7 @@
         },
         "message": {
             "title": "Current Weather Information",
+            "forecast": "5 day Forecast",
             "description": "Current weather information at coordinates: __lat__, __lon__",
             "payload": "The weather in __name__ at coordinates: __lat__, __lon__ is __main__ (__description__)."
         }

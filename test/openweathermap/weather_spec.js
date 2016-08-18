@@ -22,7 +22,7 @@ var sinon = require("sinon");
 
 describe('weather nodes', function() {
 
-    var weatherDataTest = function(weatherdata, locationdata, timedata){
+    var weatherDataTest = function(weatherdata, locationdata, timedata) {
         timedata.toUTCString().should.be.exactly("Wed, 08 Oct 2014 14:00:48 GMT");
         weatherdata.should.have.property("detail", "scattered clouds");
         weatherdata.should.have.property("tempk", 290.12);
@@ -42,29 +42,29 @@ describe('weather nodes', function() {
     };
 
     beforeEach(function(done) {
-        if(nock){
-            var scope = nock('http://api.openweathermap.org:80')
+        if (nock) {
+            var scope = nock('http://api.openweathermap.org')
             //used to return normal data on a city/country call
-            .get('/data/2.5/weather?q=london,england')
+            .get('/data/2.5/weather?q=london,england&APPID=12345')
             .reply(200, {"coord":{"lon":-0.13,"lat":51.51},"sys":{"type":1,"id":5091,"message":0.0434,"country":"GB","sunrise":1412748812,"sunset":1412788938},"weather":[{"id":802,"main":"Clouds","description":"scattered clouds","icon":"03d"}],"base":"cmc stations","main":{"temp":290.12,"pressure":994,"humidity":63,"temp_min":289.15,"temp_max":291.15},"wind":{"speed":8.7,"deg":220,"var_beg":190,"var_end":250},"clouds":{"all":40},"dt":1412776848,"id":2643743,"name":"London","cod":200})
 
             //used to return a fail error
-            .get('/data/2.5/weather?q=fail,fail')
+            .get('/data/2.5/weather?q=fail,fail&APPID=12345')
             .reply(200,{message:"Error: Not found city"})
 
             //used to return normal data on a lat/lon call
-            .get('/data/2.5/weather?lat=51.51&lon=-0.13')
+            .get('/data/2.5/weather?lat=51.51&lon=-0.13&APPID=12345')
             .reply(200, {"coord":{"lon":-0.13,"lat":51.51},"sys":{"type":1,"id":5091,"message":0.0434,"country":"GB","sunrise":1412748812,"sunset":1412788938},"weather":[{"id":802,"main":"Clouds","description":"scattered clouds","icon":"03d"}],"base":"cmc stations","main":{"temp":290.12,"pressure":994,"humidity":63,"temp_min":289.15,"temp_max":291.15},"wind":{"speed":8.7,"deg":220,"var_beg":190,"var_end":250},"clouds":{"all":40},"dt":1412776848,"id":2643743,"name":"London","cod":200})
 
             //used to return a slightly different data set to normality. Used solely in the inject node test.
-            .get('/data/2.5/weather?q=test,test')
+            .get('/data/2.5/weather?q=test,test&APPID=12345')
             .reply(200, {"coord":{"lon":-0.13,"lat":51.51},"sys":{"type":1,"id":5091,"message":0.0434,"country":"GB","sunrise":1412748812,"sunset":1412788938},"weather":[{"id":802,"main":"Different","description":"scattered clouds","icon":"03d"}],"base":"cmc stations","main":{"temp":290.12,"pressure":994,"humidity":63,"temp_min":289.15,"temp_max":291.15},"wind":{"speed":8.7,"deg":220,"var_beg":190,"var_end":250},"clouds":{"all":40},"dt":1412776848,"id":2643743,"name":"London","cod":200});
         }
         helper.startServer(done);
     });
 
     afterEach(function(done) {
-        if(nock) {
+        if (nock) {
             nock.cleanAll();
         }
         try {
@@ -72,14 +72,14 @@ describe('weather nodes', function() {
             helper.unload();
             helper.stopServer(done);
         } catch (e) {
-             var errorMessage = "" + e;
-             errorMessage.should.be.exactly("Error: Not running");
-             done();
+            var errorMessage = "" + e;
+            errorMessage.should.be.exactly("Error: Not running");
+            done();
         }
     });
 
     describe('input node', function() {
-        if(nock){
+        if (nock) {
             var scope;
             // TO BE FIXED
             // it('should output the new data when a change is detected in its received data', function(done) {
@@ -194,7 +194,28 @@ describe('weather nodes', function() {
             });
         });
 
-        if(nock){
+        if (nock) {
+
+            it('should fail if no APPID is supplied', function(done) {
+                helper.load(weatherNode,
+                            [{id:"n1", type:"helper", wires:[["weatherNode1"]]},
+                             {id:"weatherNode1", type:"openweathermap", city: "london", country: "england", wires:[["n3"]]},
+                             {id:"n3", type:"helper"}],
+                             function() {
+                                var n1 = helper.getNode("n1");
+                                var weatherNode1 = helper.getNode("weatherNode1");
+                                //weatherNode1.credentials = {apikey:"12345"}; <- this is the test
+                                var n3 = helper.getNode("n3");
+                                var stub = sinon.stub(weatherNode1, 'error', function(msg) {
+                                    msg.should.equal("weather.error.no-api-key");
+                                    stub.restore();
+                                    done();
+                                });
+                                weatherNode1.should.have.property('id', 'weatherNode1');
+                                n1.send({});
+                            });
+
+            });
 
             it('should fetch city/country data based on node properties', function(done) {
                 helper.load(weatherNode,
@@ -202,9 +223,9 @@ describe('weather nodes', function() {
                              {id:"weatherNode1", type:"openweathermap", city: "london", country: "england", wires:[["n3"]]},
                              {id:"n3", type:"helper"}],
                              function() {
-
                                 var n1 = helper.getNode("n1");
                                 var weatherNode1 = helper.getNode("weatherNode1");
+                                weatherNode1.credentials = {apikey:"12345"};
                                 var n3 = helper.getNode("n3");
                                 weatherNode1.should.have.property('id', 'weatherNode1');
                                 n3.on('input', function(msg) {
@@ -214,7 +235,6 @@ describe('weather nodes', function() {
                                     weatherDataTest(weatherdata, locationdata, timedata);
                                     done();
                                 });
-
                                 n1.send({});
                             });
 
@@ -226,21 +246,20 @@ describe('weather nodes', function() {
                              {id:"weatherNode1", type:"openweathermap", lon:"-0.13", lat:"51.51", city:"", country:"", wires:[["n3"]]},
                              {id:"n3", type:"helper"}],
                              function() {
-
-                                var n1 = helper.getNode("n1");
-                                var weatherNode1 = helper.getNode("weatherNode1");
-                                var n3 = helper.getNode("n3");
-                                weatherNode1.should.have.property('id', 'weatherNode1');
-                                n3.on('input', function(msg) {
-                                    var weatherdata = msg.payload;
-                                    var locationdata = msg.location;
-                                    var timedata = msg.time;
-                                    weatherDataTest(weatherdata, locationdata, timedata);
-                                    done();
-                                });
-
-                                n1.send({});
-                            });
+                                 var n1 = helper.getNode("n1");
+                                 var weatherNode1 = helper.getNode("weatherNode1");
+                                 var n3 = helper.getNode("n3");
+                                 weatherNode1.credentials = {apikey:"12345"};
+                                 weatherNode1.should.have.property('id', 'weatherNode1');
+                                 n3.on('input', function(msg) {
+                                     var weatherdata = msg.payload;
+                                     var locationdata = msg.location;
+                                     var timedata = msg.time;
+                                     weatherDataTest(weatherdata, locationdata, timedata);
+                                     done();
+                                 });
+                                 n1.send({});
+                             });
             });
 
             it('should fetch coordinate data based on payload lat/lon', function(done) {
@@ -249,21 +268,20 @@ describe('weather nodes', function() {
                              {id:"weatherNode1", type:"openweathermap", wires:[["n3"]]},
                              {id:"n3", type:"helper"}],
                              function() {
-
-                                var n1 = helper.getNode("n1");
-                                var weatherNode1 = helper.getNode("weatherNode1");
-                                var n3 = helper.getNode("n3");
-                                weatherNode1.should.have.property('id', 'weatherNode1');
-                                n3.on('input', function(msg) {
-                                    var weatherdata = msg.payload;
-                                    var locationdata = msg.location;
-                                    var timedata = msg.time;
-                                    weatherDataTest(weatherdata, locationdata, timedata);
-                                    done();
-                                });
-
-                                n1.send({location:{lon:"-0.13", lat:"51.51"}});
-                            });
+                                 var n1 = helper.getNode("n1");
+                                 var weatherNode1 = helper.getNode("weatherNode1");
+                                 var n3 = helper.getNode("n3");
+                                 weatherNode1.credentials = {apikey:"12345"};
+                                 weatherNode1.should.have.property('id', 'weatherNode1');
+                                 n3.on('input', function(msg) {
+                                     var weatherdata = msg.payload;
+                                     var locationdata = msg.location;
+                                     var timedata = msg.time;
+                                     weatherDataTest(weatherdata, locationdata, timedata);
+                                     done();
+                                 });
+                                 n1.send({location:{lon:"-0.13", lat:"51.51"}});
+                             });
             });
 
             it('should fetch coordinate data based on payload city/country', function(done) {
@@ -276,6 +294,7 @@ describe('weather nodes', function() {
                                 var n1 = helper.getNode("n1");
                                 var weatherNode1 = helper.getNode("weatherNode1");
                                 var n3 = helper.getNode("n3");
+                                weatherNode1.credentials = {apikey:"12345"};
                                 weatherNode1.should.have.property('id', 'weatherNode1');
                                 n3.on('input', function(msg) {
                                     var weatherdata = msg.payload;
@@ -298,7 +317,7 @@ describe('weather nodes', function() {
                     var n1 = helper.getNode("n1");
                     var weatherNode1 = helper.getNode("weatherNode1");
                     var n3 = helper.getNode("n3");
-
+                    weatherNode1.credentials = {apikey:"12345"};
                     weatherNode1.should.have.property('id', 'weatherNode1');
                     n3.on('input', function(msg) {
                         var weatherdata = msg.payload;
@@ -321,6 +340,7 @@ describe('weather nodes', function() {
                     var n1 = helper.getNode("n1");
                     var weatherNode1 = helper.getNode("weatherNode1");
                     var n3 = helper.getNode("n3");
+                    weatherNode1.credentials = {apikey:"12345"};
                     var stub = sinon.stub(weatherNode1, 'error', function(msg) {
                             msg.should.equal("weather.error.invalid-city_country");
                             stub.restore();
@@ -341,6 +361,7 @@ describe('weather nodes', function() {
                     var n1 = helper.getNode("n1");
                     var weatherNode1 = helper.getNode("weatherNode1");
                     var n3 = helper.getNode("n3");
+                    weatherNode1.credentials = {apikey:"12345"};
                     var stub = sinon.stub(weatherNode1, 'error', function(msg) {
                             msg.should.equal("weather.error.invalid-city_country");
                             stub.restore();
