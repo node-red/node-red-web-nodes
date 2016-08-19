@@ -57,8 +57,8 @@ Both will return
 
 The node also sets the following properties of **msg.location**.
 
-  - **lat** - the longitude of the location from which the data was sourced.
-  - **lon** - the latitude of the location from which the data was sourced.
+  - **lat** - the latitude of the location from which the data was sourced.
+  - **lon** - the longitude of the location from which the data was sourced.
   - **city** - the city from which the data was sourced.
   - **country** - the country from which the data was sourced.
 
