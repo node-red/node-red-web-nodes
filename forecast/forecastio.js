@@ -73,6 +73,7 @@ module.exports = function(RED) {
         }
         //If the URL is not initialised, there has been an error with the input data,
         //and a node.error is reported.
+        //console.log("URL",url);
         if (url) {
             https.get(url, function(res) {
                 var weather = "";
@@ -205,20 +206,13 @@ module.exports = function(RED) {
                 if (msg.time.toISOstring) {
                     date = msg.time.toISOString().substring(0,10);
                     time = msg.time.toISOString().substring(11,16);
-                } else if (typeof(msg.time === "string") && !isNaN(parseInt(msg.time))) {
+                } else if (typeof(msg.time === "string") && (msg.time.length >0) && !isNaN(parseInt(msg.time))) {
                     var epoch = new Date(parseInt(msg.time));
                     date = epoch.toISOString().substring(0,10);
                     time = epoch.toISOString().substring(11,16);
                 }
             }
-            //else if (n.mode === "message" && msg.payload && typeof(msg.payload === "string") && !isNaN(parseInt(msg.payload)) ) {
-                //date = (new Date(msg.payload)).toISOString().substring(0,10);
-                //time = (new Date(msg.payload)).toISOString().substring(11,16);
-            //}
-            else {
-                date = (new Date()).toISOString().substring(0,10);
-                time = (new Date()).toISOString().substring(11,16);
-            }
+            else { date = null; time = null;}
 
             assignmentFunction(node, date, time, lat, lon, RED.nodes.getNode(n.forecastio), function(err) {
                 if (err) {
