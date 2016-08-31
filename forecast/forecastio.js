@@ -1,5 +1,5 @@
 /**
- * Copyright 2014,2015 IBM Corp.
+ * Copyright 2014,2016 IBM Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,13 +59,12 @@ module.exports = function(RED) {
         } else if (today.getFullYear() - node.year < -10) {
             node.warn(RED._("forecastio.warn.more-than-10-years"));
         }
-
         //wipe clear the msg properties if they exist, or create it if it doesn't
         msg.payload = {};
         msg.location = {};
         //If there is a value missing, the URL is not initialised.
         if (node.year && node.month && node.day && node.hours && node.minutes) {
-            url = ("https://api.forecast.io/forecast/" + node.apikey + "/" + node.lat + "," + node.lon + "," + node.year + "-" + node.month + "-" + node.day + "T" + node.hours + ":" + node.minutes + ":00" + "?units=" + node.units);
+            url = ("https://api.forecast.io/forecast/" + node.apikey + "/" + node.lat + "," + node.lon + "," + node.year + "-" + node.month + "-" + node.day + "T" + node.hours + ":" + node.minutes + ":00?units=" + node.units);
             when = 0;
         } else if (node.lat && node.lon && node.apikey) {
             url = ("https://api.forecast.io/forecast/" + node.apikey + "/" + node.lat + "," + node.lon + "?units=" + node.units);
@@ -202,14 +201,18 @@ module.exports = function(RED) {
                 date = n.date;
                 time = n.time;
             }
-            else if (msg.time && n.mode === "message") {
-                if (msg.time.toISOstring) {
-                    date = msg.time.toISOString().substring(0,10);
-                    time = msg.time.toISOString().substring(11,16);
-                } else if (typeof(msg.time === "string") && (msg.time.length >0) && !isNaN(parseInt(msg.time))) {
+            else if (msg.time && (n.mode === "message")) {
+                if (!isNaN(parseInt(msg.time)) && (parseInt(msg.time) !== 0)) {
                     var epoch = new Date(parseInt(msg.time));
                     date = epoch.toISOString().substring(0,10);
                     time = epoch.toISOString().substring(11,16);
+                }
+                else {
+                    if (msg.time.toISOstring) {
+                        date = msg.time.toISOString().substring(0,10);
+                        time = msg.time.toISOString().substring(11,16);
+                    }
+                    else { date = null; time = null;}
                 }
             }
             else { date = null; time = null;}
@@ -243,5 +246,4 @@ module.exports = function(RED) {
     });
     RED.nodes.registerType("forecastio",ForecastioQueryNode);
     RED.nodes.registerType("forecastio in",ForecastioInputNode);
-
 };

@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014,2015 IBM Corp.
+  Copyright 2014,2016 IBM Corp.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -70,9 +70,9 @@
     </div>
     <div class="form-row weather-forecast-time" id="weather-forecast-time-specific">
         <label for="node-input-date"><i class="fa fa-calendar"></i> <span data-i18n="forecastio.label.date"></span></label>
-        <input id="node-input-date" class="weather-time-input" type="date" style="width:140px">
+        <input id="node-input-date" class="weather-time-input" type="date" style="width:160px">
         <span style="float:right;"><i class="fa fa-clock-o"></i> <span data-i18n="forecastio.label.time"></span>
-        <input id="node-input-time" class="weather-time-input" type="time" style="width:70px"></span>
+        <input id="node-input-time" class="weather-time-input" type="time" style="width:90px"></span>
     </div>
     <div class="form-row" id="weather-coordinates">
         <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="forecastio.label.latitude"></span></label>
@@ -124,9 +124,9 @@
                 $("#weather-forecast-time-"+id).show();
                 console.log(id);
             });
-            if(this.date !== ""||this.time !== ""){
+            if (this.date !== ""||this.time !== "") {
                 $("#weather-forecast-time-select").val("specific");
-            } else if (this.mode === "node"){
+            } else if (this.mode === "node") {
                 $("#weather-forecast-time-select").val("tomorrow");
             } else {
                 $("#weather-forecast-time-select").val("message");
@@ -141,7 +141,7 @@
                 $("#node-input-date").val("");
                 $("#node-input-time").val("");
             }
-            if(type === "message"){
+            if (type === "message") {
                 this.mode = "message";
             } else {
                 this.mode = "node";
@@ -259,7 +259,7 @@
                 $(".weather-forecast-time").hide();
                 $("#weather-forecast-time-"+id).show();
             });
-            if(this.date !== ""||this.time !== ""){
+            if (this.date !== ""||this.time !== "") {
                 $("#weather-forecast-time-select").val("specific");
             } else {
                 $("#weather-forecast-time-select").val("tomorrow");
