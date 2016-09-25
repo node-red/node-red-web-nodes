@@ -1,15 +1,13 @@
-node-red-node-forecastio
-========================
+node-red-node-darksky
+=====================
 
 A <a href="http://nodered.org" target="_new">Node-RED</a> node that gets the
-weather forecast from Forecast.io.
-
-Now Deprecated in favour of node-red-node-darksky - see http://status.darksky.net/2016/09/20/forecast-api-is-now-dark-sky-api.html for details
+weather forecast from the Dark Sky weather API.
 
 Pre-requisites
 --------------
 
-You will need an API key from  <a href="https://developer.forecast.io/" target="_blank">forecast.io</a>.
+You will need an API key from  <a href="https://darksky.net/dev/" target="_blank">Dark Sky developer portal</a>.
 
 This allows 1000 requests per day. The polling node makes a request every 5 minutes = 288 requests.
 
@@ -19,14 +17,14 @@ Install
 Run the following command in the root directory of your Node-RED install.
 This is usually `~/.node-red`
 
-        npm install node-red-node-forecastio
+        npm install node-red-node-darksky
 
 Usage
 -----
 
-Two nodes that get the weather forecast from Forecast.io.
+Two nodes that get the weather forecast from the Dark Sky weather API.
 
-One node polls forecast.io every 5 minutes, the other is triggered
+One node polls the Dark Sky api every 5 minutes, the other is triggered
 to request weather forecast data when an input is received.
 
 The user has the option of providing a date to the node instead of returning data for the next day.
@@ -72,7 +70,7 @@ The node also sets the following properties of **msg.location**.
 
 Finally, the node sets:
 
-  - **msg.time** - the time at which the weather data was received by Forecast.io.
+  - **msg.time** - the time at which the weather data was received by Dark Sky.
   - **msg.data** - the full JSON returned by the API. This is VERY rich...
 
-Weather data provided by <a href="http://forecast.io" target="_blank">Forecast.io/</a>
+Weather data Powered by <a href="https://darksky.net/poweredby/" target="_blank">Dark Sky</a>

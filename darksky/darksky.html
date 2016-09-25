@@ -1,0 +1,316 @@
+<!--
+  Copyright 2014,2016 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="darksky-credentials">
+    <div id="node-config-darksky-app-keys">
+        <div class="form-row">
+            <p style="margin-top: 10px;"><b>1.</b> <span data-i18n="darksky.label.register"></span> <a href="https://darksky.net/dev/" target="_blank" style="text-decoration:underline;">Dark Sky</a>.</p>
+        </div>
+        <div class="form-row">
+            <p style="margin-top: 10px;"><b>2.</b> <span data-i18n="darksky.label.copy"></span>:</p>
+        </div>
+        <div class="form-row">
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-key_identifier"><i class="fa fa-user"></i> <span data-i18n="darksky.label.name"></span></label>
+            <input type="text" id="node-config-input-key_identifier">
+        </div>
+        <div class="form-row">
+            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-client_key"><i class="fa fa-key"></i> <span data-i18n="darksky.label.key"></span></label>
+            <input type="password" id="node-config-input-client_key">
+        </div>
+    </div>
+</script>
+
+<script type="text/javascript">
+(function() {
+    RED.nodes.registerType('darksky-credentials',{
+        category: 'config',
+        defaults: {
+            key_identifier: {value:""}
+        },
+        credentials: {
+            key_identifier: {type:"text"},
+            client_key: { type: "password"}
+        },
+
+        label: function() {
+            return this.key_identifier;
+        },
+        exportable: false,
+        oneditprepare: function() {
+        },
+        oneditsave: function() {
+        },
+        oneditcancel: function(adding) {
+        }
+    });
+})();
+</script>
+
+<script type="text/x-red" data-template-name="darksky">
+    <div class="form-row">
+        <label for="node-input-darksky"><i class="fa fa-user"></i> <span data-i18n="darksky.label.darksky"></span></label>
+        <input type="text" id="node-input-darksky">
+    </div>
+    <div class="form-row">
+        <label for="weather-forecast-time-select"><i class="fa fa-globe"></i> <span data-i18n="darksky.label.forecast"></span></label>
+        <select id="weather-forecast-time-select"><option value="tomorrow" data-i18n="darksky.label.tomorrow"></option><option value="specific" data-i18n="darksky.label.datetime"></option><option value="message" data-i18n="darksky.label.input"></option></select>
+    </div>
+    <div class="form-row weather-forecast-time" id="weather-forecast-time-specific">
+        <label for="node-input-date"><i class="fa fa-calendar"></i> <span data-i18n="darksky.label.date"></span></label>
+        <input id="node-input-date" class="weather-time-input" type="date" style="width:160px">
+        <span style="float:right;"><i class="fa fa-clock-o"></i> <span data-i18n="darksky.label.time"></span>
+        <input id="node-input-time" class="weather-time-input" type="time" style="width:90px"></span>
+    </div>
+    <div class="form-row" id="weather-coordinates">
+        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="darksky.label.latitude"></span></label>
+        <input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom: 7px" data-i18n="[placeholder]darksky.placeholder.latitude">
+        </br>
+        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="darksky.label.longitude"></span></label>
+        <input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px" data-i18n="[placeholder]darksky.placeholder.longitude">
+    </div>
+    <div class="form-row">
+        <label for="node-input-units"><i class="fa fa-cog"></i> <span data-i18n="darksky.label.units"></span></label>
+        <select id="node-input-units" style="width:70%">
+            <option value="us" data-i18n="darksky.units.us"></option></option>
+            <option value="si" data-i18n="darksky.units.si"></option></option>
+            <option value="ca" data-i18n="darksky.units.ca"></option></option>
+            <option value="uk2" data-i18n="darksky.units.uk"></option></option>
+            <option value="auto" data-i18n="darksky.units.auto"></option></option>
+        </select>
+    </div>
+    <div class="form-row" id="weather-name">
+        <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="darksky.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]darksky.placeholder.name">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('darksky',{
+        category: 'weather',
+        color: '#7AA0D2',
+        defaults: {
+            darksky: {type:"darksky-credentials",required:true},
+            name: {value:""},
+            lon: {value:"", validate:function(v) {return ((v>=-180) && (v<=180));} },
+            lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
+            date: {value:""},
+            time: {value:""},
+            mode: {value:"node"},
+            units: {value:"us"}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "weather.png",
+        label: function() {
+            return this.name||"darksky";
+        },
+        oneditprepare: function() {
+            $("#weather-forecast-time-select").change(function() {
+                var id = $("#weather-forecast-time-select option:selected").val();
+                $(".weather-forecast-time").hide();
+                $("#weather-forecast-time-"+id).show();
+                console.log(id);
+            });
+            if (this.date !== ""||this.time !== "") {
+                $("#weather-forecast-time-select").val("specific");
+            } else if (this.mode === "node") {
+                $("#weather-forecast-time-select").val("tomorrow");
+            } else {
+                $("#weather-forecast-time-select").val("message");
+            }
+            var id = $("#weather-forecast-time-select option:selected").val();
+            $(".weather-forecast-time").hide();
+            $("#weather-forecast-time-"+id).show();
+        },
+        oneditsave: function() {
+            var type = $("#weather-forecast-time-select option:selected").val();
+            if (type == "tomorrow" || type == "message") {
+                $("#node-input-date").val("");
+                $("#node-input-time").val("");
+            }
+            if (type === "message") {
+                this.mode = "message";
+            } else {
+                this.mode = "node";
+            }
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-help-name="darksky">
+    <p>A node which polls the DarkSky API for weather forecast data when an input is received.</p>
+    <p>This is done using a latitude and longitude set of coordinates and an optional date/time combination.</p>
+    <p>These can be passed in as settings on the node, or as:</p>
+    <ul>
+       <li> <code>msg.location.lat</code>, <code>msg.location.lon</code> and optionally <code>msg.time</code></li>
+    </ul>
+    <p>if using <code>msg.time</code> it can either be a javascript Date object or a
+    string or number of milliseconds since 1970 (epoch time in mS).
+    If neither is specified the forecast defaults to tomorrow.</p>
+    <p>The user also has the option of providing a date instead of returning data for the next day.</p>
+    <p>The node will always prioritise the node settings if they are present.</p>
+    <p>The node sets the following properties of <code>msg.payload</code>:</p>
+    <ul>
+        <li><code>weather</code> - a single word representation of the current weather forecast.</li>
+        <li><code>detail</code> - a more detailed explanation of what the weather is forecast to be.</li>
+        <li><code>humidity</code> - a current humidity forecast in decimal (0-1).</li>
+        <li><code>maxtemp</code> - the current forecast max temperature for the location in Fahrenheit.</li>
+        <li><code>mintemp</code> - the current forecast minimum temperature for the location in Fahrenheit.</li>
+        <li><code>windspeed</code> - the current forecast windspeed at the location in metres per second</li>
+        <li><code>winddirection</code> - the current forecast wind direction for the location in degrees.</li>
+        <li><code>lon</code> - the longitude of the location from which the forecast was sourced.</li>
+        <li><code>lat</code> - the latitude of the location from which the forecast was sourced.</li>
+        <li><code>clouds</code> - the current forecast cloud coverage of the location in percent.</li>
+        <li><code>precipitation</code> - the current forecast precipitation chance</li>
+        <li><code>sunrise</code> - the time at which the is forecast to rise in Unix UTC format.</li>
+        <li><code>sunset</code> - the time at which the sun is forecast to set in Unix UTC format.</li>
+        <li><code>units</code> - the units of the results as requested.</li>
+    </ul>
+    <p>The node also sets:</p>
+    <ul>
+        <li><code>msg.location.lat</code> - the latitude of the location from which the data was sourced.</li>
+        <li><code>msg.location.lon</code> - the longitude of the location from which the data was sourced.</li>
+    </ul>
+    <p>Finally, the node sets: <code>msg.title</code>, <code>msg.description</code> and</p>
+    <ul>
+        <li><code>msg.time</code> - the time at which the weather data was received by DarkSky.</li>
+        <li><code>msg.data</code> - the full JSON returned by the API. </li>
+    </ul>
+    <p>Powered by the <a href="https://darksky.net/poweredby/" target="_blank">Dark Sky Forecast API</a>.</p>
+</script>
+
+<script type="text/x-red" data-template-name="darksky in">
+    <div class="form-row">
+        <label for="node-input-darksky"><i class="fa fa-user"></i> <span data-i18n="darksky.label.darksky"></span></label>
+        <input type="text" id="node-input-darksky">
+    </div>
+    <div class="form-row">
+        <label for="weather-forecast-time-select"><i class="fa fa-globe"></i> <span data-i18n="darksky.label.forecast"></span></label>
+        <select id="weather-forecast-time-select"><option value="tomorrow" data-i18n="darksky.label.tomorrow"></option><option value="specific" data-i18n="darksky.label.datetime"></option></select>
+    </div>
+    <div class="form-row weather-forecast-time" id="weather-forecast-time-specific">
+        <label for="node-input-date"><i class="fa fa-calendar"></i> <span data-i18n="darksky.label.date"></span></label>
+        <input id="node-input-date" class="weather-time-input" type="date" style="width:140px">
+        <span style="float:right;"><i class="fa fa-clock-o"></i> <span data-i18n="darksky.label.time"></span>
+        <input id="node-input-time" class="weather-time-input" type="time" style="width:70px"></span>
+    </div>
+    <div class="form-row" id="weather-coordinates">
+        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="darksky.label.latitude"></span></label>
+        <input type="text" class="weather-location-input" id="node-input-lat" style="width: 180px; margin-bottom: 7px" data-i18n="[placeholder]darksky.placeholder.latitude">
+        </br>
+        <label for=""><i class="fa fa-location-arrow"></i> <span data-i18n="darksky.label.longitude"></span></label>
+        <input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px" data-i18n="[placeholder]darksky.placeholder.longitude">
+    </div>
+    <div class="form-row">
+        <label for="node-input-units"><i class="fa fa-cog"></i> <span data-i18n="darksky.label.units"></span></label>
+        <select id="node-input-units" style="width:70%">
+            <option value="us" data-i18n="darksky.units.us"></option></option>
+            <option value="si" data-i18n="darksky.units.si"></option></option>
+            <option value="ca" data-i18n="darksky.units.ca"></option></option>
+            <option value="uk2" data-i18n="darksky.units.uk"></option></option>
+            <option value="auto" data-i18n="darksky.units.auto"></option></option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="darksky.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]darksky.placeholder.name">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('darksky in',{
+        category: 'weather',
+        color: '#7AA0D2',
+        defaults: {
+            darksky: {type:"darksky-credentials",required:true},
+            name: {value:""},
+            key: {value:""},
+            lon: {value:"", validate:function(v) {return ((v>=-180) && (v<=180));} },
+            lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
+            date: {value:""},
+            time: {value:""},
+            units: {value:"us"}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "weather.png",
+        label: function() {
+            return this.name||"darksky";
+        },
+        oneditprepare: function() {
+            $("#weather-forecast-time-select").change(function() {
+                var id = $("#weather-forecast-time-select option:selected").val();
+                $(".weather-forecast-time").hide();
+                $("#weather-forecast-time-"+id).show();
+            });
+            if (this.date !== ""||this.time !== "") {
+                $("#weather-forecast-time-select").val("specific");
+            } else {
+                $("#weather-forecast-time-select").val("tomorrow");
+            }
+            var id = $("#weather-forecast-time-select option:selected").val();
+            $(".weather-forecast-time").hide();
+            $("#weather-forecast-time-"+id).show();
+        },
+        oneditsave: function() {
+            var type = $("#weather-forecast-time-select option:selected").val();
+            if (type == "tomorrow") {
+                $("#node-input-date").val("");
+                $("#node-input-time").val("");
+            }
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-help-name="darksky in">
+    <p>A node which polls DarkSky every 5 minutes for weather forecast data and outputs when a change is detected.</p>
+    <p>This is done using a latitude and longitude set of coordinates and an optional date/time combination.</p>
+    <p>The user also has the option of providing a date instead of returning data for the next day.</p>
+    <p>The node sets the following properties of <code>msg.payload</code>:</p>
+    <ul>
+        <li><code>weather</code> - a single word representation of the current weather forecast.</li>
+        <li><code>detail</code> - a more detailed explanation of what the weather is forecast to be.</li>
+        <li><code>humidity</code> - a current humidity forecast in decimal (0-1).</li>
+        <li><code>maxtemp</code> - the current forecast max temperature for the location in Fahrenheit.</li>
+        <li><code>mintemp</code> - the current forecast minimum temperature for the location in Fahrenheit.</li>
+        <li><code>windspeed</code> - the current forecast windspeed at the location in metres per second</li>
+        <li><code>winddirection</code> - the current forecast wind direction for the location in degrees.</li>
+        <li><code>lon</code> - the longitude of the location from which the forecast was sourced.</li>
+        <li><code>lat</code> - the latitude of the location from which the forecast was sourced.</li>
+        <li><code>clouds</code> - the current forecast cloud coverage of the location in percent.</li>
+        <li><code>precipitation</code> - the current forecast precipitation chance</li>
+        <li><code>sunrise</code> - the time at which the is forecast to rise in Unix UTC format.</li>
+        <li><code>sunset</code> - the time at which the sun is forecast to set in Unix UTC format.</li>
+        <li><code>units</code> - the units of the results as requested.</li>
+    </ul>
+    <p>The node also sets:</p>
+    <ul>
+        <li><code>msg.location.lat</code> - the latitude of the location from which the data was sourced.</li>
+        <li><code>msg.location.lon</code> - the longitude of the location from which the data was sourced.</li>
+    </ul>
+    <p>Finally, the node sets: <code>msg.title</code>, <code>msg.description</code> and</p>
+    <ul>
+        <li><code>msg.time</code> - the time at which the weather data was received by DarkSky.</li>
+        <li><code>msg.data</code> - the full JSON returned by the API. </li>
+    </ul>
+    <p>Powered by the <a href="https://darksky.net/poweredby/" target="_blank">Dark Sky Forecast API</a>.</p>
+</script>

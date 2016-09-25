@@ -1,18 +1,18 @@
 {
-    "name"          : "node-red-node-forecastio",
+    "name"          : "node-red-node-darksky",
     "version"       : "0.1.12",
-    "description"   : "A Node-RED node that gets the weather forecast from Forecast.io",
+    "description"   : "A Node-RED node that gets the weather forecast from the DarkSky API",
     "dependencies"  : {
     },
     "repository" : {
         "type":"git",
-        "url":"https://github.com/node-red/node-red-web-nodes/tree/master/forecast"
+        "url":"https://github.com/node-red/node-red-web-nodes/tree/master/darksky"
     },
     "license": "Apache-2.0",
-    "keywords": [ "node-red", "weather", "forecastio", "forecast" ],
+    "keywords": [ "node-red", "weather", "forecast", "darksky" ],
     "node-red"      : {
         "nodes"     : {
-            "forecastio": "forecastio.js"
+            "darksky": "darksky.js"
         }
     },
     "author": {
