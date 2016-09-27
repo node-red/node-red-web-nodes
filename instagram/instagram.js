@@ -79,9 +79,10 @@ module.exports = function(RED) {
             node.ig.user_media_recent('self', { count : 1, min_id : null, max_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
                    node.warn(RED._("instagram.warn.userphoto-fetch-fail", {err: err}));
+                   return;
                 }
                 
-                if(medias.length > 0) { // if the user has uploaded something to Instagram already
+                if(typeof medias !== 'undefined' && medias.length > 0) { // if the user has uploaded something to Instagram already
                     node.latestSelfContentID = medias[0].id;
                 }
 
@@ -97,9 +98,10 @@ module.exports = function(RED) {
             node.ig.user_self_liked({ count : 1, max_like_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
                     node.warn(RED._("instagram.warn.likedphoto-fetch-fail", {err: err}));
+                    return;
                 }
                 
-                if(medias.length > 0) { // if the user has liked something to Instagram already
+                if(typeof medias !== 'undefined' && medias.length > 0) { // if the user has liked something to Instagram already
                     node.latestLikedID = medias[0].id;
                 }
                 
@@ -120,8 +122,9 @@ module.exports = function(RED) {
             node.ig.user_media_recent('self', { count : 1, min_id : null, max_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
                     node.warn(RED._("instagram.warn.userphoto-fetch-fail", {err: err}));
+                    return;
                 }
-                if(medias.length > 0) { // if the user has uploaded something to Instagram already
+                if(typeof medias !== 'undefined' && medias.length > 0) { // if the user has uploaded something to Instagram already
                     if(medias[0].type === IMAGE) {
                         if(medias[0].location) {
                             if(medias[0].location.latitude) {
@@ -172,8 +175,9 @@ module.exports = function(RED) {
             node.ig.user_self_liked({ count : 1, max_like_id : null}, function(err, medias, pagination, remaining, limit) {
                 if (err) {
                     node.warn(RED._("instagram.warn.likedphoto-fetch-fail", {err: err}));
+                    return;
                 }
-                if(medias.length > 0) { // if the user has liked something to Instagram already
+                if(typeof medias !== 'undefined' && medias.length > 0) { // if the user has liked something to Instagram already
                     if(medias[0].type === IMAGE) {
                         if(medias[0].location) {
                             if(medias[0].location.latitude) {
@@ -235,6 +239,7 @@ module.exports = function(RED) {
             
             if (err) {
                 node.warn(RED._("instagram.warn.latest-media-fetch-failed", {err: err}));
+                return;
             }
             
             if(medias) {
@@ -401,6 +406,7 @@ module.exports = function(RED) {
                 client_id: credentials.client_id,
                 redirect_uri: credentials.redirect_uri,
                 response_type: "code",
+                scope: "public_content",
                 state: node_id + ":" + credentials.csrfToken
             }
         }));

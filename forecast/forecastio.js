@@ -26,8 +26,8 @@ module.exports = function(RED) {
         }
 
         if (90 >= lat && 180 >= lon && lat >= -90 && lon >= -180) {
-            node.lat = lat;
-            node.lon = lon;
+            node.lat = lat.trim();
+            node.lon = lon.trim();
         } else {
             return callback(RED._("forecastio.error.invalid-lat_lon"));
         }
