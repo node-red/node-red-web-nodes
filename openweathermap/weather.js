@@ -35,9 +35,9 @@ module.exports = function(RED) {
                 node.error(RED._("weather.error.invalid-lon"),msg);
                 return;
             }
-	 }
-         node.language = language;
-         callback();
+	}
+        node.language = language;
+        callback();
     }
 
     function weatherPoll(node, msg, callback) {
