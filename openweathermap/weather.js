@@ -36,7 +36,7 @@ module.exports = function(RED) {
                 return;
             }
 	}
-        node.language = language;
+        node.language = language || "en";
         callback();
     }
 
@@ -167,7 +167,7 @@ module.exports = function(RED) {
                 lat = n.lat;
                 lon = n.lon;
             }
-            language = n.language;
+            language = n.language || "en";
             assignmentFunction(node, msg, lat, lon, city, country, language, function() {
                 weatherPoll(node, msg, function(err) {
                     if (err) {
