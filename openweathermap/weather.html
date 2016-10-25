@@ -20,6 +20,30 @@
         <input type="password" id="node-input-apikey">
     </div>
     <div class="form-row">
+        <label for="node-input-language"><i class="fa fa-globe"></i> <span data-i18n="weather.label.language"></span></label>
+        <select id="node-input-language" style="width:170px">
+            <option value="en" data-i18n="weather.label.option_lang_en"></option>
+            <option value="ru" data-i18n="weather.label.option_lang_ru"></option>
+            <option value="it" data-i18n="weather.label.option_lang_it"></option>
+            <option value="es" data-i18n="weather.label.option_lang_es"></option>
+            <option value="uk" data-i18n="weather.label.option_lang_uk"></option>
+            <option value="de" data-i18n="weather.label.option_lang_de"></option>
+            <option value="pt" data-i18n="weather.label.option_lang_pt"></option>
+            <option value="ro" data-i18n="weather.label.option_lang_ro"></option>
+            <option value="pl" data-i18n="weather.label.option_lang_pl"></option>
+            <option value="fi" data-i18n="weather.label.option_lang_fi"></option>
+            <option value="nl" data-i18n="weather.label.option_lang_nl"></option>
+            <option value="fr" data-i18n="weather.label.option_lang_fr"></option>
+            <option value="bg" data-i18n="weather.label.option_lang_bg"></option>
+            <option value="sv" data-i18n="weather.label.option_lang_sv"></option>
+            <option value="zh_tw" data-i18n="weather.label.option_lang_zh_tw"></option>
+            <option value="zh" data-i18n="weather.label.option_lang_zh"></option>
+            <option value="tr" data-i18n="weather.label.option_lang_tr"></option>
+            <option value="hr" data-i18n="weather.label.option_lang_hr"></option>
+            <option value="ca" data-i18n="weather.label.option_lang_ca"></option>
+        </select>
+    </div>
+    <div class="form-row">
         <label><span> </span></label>
         <select id="node-input-wtype" style="width:300px">
             <option value="current" data-i18n="weather.label.option_current"></option>
@@ -62,6 +86,7 @@
             lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
             city: {value:""},
             country: {value:""},
+            language: {value:"en"},
         },
         credentials: {
             apikey: {type:"password", required:true}
@@ -118,6 +143,7 @@
     </ul>
     <p>of the message input. </p>
     <p>The node will always prioritise its settings over the msg properties.</p>
+    <p>The report's language can be set by choosing from the drop down menu. The node supports all languages currently provided by OpenWeatherMap.</p>
     <p>The current weather report sets the following properties of <code>msg.payload</code>:</p>
     <ul>
         <li><code>description</code> - a brief verbal description of the current weather for human reading.</li>
@@ -170,6 +196,30 @@
         <input type="password" id="node-input-apikey">
     </div>
     <div class="form-row">
+        <label for="node-input-language"><i class="fa fa-globe"></i> <span data-i18n="weather.label.language"></span></label>
+        <select id="node-input-language" style="width:170px">
+            <option value="en" data-i18n="weather.label.option_lang_en"></option>
+            <option value="ru" data-i18n="weather.label.option_lang_ru"></option>
+            <option value="it" data-i18n="weather.label.option_lang_it"></option>
+            <option value="es" data-i18n="weather.label.option_lang_es"></option>
+            <option value="uk" data-i18n="weather.label.option_lang_uk"></option>
+            <option value="de" data-i18n="weather.label.option_lang_de"></option>
+            <option value="pt" data-i18n="weather.label.option_lang_pt"></option>
+            <option value="ro" data-i18n="weather.label.option_lang_ro"></option>
+            <option value="pl" data-i18n="weather.label.option_lang_pl"></option>
+            <option value="fi" data-i18n="weather.label.option_lang_fi"></option>
+            <option value="nl" data-i18n="weather.label.option_lang_nl"></option>
+            <option value="fr" data-i18n="weather.label.option_lang_fr"></option>
+            <option value="bg" data-i18n="weather.label.option_lang_bg"></option>
+            <option value="sv" data-i18n="weather.label.option_lang_sv"></option>
+            <option value="zh_tw" data-i18n="weather.label.option_lang_zh_tw"></option>
+            <option value="zh" data-i18n="weather.label.option_lang_zh"></option>
+            <option value="tr" data-i18n="weather.label.option_lang_tr"></option>
+            <option value="hr" data-i18n="weather.label.option_lang_hr"></option>
+            <option value="ca" data-i18n="weather.label.option_lang_ca"></option>
+        </select>
+    </div>
+    <div class="form-row">
         <label><span> </span></label>
         <select id="node-input-wtype" style="width:300px">
             <option value="current" data-i18n="weather.label.option_current"></option>
@@ -211,6 +261,7 @@
             lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
             city: {value:""},
             country: {value:""},
+            language: {value:"en"},
         },
         credentials: {
             apikey: {type:"password", required:true}
@@ -260,6 +311,7 @@
         <li> a city and the country in which that city lies</li>
         <li> a latitude and longitude set of coordinates </li>
     </ul>
+    <p>The report's language can be set by choosing from the drop down menu. The node supports all languages currently provided by OpenWeatherMap.</p>
     <p>The current report sets the following properties of <code>msg.payload</code>:</p>
     <ul>
         <li><code>description</code> - a brief verbal description of the current weather for human reading.</li>

@@ -18,7 +18,7 @@ module.exports = function(RED) {
     "use strict";
     var http = require("http");
 
-    function assignmentFunction(node, msg, lat, lon, city, country, callback) {
+    function assignmentFunction(node, msg, lat, lon, city, country, language, callback) {
         if (country && city) {
             node.country = country;
             node.city = city;
@@ -35,7 +35,8 @@ module.exports = function(RED) {
                 node.error(RED._("weather.error.invalid-lon"),msg);
                 return;
             }
-        }
+	}
+        node.language = language || "en";
         callback();
     }
 
@@ -49,15 +50,15 @@ module.exports = function(RED) {
             //If there is a value missing, the URL is not initialised.
             if (node.wtype === "forecast") {
                 if (node.lat && node.lon) {
-                    url = "http://api.openweathermap.org/data/2.5/forecast/daily?cnt=5&units=metric&lat=" + node.lat + "&lon=" + node.lon + "&APPID=" + node.credentials.apikey;
+                    url = "http://api.openweathermap.org/data/2.5/forecast/daily?lang=" + node.language + "&cnt=5&units=metric&lat=" + node.lat + "&lon=" + node.lon + "&APPID=" + node.credentials.apikey;
                 } else if (node.city && node.country) {
-                    url = "http://api.openweathermap.org/data/2.5/forecast/daily?cnt=5&units=metric&q=" + node.city + "," + node.country + "&APPID=" + node.credentials.apikey;
+                    url = "http://api.openweathermap.org/data/2.5/forecast/daily?lang=" + node.language + "&cnt=5&units=metric&q=" + node.city + "," + node.country + "&APPID=" + node.credentials.apikey;
                 }
             } else {
                 if (node.lat && node.lon) {
-                    url = "http://api.openweathermap.org/data/2.5/weather?lat=" + node.lat + "&lon=" + node.lon + "&APPID=" + node.credentials.apikey;
+                    url = "http://api.openweathermap.org/data/2.5/weather?lang=" + node.language + "&lat=" + node.lat + "&lon=" + node.lon + "&APPID=" + node.credentials.apikey;
                 } else if (node.city && node.country) {
-                    url = "http://api.openweathermap.org/data/2.5/weather?q=" + node.city + "," + node.country + "&APPID=" + node.credentials.apikey;
+                    url = "http://api.openweathermap.org/data/2.5/weather?lang=" + node.language + "&q=" + node.city + "," + node.country + "&APPID=" + node.credentials.apikey;
                 }
             }
 
@@ -149,6 +150,7 @@ module.exports = function(RED) {
         var previousdata = null;
         var city;
         var country;
+        var language;
         var lat;
         var lon;
         if ((!node.credentials) || (!node.credentials.hasOwnProperty("apikey"))) { node.error(RED._("weather.error.no-api-key")); }
@@ -165,7 +167,8 @@ module.exports = function(RED) {
                 lat = n.lat;
                 lon = n.lon;
             }
-            assignmentFunction(node, msg, lat, lon, city, country, function() {
+            language = n.language || "en";
+            assignmentFunction(node, msg, lat, lon, city, country, language, function() {
                 weatherPoll(node, msg, function(err) {
                     if (err) {
                         node.error(err,msg);
@@ -195,6 +198,7 @@ module.exports = function(RED) {
         var node = this;
         var city;
         var country;
+        var language;
         var lat;
         var lon;
         if ((!node.credentials) || (!node.credentials.hasOwnProperty("apikey"))) { node.error(RED._("weather.error.no-api-key")); }
@@ -215,7 +219,8 @@ module.exports = function(RED) {
                     country = msg.location.country;
                 }
             }
-            assignmentFunction(node, msg, lat, lon, city, country, function() {
+            language = n.language || "en";
+            assignmentFunction(node, msg, lat, lon, city, country, language, function() {
                 weatherPoll(node, msg, function(err) {
                     if (err) {
                         node.error(err,msg);
