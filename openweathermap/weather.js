@@ -219,7 +219,7 @@ module.exports = function(RED) {
                     country = msg.location.country;
                 }
             }
-            language = n.language;
+            language = n.language || "en";
             assignmentFunction(node, msg, lat, lon, city, country, language, function() {
                 weatherPoll(node, msg, function(err) {
                     if (err) {
