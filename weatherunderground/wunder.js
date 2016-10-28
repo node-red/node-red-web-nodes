@@ -84,7 +84,12 @@ module.exports = function(RED) {
                     msg.description = RED._("wunder.message.description", {lat: msg.location.lat, lon: msg.location.lon});
                     msg.payload.description = (RED._("wunder.message.payload", {city: msg.location.city, lat: msg.location.lat, lon: msg.location.lon, weather: cur.weather}));
                     var fcast = res.forecast.txt_forecast.forecastday[0];
-                    msg.payload.forecast = loc.city+" : "+fcast.title+" : "+ fcast.fcttext_metric;
+                    if (typeof fcast !== 'undefined') {
+                        msg.payload.forecast = loc.city + " : " + fcast.title + " : "+ fcast.fcttext_metric;
+                    }
+                    else {
+                        msg.payload.forecast = "";
+                    }
                     callback(null);
                 }
                 else {
