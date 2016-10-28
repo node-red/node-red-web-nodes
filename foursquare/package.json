@@ -1,10 +1,10 @@
 {
     "name"          : "node-red-node-foursquare",
-    "version"       : "0.1.0",
+    "version"       : "0.1.1",
     "description"   : "Node-RED nodes to talk to Foursquare and Swarm",
     "dependencies"  : {
         "oauth":"~0.9.11",
-        "request":"~2.40.0"
+        "request":"~2.74.0"
     },
     "repository" : {
         "type":"git",

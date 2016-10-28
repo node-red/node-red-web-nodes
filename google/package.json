@@ -1,11 +1,11 @@
 {
     "name"          : "node-red-node-google",
-    "version"       : "0.1.0",
+    "version"       : "0.1.1",
     "description"   : "A set of Node-RED nodes to access various Google services",
     "dependencies"  : {
-        "clone": "0.1.11",
-        "minimatch": "2.0.4",
-        "request":"~2.40.0"
+        "clone": "^0.1.11",
+        "minimatch": "^2.0.4",
+        "request":"~2.74.0"
       },
     "repository" : {
         "type":"git",

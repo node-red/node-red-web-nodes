@@ -1,10 +1,10 @@
 {
     "name"          : "node-red-node-flickr",
-    "version"       : "0.1.1",
+    "version"       : "0.1.2",
     "description"   : "A Node-RED node to save pictures to Flickr",
     "dependencies"  : {
-        "request": "2.60.x",
-        "oauth":"0.9.x"
+        "request": "2.74.x",
+        "oauth":"~0.9.11"
     },
     "repository" : {
         "type":"git",

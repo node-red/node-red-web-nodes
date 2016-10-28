@@ -1,9 +1,9 @@
 {
     "name"          : "node-red-node-delicious",
-    "version"       : "0.1.0",
+    "version"       : "0.1.1",
     "description"   : "A Node-RED node to save bookmarks to Delicious",
     "dependencies"  : {
-        "request":"~2.40.0"
+        "request":"~2.74.0"
     },
     "repository" : {
         "type":"git",
