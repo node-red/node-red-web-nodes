@@ -45,16 +45,21 @@ module.exports = function(RED) {
         msg.payload = {};
         msg.location = {};
 
-        if (node.lat && node.lon) {
-            node.wunder.conditions().forecast().request(node.lat+","+node.lon, function(err, response) {
-                if (err) { callback(err); }
-                else { handleResponse(response); }
-            });
-        } else if (node.city && node.country) {
-            node.wunder.conditions().forecast().request(node.city+","+node.country, function(err, response) {
-                if (err) { callback(err); }
-                else { handleResponse(response); }
-            });
+        try {
+            if (node.lat && node.lon) {
+                node.wunder.conditions().forecast().request(node.lat+","+node.lon, function(err, response) {
+                    if (err) { callback(err); }
+                    else { handleResponse(response); }
+                });
+            } else if (node.city && node.country) {
+                node.wunder.conditions().forecast().request(node.city+","+node.country, function(err, response) {
+                    if (err) { callback(err); }
+                    else { handleResponse(response); }
+                });
+            }
+        }
+        catch(e) {
+            callback(e);
         }
 
         var handleResponse = function(res) {
