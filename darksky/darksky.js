@@ -64,10 +64,10 @@ module.exports = function(RED) {
         msg.location = {};
         //If there is a value missing, the URL is not initialised.
         if (node.year && node.month && node.day && node.hours && node.minutes) {
-            url = ("https://api.darksky.net/forecast/" + node.apikey + "/" + node.lat + "," + node.lon + "," + node.year + "-" + node.month + "-" + node.day + "T" + node.hours + ":" + node.minutes + ":00?units=" + node.units);
+            url = ("https://api.darksky.net/forecast/" + node.apikey + "/" + node.lat + "," + node.lon + "," + node.year + "-" + node.month + "-" + node.day + "T" + node.hours + ":" + node.minutes + ":00?units=" + node.units + "&lang=" + node.lang);
             when = 0;
         } else if (node.lat && node.lon && node.apikey) {
-            url = ("https://api.darksky.net/forecast/" + node.apikey + "/" + node.lat + "," + node.lon + "?units=" + node.units);
+            url = ("https://api.darksky.net/forecast/" + node.apikey + "/" + node.lat + "," + node.lon + "?units=" + node.units + "&lang=" + node.lang);
             when = 1;
         }
         //If the URL is not initialised, there has been an error with the input data,
@@ -124,7 +124,8 @@ module.exports = function(RED) {
 
     function DarkSkyInputNode(n) {
         RED.nodes.createNode(this, n);
-        this.units = n.units || "us";
+        this.lang = n.lang || "en";
+	this.units = n.units || "us";
         var node = this;
         this.repeat = 900000;
         this.interval_id = null;

@@ -82,13 +82,51 @@
         <input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px" data-i18n="[placeholder]darksky.placeholder.longitude">
     </div>
     <div class="form-row">
+        <label for="node-input-lang"><i class="fa fa-language"></i> <span data-i18n="darksky.label.lang"></span></label>
+        <select id="node-input-lang" style="width:70%">
+            <option value="ar" data-i18n="darksky.lang.ar"></option>
+            <option value="az" data-i18n="darksky.lang.az"></option>
+            <option value="be" data-i18n="darksky.lang.be"></option>
+            <option value="bs" data-i18n="darksky.lang.bs"></option>
+            <option value="ca" data-i18n="darksky.lang.ca"></option>
+            <option value="cs" data-i18n="darksky.lang.cs"></option>
+            <option value="de" data-i18n="darksky.lang.de"></option>
+            <option value="el" data-i18n="darksky.lang.el"></option>
+            <option value="en" data-i18n="darksky.lang.en"></option>
+            <option value="es" data-i18n="darksky.lang.es"></option>
+            <option value="et" data-i18n="darksky.lang.et"></option>
+            <option value="fr" data-i18n="darksky.lang.fr"></option>
+            <option value="hr" data-i18n="darksky.lang.hr"></option>
+            <option value="hu" data-i18n="darksky.lang.hu"></option>
+            <option value="id" data-i18n="darksky.lang.id"></option>
+            <option value="it" data-i18n="darksky.lang.it"></option>
+            <option value="is" data-i18n="darksky.lang.is"></option>
+            <option value="kw" data-i18n="darksky.lang.kw"></option>
+            <option value="nb" data-i18n="darksky.lang.nb"></option>
+            <option value="nl" data-i18n="darksky.lang.nl"></option>
+            <option value="pl" data-i18n="darksky.lang.pl"></option>
+            <option value="pt" data-i18n="darksky.lang.pt"></option>
+            <option value="ru" data-i18n="darksky.lang.ru"></option>
+            <option value="sk" data-i18n="darksky.lang.sk"></option>
+            <option value="sl" data-i18n="darksky.lang.sl"></option>
+            <option value="sr" data-i18n="darksky.lang.sr"></option>
+            <option value="sv" data-i18n="darksky.lang.sv"></option>
+            <option value="tet" data-i18n="darksky.lang.tet"></option>
+            <option value="tr" data-i18n="darksky.lang.tr"></option>
+            <option value="uk" data-i18n="darksky.lang.uk"></option>
+            <option value="x-pig-latin" data-i18n="darksky.lang.x-pig-latin"></option>
+            <option value="zh" data-i18n="darksky.lang.zh"></option>
+            <option value="zh-tw" data-i18n="darksky.lang.zh-tw"></option>
+        </select>
+    </div>
+    <div class="form-row">
         <label for="node-input-units"><i class="fa fa-cog"></i> <span data-i18n="darksky.label.units"></span></label>
         <select id="node-input-units" style="width:70%">
-            <option value="us" data-i18n="darksky.units.us"></option></option>
-            <option value="si" data-i18n="darksky.units.si"></option></option>
-            <option value="ca" data-i18n="darksky.units.ca"></option></option>
-            <option value="uk2" data-i18n="darksky.units.uk"></option></option>
-            <option value="auto" data-i18n="darksky.units.auto"></option></option>
+            <option value="us" data-i18n="darksky.units.us"></option>
+            <option value="si" data-i18n="darksky.units.si"></option>
+            <option value="ca" data-i18n="darksky.units.ca"></option>
+            <option value="uk2" data-i18n="darksky.units.uk"></option>
+            <option value="auto" data-i18n="darksky.units.auto"></option>
         </select>
     </div>
     <div class="form-row" id="weather-name">
@@ -109,6 +147,7 @@
             date: {value:""},
             time: {value:""},
             mode: {value:"node"},
+	    lang: {value:"en"},
             units: {value:"us"}
         },
         inputs:1,
@@ -180,7 +219,8 @@
         <li><code>precipitation</code> - the current forecast precipitation chance</li>
         <li><code>sunrise</code> - the time at which the is forecast to rise in Unix UTC format.</li>
         <li><code>sunset</code> - the time at which the sun is forecast to set in Unix UTC format.</li>
-        <li><code>units</code> - the units of the results as requested.</li>
+ 	<li><code>lang</code> - the language of the results as requested.</li>       
+ 	<li><code>units</code> - the units of the results as requested.</li>
     </ul>
     <p>The node also sets:</p>
     <ul>
@@ -218,13 +258,51 @@
         <input type="text" class="weather-location-input" id="node-input-lon" style="width: 180px" data-i18n="[placeholder]darksky.placeholder.longitude">
     </div>
     <div class="form-row">
+        <label for="node-input-lang"><i class="fa fa-language"></i> <span data-i18n="darksky.label.lang"></span></label>
+        <select id="node-input-lang" style="width:70%">
+            <option value="ar" data-i18n="darksky.lang.ar"></option>
+            <option value="az" data-i18n="darksky.lang.az"></option>
+            <option value="be" data-i18n="darksky.lang.be"></option>
+            <option value="bs" data-i18n="darksky.lang.bs"></option>
+            <option value="ca" data-i18n="darksky.lang.ca"></option>
+            <option value="cs" data-i18n="darksky.lang.cs"></option>
+            <option value="de" data-i18n="darksky.lang.de"></option>
+            <option value="el" data-i18n="darksky.lang.el"></option>
+            <option value="en" data-i18n="darksky.lang.en"></option>
+            <option value="es" data-i18n="darksky.lang.es"></option>
+            <option value="et" data-i18n="darksky.lang.et"></option>
+            <option value="fr" data-i18n="darksky.lang.fr"></option>
+            <option value="hr" data-i18n="darksky.lang.hr"></option>
+            <option value="hu" data-i18n="darksky.lang.hu"></option>
+            <option value="id" data-i18n="darksky.lang.id"></option>
+            <option value="it" data-i18n="darksky.lang.it"></option>
+            <option value="is" data-i18n="darksky.lang.is"></option>
+            <option value="kw" data-i18n="darksky.lang.kw"></option>
+            <option value="nb" data-i18n="darksky.lang.nb"></option>
+            <option value="nl" data-i18n="darksky.lang.nl"></option>
+            <option value="pl" data-i18n="darksky.lang.pl"></option>
+            <option value="pt" data-i18n="darksky.lang.pt"></option>
+            <option value="ru" data-i18n="darksky.lang.ru"></option>
+            <option value="sk" data-i18n="darksky.lang.sk"></option>
+            <option value="sl" data-i18n="darksky.lang.sl"></option>
+            <option value="sr" data-i18n="darksky.lang.sr"></option>
+            <option value="sv" data-i18n="darksky.lang.sv"></option>
+            <option value="tet" data-i18n="darksky.lang.tet"></option>
+            <option value="tr" data-i18n="darksky.lang.tr"></option>
+            <option value="uk" data-i18n="darksky.lang.uk"></option>
+            <option value="x-pig-latin" data-i18n="darksky.lang.x-pig-latin"></option>
+            <option value="zh" data-i18n="darksky.lang.zh"></option>
+            <option value="zh-tw" data-i18n="darksky.lang.zh-tw"></option>
+        </select>
+    </div>
+    <div class="form-row">
         <label for="node-input-units"><i class="fa fa-cog"></i> <span data-i18n="darksky.label.units"></span></label>
         <select id="node-input-units" style="width:70%">
-            <option value="us" data-i18n="darksky.units.us"></option></option>
-            <option value="si" data-i18n="darksky.units.si"></option></option>
-            <option value="ca" data-i18n="darksky.units.ca"></option></option>
-            <option value="uk2" data-i18n="darksky.units.uk"></option></option>
-            <option value="auto" data-i18n="darksky.units.auto"></option></option>
+            <option value="us" data-i18n="darksky.units.us"></option>
+            <option value="si" data-i18n="darksky.units.si"></option>
+            <option value="ca" data-i18n="darksky.units.ca"></option>
+            <option value="uk2" data-i18n="darksky.units.uk"></option>
+            <option value="auto" data-i18n="darksky.units.auto"></option>
         </select>
     </div>
     <div class="form-row">
@@ -245,6 +323,7 @@
             lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
             date: {value:""},
             time: {value:""},
+	    lang: {value:"en"},
             units: {value:"us"}
         },
         inputs:0,
@@ -300,6 +379,7 @@
         <li><code>precipitation</code> - the current forecast precipitation chance</li>
         <li><code>sunrise</code> - the time at which the is forecast to rise in Unix UTC format.</li>
         <li><code>sunset</code> - the time at which the sun is forecast to set in Unix UTC format.</li>
+ 	<li><code>lang</code> - the language of the results as requested.</li>  
         <li><code>units</code> - the units of the results as requested.</li>
     </ul>
     <p>The node also sets:</p>
