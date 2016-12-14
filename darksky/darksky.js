@@ -63,6 +63,7 @@ module.exports = function(RED) {
         msg.payload = {};
         msg.location = {};
         //If there is a value missing, the URL is not initialised.
+        if (typeof(node.lang == 'undefined')) { node.lang = 'en'; }
         if (node.year && node.month && node.day && node.hours && node.minutes) {
             url = ("https://api.darksky.net/forecast/" + node.apikey + "/" + node.lat + "," + node.lon + "," + node.year + "-" + node.month + "-" + node.day + "T" + node.hours + ":" + node.minutes + ":00?units=" + node.units + "&lang=" + node.lang);
             when = 0;
