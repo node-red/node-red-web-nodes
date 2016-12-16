@@ -147,8 +147,8 @@ module.exports = function(RED) {
         });
 
         this.on("close", function() {
-            if (this.interval_id !== null) {
-                clearInterval(this.interval_id);
+            if (node.interval_id !== null) {
+                clearInterval(node.interval_id);
             }
         });
 
