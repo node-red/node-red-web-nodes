@@ -217,7 +217,7 @@ module.exports = function(RED) {
         return (parentPath !== "" ? parentPath+'/' : "") + entry.name;
     }
 
-    RED.httpAdmin.get('/box-credentials/auth', function(req, res){
+    RED.httpAdmin.get('/box-credentials/auth', function(req, res) {
         if (!req.query.clientId || !req.query.clientSecret ||
             !req.query.id || !req.query.callback) {
             res.send(400);
@@ -287,8 +287,7 @@ module.exports = function(RED) {
             credentials.accessToken = data.access_token;
             credentials.refreshToken = data.refresh_token;
             credentials.expiresIn = data.expires_in;
-            credentials.expireTime =
-                data.expires_in + (new Date().getTime()/1000);
+            credentials.expireTime = data.expires_in + (new Date().getTime()/1000);
             credentials.tokenType = data.token_type;
             delete credentials.csrfToken;
             delete credentials.callback;
@@ -384,11 +383,9 @@ module.exports = function(RED) {
             });
             var interval = setInterval(function() {
                 node.emit("input", {});
-            }, 900000); // 15 minutes
+            }, 600000); // 10 minutes
             node.on("close", function() {
-                if (interval !== null) {
-                    clearInterval(interval);
-                }
+                if (interval !== null) { clearInterval(interval); }
             });
         });
     }
@@ -528,11 +525,9 @@ module.exports = function(RED) {
                             });
                             var form = r.form();
                             if (localFilename) {
-                                form.append('filename', fs.createReadStream(localFilename),
-                                            { filename: basename });
+                                form.append('filename', fs.createReadStream(localFilename), { filename: basename });
                             } else {
-                                form.append('filename', RED.util.ensureBuffer(msg.payload),
-                                { filename: basename });
+                                form.append('filename', RED.util.ensureBuffer(msg.payload), { filename: basename });
                             }
                         } else {
                             node.error(RED._("box.error.upload-failed",{err:err.toString()}),msg);
@@ -544,11 +539,9 @@ module.exports = function(RED) {
                 });
                 var form = r.form();
                 if (localFilename) {
-                    form.append('filename', fs.createReadStream(localFilename),
-                                { filename: basename });
+                    form.append('filename', fs.createReadStream(localFilename), { filename: basename });
                 } else {
-                    form.append('filename', RED.util.ensureBuffer(msg.payload),
-                                { filename: basename });
+                    form.append('filename', RED.util.ensureBuffer(msg.payload), { filename: basename });
                 }
                 form.append('parent_id', parent_id);
             });
