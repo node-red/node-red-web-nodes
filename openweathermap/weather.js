@@ -22,7 +22,8 @@ module.exports = function(RED) {
         if (country && city) {
             node.country = country;
             node.city = city;
-        } else if (lat && lon) {
+        }
+        else if (lat && lon) {
             if (90 >= lat && lat >= -90) {
                 node.lat = lat;
             } else {
@@ -35,7 +36,7 @@ module.exports = function(RED) {
                 node.error(RED._("weather.error.invalid-lon"),msg);
                 return;
             }
-	}
+        }
         node.language = language || "en";
         callback();
     }
@@ -85,8 +86,8 @@ module.exports = function(RED) {
                             return;
                         }
                         if (jsun) {
+                            msg.data = jsun;
                             if (jsun.hasOwnProperty("weather") && jsun.hasOwnProperty("main")) {
-                                msg.data = jsun;
                                 msg.payload.weather = jsun.weather[0].main;
                                 msg.payload.detail = jsun.weather[0].description;
                                 msg.payload.tempk = jsun.main.temp;
@@ -102,8 +103,10 @@ module.exports = function(RED) {
                                 msg.payload.sunrise = jsun.sys.sunrise;
                                 msg.payload.sunset = jsun.sys.sunset;
                                 msg.payload.clouds = jsun.clouds.all;
-                                msg.location.lon = jsun.coord.lon;
-                                msg.location.lat = jsun.coord.lat;
+                                if (jsun.hasOwnProperty("coord")) {
+                                    msg.location.lon = jsun.coord.lon;
+                                    msg.location.lat = jsun.coord.lat;
+                                }
                                 msg.location.city = jsun.name;
                                 msg.location.country = jsun.sys.country;
                                 if (jsun.hasOwnProperty("dt")) { msg.time = new Date(jsun.dt*1000); }
@@ -112,12 +115,15 @@ module.exports = function(RED) {
                                 msg.payload.description = (RED._("weather.message.payload", {name: jsun.name, lat: jsun.coord.lat, lon: jsun.coord.lon, main: jsun.weather[0].main, description: jsun.weather[0].description}));
                                 callback();
                             } else if (jsun.hasOwnProperty("list")) {
-                                msg.location.lon = jsun.city.coord.lon;
-                                msg.location.lat = jsun.city.coord.lat;
-                                msg.location.city = jsun.city.name;
-                                msg.location.country = jsun.city.country;
                                 msg.payload = jsun.list;
-                                msg.data = jsun;
+                                if (jsun.hasOwnProperty("city")) {
+                                    msg.location.city = jsun.city.name;
+                                    msg.location.country = jsun.city.country;
+                                    if (jsun.city.hasOwnProperty("coord")) {
+                                        msg.location.lat = jsun.city.coord.lat;
+                                        msg.location.lon = jsun.city.coord.lon;
+                                    }
+                                }
                                 msg.title = RED._("weather.message.forecast");
                                 callback();
                             } else {
