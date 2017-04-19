@@ -127,6 +127,7 @@ Usage
     </ul>
 </p>
 <p><code>msg.transit_routing_preferences</code> - </p>
+
 #### Return values:
 <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
 <p><code>msg.distance</code> - The distance of the trip, provided in meters</p>
@@ -219,7 +220,9 @@ Usage
 
 <p>Utilizes the Google Geocoding API to allow conversion of addresses to coordinate sets, and vice versa.</p>
 <p>The node can be configured to send a geocode or reverse-geocode request by changing the <code>geocodeBy</code> parameter in the node.</p>
+
 #### Input Parameters:
+
 <p><code>Name</code> - Name of the node</p>
 <p><code>Geocode by</code> - Toggle to switch between a geocode and reverse-geocode request. Switching between the two will toggle the address and <i>latitude,longitude</i> inputs.</p>
 <p>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</p>
@@ -231,7 +234,9 @@ Usage
 <p><code>msg.language</code> - The language in which to return results.</p>
 <p><code>msg.region</code> - The region code, specified as a ccTLD ("top-level domain") two-character value. This parameter will only influence, not fully restrict, results from the geocoder.</p>
 <p><code>msg.components</code> - The component filters, separated by a pipe (|). Each component filter consists of a component:value pair and will fully restrict the results from the geocoder.</p>
+
 #### Return values:
+
 <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
 <p>If <code>msg.status</code> returned 'OK':
 <p><code>msg.location</code> - If provided with an <code>address</code>, <code>msg.location</code> will contain a <code>lat</code> and <code>lon</code> point. If provided with a <code>lat</code>/<code>lon</code> pair, <code>msg.location</code> will contain an <code>address</code></p>
@@ -262,6 +267,7 @@ Usage
 <p><code>msg.name</code> - The name of the business to search for.</p>
 <p><code>msg.types</code> - Restricts the results to places matching at least one of the specified types. Types should be separated with a pipe symbol (type1|type2|etc). (<a href="https://developers.google.com/places/documentation/supported_types" target="_new">Click here</a> for supported types)</p>
 <p><code>msg.opennow</code> - If set to true, will only return results that are currently open now.</p>
+
 #### Return values:
 <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
 <p>If <code>msg.status</code> returned 'OK':
@@ -296,6 +302,7 @@ Usage
 <p><code>msg.maxprice</code> - Restricts results to only those places within the specified price level. Valid values are in the range from 0 (most affordable) to 4 (most expensive), inclusive.</p>
 <p><code>msg.types</code> - Restricts the results to places matching at least one of the specified types. Types should be separated with a pipe symbol (type1|type2|etc). (<a href="https://developers.google.com/places/documentation/supported_types" target="_new">Click here</a> for supported types)</p>
 <p><code>msg.opennow</code> - If set to true, will only return results that are currently open now.</p>
+
 #### Return values:
 <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
 <p>If <code>msg.status</code> returned 'OK':
@@ -324,6 +331,7 @@ Usage
 <p><code>msg.placeid</code> - A unique identifier that is returned from a Google Places request. <i>(Required)</i></p>
 <p><code>msg.language</code> - The language in which to return results.</p>
 <p><code>msg.extensions</code> - Indicates if the Place Details response should include additional fields. Additional fields may include Premium data, requiring an additional license, or values that are not commonly requested. Extensions are currently experimental. Supported values for the extensions parameter are {review_summary}.</p>
+
 #### Return values:
 <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
 <p>If <code>msg.status</code> returned 'OK':
@@ -349,11 +357,12 @@ Usage
 ### Plus
 
 <p>Interact with the Google+ API to get information about people, activities, and comments.</p>
+
 #### Request Types:
 <p><b>People</b> - Allows you to interact with Google+ profiles. You are able to <i>get</i> a particular profile, <i>search</i> for a profile, or gather a <i>list</i> of people that have +1'd or reshared an activity.</p>
 <p><b>Activities</b> - Allows you to interact with Google+ activities. You are able to <i>get</i> a particular activity, <i>search</i> for an activitiy, or gather a <i>list</i> of activities directly related to a person.</p>
 <p><b>Comments</b> - Allows you to interact with Google+ comments. You are able to <i>get</i> a particular comment, or gather a <i>list</i> of comments attached to an activity.</p>
-<br>
+
 #### Inputs:
 <p><b>User Id</b> - The ID of the person to get the profile for. The special value "me" can be used to indicate the authenticated user.</p>
 <p><b>Activity Id</b> - The ID of the activity to get.</p>
