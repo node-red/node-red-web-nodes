@@ -25,7 +25,7 @@ or see - https://code.google.com/apis/console
 Usage
 -----
 
-###Calendar in
+### Calendar in
 
 <p>Send a message every time an event occurs in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
 <p>The message sent from the node will have properties:
@@ -50,7 +50,7 @@ Usage
 </p>
 
 
-###Calendar query
+### Calendar query
 
 <p>Return the next event in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
 <p>The incoming message can provide the following properties:
@@ -80,7 +80,7 @@ Usage
 </ul>
 </p>
 
-###Calendar out
+### Calendar out
 
 <p>Create an entry in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
 <p>The incoming message can provide the following properties:
@@ -92,11 +92,11 @@ Usage
 </p>
 
 
-###Directions
+### Directions
 
 <p>Utilizes the Google Direcions API to provide directions between the supplied origin and destination.</p>
 
-####Input Parameters:
+#### Input Parameters:
 <p><code>Name</code> - Name of the node</p>
 <p>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</p>
 <p><code>msg.key</code> - Your application's API key. This key identifies your application for purposes of quota management.</p>
@@ -127,7 +127,8 @@ Usage
     </ul>
 </p>
 <p><code>msg.transit_routing_preferences</code> - </p>
-####Return values:
+
+#### Return values:
 <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
 <p><code>msg.distance</code> - The distance of the trip, provided in meters</p>
 <p><code>msg.duration</code> - The duration of the trip, provided in seconds.</p>
@@ -215,11 +216,13 @@ Usage
 <p>For more information, please visit the <a href="https://developers.google.com/maps/documentation/directions/">Google Directions API Developer Docs</a>
 
 
-###Geocoding
+### Geocoding
 
 <p>Utilizes the Google Geocoding API to allow conversion of addresses to coordinate sets, and vice versa.</p>
 <p>The node can be configured to send a geocode or reverse-geocode request by changing the <code>geocodeBy</code> parameter in the node.</p>
-####Input Parameters:
+
+#### Input Parameters:
+
 <p><code>Name</code> - Name of the node</p>
 <p><code>Geocode by</code> - Toggle to switch between a geocode and reverse-geocode request. Switching between the two will toggle the address and <i>latitude,longitude</i> inputs.</p>
 <p>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</p>
@@ -231,7 +234,9 @@ Usage
 <p><code>msg.language</code> - The language in which to return results.</p>
 <p><code>msg.region</code> - The region code, specified as a ccTLD ("top-level domain") two-character value. This parameter will only influence, not fully restrict, results from the geocoder.</p>
 <p><code>msg.components</code> - The component filters, separated by a pipe (|). Each component filter consists of a component:value pair and will fully restrict the results from the geocoder.</p>
-####Return values:
+
+#### Return values:
+
 <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
 <p>If <code>msg.status</code> returned 'OK':
 <p><code>msg.location</code> - If provided with an <code>address</code>, <code>msg.location</code> will contain a <code>lat</code> and <code>lon</code> point. If provided with a <code>lat</code>/<code>lon</code> pair, <code>msg.location</code> will contain an <code>address</code></p>
@@ -241,13 +246,13 @@ Usage
 <p>For more information, please visit the <a href="https://developers.google.com/maps/documentation/geocoding/">Google Geocoding API Developer Docs</a>
 
 
-###Places
+### Places
 
 <p>Utilizes the Google Places API in order to find and learn more about local establishments.</p>
 <p>The node can be configured to send three different types of Places requests by toggling the <code>reqType</code> parameter in the node.</p>
 
-###Google Places Nearby
-####Input Parameters:
+### Google Places Nearby
+#### Input Parameters:
 <p><code>name</code> - Name of the node</p>
 <p><code>reqType</code> - Toggle to switch between a Places Nearby, Places Text, and Places Details request.</p>
 <p>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</p>
@@ -262,7 +267,8 @@ Usage
 <p><code>msg.name</code> - The name of the business to search for.</p>
 <p><code>msg.types</code> - Restricts the results to places matching at least one of the specified types. Types should be separated with a pipe symbol (type1|type2|etc). (<a href="https://developers.google.com/places/documentation/supported_types" target="_new">Click here</a> for supported types)</p>
 <p><code>msg.opennow</code> - If set to true, will only return results that are currently open now.</p>
-####Return values:
+
+#### Return values:
 <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
 <p>If <code>msg.status</code> returned 'OK':
 <p><code>msg.location</code> - Will contain <code>lat</code>, <code>lon</code>, and <code>address</code></p>
@@ -280,8 +286,8 @@ Usage
 <p>Otherwise:</p>
 <p><code>msg.error</code> will contain a more detailed error message, if available</p>
 
-###Google Places Text
-####Input Parameters:
+### Google Places Text
+#### Input Parameters:
 <p><code>name</code> - Name of the node</p>
 <p><code>reqType</code> - Toggle to switch between a Places Nearby, Places Text, and Places Details request.</p>
 <p>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</p>
@@ -296,7 +302,8 @@ Usage
 <p><code>msg.maxprice</code> - Restricts results to only those places within the specified price level. Valid values are in the range from 0 (most affordable) to 4 (most expensive), inclusive.</p>
 <p><code>msg.types</code> - Restricts the results to places matching at least one of the specified types. Types should be separated with a pipe symbol (type1|type2|etc). (<a href="https://developers.google.com/places/documentation/supported_types" target="_new">Click here</a> for supported types)</p>
 <p><code>msg.opennow</code> - If set to true, will only return results that are currently open now.</p>
-####Return values:
+
+#### Return values:
 <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
 <p>If <code>msg.status</code> returned 'OK':
 <p><code>msg.title</code> - The name of the establishment.
@@ -315,8 +322,8 @@ Usage
 <p>Otherwise:</p>
 <p><code>msg.error</code> will contain a more detailed error message, if available</p>
 
-###Google Places Details
-####Input Parameters:
+### Google Places Details
+#### Input Parameters:
 <p><code>Name</code> - Name of the node</p>
 <p><code>reqType</code> - Toggle to switch between a Places Nearby, Places Text, and Places Details request.</p>
 <p>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</p>
@@ -324,7 +331,8 @@ Usage
 <p><code>msg.placeid</code> - A unique identifier that is returned from a Google Places request. <i>(Required)</i></p>
 <p><code>msg.language</code> - The language in which to return results.</p>
 <p><code>msg.extensions</code> - Indicates if the Place Details response should include additional fields. Additional fields may include Premium data, requiring an additional license, or values that are not commonly requested. Extensions are currently experimental. Supported values for the extensions parameter are {review_summary}.</p>
-####Return values:
+
+#### Return values:
 <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
 <p>If <code>msg.status</code> returned 'OK':
 <p><code>msg.location</code> - Will contain <code>lat</code>, <code>lon</code>, and <code>address</code></p>
@@ -346,15 +354,16 @@ Usage
 <p><code>msg.error</code> will contain a more detailed error message, if available</p>
 <p>For more information, please visit the <a href="https://developers.google.com/maps/documentation/geocoding/">Google Geocoding API Developer Docs</a>
 
-###Plus
+### Plus
 
 <p>Interact with the Google+ API to get information about people, activities, and comments.</p>
-####Request Types:
+
+#### Request Types:
 <p><b>People</b> - Allows you to interact with Google+ profiles. You are able to <i>get</i> a particular profile, <i>search</i> for a profile, or gather a <i>list</i> of people that have +1'd or reshared an activity.</p>
 <p><b>Activities</b> - Allows you to interact with Google+ activities. You are able to <i>get</i> a particular activity, <i>search</i> for an activitiy, or gather a <i>list</i> of activities directly related to a person.</p>
 <p><b>Comments</b> - Allows you to interact with Google+ comments. You are able to <i>get</i> a particular comment, or gather a <i>list</i> of comments attached to an activity.</p>
-<br>
-####Inputs:
+
+#### Inputs:
 <p><b>User Id</b> - The ID of the person to get the profile for. The special value "me" can be used to indicate the authenticated user.</p>
 <p><b>Activity Id</b> - The ID of the activity to get.</p>
 <p><b>Comment Id</b> - The ID of the comment to get.</p>
