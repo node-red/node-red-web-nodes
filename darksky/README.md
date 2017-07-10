@@ -24,7 +24,7 @@ Usage
 
 Two nodes that get the weather forecast from the Dark Sky weather API.
 
-One node polls the Dark Sky api every 5 minutes, the other is triggered
+One node polls the Dark Sky api every 15 minutes, the other is triggered
 to request weather forecast data when an input is received.
 
 The user has the option of providing a date to the node instead of returning data for the next day.

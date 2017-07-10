@@ -1,6 +1,6 @@
 {
     "name"          : "node-red-node-darksky",
-    "version"       : "0.1.15",
+    "version"       : "0.1.16",
     "description"   : "A Node-RED node that gets the weather forecast from the DarkSky API",
     "dependencies"  : {
     },
