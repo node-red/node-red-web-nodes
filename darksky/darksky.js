@@ -90,7 +90,7 @@ module.exports = function(RED) {
                         try {
                             jsun = JSON.parse(weather);
                         } catch (err) {
-                            return callback(RED._("darksky.error.api-response", { response: weather }));
+                            return callback(RED._("darksky.error.api-response", { response:weather }));
                         }
                         msg.data = jsun;
                         msg.payload.weather = jsun.daily.data[when].icon;
@@ -111,7 +111,7 @@ module.exports = function(RED) {
                         msg.location.lon = jsun.longitude;
                         msg.time = new Date(jsun.daily.data[when].time*1000);
                         msg.title = RED._("darksky.message.weather-forecast");
-                        msg.description = RED._("darksky.message.weather-info", {time: msg.time.toLocaleString(), lat: msg.location.lat, lon: msg.location.lon});
+                        msg.description = RED._("darksky.message.weather-info", {time:msg.time.toLocaleString(), lat:msg.location.lat, lon:msg.location.lon});
                         callback();
                     }
                 });
@@ -126,7 +126,7 @@ module.exports = function(RED) {
     function DarkSkyInputNode(n) {
         RED.nodes.createNode(this, n);
         this.lang = n.lang || "en";
-	this.units = n.units || "us";
+        this.units = n.units || "us";
         var node = this;
         this.repeat = 900000;
         this.interval_id = null;

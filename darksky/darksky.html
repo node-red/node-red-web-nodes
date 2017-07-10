@@ -42,19 +42,10 @@
         },
         credentials: {
             key_identifier: {type:"text"},
-            client_key: { type: "password"}
+            client_key: { type:"password"}
         },
-
-        label: function() {
-            return this.key_identifier;
-        },
-        exportable: false,
-        oneditprepare: function() {
-        },
-        oneditsave: function() {
-        },
-        oneditcancel: function(adding) {
-        }
+        label: function() { return this.key_identifier; },
+        exportable: false
     });
 })();
 </script>
@@ -66,7 +57,11 @@
     </div>
     <div class="form-row">
         <label for="weather-forecast-time-select"><i class="fa fa-globe"></i> <span data-i18n="darksky.label.forecast"></span></label>
-        <select id="weather-forecast-time-select"><option value="tomorrow" data-i18n="darksky.label.tomorrow"></option><option value="specific" data-i18n="darksky.label.datetime"></option><option value="message" data-i18n="darksky.label.input"></option></select>
+        <select id="weather-forecast-time-select">
+            <option value="tomorrow" data-i18n="darksky.label.tomorrow"></option>
+            <option value="specific" data-i18n="darksky.label.datetime"></option>
+            <option value="message" data-i18n="darksky.label.input"></option>
+        </select>
     </div>
     <div class="form-row weather-forecast-time" id="weather-forecast-time-specific">
         <label for="node-input-date"><i class="fa fa-calendar"></i> <span data-i18n="darksky.label.date"></span></label>
@@ -147,15 +142,14 @@
             date: {value:""},
             time: {value:""},
             mode: {value:"node"},
-	    lang: {value:"en"},
+            lang: {value:"en"},
             units: {value:"us"}
         },
         inputs:1,
         outputs:1,
         icon: "weather.png",
-        label: function() {
-            return this.name||"darksky";
-        },
+        label: function() { return this.name||"darksky"; },
+        labelStyle: function() { return this.name?"node_label_italic":""; },
         oneditprepare: function() {
             $("#weather-forecast-time-select").change(function() {
                 var id = $("#weather-forecast-time-select option:selected").val();
@@ -219,7 +213,7 @@
         <li><code>precipitation</code> - the current forecast precipitation chance</li>
         <li><code>sunrise</code> - the time at which the is forecast to rise in Unix UTC format.</li>
         <li><code>sunset</code> - the time at which the sun is forecast to set in Unix UTC format.</li>
- 	<li><code>lang</code> - the language of the results as requested.</li>       
+ 	<li><code>lang</code> - the language of the results as requested.</li>
  	<li><code>units</code> - the units of the results as requested.</li>
     </ul>
     <p>The node also sets:</p>
@@ -242,7 +236,10 @@
     </div>
     <div class="form-row">
         <label for="weather-forecast-time-select"><i class="fa fa-globe"></i> <span data-i18n="darksky.label.forecast"></span></label>
-        <select id="weather-forecast-time-select"><option value="tomorrow" data-i18n="darksky.label.tomorrow"></option><option value="specific" data-i18n="darksky.label.datetime"></option></select>
+        <select id="weather-forecast-time-select">
+            <option value="tomorrow" data-i18n="darksky.label.tomorrow"></option>
+            <option value="specific" data-i18n="darksky.label.datetime"></option>
+        </select>
     </div>
     <div class="form-row weather-forecast-time" id="weather-forecast-time-specific">
         <label for="node-input-date"><i class="fa fa-calendar"></i> <span data-i18n="darksky.label.date"></span></label>
@@ -323,15 +320,14 @@
             lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
             date: {value:""},
             time: {value:""},
-	    lang: {value:"en"},
+            lang: {value:"en"},
             units: {value:"us"}
         },
         inputs:0,
         outputs:1,
         icon: "weather.png",
-        label: function() {
-            return this.name||"darksky";
-        },
+        label: function() { return this.name||"darksky"; },
+        labelStyle: function() { return this.name?"node_label_italic":""; },
         oneditprepare: function() {
             $("#weather-forecast-time-select").change(function() {
                 var id = $("#weather-forecast-time-select option:selected").val();
@@ -379,7 +375,7 @@
         <li><code>precipitation</code> - the current forecast precipitation chance</li>
         <li><code>sunrise</code> - the time at which the is forecast to rise in Unix UTC format.</li>
         <li><code>sunset</code> - the time at which the sun is forecast to set in Unix UTC format.</li>
- 	<li><code>lang</code> - the language of the results as requested.</li>  
+        <li><code>lang</code> - the language of the results as requested.</li>
         <li><code>units</code> - the units of the results as requested.</li>
     </ul>
     <p>The node also sets:</p>
