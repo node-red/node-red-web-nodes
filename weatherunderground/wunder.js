@@ -119,7 +119,7 @@ module.exports = function(RED) {
         var lat;
         var lon;
 
-        this.on('input', function(msg) {
+        node.on('input', function(msg) {
             if (n.country && n.city) {
                 country = n.country;
                 city = n.city;
@@ -142,16 +142,16 @@ module.exports = function(RED) {
             });
         });
 
-        this.on("close", function() {
+        node.on("close", function() {
             if (node.interval_id !== null) { clearInterval(node.interval_id); }
-            if (node.interval_id1 !== null) { clearInterval(node.interval_id1); }
+            if (node.timeout_id !== null) { clearTimeout(node.interval_id1); }
         });
 
-        this.interval_id = setInterval( function() {
+        node.interval_id = setInterval( function() {
             node.emit("input",{});
         }, this.repeat ); // repeat every 10 minutes
 
-        node.interval_id1 = setTimeout( function() {
+        node.timeout_id = setTimeout( function() {
             node.emit("input",{});
         }, 2000); // start after 2 sec delay
     }
@@ -168,7 +168,7 @@ module.exports = function(RED) {
         var lat;
         var lon;
 
-        this.on ('input', function(msg) {
+        node.on ('input', function(msg) {
             if (n.country && n.city) {
                 country = n.country;
                 city = n.city;
