@@ -110,7 +110,7 @@ module.exports = function(RED) {
         if ((credentials) && (credentials.hasOwnProperty("apikey"))) { this.apikey = credentials.apikey; }
         else { this.error(RED._("wunder.error.no-apikey")); }
         this.wunder = new Wunderground(this.apikey);
-        this.repeat = 300000;
+        this.repeat = 600000;   // every 10 minutes
         this.interval_id = null;
         var node = this;
         var previousdata = null;
@@ -118,10 +118,6 @@ module.exports = function(RED) {
         var country;
         var lat;
         var lon;
-
-        this.interval_id = setInterval( function() {
-            node.emit("input",{});
-        }, this.repeat );
 
         this.on('input', function(msg) {
             if (n.country && n.city) {
@@ -147,14 +143,17 @@ module.exports = function(RED) {
         });
 
         this.on("close", function() {
-            if (node.interval_id !== null) {
-                clearInterval(node.interval_id);
-            }
+            if (node.interval_id !== null) { clearInterval(node.interval_id); }
+            if (node.interval_id1 !== null) { clearInterval(node.interval_id1); }
         });
 
-        this.interval_id = setTimeout( function() {
+        this.interval_id = setInterval( function() {
             node.emit("input",{});
-        },2000); // start after 2 sec delay
+        }, this.repeat ); // repeat every 10 minutes
+
+        node.interval_id1 = setTimeout( function() {
+            node.emit("input",{});
+        }, 2000); // start after 2 sec delay
     }
 
     function WunderNode(n) {
