@@ -51,9 +51,9 @@ module.exports = function(RED) {
             //If there is a value missing, the URL is not initialised.
             if (node.wtype === "forecast") {
                 if (node.lat && node.lon) {
-                    url = "http://api.openweathermap.org/data/2.5/forecast?lang=" + node.language + "&cnt=5&units=metric&lat=" + node.lat + "&lon=" + node.lon + "&APPID=" + node.credentials.apikey;
+                    url = "http://api.openweathermap.org/data/2.5/forecast?lang=" + node.language + "&cnt=40&units=metric&lat=" + node.lat + "&lon=" + node.lon + "&APPID=" + node.credentials.apikey;
                 } else if (node.city && node.country) {
-                    url = "http://api.openweathermap.org/data/2.5/forecast?lang=" + node.language + "&cnt=5&units=metric&q=" + node.city + "," + node.country + "&APPID=" + node.credentials.apikey;
+                    url = "http://api.openweathermap.org/data/2.5/forecast?lang=" + node.language + "&cnt=40&units=metric&q=" + node.city + "," + node.country + "&APPID=" + node.credentials.apikey;
                 }
             } else {
                 if (node.lat && node.lon) {
