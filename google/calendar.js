@@ -513,7 +513,7 @@ module.exports = function(RED) {
         }
         if (ev[type] && ev[type].dateTime) {
             return new Date(ev[type].dateTime);
-        } else if (ev.start && ev.start.date) {
+        } else if (ev.start && ev.start.date || ev.end && ev.end.date) {
             return new Date(ev[type].date);
         } else {
             return null;
