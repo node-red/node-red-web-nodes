@@ -143,7 +143,7 @@
     </ul>
     <p>of the message input. </p>
     <p>The node will always prioritise its settings over the msg properties.</p>
-    <p>The report's language can be set by choosing from the drop down menu. The node supports all languages currently provided by OpenWeatherMap.</p>
+    <p>The language of the report can be set by choosing from the drop down menu. The node supports all languages currently provided by OpenWeatherMap.</p>
     <p>The current weather report sets the following properties of <code>msg.payload</code>:</p>
     <ul>
         <li><code>description</code> - a brief verbal description of the current weather for human reading.</li>
@@ -257,11 +257,12 @@
         color: '#FFCC66',
         defaults: {
             name: {value:""},
+            wtype: {value:"current"},
             lon: {value:"", validate:function(v) {return ((v>=-180) && (v<=180));} },
             lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
             city: {value:""},
             country: {value:""},
-            language: {value:"en"},
+            language: {value:"en"}
         },
         credentials: {
             apikey: {type:"password", required:true}
