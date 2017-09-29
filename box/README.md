@@ -14,7 +14,7 @@ Run the following command in the root directory of your Node-RED install
 Usage
 -----
 
-###Box watch node
+### Box watch node
 
 Watches for file events on Box. By default all
 file events are reported, but the filename pattern can be supplied
@@ -27,7 +27,7 @@ the event type in `msg.event` and the full event entry as
 returned by the <a href="https://developers.box.com/docs/#events">event
 API</a> in `msg.data`.
 
-###Box input node
+### Box input node
 
 Downloads content from Box.
 
@@ -35,7 +35,7 @@ The filename on Box is taken from
 the node **filename** property or the `msg.filename` property.
 The content is sent as `msg.payload` property.
 
-###Box output node
+### Box output node
 
 Uploads content to Box.
 
