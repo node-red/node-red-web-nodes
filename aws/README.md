@@ -14,7 +14,7 @@ Run the following command in the root directory of your Node-RED install
 Usage
 -----
 
-###Amazon S3 watch node
+### Amazon S3 watch node
 
 Watches for file events on an Amazon S3 bucket. By default all
 file events are reported, but the filename pattern can be supplied
@@ -23,7 +23,7 @@ the glob pattern. The event messages consist of the full filename
 in `msg.payload` property, the filename in `msg.file`,
 the event type in `msg.event`.
 
-###Amazon S3 input node
+### Amazon S3 input node
 
 Downloads content from an Amazon S3 bucket. The bucket name can be specified in
 the node **bucket** property or in the `msg.bucket` property.
@@ -32,7 +32,7 @@ or the `msg.filename` property. The downloaded content is sent as `msg.payload`
 property. If the download fails `msg.error` will contain an error object.
 
 
-###Amazon S3 out node.
+### Amazon S3 out node.
 
 Uploads content to an Amazon S3 bucket. The bucket name can be specified in the
 node <b>bucket</b> property or in the `msg.bucket` property. The filename on
