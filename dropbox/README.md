@@ -14,7 +14,7 @@ Run the following command in the root directory of your Node-RED install
 Usage
 -----
 
-###Watch node
+### Watch node
 
 Watches for file events on Dropbox.
 
@@ -29,7 +29,7 @@ the <a href="https://github.com/dropbox/dropbox-js">dropbox.js</a>
 API <a href="http://coffeedoc.info/github/dropbox/dropbox-js/master/classes/Dropbox/Http/PulledChange.html">PulledChange</a>
 object in `msg.data`.
 
-###Input node
+### Input node
 
 Downloads content from Dropbox.
 
@@ -39,7 +39,7 @@ property or the `msg.filename` property.
 The downloaded content is sent as `msg.payload` property. If the download
 fails `msg.error` will contain an error object.
 
-###Output node
+### Output node
 
 Uploads content to Dropbox.
 
