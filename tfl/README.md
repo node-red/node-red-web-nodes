@@ -13,7 +13,7 @@ Run the following command in the root directory of your Node-RED install
 Usage
 -----
 
-###Buses
+### Buses
 
 Transport for London Buses and River Buses query node.
 Get live bus departure/arrival info for your bus stop.
@@ -38,7 +38,7 @@ for them based on a given GPS coordinate and a search radius around specified co
 Before using this node, please sign up to <a href=https://api-portal.tfl.gov.uk/login target="_blank" style="text-decoration:underline;\">Transport for London</a>
 and accept the terms and conditions to gain access to the live feeds.
 
-###Underground
+### Underground
 
 Transport for London Underground query node.
 

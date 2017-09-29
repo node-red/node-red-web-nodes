@@ -14,7 +14,7 @@ Run the following command in the root directory of your Node-RED install
 Usage
 -----
 
-###Foursquare query node
+### Foursquare query node
 
 Can be used to
 
@@ -69,7 +69,7 @@ For further information about the Foursquare API see
 <a href="https://developer.foursquare.com/docs/venues/explore">Explore Recommended and Popular Venues</a>.
 
 
-###Swarm input node
+### Swarm input node
 
 Polls every 15 minutes for the latest Swarm check-ins that have been registered by the authenticated
 user since the node was registered. If a new check-in has been made within the polling interval
@@ -78,7 +78,7 @@ then `msg.payload` is set to be the JSON of the most recent new check-in.
 The properties of the <a href="https://foursquare.com/">Swarm</a> check-in are documented at
 <a href="https://developer.foursquare.com/docs/responses/checkin">Checkin Response</a>.
 
-###Swarm query node
+### Swarm query node
 
 Can be used to search
 
