@@ -23,76 +23,162 @@ module.exports = function(RED) {
 
     function DropboxNode(n) {
         RED.nodes.createNode(this,n);
+        this.dropbox = new Dropbox({
+            accessToken: this.credentials.accesstoken
+        });
     }
     RED.nodes.registerType("dropbox-config",DropboxNode,{
         credentials: {
-            appkey: { type:"text" },
-            appsecret: { type: "password" },
             accesstoken: { type:"password" },
         }
     });
 
     function DropboxInNode(n) {
         RED.nodes.createNode(this,n);
-        this.filepattern = n.filepattern || "";
-        this.checkInterval = n.checkInterval || 600000;
-        this.dropboxConfig = RED.nodes.getNode(n.dropbox);
-        var credentials = this.dropboxConfig ? this.dropboxConfig.credentials : {};
-        if (!credentials.appkey || !credentials.appsecret ||
-            !credentials.accesstoken) {
+
+        var dropboxConfig = RED.nodes.getNode(n.dropbox);
+        var credentials = dropboxConfig ? dropboxConfig.credentials : {};
+        if (!credentials.accesstoken) {
             this.warn(RED._("dropbox.warn.missing-credentials"));
             return;
         }
 
+        this.filepattern = n.filepattern || "";
+        if (this.filepattern && this.filepattern[0] !== '/') {
+            this.filepattern = '/'+this.filepattern;
+        }
+
         var node = this;
-        var dropbox = new Dropbox.Client({
-            //uid: credentials.uid,
-            key: credentials.appkey,
-            secret: credentials.appsecret,
-            token: credentials.accesstoken,
-        });
-        node.status({fill:"blue",shape:"dot",text:"dropbox.status.initializing"});
-        node.on("input", function(msg) {
-            node.status({fill:"blue",shape:"dot",text:"dropbox.status.checking-for-changes"});
-            dropbox.pullChanges(node.state, function(err, data) {
-                if (err) {
-                    node.error(RED._("dropbox.error.change-fetch-failed",{err:err.toString()}),msg);
-                    node.status({}); // clear status since poll retries anyway
+
+        var dropbox = dropboxConfig.dropbox;
+        var currentFiles = {};
+        var initialized = false;
+        var longPollTimeout;
+        var closing = false;
+
+
+
+        node.getFolderCursor = function() {
+            node.trace("get cursor");
+            node.status({fill:"blue",shape:"dot",text:"dropbox.status.initializing"});
+            return dropbox.filesListFolder({path: '',recursive:true}).then(function(response) { return response.cursor});
+        }
+        node.drainCursor = function(cursor, emit) {
+            if (closing) {
+                return;
+            }
+            if (emit) {
+                node.status({fill:"blue",shape:"dot",text:"dropbox.status.checking-for-changes"});
+            }
+            node.trace("draining files emit="+!!emit);
+            return dropbox.filesListFolderContinue({cursor: cursor}).then(function(response) {
+                if (closing) {
                     return;
                 }
-                node.status({});
-                if (!node.state) {
-                    node.state = data.cursor();
-                }
-                else {
-                    var changes = data.changes;
-                    for (var i = 0; i < changes.length; i++) {
-                        var change = changes[i];
-                        if (node.filepattern &&
-                            !minimatch(change.path, node.filepattern)) {
-                            continue;
+                response.entries.forEach(function(entry) {
+                    if (emit) {
+                        if (node.filepattern && !minimatch(entry.path_display, node.filepattern)) {
+                            return;
                         }
-                        msg.payload = change.path;
-                        msg.file = change.path.substring(change.path.lastIndexOf('/') + 1);
-                        msg.event = change.wasRemoved ? 'delete' : 'add';
-                        msg.data = change;
-                        node.send(msg);
+                        var change = {
+                            payload: entry.path_display,
+                            file: entry.name,
+                        };
+                        if (entry['.tag'] === 'deleted') {
+                            change.event = 'delete';
+                        } else if (!currentFiles[entry.path_display]) {
+                            change.event = 'add';
+                        } else {
+                            change.event = 'change';
+                        }
+                        node.send(change);
                     }
+                    currentFiles[entry.path_display] = entry.server_modified;
+                });
+                if (response.has_more) {
+                    return node.drainCursor(response.cursor,emit);
+                } else {
+                    node.status({});
                 }
+                return response.cursor;
             });
-        });
+        }
 
-        var tout = setTimeout(function() {
-            node.emit("input", {});
-        }, 5000); // do first check after 5 secs
+        node.poll = function(cursor,backoff) {
+            if (closing) {
+                return;
+            }
+            node.trace("polling backoff="+(backoff||0));
+            if (backoff) {
+                longPollTimeout = setTimeout(function() {
+                    node.poll(cursor);
+                },backoff*1000);
+                return;
+            }
+            return dropbox.filesListFolderLongpoll({cursor: cursor}).then(function(response) {
+                if (closing) {
+                    return;
+                }
+                if (response.changes) {
+                    node.drainCursor(cursor,true).then(function(c) {
+                        if (closing) {
+                            return;
+                        }
+                        node.poll(c,response.backoff);
+                    })
+                } else {
+                    node.poll(cursor,response.backoff);
+                }
+            }).catch(function(err) {
+                var errorMessage;
+                if (err.error) {
+                    errorMessage = err.error;
+                } else {
+                    errorMessage = err.toString();
+                }
+                node.trace("Error polling:"+errorMessage);
+                if (error.error[".tag"] === 'reset') {
+                    startPolling();
+                } else {
+                    longPollTimeout = setTimeout(function() {
+                        node.poll(cursor,backoff);
+                    },15000);
+                }
+            })
+        }
 
-        var interval = setInterval(function() {
-            node.emit("input", {});
-        }, node.checkInterval); // default 10 minutes
+        node.startPolling = function() {
+            if (closing) {
+                return;
+            }
+            node.trace("Starting polling");
+            node.getFolderCursor()
+                .then(node.drainCursor)
+                .then(node.poll)
+                .catch(function(err) {
+                    var errorMessage;
+                    if (err.error) {
+                        errorMessage = err.error;
+                    } else {
+                        errorMessage = err.toString();
+                    }
+                    node.trace("Error polling:"+errorMessage);
+                    node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
+                    longPollTimeout = setTimeout(function() {
+                        node.startPolling();
+                    },15000);
+                })
+        }
+
+        node.startPolling();
 
         node.on("close", function() {
-            if (tout) { clearTimeout(tout); }
-            if (interval) { clearInterval(interval); }
+            if (longPollTimeout) {
+                clearTimeout(longPollTimeout);
+            }
+            closing = true;
+            // if (tout) { clearTimeout(tout); }
+            // if (interval) { clearInterval(interval); }
         });
     }
     RED.nodes.registerType("dropbox in",DropboxInNode);
@@ -100,39 +186,50 @@ module.exports = function(RED) {
     function DropboxQueryNode(n) {
         RED.nodes.createNode(this,n);
         this.filename = n.filename || "";
-        this.dropboxConfig = RED.nodes.getNode(n.dropbox);
-        var credentials = this.dropboxConfig ? this.dropboxConfig.credentials : {};
-        if (!credentials.appkey || !credentials.appsecret ||
-            !credentials.accesstoken) {
+
+        var dropboxConfig = RED.nodes.getNode(n.dropbox);
+        var credentials = dropboxConfig ? dropboxConfig.credentials : {};
+        if (!credentials.accesstoken) {
             this.warn(RED._("dropbox.warn.missing-credentials"));
             return;
         }
-
         var node = this;
-        var dropbox = new Dropbox.Client({
-            //uid: credentials.uid,
-            key: credentials.appkey,
-            secret: credentials.appsecret,
-            token: credentials.accesstoken,
-        });
+
+        var dropbox = dropboxConfig.dropbox;
+
         node.on("input", function(msg) {
             var filename = this.filename || msg.filename;
             if (filename === "") {
                 node.error(RED._("dropbox.error.no-filename"),msg);
                 return;
             }
+
+            if (filename[0] !== '/') {
+                filename = '/'+filename;
+            }
+
             msg.filename = filename;
             node.status({fill:"blue",shape:"dot",text:"dropbox.status.downloading"});
-            dropbox.readFile(filename, { buffer: true }, function(err, data) {
-                if (err) {
-                    node.error(RED._("dropbox.error.download-failed",{err:err.toString()}),msg);
-                    node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
+
+            dropbox.filesDownload({path: filename}).then(function(response) {
+                var data = response.fileBinary;
+                var dataBuffer = new Buffer(data,'binary');
+                if (!isUtf8(dataBuffer)) {
+                    msg.payload = dataBuffer;
                 } else {
-                    if (isUtf8(data)) { data = data.toString(); }
                     msg.payload = data;
-                    node.status({});
-                    node.send(msg);
                 }
+                node.status({});
+                node.send(msg);
+            }).catch(function(err) {
+                var errorMessage;
+                if (err.error) {
+                    errorMessage = err.error;
+                } else {
+                    errorMessage = err.toString();
+                }
+                node.error(RED._("dropbox.error.download-failed",{err:errorMessage}),msg);
+                node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
             });
         });
     }
@@ -142,68 +239,64 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         this.filename = n.filename || "";
         this.localFilename = n.localFilename || "";
-        this.dropboxConfig = RED.nodes.getNode(n.dropbox);
-        var credentials = this.dropboxConfig ? this.dropboxConfig.credentials : {};
-        if (!credentials.appkey || !credentials.appsecret ||
-            !credentials.accesstoken) {
+
+        var dropboxConfig = RED.nodes.getNode(n.dropbox);
+        var credentials = dropboxConfig ? dropboxConfig.credentials : {};
+        if (!credentials.accesstoken) {
             this.warn(RED._("dropbox.warn.missing-credentials"));
             return;
         }
         var node = this;
-        var dropbox = new Dropbox.Client({
-            //uid: credentials.uid,
-            key: credentials.appkey,
-            secret: credentials.appsecret,
-            token: credentials.accesstoken,
-        });
-        node.status({fill:"blue",shape:"dot",text:"dropbox.status.checking-credentials"});
-        dropbox.getAccountInfo(function (err) {
-            if (err) {
-                node.error(RED._("dropbox.error.credentials-error",{err:err}));
-                node.status({fill:"red",shape:"ring",text:"dropbox.status.access-denied"});
-                    return;
+        var dropbox = dropboxConfig.dropbox;
+        node.on("input", function(msg) {
+            var filename = this.filename || msg.filename;
+            if (filename === "") {
+                node.error(RED._("dropbox.error.no-filename"),msg);
+                node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
+                return;
             }
-            node.status({});
-            node.on("input", function(msg) {
-                var filename = this.filename || msg.filename;
-                if (filename === "") {
-                    node.error(RED._("dropbox.error.no-filename"),msg);
-                    node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
-                    return;
-                }
-                var localFilename = this.localFilename || msg.localFilename;
-                if (localFilename) {
-                    // TODO: use chunked upload for files larger than 150M
-                    node.status({fill:"blue",shape:"dot",text:"dropbox.status.uploading"});
-                    fs.readFile(localFilename, function read(err, data) {
-                        if (err) {
-                            node.error(err.toString(),msg);
-                            node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
-                            return;
-                        }
+            if (filename[0] !== '/') {
+                filename = '/'+filename;
+            }
 
-                        dropbox.writeFile(filename, data, function(err) {
-                            if (err) {
-                                node.error(err.toString(),msg);
-                                node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
-                                return;
-                            }
-                            node.status({});
-                        });
-                    });
-                } else if (typeof msg.payload !== "undefined") {
-                    var data = RED.util.ensureBuffer(msg.payload);
-                    node.status({fill:"blue",shape:"dot",text:"dropbox.status.uploading"});
-                    dropbox.writeFile(filename, data, function(err) {
-                        if (err) {
-                            node.error(err.toString(),msg);
-                            node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
-                            return;
-                        }
+            var localFilename = this.localFilename || msg.localFilename;
+            if (localFilename) {
+                // TODO: use chunked upload for files larger than 150M
+                node.status({fill:"blue",shape:"dot",text:"dropbox.status.uploading"});
+                fs.readFile(localFilename, function read(err, data) {
+                    if (err) {
+                        node.error(err.toString(),msg);
+                        node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
+                        return;
+                    }
+                    dropbox.filesUpload({ path: filename, contents: data })
+                    .then(function (response) {
                         node.status({});
+                    })
+                    .catch(function (err) {
+                        node.error(err.toString(),msg);
+                        node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
                     });
-                }
-            });
+                });
+            } else if (typeof msg.payload !== "undefined") {
+                var data = RED.util.ensureBuffer(msg.payload);
+                node.status({fill:"blue",shape:"dot",text:"dropbox.status.uploading"});
+
+                dropbox.filesUpload({ path: filename, contents: data, mode: {".tag":"overwrite"}})
+                .then(function (response) {
+                    node.status({});
+                })
+                .catch(function (err) {
+                    var errorMessage;
+                    if (err.error) {
+                        errorMessage = err.error;
+                    } else {
+                        errorMessage = err.toString();
+                    }
+                    node.error(errorMessage,msg);
+                    node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
+                });
+            }
         });
     }
     RED.nodes.registerType("dropbox out",DropboxOutNode);

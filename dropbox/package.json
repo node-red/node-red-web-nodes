@@ -1,11 +1,11 @@
 {
     "name"          : "node-red-node-dropbox",
-    "version"       : "0.1.3",
+    "version"       : "1.0.0",
     "description"   : "Node-RED nodes to watch and download files from Dropbox",
     "dependencies"  : {
-        "dropbox":"0.10.3",
-        "minimatch":"2.0.*",
-        "is-utf8":"0.2.0"
+        "dropbox":"2.5.10",
+        "minimatch":"3.0.4",
+        "is-utf8":"0.2.1"
     },
     "repository" : {
         "type":"git",
@@ -22,5 +22,8 @@
         "name": "Mark Hindess",
         "email": "HINDESSM@vnet.ibm.com",
         "url": "http://nodered.org"
-    }
+    },
+    "contributors": [
+        {"name": "Nick O'Leary"}
+    ]
 }

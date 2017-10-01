@@ -7,14 +7,15 @@ and retrieve files from Dropbox.
 Install
 -------
 
-Run the following command in the root directory of your Node-RED install
+Search for `node-red-node-dropbox` in the Palette Manager, or run the following
+command in your Node-RED user directory, ``~/.node-red`:
 
     npm install node-red-node-dropbox
 
 Usage
 -----
 
-###Watch node
+### Watch node
 
 Watches for file events on Dropbox.
 
@@ -22,14 +23,10 @@ By default all file events are reported, but the filename pattern can
 be supplied to limit the events to files which have full filenames
 that match the glob pattern.
 
-The event messages consist of the
-full filename in `msg.payload` property, the filename
-in `msg.file`, the event type in `msg.event` and
-the <a href="https://github.com/dropbox/dropbox-js">dropbox.js</a>
-API <a href="http://coffeedoc.info/github/dropbox/dropbox-js/master/classes/Dropbox/Http/PulledChange.html">PulledChange</a>
-object in `msg.data`.
+The event messages consist of the full filename in `msg.payload` property, the
+filename in `msg.file` and the event type in `msg.event`.
 
-###Input node
+### Input node
 
 Downloads content from Dropbox.
 
@@ -39,7 +36,7 @@ property or the `msg.filename` property.
 The downloaded content is sent as `msg.payload` property. If the download
 fails `msg.error` will contain an error object.
 
-###Output node
+### Output node
 
 Uploads content to Dropbox.
 
