@@ -20,6 +20,7 @@ module.exports = function(RED) {
     var fs = require("fs");
     var minimatch = require("minimatch");
     var isUtf8 = require('is-utf8');
+    var fspath = require("path");
 
     function DropboxNode(n) {
         RED.nodes.createNode(this,n);
@@ -249,17 +250,20 @@ module.exports = function(RED) {
         var node = this;
         var dropbox = dropboxConfig.dropbox;
         node.on("input", function(msg) {
-            var filename = this.filename || msg.filename;
+            var localFilename = this.localFilename || msg.localFilename || "";
+            var filename = this.filename || msg.filename || "";
             if (filename === "") {
-                node.error(RED._("dropbox.error.no-filename"),msg);
-                node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
-                return;
+                if (localFilename) {
+                    filename = fspath.basename(localFilename);
+                } else {
+                    node.error(RED._("dropbox.error.no-filename"),msg);
+                    node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
+                    return;
+                }
             }
             if (filename[0] !== '/') {
                 filename = '/'+filename;
             }
-
-            var localFilename = this.localFilename || msg.localFilename;
             if (localFilename) {
                 // TODO: use chunked upload for files larger than 150M
                 node.status({fill:"blue",shape:"dot",text:"dropbox.status.uploading"});
@@ -269,33 +273,39 @@ module.exports = function(RED) {
                         node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
                         return;
                     }
-                    dropbox.filesUpload({ path: filename, contents: data })
-                    .then(function (response) {
-                        node.status({});
-                    })
-                    .catch(function (err) {
-                        node.error(err.toString(),msg);
-                        node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
-                    });
+                    dropbox.filesUpload({ path: filename, contents: data, mode: {".tag":"overwrite"}})
+                        .then(function (response) {
+                            node.status({});
+                        })
+                        .catch(function (err) {
+                            var errorMessage;
+                            if (err.error) {
+                                errorMessage = err.error;
+                            } else {
+                                errorMessage = err.toString();
+                            }
+                            node.error(errorMessage,msg);
+                            node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
+                        });
                 });
             } else if (typeof msg.payload !== "undefined") {
                 var data = RED.util.ensureBuffer(msg.payload);
                 node.status({fill:"blue",shape:"dot",text:"dropbox.status.uploading"});
 
                 dropbox.filesUpload({ path: filename, contents: data, mode: {".tag":"overwrite"}})
-                .then(function (response) {
-                    node.status({});
-                })
-                .catch(function (err) {
-                    var errorMessage;
-                    if (err.error) {
-                        errorMessage = err.error;
-                    } else {
-                        errorMessage = err.toString();
-                    }
-                    node.error(errorMessage,msg);
-                    node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
-                });
+                    .then(function (response) {
+                        node.status({});
+                    })
+                    .catch(function (err) {
+                        var errorMessage;
+                        if (err.error) {
+                            errorMessage = err.error;
+                        } else {
+                            errorMessage = err.toString();
+                        }
+                        node.error(errorMessage,msg);
+                        node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
+                    });
             }
         });
     }
