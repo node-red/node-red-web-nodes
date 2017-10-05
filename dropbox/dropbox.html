@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014 IBM Corp.
+  Copyright JS Foundation and other contributors, http://js.foundation
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -175,12 +175,19 @@
     <h3>Inputs</h3>
     <dl class="message-properties">
         <dt class="optional">payload <span class="property-type">string|Buffer</span></dt>
-        <dd>If <code>localFileName</code> is not specified, the contents of the file is taken from this property.</dd>
+        <dd>If <code>localFileName</code> is not specified, this contains the contents
+           of the file to upload as either a String or Buffer.</dd>
         <dt class="optional">filename <span class="property-type">string</span></dt>
-        <dd>If not configured within the node, this identifies the full destination path of the file to upload.</dd>
+        <dd>If not configured within the node, this sets the full path the file will be uploaded to.</dd>
         <dt class="optional">localFilename <span class="property-type">string</span></dt>
-        <dd>If not configured within the node, this identifies a local file that should be uploaded.</dd>
+        <dd>If not configured within the node, this identifies a local file that should be uploaded.
+            If this property is not set, either in the node or msg, the contents of the file will be
+            taken from the <code>payload</code> property.</dd>
     </dl>
+    <h3>Details</h3>
+    <p>If `localFilename` is set and `filename` is not, the basename of the local file
+    will be used as the name of the file uploaded. For example, a `localFilename` of
+    `/home/user/photo.png` will be uploaded as `photo.png`.</p>
 </script>
 
 <script type="text/javascript">

@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 IBM Corp.
+ * Copyright JS Foundation and other contributors, http://js.foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,9 @@ module.exports = function(RED) {
 
 
         node.getFolderCursor = function() {
-            node.trace("get cursor");
+            if (node.trace) {
+                node.trace("get cursor");
+            }
             node.status({fill:"blue",shape:"dot",text:"dropbox.status.initializing"});
             return dropbox.filesListFolder({path: '',recursive:true}).then(function(response) { return response.cursor});
         }
@@ -71,7 +73,9 @@ module.exports = function(RED) {
             if (emit) {
                 node.status({fill:"blue",shape:"dot",text:"dropbox.status.checking-for-changes"});
             }
-            node.trace("draining files emit="+!!emit);
+            if (node.trace) {
+                node.trace("draining files emit="+!!emit);
+            }
             return dropbox.filesListFolderContinue({cursor: cursor}).then(function(response) {
                 if (closing) {
                     return;
@@ -109,7 +113,9 @@ module.exports = function(RED) {
             if (closing) {
                 return;
             }
-            node.trace("polling backoff="+(backoff||0));
+            if (node.trace) {
+                node.trace("polling backoff="+(backoff||0));
+            }
             if (backoff) {
                 longPollTimeout = setTimeout(function() {
                     node.poll(cursor);
@@ -137,7 +143,9 @@ module.exports = function(RED) {
                 } else {
                     errorMessage = err.toString();
                 }
-                node.trace("Error polling:"+errorMessage);
+                if (node.trace) {
+                    node.trace("Error polling:"+errorMessage);
+                }
                 if (error.error[".tag"] === 'reset') {
                     startPolling();
                 } else {
@@ -152,7 +160,9 @@ module.exports = function(RED) {
             if (closing) {
                 return;
             }
-            node.trace("Starting polling");
+            if (node.trace) {
+                node.trace("Starting polling");
+            }
             node.getFolderCursor()
                 .then(node.drainCursor)
                 .then(node.poll)
@@ -163,7 +173,9 @@ module.exports = function(RED) {
                     } else {
                         errorMessage = err.toString();
                     }
-                    node.trace("Error polling:"+errorMessage);
+                    if (node.trace) {
+                        node.trace("Error polling:"+errorMessage);
+                    }
                     node.status({fill:"red",shape:"ring",text:"dropbox.status.failed"});
                     longPollTimeout = setTimeout(function() {
                         node.startPolling();
