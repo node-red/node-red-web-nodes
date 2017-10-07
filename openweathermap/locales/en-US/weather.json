@@ -32,7 +32,8 @@
             "option_lang_zh": "Chinese Simplified",
             "option_lang_tr": "Turkish",
             "option_lang_hr": "Croatian",
-            "option_lang_ca": "Catalan"
+            "option_lang_ca": "Catalan",
+            "option_lang_hu": "Hungarian"
         },
         "placeholder": {
             "name": "Name",
