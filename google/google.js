@@ -19,10 +19,13 @@ module.exports = function(RED) {
     var request = require('request');
     var crypto = require("crypto");
     var url = require('url');
+    var backoff = require('backoff');
+    var events = require('events');
 
     function GoogleNode(n) {
         RED.nodes.createNode(this,n);
         this.displayName = n.displayName;
+        this.eventEmitter = new events();
     }
     RED.nodes.registerType("google-credentials",GoogleNode,{
         credentials: {
@@ -38,51 +41,71 @@ module.exports = function(RED) {
     GoogleNode.prototype.refreshToken = function(cb) {
         var credentials = this.credentials;
         var node = this;
-        //console.log("refreshing token: " + credentials.refreshToken);
+
         if (!credentials.refreshToken) {
             node.error(RED._("google.error.no-refresh-token"));
             return cb(RED._("google.error.no-refresh-token"));
         }
-        request.post({
-            url: 'https://accounts.google.com/o/oauth2/token',
-            json: true,
-            form: {
-                grant_type: 'refresh_token',
-                client_id: credentials.clientId,
-                client_secret: credentials.clientSecret,
-                refresh_token: credentials.refreshToken,
-            },
-        }, function(err, result, data) {
-            if (err) {
-                node.error(RED._("google.error.token-request-error", {err: err}));
-                return;
-            }
-            if (data.error) {
-                node.error(RED._("google.error.refresh-token-error", {message: data.error.message}));
-                return;
-            }
-            // console.log("refreshed: " + require('util').inspect(data));
-            credentials.accessToken = data.access_token;
-            if (data.refresh_token) {
-                credentials.refreshToken = data.refresh_token;
-            }
-            credentials.expiresIn = data.expires_in;
-            credentials.expireTime =
-                data.expires_in + (new Date().getTime()/1000);
-            credentials.tokenType = data.token_type;
-            RED.nodes.addCredentials(node.id, credentials);
-            if (typeof cb !== undefined) {
-                cb();
-            }
+
+        var exponentialBackoff = backoff.exponential({
+            initialDelay: 100,
+            maxDelay: 73000,
+            factor: 9
         });
+        exponentialBackoff.failAfter(4);
+        exponentialBackoff.on('backoff', function(number, delay) {
+            node.warn(RED._("google.warn.retry-request", {number: number + 1, delay: delay}));
+            node.eventEmitter.emit('retry', delay);
+        });
+        exponentialBackoff.on('fail', function() {
+            node.error(RED._("google.error.too-many-refresh-attempts"));
+            cb(RED._("google.error.too-many-refresh-attempts"));
+        });
+        exponentialBackoff.on('ready', function() {
+            node.warn(RED._("google.warn.token-expired"));
+            request.post(
+                {
+                    url: 'https://accounts.google.com/o/oauth2/token',
+                    json: true,
+                    form: {
+                        grant_type: 'refresh_token',
+                        client_id: credentials.clientId,
+                        client_secret: credentials.clientSecret,
+                        refresh_token: credentials.refreshToken,
+                    },
+                },
+                function(err, result, data) {
+                    if (err) {
+                        node.error(RED._("google.error.token-request-error", {err: err}));
+                        return exponentialBackoff.backoff();
+                    }
+                    if (data.error) {
+                        node.error(RED._("google.error.refresh-token-error", {message: data.error.message}));
+                        return exponentialBackoff.backoff();
+                    }
+
+                    credentials.accessToken = data.access_token;
+                    if (data.refresh_token) {
+                        credentials.refreshToken = data.refresh_token;
+                    }
+                    credentials.expiresIn = data.expires_in;
+                    credentials.expireTime =
+                        data.expires_in + (new Date().getTime()/1000);
+                    credentials.tokenType = data.token_type;
+                    RED.nodes.addCredentials(node.id, credentials);
+                    if (typeof cb !== undefined) {
+                        cb();
+                    }
+                }
+            );
+        });
+
+        exponentialBackoff.emit('ready');
     };
 
-    GoogleNode.prototype.request = function(req, retries, cb) {
+    GoogleNode.prototype.request = function(req, cb) {
         var node = this;
-        if (typeof retries === 'function') {
-            cb = retries;
-            retries = 1;
-        }
+
         if (typeof req !== 'object') {
             req = { url: req };
         }
@@ -95,17 +118,11 @@ module.exports = function(RED) {
         //console.log(require('util').inspect(req));
         if (!this.credentials.expireTime ||
             this.credentials.expireTime < (new Date().getTime()/1000)) {
-            if (retries === 0) {
-                node.error(RED._("google.error.too-many-refresh-attempts"));
-                cb(RED._("google.error.too-many-refresh-attempts"));
-                return;
-            }
-            node.warn(RED._("google.warn.token-expired"));
             node.refreshToken(function (err) {
                 if (err) {
-                    return;
+                    return cb(err);
                 }
-                node.request(req, 0, cb);
+                node.request(req, cb);
             });
             return;
         }

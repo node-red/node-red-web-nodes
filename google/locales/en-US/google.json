@@ -21,7 +21,8 @@
         },
         "warn": {
             "token-expired": "trying to refresh token due to expiry",
-            "refreshing-accesstoken": "refreshing access token after 401 error"
+            "refreshing-accesstoken": "refreshing access token after 401 error",
+            "retry-request": "__number__. failed attempts. Waiting __delay__ ms before next attempt."
         },
         "error": {
             "no-refresh-token": "No refresh token to regain Google access",

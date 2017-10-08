@@ -170,5 +170,96 @@ describe('google nodes', function() {
                 });
             });
         });
+
+        it("should report failed token refresh to the caller", function(done) {
+            helper.load(googleNode, [
+                {id:"google-config", type:"google-credentials"}
+            ], {
+                "google-config": {
+                    clientId: "ID",
+                    clientSecret: "SECRET",
+                    accessToken: "TOKEN",
+                    refreshToken: "REFRESH",
+                    expireTime: 0
+                }
+            }, function() {
+                nock('https://accounts.google.com:443')
+                    .persist()
+                    .post('/o/oauth2/token',
+                        "grant_type=refresh_token&client_id=ID&client_secret=SECRET&refresh_token=REFRESH")
+                    .reply(500, {
+                        error: "Service temporary unavailable."
+                    }, {
+                        'content-type': 'application/json; charset=utf-8',
+                        date: 'Mon, 10 Nov 2014 08:21:30 GMT',
+                        'transfer-encoding': 'chunked'
+                    });
+                var google = helper.getNode("google-config");
+                var clock = sinon.useFakeTimers({'toFake': ['setTimeout', 'Date']});
+                google.eventEmitter.on('retry', function(delay) {
+                    clock.tick(delay);
+                });
+                google.request('https://www.googleapis.com/calendar/v3/users/me/calendarList', function (err, data) {
+                    should.exist(err);
+                    clock.restore();
+                    done();
+                });
+            });
+        });
+
+        it("should retry failed token refresh multiple times, using exponential backoff strategy", function(done) {
+            // API calls should be retried after these delays. In worst case, it will take 82 seconds to retry
+            // calling the API last time (5th times in the series).
+            var backoffTimes = [0, 100, 900, 8100, 72900];
+
+            helper.load(googleNode, [
+                {id:"google-config", type:"google-credentials"}
+            ], {
+                "google-config": {
+                    clientId: "ID",
+                    clientSecret: "SECRET",
+                    accessToken: "TOKEN",
+                    refreshToken: "REFRESH",
+                    expireTime: 0
+                }
+            }, function() {
+                nock('https://accounts.google.com:443')
+                    .persist()
+                    .post('/o/oauth2/token',
+                        "grant_type=refresh_token&client_id=ID&client_secret=SECRET&refresh_token=REFRESH")
+                    .reply(500, function() {
+                        apiCalls.push(Date.now());
+                        return {
+                            error: "Service temporary unavailable."
+                        };
+                    }, {
+                        'content-type': 'application/json; charset=utf-8',
+                        date: 'Mon, 10 Nov 2014 08:21:30 GMT',
+                        'transfer-encoding': 'chunked'
+                    });
+                var google = helper.getNode("google-config");
+                var clock = sinon.useFakeTimers({'toFake': ['setTimeout', 'Date']});
+                var apiCalls = [], startTime = Date.now();
+                var roundTo = function(n, digits) {
+                    var multiplicator = Math.pow(10, digits);
+                    return Math.round(n / multiplicator) * multiplicator;
+                };
+                google.eventEmitter.on('retry', function() {
+                    clock.tick(backoffTimes[apiCalls.length]);
+                });
+                google.request('https://accounts.google.com/o/oauth2/token', function (err, data) {
+                    var diffInMilliseconds = [];
+                    apiCalls.forEach(function(timestamp) {
+                        diffInMilliseconds.push(roundTo(timestamp - startTime, 2));
+                        startTime = timestamp;
+                    });
+                    backoffTimes.should.be.eql(diffInMilliseconds);
+                    clock.restore();
+                    done();
+                });
+            });
+
+        });
+
     });
 });
