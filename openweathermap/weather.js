@@ -91,9 +91,9 @@ module.exports = function(RED) {
                                 msg.payload.weather = jsun.weather[0].main;
                                 msg.payload.detail = jsun.weather[0].description;
                                 msg.payload.tempk = jsun.main.temp;
-                                if (jsun.main.hasOwnProperty("temp")) { msg.payload.tempc = parseInt(10 * (Number(jsun.main.temp) - 273.2))/10; }
-                                if (jsun.main.hasOwnProperty("temp_max")) { msg.payload.temp_maxc = parseInt(10 * (Number(jsun.main.temp_max) - 273.2))/10; }
-                                if (jsun.main.hasOwnProperty("temp_min")) { msg.payload.temp_minc = parseInt(10 * (Number(jsun.main.temp_min) - 273.2))/10; }
+                                if (jsun.main.hasOwnProperty("temp")) { msg.payload.tempc = parseInt(10 * (Number(jsun.main.temp) - 273.15))/10; }
+                                if (jsun.main.hasOwnProperty("temp_max")) { msg.payload.temp_maxc = parseInt(10 * (Number(jsun.main.temp_max) - 273.15))/10; }
+                                if (jsun.main.hasOwnProperty("temp_min")) { msg.payload.temp_minc = parseInt(10 * (Number(jsun.main.temp_min) - 273.15))/10; }
                                 msg.payload.humidity = jsun.main.humidity;
                                 msg.payload.maxtemp = jsun.main.temp_max;
                                 msg.payload.mintemp = jsun.main.temp_min;
@@ -152,9 +152,10 @@ module.exports = function(RED) {
 
     function OpenWeatherMapInputNode(n) {
         RED.nodes.createNode(this, n);
-        var node = this;
+        this.wtype = n.wtype;
         this.repeat = 600000;  // every 10 minutes
         this.interval_id = null;
+        var node = this;
         var previousdata = null;
         var city;
         var country;

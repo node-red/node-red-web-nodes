@@ -162,7 +162,7 @@
         <li><code>sunset</code> - the time at which the sun will set in Unix UTC format.</li>
         <li><code>clouds</code> - the current cloud coverage of the location in percent.</li>
     </ul>
-    <p>The 5 day forecast creates a 5 part array in <code>msg.payload</code> of objects with the following properties:</p>
+    <p>The 5 day forecast creates a 40 part array (5 days x 8, 3 hour intervals) in <code>msg.payload</code> of objects with the following properties:</p>
     <ul>
         <li><code>dt</code> - epoch timestamp
         <li><code>pressure</code> - in hPa
@@ -332,7 +332,7 @@
         <li><code>sunset</code> - the time at which the sun will set in Unix UTC format.</li>
         <li><code>clouds</code> - the current cloud coverage of the location in percent.</li>
     </ul>
-    <p>The 5 day forecast creates a 5 part array in <code>msg.payload</code> of objects with the following properties:</p>
+    <p>The 5 day forecast creates a 40 part (5 days x 8, 3 hour intervals) array in <code>msg.payload</code> of objects with the following properties:</p>
     <ul>
         <li><code>dt</code> - epoch timestamp
         <li><code>pressure</code> - in hPa
