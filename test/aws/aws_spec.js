@@ -102,7 +102,7 @@ describe('aws nodes', function() {
 
                             // wait for s3.on("input", ...) to be called
                             var onFunction = s3.on;
-                            var onStub = sinon.stub(s3, 'on', function(event, cb) {
+                            var onStub = sinon.stub(s3, 'on').callsFake(function(event, cb) {
                                 var res = onFunction.apply(s3, arguments);
                                 onStub.restore();
                                 s3.emit('input', {}); // trigger poll
@@ -149,7 +149,7 @@ describe('aws nodes', function() {
 
                             // wait for s3.on("input", ...) to be called
                             var onFunction = s3.on;
-                            var onStub = sinon.stub(s3, 'on', function(event, cb) {
+                            var onStub = sinon.stub(s3, 'on').callsFake(function(event, cb) {
                                 var res = onFunction.apply(s3, arguments);
                                 onStub.restore();
                                 s3.emit('input', {}); // trigger poll
@@ -193,7 +193,7 @@ describe('aws nodes', function() {
 
                             // wait for s3.on("input", ...) to be called
                             var onFunction = s3.on;
-                            var onStub = sinon.stub(s3, 'on', function(event, cb) {
+                            var onStub = sinon.stub(s3, 'on').callsFake(function(event, cb) {
                                 var res = onFunction.apply(s3, arguments);
                                 onStub.restore();
                                 s3.emit('input', {}); // trigger poll
@@ -246,7 +246,7 @@ describe('aws nodes', function() {
 
                             // wait for s3.on("input", ...) to be called
                             var onFunction = s3.on;
-                            var onStub = sinon.stub(s3, 'on', function(event, cb) {
+                            var onStub = sinon.stub(s3, 'on').callsFake(function(event, cb) {
                                 var res = onFunction.apply(s3, arguments);
                                 onStub.restore();
                                 s3.emit('input', {}); // trigger poll
@@ -291,7 +291,7 @@ describe('aws nodes', function() {
 
                             // wait for s3.on("input", ...) to be called
                             var onFunction = s3.on;
-                            var onStub = sinon.stub(s3, 'on', function(event, cb) {
+                            var onStub = sinon.stub(s3, 'on').callsFake(function(event, cb) {
                                 var res = onFunction.apply(s3, arguments);
                                 onStub.restore();
                                 s3.emit('input', {}); // trigger poll
@@ -382,11 +382,11 @@ describe('aws nodes', function() {
 
                      // wait for s3.on("input", ...) to be called
                      var onFunction = s3.on;
-                     var onStub = sinon.stub(s3, 'on', function(event, cb) {
+                     var onStub = sinon.stub(s3, 'on').callsFake(function(event, cb) {
                          var res = onFunction.apply(s3, arguments);
                          onStub.restore();
                          // stub status call to wait for successful upload
-                         var stub = sinon.stub(s3, 'status', function(status) {
+                         var stub = sinon.stub(s3, 'status').callsFake(function(status) {
                              if (Object.getOwnPropertyNames(status).length === 0) {
                                  stub.restore();
                                  done();

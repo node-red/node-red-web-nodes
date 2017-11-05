@@ -839,7 +839,7 @@ describe('google geocoding', function () {
 				geocoding.should.have.property('id', 'geocoding');
 				var output = helper.getNode("output");
 				output.should.have.property('id', 'output');
-				var stub = sinon.stub(geocoding, 'error', function (error) {
+				var stub = sinon.stub(geocoding, 'error').callsFake(function (error) {
 						stub.restore();
 						stub = null;
 						error.message.should.containEql("API key is invalid");
@@ -893,7 +893,7 @@ describe('google geocoding', function () {
 				geocoding.should.have.property('id', 'geocoding');
 				var output = helper.getNode("output");
 				output.should.have.property('id', 'output');
-				var stub = sinon.stub(geocoding, 'error', function (error) {
+				var stub = sinon.stub(geocoding, 'error').callsFake(function (error) {
 						stub.restore();
 						stub = null;
 						error.message.should.containEql("API key is invalid");

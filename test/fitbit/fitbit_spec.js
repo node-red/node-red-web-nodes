@@ -120,7 +120,7 @@ describe('fitbit nodes', function() {
 
                     // wait for fitbit.on("input", ...) to be called
                     var onFunction = fitbit.on;
-                    var onStub = sinon.stub(fitbit, 'on', function() {
+                    var onStub = sinon.stub(fitbit, 'on').callsFake(function() {
                         var res = onFunction.apply(fitbit, arguments);
                         onStub.restore();
                         fitbit.emit('input', {}); // trigger poll
@@ -186,7 +186,7 @@ describe('fitbit nodes', function() {
 
                     // wait for fitbit.on("input", ...) to be called
                     var onFunction = fitbit.on;
-                    var onStub = sinon.stub(fitbit, 'on', function() {
+                    var onStub = sinon.stub(fitbit, 'on').callsFake(function() {
                         var res = onFunction.apply(fitbit, arguments);
                         onStub.restore();
                         fitbit.emit('input', {}); // trigger poll
@@ -264,7 +264,7 @@ describe('fitbit nodes', function() {
 
                     // wait for fitbit.on("input", ...) to be called
                     var onFunction = fitbit.on;
-                    var onStub = sinon.stub(fitbit, 'on', function() {
+                    var onStub = sinon.stub(fitbit, 'on').callsFake(function() {
                         var res = onFunction.apply(fitbit, arguments);
                         onStub.restore();
                         fitbit.emit('input', {}); // trigger poll
@@ -319,7 +319,7 @@ describe('fitbit nodes', function() {
 
                     // wait for fitbit.on("input", ...) to be called
                     var onFunction = fitbit.on;
-                    var onStub = sinon.stub(fitbit, 'on', function() {
+                    var onStub = sinon.stub(fitbit, 'on').callsFake(function() {
                         var res = onFunction.apply(fitbit, arguments);
                         onStub.restore();
                         fitbit.emit('input', {}); // trigger poll
@@ -374,7 +374,7 @@ describe('fitbit nodes', function() {
 
                     // wait for fitbit.on("input", ...) to be called
                     var onFunction = fitbit.on;
-                    var onStub = sinon.stub(fitbit, 'on', function() {
+                    var onStub = sinon.stub(fitbit, 'on').callsFake(function() {
                         var res = onFunction.apply(fitbit, arguments);
                         onStub.restore();
                         fitbit.emit('input', {}); // trigger poll
@@ -429,7 +429,7 @@ describe('fitbit nodes', function() {
 
                     // wait for fitbit.on("input", ...) to be called
                     var onFunction = fitbit.on;
-                    var onStub = sinon.stub(fitbit, 'on', function() {
+                    var onStub = sinon.stub(fitbit, 'on').callsFake(function() {
                         var res = onFunction.apply(fitbit, arguments);
                         onStub.restore();
                         /* hack state so it thinks it was yesterdays data
@@ -450,9 +450,9 @@ describe('fitbit nodes', function() {
 
             it('can do oauth dance', function(done) {
                 helper.load(fitbitNode, [
-                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"input", type:"helper", wires:[["fitbit-node"]]},
                     {id:"fitbit-config", type:"fitbit-credentials"},
-                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                    {id:"fitbit-node", type:"fitbit", fitbit: "fitbit-config",
                      wires:[["output"]], dataType:"sleep"},
                     {id:"output", type:"helper"}], function() {
                     var scope = nock('https://api.fitbit.com:443')
@@ -517,9 +517,9 @@ describe('fitbit nodes', function() {
 
             it('can fetch sleep data', function(done) {
                 helper.load(fitbitNode, [
-                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"input", type:"helper", wires:[["fitbit-node"]]},
                     {id:"fitbit-config", type:"fitbit-credentials", username: "Bob"},
-                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config", wires:[["output"]],
+                    {id:"fitbit-node", type:"fitbit", fitbit: "fitbit-config", wires:[["output"]],
                      dataType:"sleep"},
                     {id:"output", type:"helper"}],
                     {
@@ -555,9 +555,9 @@ describe('fitbit nodes', function() {
                         'date': 'Mon, 29 Sep 2014 21:23:03 GMT',
                         'connection': 'close' });
                     var input = helper.getNode("input");
-                    var fitbit = helper.getNode("fitbit");
+                    var fitbit = helper.getNode("fitbit-node");
                     var output = helper.getNode("output");
-                    fitbit.should.have.property('id', 'fitbit');
+                    fitbit.should.have.property('id', 'fitbit-node');
                     input.send({ date: "2014-09-29" });
                     output.on('input', function(msg) {
                         var sleep = msg.payload;
@@ -572,10 +572,10 @@ describe('fitbit nodes', function() {
 
             it('handles empty sleep data', function(done) {
                 helper.load(fitbitNode, [
-                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"input", type:"helper", wires:[["fitbit-node"]]},
                     {id:"fitbit-config", type:"fitbit-credentials",
                      username: "Bob"},
-                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                    {id:"fitbit-node", type:"fitbit", fitbit: "fitbit-config",
                      wires:[["output"]], dataType:"sleep"},
                     {id:"output", type:"helper"}],
                     {
@@ -600,9 +600,9 @@ describe('fitbit nodes', function() {
                             'content-language': 'en',
                         });
                     var input = helper.getNode("input");
-                    var fitbit = helper.getNode("fitbit");
+                    var fitbit = helper.getNode("fitbit-node");
                     var output = helper.getNode("output");
-                    fitbit.should.have.property('id', 'fitbit');
+                    fitbit.should.have.property('id', 'fitbit-node');
                     input.send({ date: "2014-09-29" });
                     var errored = false;
                     setTimeout(function() {
@@ -619,10 +619,10 @@ describe('fitbit nodes', function() {
 
             it('can fetch badge data', function(done) {
                 helper.load(fitbitNode, [
-                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"input", type:"helper", wires:[["fitbit-node"]]},
                     {id:"fitbit-config", type:"fitbit-credentials",
                      username: "Bob"},
-                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                    {id:"fitbit-node", type:"fitbit", fitbit: "fitbit-config",
                      wires:[["output"]], dataType:"badges"},
                     {id:"output", type:"helper"}],
                     {
@@ -667,9 +667,9 @@ describe('fitbit nodes', function() {
                         'connection': 'close',
                     });
                     var input = helper.getNode("input");
-                    var fitbit = helper.getNode("fitbit");
+                    var fitbit = helper.getNode("fitbit-node");
                     var output = helper.getNode("output");
-                    fitbit.should.have.property('id', 'fitbit');
+                    fitbit.should.have.property('id', 'fitbit-node');
                     input.send({ date: "2014-09-29" });
                     output.on('input', function(msg) {
                         var badge = msg.payload.badges[0];
@@ -684,10 +684,10 @@ describe('fitbit nodes', function() {
 
             it('sets appropriate status on error', function(done) {
                 helper.load(fitbitNode, [
-                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"input", type:"helper", wires:[["fitbit-node"]]},
                     {id:"fitbit-config", type:"fitbit-credentials",
                      username: "Bob"},
-                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                    {id:"fitbit-node", type:"fitbit", fitbit: "fitbit-config",
                      wires:[["output"]], dataType:"badges"},
                     {id:"output", type:"helper"}],
                     {
@@ -703,13 +703,13 @@ describe('fitbit nodes', function() {
                             .get('/1/user/-/badges.json')
                             .reply(404, '{"errors":[ { "errorType":"foo", "fieldName":"bar", "message":"oops" } ] }');
                         var input = helper.getNode("input");
-                        var fitbit = helper.getNode("fitbit");
+                        var fitbit = helper.getNode("fitbit-node");
                         var output = helper.getNode("output");
                         var expected = [
                             {"fill":"blue","shape":"dot","text":"fitbit.status.querying"},
                             {"fill":"red","shape":"ring","text":"fitbit.status.failed"},
                         ];
-                        sinon.stub(fitbit, 'status', function(status) {
+                        sinon.stub(fitbit, 'status').callsFake(function(status) {
                             should.deepEqual(status, expected.shift());
                             if (expected.length === 0) {
                                 done();
@@ -721,9 +721,9 @@ describe('fitbit nodes', function() {
             
             it('fails oauth dance if client key is invalid', function(done) {
                 helper.load(fitbitNode, [
-                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"input", type:"helper", wires:[["fitbit-node"]]},
                     {id:"fitbit-config", type:"fitbit-credentials"},
-                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                    {id:"fitbit-node", type:"fitbit", fitbit: "fitbit-config",
                      wires:[["output"]],dataType:"sleep"},
                     {id:"output", type:"helper"}], function() {
                     var scope = nock('https://api.fitbit.com:443')
@@ -744,9 +744,9 @@ describe('fitbit nodes', function() {
 
             it('fails if access token request fails', function(done) {
                 helper.load(fitbitNode, [
-                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"input", type:"helper", wires:[["fitbit-node"]]},
                     {id:"fitbit-config", type:"fitbit-credentials"},
-                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                    {id:"fitbit-node", type:"fitbit", fitbit: "fitbit-config",
                      wires:[["output"]],dataType:"sleep"},
                     {id:"output", type:"helper"}], function() {
                     var scope = nock('https://api.fitbit.com:443')
@@ -794,9 +794,9 @@ describe('fitbit nodes', function() {
 
             it('fails if profile can\'t be retrieved', function(done) {
                 helper.load(fitbitNode, [
-                    {id:"input", type:"helper", wires:[["fitbit"]]},
+                    {id:"input", type:"helper", wires:[["fitbit-node"]]},
                     {id:"fitbit-config", type:"fitbit-credentials"},
-                    {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                    {id:"fitbit-node", type:"fitbit", fitbit: "fitbit-config",
                      wires:[["output"]],dataType:"sleep"},
                     {id:"output", type:"helper"}], function() {
                     var scope = nock('https://api.fitbit.com:443')
@@ -864,9 +864,9 @@ describe('fitbit nodes', function() {
 
         it('fails oauth dance if no client secret is supplied', function(done) {
             helper.load(fitbitNode, [
-                {id:"input", type:"helper", wires:[["fitbit"]]},
+                {id:"input", type:"helper", wires:[["fitbit-node"]]},
                 {id:"fitbit-config", type:"fitbit-credentials"},
-                {id:"fitbit", type:"fitbit", fitbit: "fitbit-config",
+                {id:"fitbit-node", type:"fitbit", fitbit: "fitbit-config",
                  wires:[["output"]],dataType:"sleep"},
                 {id:"output", type:"helper"}], function() {
                 helper.request()

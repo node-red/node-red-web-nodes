@@ -39,14 +39,8 @@ describe('instagram nodes', function() {
         if (testInterval !== null) {
             clearInterval(testInterval);
         }
-        try {
-            helper.unload();
-            helper.stopServer(done);
-        } catch (e) {
-            var errorMessage = "" + e;
-            errorMessage.should.be.exactly("Error: Not running");
-            done();
-        }
+        helper.unload();
+        helper.stopServer(done);
     });
 
     describe('query node', function() {
@@ -432,10 +426,10 @@ describe('instagram nodes', function() {
                         if(instagramNode1._events.input) {
                             instagramNode1.interval._repeat.should.be.true; // ensure that the query interval is indeed set
                             helper.unload();
-                            helper.stopServer();
+                            helperNode1.close();
                             clearInterval(testInterval);
                             testInterval = setInterval(function() {
-                                if(instagramNode1.interval._repeat === false) {
+                                if(instagramNode1.interval._repeat === null) {
                                     done(); // success, the automatic interval has been cleared
                                 }
                             }, 100);
@@ -489,7 +483,7 @@ describe('instagram nodes', function() {
 
                 if(workingSubsequentRequest === false) {
                     var sinon = require("sinon");
-                    var stub = sinon.stub(instagramNode1, 'warn', function() {
+                    var stub = sinon.stub(instagramNode1, 'warn').callsFake(function() {
                         stub.restore();
                         stub = null;
                         done();

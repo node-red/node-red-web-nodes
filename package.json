@@ -3,17 +3,17 @@
     "version": "0.3.4",
     "description": "A collection of Node-RED nodes for popular web services.",
     "dependencies": {
-        "aws-sdk": "^2.0.15",
-        "backoff": "~2.5.0",
+        "aws-sdk": "^2.145.0",
+        "backoff": "^2.5.0",
+        "clone": "0.1.11",
         "dropbox": "^0.10.3",
+        "instagram-node": "0.5.1",
+        "is-utf8": "0.2.*",
         "minimatch": "^1.0.0",
         "oauth": "~0.9.11",
         "request": "~2.74.0",
-        "instagram-node": "0.5.1",
-        "clone": "0.1.11",
-        "xml2js": "0.4.*",
         "should-sinon": "0.0.6",
-        "is-utf8": "0.2.*"
+        "xml2js": "0.4.*"
     },
     "repository": {
         "type": "git",

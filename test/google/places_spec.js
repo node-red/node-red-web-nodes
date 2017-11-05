@@ -256,7 +256,7 @@ describe('google places', function () {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     var sinon = require("sinon");
-                    var stub = sinon.stub(places, 'error', function (err) {
+                    var stub = sinon.stub(places, 'error').callsFake(function (err) {
                             stub.restore();
                             stub = null;
                             err.message.should.containEql("API key is invalid");
@@ -1366,7 +1366,7 @@ describe('google places', function () {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     var sinon = require("sinon");
-                    var stub = sinon.stub(places, 'error', function (err) {
+                    var stub = sinon.stub(places, 'error').callsFake(function (err) {
                             stub.restore();
                             stub = null;
                             err.message.should.containEql("API key is invalid");
@@ -1640,7 +1640,7 @@ describe('google places', function () {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     var sinon = require("sinon");
-                    var stub = sinon.stub(places, 'error', function (err) {
+                    var stub = sinon.stub(places, 'error').callsFake(function (err) {
                             stub.restore();
                             stub = null;
                             err.message.should.containEql("API key is invalid");
