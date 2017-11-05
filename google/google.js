@@ -38,6 +38,16 @@ module.exports = function(RED) {
         }
     });
 
+    function createExponentialBackoff() {
+        var exponentialBackoff = backoff.exponential({
+            initialDelay: 100,
+            maxDelay: 73000,
+            factor: 9
+        });
+        exponentialBackoff.failAfter(4);
+        return exponentialBackoff;
+    }
+
     GoogleNode.prototype.refreshToken = function(cb) {
         var credentials = this.credentials;
         var node = this;
@@ -47,12 +57,7 @@ module.exports = function(RED) {
             return cb(RED._("google.error.no-refresh-token"));
         }
 
-        var exponentialBackoff = backoff.exponential({
-            initialDelay: 100,
-            maxDelay: 73000,
-            factor: 9
-        });
-        exponentialBackoff.failAfter(4);
+        var exponentialBackoff = createExponentialBackoff();
         exponentialBackoff.on('backoff', function(number, delay) {
             node.warn(RED._("google.warn.retry-request", {number: number + 1, delay: delay}));
             node.eventEmitter.emit('retry', delay);
@@ -126,30 +131,42 @@ module.exports = function(RED) {
             });
             return;
         }
-        request(req, function(err, result, data) {
-            if (err) {
-                // handled in callback
-            } else if (result.statusCode >= 400) {
-                data = {
-                    error: {
-                        code: result.statusCode,
-                        message: result.body,
-                    },
-                };
-            } else if (data.error) {
-                if (data.error.code === 401 && retries > 0) {
-                    retries--;
+
+        var exponentialBackoff = createExponentialBackoff();
+        exponentialBackoff.on('backoff', function(number, delay) {
+            node.warn(RED._("google.warn.retry-request", {number: number + 1, delay: delay}));
+            node.eventEmitter.emit('retry', delay);
+        });
+        exponentialBackoff.on('fail', function(reason) {
+            node.error(RED._("google.error.too-many-refresh-attempts"));
+            cb(reason.err, reason.data);
+        });
+        exponentialBackoff.on('ready', function() {
+            request(req, function(err, result, data) {
+                if (err) {
+                    return exponentialBackoff.backoff({err: err, data: data});
+                } else if (result.statusCode >= 400) {
+                    data = {
+                        error: {
+                            code: result.statusCode,
+                            message: result.body,
+                        },
+                    };
+                    return exponentialBackoff.backoff({err: err, data: data});
+                } else if (data.error && data.error.code === 401) {
                     node.warn(RED._("google.warn.refreshing-accesstoken"));
                     node.refreshToken(function (err) {
                         if (err) {
-                            return cb(err, null);
+                            return cb(err);
                         }
-                        return node.request(req, retries, cb);
+                        return node.request(req, cb);
                     });
                 }
-            }
-            cb(err, data);
+                cb(err, data);
+            });
         });
+
+        exponentialBackoff.emit('ready');
     };
 
     RED.httpAdmin.get('/google-credentials/auth', function(req, res){

@@ -261,5 +261,59 @@ describe('google nodes', function() {
 
         });
 
+        it("should retry failed api requests multiple times, using exponential backoff strategy", function(done) {
+            // API calls should be retried after these delays. In worst case, it will take 82 seconds to retry
+            // calling the API last time (5th times in the series).
+            var backoffTimes = [0, 100, 900, 8100, 72900];
+
+            helper.load(googleNode, [
+                {id:"google-config", type:"google-credentials"}
+            ], {
+                "google-config": {
+                    clientId: "ID",
+                    clientSecret: "SECRET",
+                    accessToken: "TOKEN",
+                    refreshToken: "REFRESH",
+                    expireTime: Date.now() + 2000
+                }
+            }, function() {
+                nock('https://www.googleapis.com:443')
+                    .persist()
+                    .get('/any-resource')
+                    .reply(500, function() {
+                        apiCalls.push(Date.now());
+                        return {
+                            error: "Service temporary unavailable."
+                        };
+                    }, {
+                        'content-type': 'application/json; charset=utf-8',
+                        date: 'Mon, 10 Nov 2014 08:21:30 GMT',
+                        'transfer-encoding': 'chunked'
+                    });
+                var google = helper.getNode("google-config");
+                var clock = sinon.useFakeTimers({'toFake': ['setTimeout', 'Date']});
+                var apiCalls = [], startTime = Date.now();
+                var roundTo = function(n, digits) {
+                    var multiplicator = Math.pow(10, digits);
+                    return Math.round(n / multiplicator) * multiplicator;
+                };
+                google.eventEmitter.on('retry', function() {
+                    clock.tick(backoffTimes[apiCalls.length]);
+                });
+                google.request('https://www.googleapis.com/any-resource', function (err, data) {
+                    var diffInMilliseconds = [];
+                    apiCalls.forEach(function(timestamp) {
+                        diffInMilliseconds.push(roundTo(timestamp - startTime, 2));
+                        startTime = timestamp;
+                    });
+                    backoffTimes.should.be.eql(diffInMilliseconds);
+                    clock.restore();
+                    data.error.message.should.be.eql({error: 'Service temporary unavailable.'});
+                    done();
+                });
+            });
+
+        });
+
     });
 });
