@@ -47,7 +47,7 @@ module.exports = function(grunt) {
             all: {
                 src: ['*/*.js'],
                 filter: function(filepath) { // on some developer machines the test coverage HTML report utilities cause further failures
-                    if (filepath.indexOf("coverage/prettify.js") === -1) {
+                    if ((filepath.indexOf("coverage/prettify.js") === -1) && (filepath.indexOf("node_modules") === -1))  {
                         return true;
                     } else {
                         console.log("Filtered out " + filepath + " from the jshint checks");
