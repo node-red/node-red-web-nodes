@@ -151,7 +151,7 @@ describe('box nodes', function() {
 
                     // wait for s3.on("input", ...) to be called
                     var onFunction = box.on;
-                    var onStub = sinon.stub(box, 'on', function(event, cb) {
+                    var onStub = sinon.stub(box, 'on').callsFake(function(event, cb) {
                         var res = onFunction.apply(box, arguments);
                         onStub.restore();
                         box.emit('input', {}); // trigger poll
@@ -227,7 +227,7 @@ describe('box nodes', function() {
 
                     // wait for s3.on("input", ...) to be called
                     var onFunction = box.on;
-                    var onStub = sinon.stub(box, 'on', function(event, cb) {
+                    var onStub = sinon.stub(box, 'on').callsFake(function(event, cb) {
                         var res = onFunction.apply(box, arguments);
                         onStub.restore();
                         box.emit('input', {}); // trigger poll
@@ -291,7 +291,7 @@ describe('box nodes', function() {
 
                     // wait for s3.on("input", ...) to be called
                     var onFunction = box.on;
-                    var onStub = sinon.stub(box, 'on', function(event, cb) {
+                    var onStub = sinon.stub(box, 'on').callsFake(function(event, cb) {
                         var res = onFunction.apply(box, arguments);
                         onStub.restore();
                         box.emit('input', {}); // trigger poll
@@ -359,7 +359,7 @@ describe('box nodes', function() {
 
                     // wait for s3.on("input", ...) to be called
                     var onFunction = box.on;
-                    var onStub = sinon.stub(box, 'on', function(event, cb) {
+                    var onStub = sinon.stub(box, 'on').callsFake(function(event, cb) {
                         var res = onFunction.apply(box, arguments);
                         onStub.restore();
                         box.emit('input', {}); // trigger poll
@@ -421,7 +421,7 @@ describe('box nodes', function() {
 
                     // wait for s3.on("input", ...) to be called
                     var onFunction = box.on;
-                    var onStub = sinon.stub(box, 'on', function(event, cb) {
+                    var onStub = sinon.stub(box, 'on').callsFake(function(event, cb) {
                         var res = onFunction.apply(box, arguments);
                         onStub.restore();
                         box.emit('input', {}); // trigger poll
@@ -489,9 +489,9 @@ describe('box nodes', function() {
                     'content-length': '11',
                 });
             helper.load(boxNode,
-                [{id:"inject", type: "helper", wires: [["box"]]},
+                [{id:"inject", type: "helper", wires: [["box-instance"]]},
                  {id:"box-config", type: "box-credentials"},
-                 {id:"box", type:"box",
+                 {id:"box-instance", type:"box",
                   box: "box-config", wires: [["output"]] },
                  {id:"output", type: "helper" },
                 ], {
@@ -503,8 +503,8 @@ describe('box nodes', function() {
                         expireTime: 1000+(new Date().getTime()/1000)
                     }
                 }, function() {
-                    var box = helper.getNode("box");
-                    box.should.have.property('id', 'box');
+                    var box = helper.getNode("box-instance");
+                    box.should.have.property('id', 'box-instance');
                     var inject = helper.getNode("inject");
                     inject.should.have.property('id', 'inject');
                     var output = helper.getNode("output");
@@ -563,7 +563,7 @@ describe('box nodes', function() {
                     /----------------------------[a-z0-9]*/g,
                     '----------------------------blah')
                 .post('/api/2.0/files/content',
-                    "----------------------------blah\r\nContent-Disposition: form-data; name=\"filename\"; filename=\"foobar.txt\"\r\nContent-Type: text/plain\r\n\r\nhello world\r\n----------------------------blah\r\nContent-Disposition: form-data; name=\"parent_id\"\r\n\r\n2\r\n----------------------------blah--")
+                    "----------------------------blah\r\nContent-Disposition: form-data; name=\"filename\"; filename=\"foobar.txt\"\r\nContent-Type: text/plain\r\n\r\nhello world\r\n----------------------------blah\r\nContent-Disposition: form-data; name=\"parent_id\"\r\n\r\n2\r\n----------------------------blah--\r\n")
                 .reply(201, {
                     "total_count":1,"entries":[{
                         "type":"file","id":"3","name":"foobar.txt",
@@ -596,7 +596,7 @@ describe('box nodes', function() {
                     inject.should.have.property('id', 'inject');
 
                     // stub status call to wait for successful upload
-                    var stub = sinon.stub(box, 'status', function(status) {
+                    var stub = sinon.stub(box, 'status').callsFake(function(status) {
                         if (Object.getOwnPropertyNames(status).length === 0) {
                             stub.restore();
                             done();

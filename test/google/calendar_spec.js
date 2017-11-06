@@ -194,7 +194,7 @@ describe('google calendar nodes', function() {
 
                 // wait for calendar.status({}) to be called twice
                 var count = 0;
-                var stub = sinon.stub(calendar, 'status', function(status) {
+                var stub = sinon.stub(calendar, 'status').callsFake(function(status) {
                     if (Object.getOwnPropertyNames(status).length === 0) {
                         count++;
                         if (count == 2) {
@@ -357,7 +357,7 @@ describe('google calendar nodes', function() {
 
                 // wait for calendar.status({}) to be called twice
                 var count = 0;
-                var stub = sinon.stub(calendar, 'status', function(status) {
+                var stub = sinon.stub(calendar, 'status').callsFake(function(status) {
                     if (Object.getOwnPropertyNames(status).length === 0) {
                         count++;
                         if (count == 2) {
@@ -479,7 +479,7 @@ describe('google calendar nodes', function() {
 
                 // wait for calendar.on("input", ...) to be called
                 var onFunction = calendar.on;
-                var onStub = sinon.stub(calendar, 'on', function() {
+                var onStub = sinon.stub(calendar, 'on').callsFake(function() {
                     var res = onFunction.apply(calendar, arguments);
                     onStub.restore();
                     calendar.emit('input', {}); // trigger poll
@@ -545,7 +545,7 @@ describe('google calendar nodes', function() {
                 var calendar = helper.getNode("calendar");
                 calendar.should.have.property('id', 'calendar');
 
-                var stub = sinon.stub(calendar, 'status', function(status) {
+                var stub = sinon.stub(calendar, 'status').callsFake(function(status) {
                     if (Object.getOwnPropertyNames(status).length === 0) {
                         stub.restore();
                         done();
@@ -555,7 +555,7 @@ describe('google calendar nodes', function() {
 
                 // wait for calendar.on("input", ...) to be called
                 var onFunction = calendar.on;
-                var onStub = sinon.stub(calendar, 'on', function() {
+                var onStub = sinon.stub(calendar, 'on').callsFake(function() {
                     var res = onFunction.apply(calendar, arguments);
                     onStub.restore();
                     calendar.emit('input', {
@@ -624,7 +624,7 @@ describe('google calendar nodes', function() {
                 var calendar = helper.getNode("calendar");
                 calendar.should.have.property('id', 'calendar');
 
-                var stub = sinon.stub(calendar, 'status', function(status) {
+                var stub = sinon.stub(calendar, 'status').callsFake(function(status) {
                     if (Object.getOwnPropertyNames(status).length === 0) {
                         stub.restore();
                         done();
@@ -634,7 +634,7 @@ describe('google calendar nodes', function() {
 
                 // wait for calendar.on("input", ...) to be called
                 var onFunction = calendar.on;
-                var onStub = sinon.stub(calendar, 'on', function() {
+                var onStub = sinon.stub(calendar, 'on').callsFake(function() {
                     var res = onFunction.apply(calendar, arguments);
                     onStub.restore();
                     calendar.emit('input', {

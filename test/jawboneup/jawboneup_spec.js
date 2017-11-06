@@ -64,9 +64,9 @@ describe('jawboneup nodes', function() {
                                         if (err) {
                                         	return done(err);
                                         }
-                                        var state = res.text.split("state=n4%253A");
+                                        var token = decodeURIComponent(res.header.location).match(new RegExp('state=[^:]+:([^&]+)'))[1];
                                         helper.request()
-                                            .get('/jawboneup-credentials/auth/callback?code=123456&state=n4:'+state[1])
+                                            .get('/jawboneup-credentials/auth/callback?code=123456&state=n4:'+token)
                                             .expect(200)
                                             .end(function(err, res) {
                                                 if (err) {
@@ -112,18 +112,18 @@ describe('jawboneup nodes', function() {
                                 if (err) {
                                 	return done(err);
                                 }
-                              var state = res.text.split("state=n4%253A");
-                              helper.request()
-                                  .get('/jawboneup-credentials/auth/callback?code=123456&state=n4:'+state[1])
-                                  .expect(200)
-                                  .end(function(err, res) {
-                                      if (err) {
-                                    	  return done(err);
-                                      }
-                                      res.text.should.containEql('jawboneup.error.oautherrorinfo');
-                                      done();
-                                  });
-                            });
+                                var token = decodeURIComponent(res.header.location).match(new RegExp('state=[^:]+:([^&]+)'))[1];
+                                helper.request()
+                                    .get('/jawboneup-credentials/auth/callback?code=123456&state=n4:'+token)
+                                    .expect(200)
+                                    .end(function(err, res) {
+                                        if (err) {
+                                            return done(err);
+                                        }
+                                        res.text.should.containEql('jawboneup.error.oautherrorinfo');
+                                        done();
+                                    });
+                                });
                 });
            });
 
@@ -147,9 +147,9 @@ describe('jawboneup nodes', function() {
                                         if (err) {
                                         	return done(err);
                                         }
-                                        var state = res.text.split("state=n4%253A");
+                                        var token = decodeURIComponent(res.header.location).match(new RegExp('state=[^:]+:([^&]+)'))[1];
                                         helper.request()
-                                            .get('/jawboneup-credentials/auth/callback?code=123456&state=n4:'+state[1])
+                                            .get('/jawboneup-credentials/auth/callback?code=123456&state=n4:'+token)
                                             .expect(200)
                                             .end(function(err, res) {
                                                 if (err) {
@@ -226,7 +226,7 @@ describe('jawboneup nodes', function() {
                               var n3 = helper.getNode("n3");
                               n2.should.have.property('id','n2');
                               
-                              sinon.stub(n2, 'status', function(status){
+                              sinon.stub(n2, 'status').callsFake(function(status){
                                   var expected = {fill:"red",shape:"ring",text:"jawboneup.status.failed"};
                                   should.deepEqual(status, expected);
                                   done();

@@ -45,19 +45,19 @@ describe('weather nodes', function() {
         if (nock) {
             var scope = nock('http://api.openweathermap.org')
             //used to return normal data on a city/country call
-            .get('/data/2.5/weather?q=london,england&APPID=12345')
+            .get('/data/2.5/weather?lang=en&q=london,england&APPID=12345')
             .reply(200, {"coord":{"lon":-0.13,"lat":51.51},"sys":{"type":1,"id":5091,"message":0.0434,"country":"GB","sunrise":1412748812,"sunset":1412788938},"weather":[{"id":802,"main":"Clouds","description":"scattered clouds","icon":"03d"}],"base":"cmc stations","main":{"temp":290.12,"pressure":994,"humidity":63,"temp_min":289.15,"temp_max":291.15},"wind":{"speed":8.7,"deg":220,"var_beg":190,"var_end":250},"clouds":{"all":40},"dt":1412776848,"id":2643743,"name":"London","cod":200})
 
             //used to return a fail error
-            .get('/data/2.5/weather?q=fail,fail&APPID=12345')
+            .get('/data/2.5/weather?lang=en&q=fail,fail&APPID=12345')
             .reply(200,{message:"Error: Not found city"})
 
             //used to return normal data on a lat/lon call
-            .get('/data/2.5/weather?lat=51.51&lon=-0.13&APPID=12345')
+            .get('/data/2.5/weather?lang=en&lat=51.51&lon=-0.13&APPID=12345')
             .reply(200, {"coord":{"lon":-0.13,"lat":51.51},"sys":{"type":1,"id":5091,"message":0.0434,"country":"GB","sunrise":1412748812,"sunset":1412788938},"weather":[{"id":802,"main":"Clouds","description":"scattered clouds","icon":"03d"}],"base":"cmc stations","main":{"temp":290.12,"pressure":994,"humidity":63,"temp_min":289.15,"temp_max":291.15},"wind":{"speed":8.7,"deg":220,"var_beg":190,"var_end":250},"clouds":{"all":40},"dt":1412776848,"id":2643743,"name":"London","cod":200})
 
             //used to return a slightly different data set to normality. Used solely in the inject node test.
-            .get('/data/2.5/weather?q=test,test&APPID=12345')
+            .get('/data/2.5/weather?lang=en&q=test,test&APPID=12345')
             .reply(200, {"coord":{"lon":-0.13,"lat":51.51},"sys":{"type":1,"id":5091,"message":0.0434,"country":"GB","sunrise":1412748812,"sunset":1412788938},"weather":[{"id":802,"main":"Different","description":"scattered clouds","icon":"03d"}],"base":"cmc stations","main":{"temp":290.12,"pressure":994,"humidity":63,"temp_min":289.15,"temp_max":291.15},"wind":{"speed":8.7,"deg":220,"var_beg":190,"var_end":250},"clouds":{"all":40},"dt":1412776848,"id":2643743,"name":"London","cod":200});
         }
         helper.startServer(done);
@@ -165,7 +165,7 @@ describe('weather nodes', function() {
                 var n1 = helper.getNode("n1");
                 var weatherNode1 = helper.getNode("weatherNode1");
                 var n3 = helper.getNode("n3");
-                var stub = sinon.stub(weatherNode1, 'error', function(msg) {
+                var stub = sinon.stub(weatherNode1, 'error').callsFake(function(msg) {
                     msg.should.equal("weather.error.invalid-lat");
                     stub.restore();
                     done();
@@ -184,7 +184,7 @@ describe('weather nodes', function() {
                 var n1 = helper.getNode("n1");
                 var weatherNode1 = helper.getNode("weatherNode1");
                 var n3 = helper.getNode("n3");
-                var stub = sinon.stub(weatherNode1, 'error', function(msg) {
+                var stub = sinon.stub(weatherNode1, 'error').callsFake(function(msg) {
                     msg.should.equal("weather.error.invalid-lon");
                     stub.restore();
                     done();
@@ -206,7 +206,7 @@ describe('weather nodes', function() {
                                 var weatherNode1 = helper.getNode("weatherNode1");
                                 //weatherNode1.credentials = {apikey:"12345"}; <- this is the test
                                 var n3 = helper.getNode("n3");
-                                var stub = sinon.stub(weatherNode1, 'error', function(msg) {
+                                var stub = sinon.stub(weatherNode1, 'error').callsFake(function(msg) {
                                     msg.should.equal("weather.error.no-api-key");
                                     stub.restore();
                                     done();
@@ -341,7 +341,7 @@ describe('weather nodes', function() {
                     var weatherNode1 = helper.getNode("weatherNode1");
                     var n3 = helper.getNode("n3");
                     weatherNode1.credentials = {apikey:"12345"};
-                    var stub = sinon.stub(weatherNode1, 'error', function(msg) {
+                    var stub = sinon.stub(weatherNode1, 'error').callsFake(function(msg) {
                             msg.should.equal("weather.error.invalid-city_country");
                             stub.restore();
                             done();
@@ -362,7 +362,7 @@ describe('weather nodes', function() {
                     var weatherNode1 = helper.getNode("weatherNode1");
                     var n3 = helper.getNode("n3");
                     weatherNode1.credentials = {apikey:"12345"};
-                    var stub = sinon.stub(weatherNode1, 'error', function(msg) {
+                    var stub = sinon.stub(weatherNode1, 'error').callsFake(function(msg) {
                             msg.should.equal("weather.error.invalid-city_country");
                             stub.restore();
                             done();

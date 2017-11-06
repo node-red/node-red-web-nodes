@@ -122,7 +122,7 @@ describe('delicious nodes', function() {
                               var delicious = helper.getNode("delicious");
                               delicious.should.have.property('id','delicious');
                               inject.send({payload:"foobar", title:"test",description:"testdesc"});
-                              var stub = sinon.stub(delicious, 'status', function(status) {
+                              var stub = sinon.stub(delicious, 'status').callsFake(function(status) {
                                   if (Object.getOwnPropertyNames(status).length === 0) {
                                       stub.restore();
                                       done();
@@ -150,7 +150,7 @@ describe('delicious nodes', function() {
                               var inject = helper.getNode("inject");
                               var delicious = helper.getNode("delicious");
                               delicious.should.have.property('id','delicious');
-                              var stub = sinon.stub(delicious, 'status', function(status) {
+                              var stub = sinon.stub(delicious, 'status').callsFake(function(status) {
                                   if (status.text === "delicious.status.failed") {
                                       var expected = {fill:"red",shape:"ring",text:"delicious.status.failed"};
                                       should.deepEqual(status, expected);

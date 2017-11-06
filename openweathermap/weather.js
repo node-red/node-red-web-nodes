@@ -16,7 +16,7 @@
 
 module.exports = function(RED) {
     "use strict";
-    var http = require("http");
+    var request = require("request");
 
     function assignmentFunction(node, msg, lat, lon, city, country, language, callback) {
         if (country && city) {
@@ -67,79 +67,74 @@ module.exports = function(RED) {
             //and a node.error is reported.
             if (url) {
                 node.status({fill:"blue",shape:"dot",text:"weather.status.requesting"});
-                http.get(url, function(res) {
-                    var weather = "";
-                    res.on('data', function(d) {
-                        weather += d;
-                    });
-
-                    res.on('end', function() {
-                        var jsun;
-                        if (weather.indexOf("Invalid API key") > -1) {
-                            callback(RED._("weather.error.invalid-key"));
-                            return;
-                        }
-                        try {
-                            jsun = JSON.parse(weather);
-                        } catch (e) {
-                            callback(RED._("weather.error.invalid-json"));
-                            return;
-                        }
-                        if (jsun) {
-                            msg.data = jsun;
-                            if (jsun.hasOwnProperty("weather") && jsun.hasOwnProperty("main")) {
-                                msg.payload.weather = jsun.weather[0].main;
-                                msg.payload.detail = jsun.weather[0].description;
-                                msg.payload.tempk = jsun.main.temp;
-                                if (jsun.main.hasOwnProperty("temp")) { msg.payload.tempc = parseInt(10 * (Number(jsun.main.temp) - 273.15))/10; }
-                                if (jsun.main.hasOwnProperty("temp_max")) { msg.payload.temp_maxc = parseInt(10 * (Number(jsun.main.temp_max) - 273.15))/10; }
-                                if (jsun.main.hasOwnProperty("temp_min")) { msg.payload.temp_minc = parseInt(10 * (Number(jsun.main.temp_min) - 273.15))/10; }
-                                msg.payload.humidity = jsun.main.humidity;
-                                msg.payload.maxtemp = jsun.main.temp_max;
-                                msg.payload.mintemp = jsun.main.temp_min;
-                                msg.payload.windspeed = jsun.wind.speed;
-                                msg.payload.winddirection = jsun.wind.deg;
-                                msg.payload.location = jsun.name;
-                                msg.payload.sunrise = jsun.sys.sunrise;
-                                msg.payload.sunset = jsun.sys.sunset;
-                                msg.payload.clouds = jsun.clouds.all;
-                                if (jsun.hasOwnProperty("coord")) {
-                                    msg.location.lon = jsun.coord.lon;
-                                    msg.location.lat = jsun.coord.lat;
-                                }
-                                msg.location.city = jsun.name;
-                                msg.location.country = jsun.sys.country;
-                                if (jsun.hasOwnProperty("dt")) { msg.time = new Date(jsun.dt*1000); }
-                                msg.title = RED._("weather.message.title");
-                                msg.description = RED._("weather.message.description", {lat: msg.location.lat, lon: msg.location.lon});
-                                msg.payload.description = (RED._("weather.message.payload", {name: jsun.name, lat: jsun.coord.lat, lon: jsun.coord.lon, main: jsun.weather[0].main, description: jsun.weather[0].description}));
-                                callback();
-                            } else if (jsun.hasOwnProperty("list")) {
-                                msg.payload = jsun.list;
-                                if (jsun.hasOwnProperty("city")) {
-                                    msg.location.city = jsun.city.name;
-                                    msg.location.country = jsun.city.country;
-                                    if (jsun.city.hasOwnProperty("coord")) {
-                                        msg.location.lat = jsun.city.coord.lat;
-                                        msg.location.lon = jsun.city.coord.lon;
-                                    }
-                                }
-                                msg.title = RED._("weather.message.forecast");
-                                callback();
-                            } else {
-                                if (jsun.message === "Error: Not found city") {
-                                    callback(RED._("weather.error.invalid-city_country"));
-                                    return;
-                                } else {
-                                    callback(jsun.cod + " " + jsun.message);
-                                    return;
+                request.get(url, function(error, result, data) {
+                    if (error) {
+                        callback(error);
+                        return;
+                    }
+                    var weather = data;
+                    var jsun;
+                    if (weather.indexOf("Invalid API key") > -1) {
+                        callback(RED._("weather.error.invalid-key"));
+                        return;
+                    }
+                    try {
+                        jsun = JSON.parse(weather);
+                    } catch (e) {
+                        callback(RED._("weather.error.invalid-json"));
+                        return;
+                    }
+                    if (jsun) {
+                        msg.data = jsun;
+                        if (jsun.hasOwnProperty("weather") && jsun.hasOwnProperty("main")) {
+                            msg.payload.weather = jsun.weather[0].main;
+                            msg.payload.detail = jsun.weather[0].description;
+                            msg.payload.tempk = jsun.main.temp;
+                            if (jsun.main.hasOwnProperty("temp")) { msg.payload.tempc = parseInt(10 * (Number(jsun.main.temp) - 273.15))/10; }
+                            if (jsun.main.hasOwnProperty("temp_max")) { msg.payload.temp_maxc = parseInt(10 * (Number(jsun.main.temp_max) - 273.15))/10; }
+                            if (jsun.main.hasOwnProperty("temp_min")) { msg.payload.temp_minc = parseInt(10 * (Number(jsun.main.temp_min) - 273.15))/10; }
+                            msg.payload.humidity = jsun.main.humidity;
+                            msg.payload.maxtemp = jsun.main.temp_max;
+                            msg.payload.mintemp = jsun.main.temp_min;
+                            msg.payload.windspeed = jsun.wind.speed;
+                            msg.payload.winddirection = jsun.wind.deg;
+                            msg.payload.location = jsun.name;
+                            msg.payload.sunrise = jsun.sys.sunrise;
+                            msg.payload.sunset = jsun.sys.sunset;
+                            msg.payload.clouds = jsun.clouds.all;
+                            if (jsun.hasOwnProperty("coord")) {
+                                msg.location.lon = jsun.coord.lon;
+                                msg.location.lat = jsun.coord.lat;
+                            }
+                            msg.location.city = jsun.name;
+                            msg.location.country = jsun.sys.country;
+                            if (jsun.hasOwnProperty("dt")) { msg.time = new Date(jsun.dt*1000); }
+                            msg.title = RED._("weather.message.title");
+                            msg.description = RED._("weather.message.description", {lat: msg.location.lat, lon: msg.location.lon});
+                            msg.payload.description = (RED._("weather.message.payload", {name: jsun.name, lat: jsun.coord.lat, lon: jsun.coord.lon, main: jsun.weather[0].main, description: jsun.weather[0].description}));
+                            callback();
+                        } else if (jsun.hasOwnProperty("list")) {
+                            msg.payload = jsun.list;
+                            if (jsun.hasOwnProperty("city")) {
+                                msg.location.city = jsun.city.name;
+                                msg.location.country = jsun.city.country;
+                                if (jsun.city.hasOwnProperty("coord")) {
+                                    msg.location.lat = jsun.city.coord.lat;
+                                    msg.location.lon = jsun.city.coord.lon;
                                 }
                             }
+                            msg.title = RED._("weather.message.forecast");
+                            callback();
+                        } else {
+                            if (jsun.message === "Error: Not found city") {
+                                callback(RED._("weather.error.invalid-city_country"));
+                                return;
+                            } else {
+                                callback(jsun.cod + " " + jsun.message);
+                                return;
+                            }
                         }
-                    });
-                }).on('error', function(e) {
-                    callback(e);
-                    return;
+                    }
                 });
                 node.status({});
             } else {

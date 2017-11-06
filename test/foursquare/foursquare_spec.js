@@ -59,9 +59,9 @@ describe('foursquare nodes', function() {
                                         if (err) {
                                         	return done(err);
                                         }
-                                        var state = res.text.split("state=n4%253A");
+                                        var token = decodeURIComponent(res.header.location).match(new RegExp('state=[^:]+:([^&]+)'))[1];
                                         helper.request()
-                                            .get('/foursquare-credentials/auth/callback?code=123456&state=n4:'+state[1])
+                                            .get('/foursquare-credentials/auth/callback?code=123456&state=n4:'+token)
                                             .expect(200)
                                             .end(function(err, res) {
                                                 if (err) {
@@ -105,17 +105,17 @@ describe('foursquare nodes', function() {
                                 if (err) {
                                 	return done(err);
                                 }
-                              var state = res.text.split("state=n4%253A");
-                              helper.request()
-                                  .get('/foursquare-credentials/auth/callback?code=123456&state=n4:'+state[1])
-                                  .expect(200)
-                                  .end(function(err, res) {
-                                      if (err) {
-                                    	  return done(err);
-                                      }
-                                      res.text.should.containEql('foursquare.error.oauth-error-status');
-                                      done();
-                                  });
+                                var token = decodeURIComponent(res.header.location).match(new RegExp('state=[^:]+:([^&]+)'))[1];
+                                helper.request()
+                                    .get('/foursquare-credentials/auth/callback?code=123456&state=n4:'+token)
+                                    .expect(200)
+                                    .end(function(err, res) {
+                                        if (err) {
+                                            return done(err);
+                                        }
+                                        res.text.should.containEql('foursquare.error.oauth-error-status');
+                                        done();
+                                    });
                             });
                 });
            });
@@ -142,9 +142,9 @@ describe('foursquare nodes', function() {
                                         if (err) {
                                         	return done(err);
                                         }
-                                        var state = res.text.split("state=n4%253A");
+                                        var token = decodeURIComponent(res.header.location).match(new RegExp('state=[^:]+:([^&]+)'))[1];
                                         helper.request()
-                                            .get('/foursquare-credentials/auth/callback?code=123456&state=n4:'+state[1])
+                                            .get('/foursquare-credentials/auth/callback?code=123456&state=n4:'+token)
                                             .expect(200)
                                             .end(function(err, res) {
                                                 if (err) {
@@ -215,7 +215,7 @@ describe('foursquare nodes', function() {
                           var n3 = helper.getNode("n3");
                           n2.should.have.property('id','n2');
                           
-                          sinon.stub(n2, 'status', function(status){
+                          sinon.stub(n2, 'status').callsFake(function(status){
                               var expected = {fill:"red",shape:"ring",text:"foursquare.status.failed"};
                               should.deepEqual(status, expected);
                               done();
@@ -245,7 +245,7 @@ describe('foursquare nodes', function() {
                           var n3 = helper.getNode("n3");
                           n2.should.have.property('id','n2');
                           
-                          sinon.stub(n2, 'status', function(status){
+                          sinon.stub(n2, 'status').callsFake(function(status){
                               var expected = {fill:"red",shape:"ring",text:"foursquare.status.failed"};
                               should.deepEqual(status, expected);
                               done();
@@ -275,7 +275,7 @@ describe('foursquare nodes', function() {
                           var n3 = helper.getNode("n3");
                           n2.should.have.property('id','n2');
                           
-                          sinon.stub(n2, 'status', function(status){
+                          sinon.stub(n2, 'status').callsFake(function(status){
                               var expected = {fill:"red",shape:"ring",text:"foursquare.status.failed"};
                               should.deepEqual(status, expected);
                               done();
@@ -311,7 +311,7 @@ describe('foursquare nodes', function() {
                               var n3 = helper.getNode("n3");
                               n2.should.have.property('id','n2');
                               
-                              sinon.stub(n2, 'status', function(status){
+                              sinon.stub(n2, 'status').callsFake(function(status){
                                   var expected = {fill:"red",shape:"ring",text:"foursquare.status.failed"};
                                   should.deepEqual(status, expected);
                                   done();

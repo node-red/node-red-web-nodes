@@ -1,26 +1,43 @@
 {
-    "name"          : "node-red-node-web-nodes",
-    "version"       : "0.3.4",
-    "description"   : "A collection of Node-RED nodes for popular web services.",
-    "dependencies"  : {
-        "aws-sdk": "^2.0.15",
-        "dropbox":"^0.10.3",
-        "minimatch": "^1.0.0",
-        "oauth":"~0.9.11",
-        "request":"~2.74.0",
-        "instagram-node":"0.5.1",
+    "name": "node-red-node-web-nodes",
+    "version": "0.3.4",
+    "description": "A collection of Node-RED nodes for popular web services.",
+    "dependencies": {
+        "aws-sdk": "^2.145.0",
+        "backoff": "^2.5.0",
         "clone": "0.1.11",
-        "xml2js":"0.4.*",
-        "is-utf8":"0.2.*"
+        "dropbox": "^0.10.3",
+        "instagram-node": "0.5.1",
+        "is-utf8": "0.2.*",
+        "minimatch": "^1.0.0",
+        "oauth": "~0.9.11",
+        "request": "~2.74.0",
+        "should-sinon": "0.0.6",
+        "xml2js": "0.4.*"
     },
-    "repository" : {
-        "type":"git",
-        "url":"https://github.com/node-red/node-red-web-nodes"
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/node-red/node-red-web-nodes"
     },
     "license": "Apache-2.0",
-    "keywords": [ "node-red", "flickr", "pinboard", "dropbox", "aws", "s3", "swarm", "foursquare"," instagram","google","tfl","strava","forecastio","jawbone" ],
-    "node-red"      : {
-        "nodes"     : {
+    "keywords": [
+        "node-red",
+        "flickr",
+        "pinboard",
+        "dropbox",
+        "aws",
+        "s3",
+        "swarm",
+        "foursquare",
+        " instagram",
+        "google",
+        "tfl",
+        "strava",
+        "forecastio",
+        "jawbone"
+    ],
+    "node-red": {
+        "nodes": {
             "aws": "aws/aws.js",
             "box": "box/box.js",
             "s3": "aws/s3.js",
@@ -29,10 +46,10 @@
             "fitbit": "fitbit/fitbit.js",
             "flickr": "flickr/flickr.js",
             "dropbox": "dropbox/dropbox.js",
-            "foursquare":"foursquare/foursquare.js",
-            "swarm":"foursquare/swarm.js",
-            "instagram" : "instagram/instagram.js",
-            "jawboneup" : "jawboneup/jawboneup.js",
+            "foursquare": "foursquare/foursquare.js",
+            "swarm": "foursquare/swarm.js",
+            "instagram": "instagram/instagram.js",
+            "jawboneup": "jawboneup/jawboneup.js",
             "google": "google/google.js",
             "googlecalendar": "google/calendar.js",
             "googleplaces": "google/places.js",
@@ -52,7 +69,7 @@
         "grunt-jscs": "^2.8.*",
         "mocha": "^2.4.5",
         "should": "^8.3.1",
-        "sinon": "^1.17.6",
+        "sinon": "^3.2.1",
         "supertest": "^1.2.0",
         "fs-extra": "^0.11.1",
         "nock": "^0.48.0"

@@ -1321,7 +1321,7 @@ describe('google plus', function () {
                 plus.should.have.property('id', 'plus');
                 var output = helper.getNode("output");
                 output.should.have.property('id', 'output');
-                var stub = sinon.stub(plus, 'error', function (error) {
+                var stub = sinon.stub(plus, 'error').callsFake(function (error) {
                     stub.restore();
                     stub = null;
                     error.message.should.containEql("plus.error.no-accesstoken");
