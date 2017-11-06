@@ -47,11 +47,11 @@ module.exports = function(grunt) {
             all: {
                 src: ['*/*.js'],
                 filter: function(filepath) { // on some developer machines the test coverage HTML report utilities cause further failures
-                    if ((filepath.indexOf("coverage/prettify.js") === -1) && (filepath.indexOf("node_modules") === -1))  {
-                        return true;
-                    } else {
-                        console.log("Filtered out " + filepath + " from the jshint checks");
+                    if ((filepath.indexOf("coverage/") !== -1) || (filepath.indexOf("node_modules") !== -1)) {
+                        console.log( "\033[30m  filtered out \033[32m:\033[37m " + filepath + "\033[0m");
                         return false;
+                    } else {
+                        return true;
                     }
                 }
             },
