@@ -195,7 +195,7 @@
         icon: "amazon.png",
         align: "right",
         label: function() {
-            return this.bucket ? "s3 "+this.bucket : "s3";
+            return this.name || this.bucket ? "s3 "+this.bucket : "s3";
         }
     });
 </script>
