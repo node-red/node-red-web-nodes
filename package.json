@@ -2,6 +2,12 @@
     "name": "node-red-node-web-nodes",
     "version": "0.3.5",
     "description": "A collection of Node-RED nodes for popular web services.",
+    "homepage": "http://nodered.org",
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/node-red/node-red-web-nodes.git"
+    },
     "dependencies": {
         "aws-sdk": "^2.145.0",
         "backoff": "^2.5.0",
@@ -15,11 +21,6 @@
         "should-sinon": "0.0.6",
         "xml2js": "0.4.*"
     },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/node-red/node-red-web-nodes"
-    },
-    "license": "Apache-2.0",
     "keywords": [
         "node-red",
         "flickr",
@@ -62,16 +63,16 @@
         }
     },
     "devDependencies": {
+        "fs-extra": "^0.11.1",
         "grunt": "^0.4.5",
-        "grunt-simple-mocha": "^0.4.*",
         "grunt-contrib-jshint": "^1.0.*",
+		"grunt-jscs": "^2.8.*",
         "grunt-lint-inline": "^0.4.4",
-        "grunt-jscs": "^2.8.*",
+        "grunt-simple-mocha": "^0.4.*", 
         "mocha": "^2.4.5",
+		"nock": "^0.48.0",
         "should": "^8.3.1",
         "sinon": "^3.2.1",
-        "supertest": "^1.2.0",
-        "fs-extra": "^0.11.1",
-        "nock": "^0.48.0"
+        "supertest": "^1.2.0"
     }
 }

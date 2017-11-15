@@ -18,21 +18,21 @@ module.exports = function(RED) {
     "use strict";
     var request = require('request');
     var clone = require('clone');
-    
+
     function GoogleDirectionsNode(n) {
         RED.nodes.createNode(this,n);
         var node = this;
         this.googleAPI = RED.nodes.getNode(n.googleAPI);
-        
-        this.on('input', function(msg){
+
+        this.on('input', function(msg) {
             var url, queryParams, key, origin, destination, mode, waypoints, alternatives, avoid, language, units, region, departure_time, arrival_time, transit_mode, transit_routing_preferences;
-            
-            if(this.googleAPI && this.googleAPI.credentials && this.googleAPI.credentials.key){
+
+            if (this.googleAPI && this.googleAPI.credentials && this.googleAPI.credentials.key) {
                 key = this.googleAPI.credentials.key;
-            } else if(msg.key){
+            } else if (msg.key) {
                 key = msg.key;
             }
-            
+
             origin = n.origin || msg.origin;
             destination = n.destination || msg.destination;
             mode = n.mode || msg.mode;
@@ -46,25 +46,24 @@ module.exports = function(RED) {
             arrival_time = n.arrival_time || msg.arrival_time;
             transit_mode = n.transit_mode || msg.transit_mode;
             transit_routing_preferences = n.transit_routing_preferences || msg.transit_routing_preferences;
-            
-            
-            function processInput(){
+
+            function processInput() {
                 queryParams = {};
-                
-                if(key){
+
+                if (key) {
                     queryParams.key = key;
                 }
-                
-                directionsRequest(function(response){
-                    if(response){
+
+                directionsRequest(function(response) {
+                    if (response) {
                         node.send(response);
                     }
                 });
             }
-            
-            function directionsRequest(cb){
+
+            function directionsRequest(cb) {
                 url = 'https://maps.googleapis.com/maps/api/directions/json';
-                if(!origin){
+                if (!origin) {
                     throwNodeError({
                         code: 400,
                         message: RED._("directions.error.no-origin"),
@@ -72,7 +71,7 @@ module.exports = function(RED) {
                     }, msg);
                     return;
                 }
-                if(!destination){
+                if (!destination) {
                     throwNodeError({
                         code: 400,
                         message: RED._("directions.error.no-destination"),
@@ -82,62 +81,62 @@ module.exports = function(RED) {
                 }
                 queryParams.origin = origin;
                 queryParams.destination = destination;
-                if(mode){
+                if (mode) {
                     queryParams.mode = mode;
                 }
-                if(waypoints){
+                if (waypoints) {
                     queryParams.waypoints = waypoints;
                 }
-                if(alternatives){
+                if (alternatives) {
                     queryParams.alternatives = alternatives;
                 }
-                if(avoid){
+                if (avoid) {
                     queryParams.avoid = avoid;
                 }
-                if(language){
+                if (language) {
                     queryParams.language = language;
                 }
-                if(units){
+                if (units) {
                     queryParams.units = units;
                 }
-                if(region){
+                if (region) {
                     queryParams.region = region;
                 }
-                if(departure_time){
+                if (departure_time) {
                     queryParams.departure_time = departure_time;
                 }
-                if(arrival_time){
+                if (arrival_time) {
                     queryParams.arrival_time = arrival_time;
                 }
-                if(transit_mode){
+                if (transit_mode) {
                     queryParams.transit_mode = transit_mode;
                 }
-                if(transit_routing_preferences){
+                if (transit_routing_preferences) {
                     queryParams.transit_routing_preferences = transit_routing_preferences;
                 }
-//                console.log(queryParams);
-                sendReqToGoogle(function(err, data){
-                    if(err){
-//                        console.log(err);
+                // console.log(queryParams);
+                sendReqToGoogle(function(err, data) {
+                    if (err) {
+                        // console.log(err);
                         throwNodeError(err, msg);
                         return;
-                    } else{
-                        handleDirectionsResponse(JSON.parse(data), function(msg){
+                    } else {
+                        handleDirectionsResponse(JSON.parse(data), function(msg) {
                             cb(msg);
                         });
                     }
                 });
             }
-            
-            function handleDirectionsResponse(data, cb){
+
+            function handleDirectionsResponse(data, cb) {
                 var newMsg;
-                if(data.status == 'OK'){
+                if (data.status == 'OK') {
                     newMsg = cloneMsg(msg);     //quick clone msg
                     newMsg.payload = {
                         routes: [],
                         status: data.status
                     };
-                    for(var i = 0; i < data.routes.length; i++){
+                    for (var i = 0; i < data.routes.length; i++) {
                         newMsg.payload.routes.push(parseRoute(data.routes[i]));
                     }
                     newMsg.status = data.status;
@@ -158,7 +157,7 @@ module.exports = function(RED) {
                         }
                     };
                     cb(newMsg);
-                } else if (data.status == 'ZERO_RESULTS'){
+                } else if (data.status == 'ZERO_RESULTS') {
                     newMsg = cloneMsg(msg);     //quick clone msg
                     newMsg.payload = {
                         status: 'ZERO_RESULTS'
@@ -166,10 +165,10 @@ module.exports = function(RED) {
                     newMsg.title = 'ZERO_RESULTS';
                     newMsg.description = 'ZERO_RESULTS';
                     cb(newMsg);
-                }else{
+                } else {
                     var error = {};
                     error.status = data.status;
-                    switch(data.status){
+                    switch(data.status) {
                         case 'NOT_FOUND':
                             error.code = 400;
                             error.message = RED._("directions.error.no-waypoint");
@@ -206,18 +205,18 @@ module.exports = function(RED) {
                     return;
                 }
             }
-            
-            function sendReqToGoogle(cb){
+
+            function sendReqToGoogle(cb) {
                 request.get({
                     url: url,
                     qs: queryParams,
                     method: "GET"
-                }, function(err, resp, body){
+                }, function(err, resp, body) {
                     cb(err, body);
                 });
             }
-            
-            function parseRoute(route){
+
+            function parseRoute(route) {
                 var parsedRoute = {};
                 parsedRoute.copyrights = route.copyrights;
                 parsedRoute.summary = route.summary;
@@ -231,21 +230,21 @@ module.exports = function(RED) {
                         lon: route.bounds.southwest.lng
                     }
                 };
-                if(route.warnings.length > 0){
+                if (route.warnings.length > 0) {
                     parsedRoute.warnings = route.warnings;
                 }
-                if(route.waypoint_order.length > 0){
+                if (route.waypoint_order.length > 0) {
                     parsedRoute.waypoint_order = route.waypoint_order;
                 }
                 parsedRoute.fare = route.fare;
                 parsedRoute.legs = [];
-                for(var i = 0; i < route.legs.length; i++){
+                for (var i = 0; i < route.legs.length; i++) {
                     parsedRoute.legs.push(parseLeg(route.legs[i]));
                 }
                 return parsedRoute;
             }
-            
-            function parseLeg(leg){
+
+            function parseLeg(leg) {
                 var parsedLeg = {};
                 parsedLeg.distance = leg.distance;
                 parsedLeg.duration = leg.duration;
@@ -263,13 +262,13 @@ module.exports = function(RED) {
                     lon: leg.end_location.lng
                 };
                 parsedLeg.steps = [];
-                for(var i = 0; i < leg.steps.length; i++){
+                for (var i = 0; i < leg.steps.length; i++) {
                     parsedLeg.steps.push(parseStep(leg.steps[i]));
                 }
                 return parsedLeg;
             }
-            
-            function parseStep(step){
+
+            function parseStep(step) {
                 var parsedStep = {};
                 parsedStep.distance = step.distance;
                 parsedStep.duration = step.duration;
@@ -284,16 +283,15 @@ module.exports = function(RED) {
                 parsedStep.html_instructions = step.html_instructions;
                 parsedStep.maneuver = step.maneuver;
                 parsedStep.travel_mode = step.travel_mode;
-                if(parsedStep.travel_mode == 'transit'){
+                if (parsedStep.travel_mode == 'transit') {
                     parsedStep.transit_details = step.transit_details;
                 }
                 return parsedStep;
             }
-            
             processInput();
         });
 
-        function throwNodeError(err, msg){
+        function throwNodeError(err, msg) {
             node.status({fill:"red",shape:"ring",text:"directions.status.failed"});
             msg.error = err;
             node.error(err, msg);
@@ -301,8 +299,8 @@ module.exports = function(RED) {
         }
     }
     RED.nodes.registerType("google directions",GoogleDirectionsNode);
-    
-    function cloneMsg(msg){
+
+    function cloneMsg(msg) {
         var req = msg.req;
         var res = msg.res;
         delete msg.req;
