@@ -1,6 +1,6 @@
 {
     "name"          : "node-red-node-weather-underground",
-    "version"       : "0.1.10",
+    "version"       : "0.1.11",
     "description"   : "A Node-RED node that gets the weather report and forecast from The Weather Underground",
     "dependencies"  : {
         "wundergroundnode":"0.11.*"

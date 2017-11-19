@@ -63,7 +63,7 @@ module.exports = function(RED) {
         }
 
         var handleResponse = function(res) {
-            if (res.response.hasOwnProperty("error")) {
+            if (res && res.hasOwnProperty("response") && res.response.hasOwnProperty("error")) {
                 callback(res.response.error);
             }
             else {
