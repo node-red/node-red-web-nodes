@@ -40,6 +40,7 @@ Current conditions will return
 
   - **description** - a brief verbal description of the current weather for human reading.
   - **weather** - a very short description of the current weather.
+  - **icon** - the weather icon code for the current conditions.
   - **tempc** - the current ground temperature at that location in Celsius.
   - **tempk** - the current ground temperature at that location in Kelvin.
   - **humidity** - the current relative humidity at the location in percent.
