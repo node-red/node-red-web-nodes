@@ -89,6 +89,7 @@ module.exports = function(RED) {
                         if (jsun.hasOwnProperty("weather") && jsun.hasOwnProperty("main")) {
                             msg.payload.weather = jsun.weather[0].main;
                             msg.payload.detail = jsun.weather[0].description;
+                            msg.payload.icon = jsun.weather[0].icon;
                             msg.payload.tempk = jsun.main.temp;
                             if (jsun.main.hasOwnProperty("temp")) { msg.payload.tempc = parseInt(10 * (Number(jsun.main.temp) - 273.15))/10; }
                             if (jsun.main.hasOwnProperty("temp_max")) { msg.payload.temp_maxc = parseInt(10 * (Number(jsun.main.temp_max) - 273.15))/10; }
