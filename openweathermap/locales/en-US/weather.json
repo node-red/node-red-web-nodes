@@ -33,7 +33,21 @@
             "option_lang_tr": "Turkish",
             "option_lang_hr": "Croatian",
             "option_lang_ca": "Catalan",
-            "option_lang_hu": "Hungarian"
+            "option_lang_hu": "Hungarian",
+            "option_lang_ar": "Arabic",
+            "option_lang_cz": "Czech",
+            "option_lang_el": "Greek",
+            "option_lang_fa": "Persian (Farsi)",
+            "option_lang_gl": "Galician",
+            "option_lang_ja": "Japanese",
+            "option_lang_kr": "Korean",
+            "option_lang_la": "Latvian",
+            "option_lang_lt": "Lithuanian",
+            "option_lang_mk": "Macedonian",
+            "option_lang_sk": "Slovak",
+            "option_lang_sl": "Slovenian",
+            "option_lang_vi": "Vietnamese",
+            "option_lang_xx": "Set by msg.language"
         },
         "placeholder": {
             "name": "Name",

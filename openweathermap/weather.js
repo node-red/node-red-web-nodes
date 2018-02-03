@@ -173,6 +173,9 @@ module.exports = function(RED) {
                 lon = n.lon;
             }
             language = n.language || "en";
+            if (language === "msg") {
+                language = msg.language || "en";
+            }
             assignmentFunction(node, msg, lat, lon, city, country, language, function() {
                 weatherPoll(node, msg, function(err) {
                     if (err) {
@@ -225,6 +228,9 @@ module.exports = function(RED) {
                 }
             }
             language = n.language || "en";
+            if (language === "msg") {
+                language = msg.language || "en";
+            }
             assignmentFunction(node, msg, lat, lon, city, country, language, function() {
                 weatherPoll(node, msg, function(err) {
                     if (err) {
