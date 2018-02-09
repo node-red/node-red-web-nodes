@@ -47,6 +47,7 @@ module.exports = function(RED) {
                     return;
                 }
                 var options = {
+                    protocol: "https:",
                     hostname: "api.pinboard.in",
                     path: "/v1/posts/add?"+
                           "url="+encodeURIComponent(msg.payload)+
@@ -75,7 +76,20 @@ module.exports = function(RED) {
                         m += chunk;
                     });
                     res.on('end',function() {
-                        var result = JSON.parse(m);
+                        var result;
+                        if (res.statusCode < 200 || res.statusCode > 299) {
+                            node.error(res.statusMessage);
+                            node.status({fill:"red",shape:"ring",text:res.statusMessage});
+                            return;
+                        }
+                        try {
+                            result = JSON.parse(m);
+                        } catch (e) {
+                            node.error(e,msg);
+                            node.status({fill:"red",shape:"ring",text:e});
+                            return;
+                        }
+
                         if (result.result_code == "done") {
                             node.status({});
                         } else {
