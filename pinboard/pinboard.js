@@ -26,15 +26,15 @@ module.exports = function(RED) {
             token: { type:"password" }
         }
     });
-    
-    
+
+
     function PinboardOutNode(n) {
         RED.nodes.createNode(this,n);
         var node = this;
         this.tags = n.tags;
         this.toread = n.toread;
         this.private = n.private;
-        
+
         this.user = RED.nodes.getNode(n.user);
         if (this.user) {
             this.on("input", function(msg) {
@@ -59,14 +59,14 @@ module.exports = function(RED) {
                         "Accept":"application/json"
                     }
                 }
-                // TODO: allow tags to be added by the message 
+                // TODO: allow tags to be added by the message
                 if (node.tags) {
-                    options.path += "&tags="+encodeURIComponent(node.tags)
+                    options.path += "&tags="+encodeURIComponent(node.tags);
                 }
                 if (msg.description) {
-                    options.path += "&extended="+encodeURIComponent(msg.description)
+                    options.path += "&extended="+encodeURIComponent(msg.description);
                 }
-                
+
                 node.status({fill:"blue",shape:"dot",text:"pinboard.status.saving"});
 
                 https.get(options, function(res) {
@@ -87,12 +87,12 @@ module.exports = function(RED) {
                     node.error(err,msg);
                     node.status({fill:"red",shape:"ring",text:err.code});
                 });
-                
+
             });
         } else {
             this.error(RED._("pinboard.error.no-apitoken"));
         }
-        
+
     }
     RED.nodes.registerType("pinboard out",PinboardOutNode);
-}
+};
