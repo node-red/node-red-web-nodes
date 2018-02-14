@@ -15,6 +15,7 @@
  **/
 
 var should = require("should");
+var sinon = require('sinon');
 var pinboardNode = require("../../pinboard/pinboard.js");
 var helper = require('../helper.js');
 
@@ -30,10 +31,10 @@ describe('pinboard nodes', function() {
 
     describe('out node', function() {
         it(' logs a warning if msg.payload is not set', function(done) {
-            helper.load(pinboardNode, 
+            helper.load(pinboardNode,
                 [ {id:"inject", type:"helper", wires:[["pinboard"]]},
                   {id:"del-user", type:"pinboard-user", username:"Bob Jones"},
-                  {id:"pinboard", type:"pinboard out", user:"del-user", private:true, tags:"testtag"}], 
+                  {id:"pinboard", type:"pinboard out", user:"del-user", private:true, tags:"testtag"}],
                   {
                     "del-user": {
                         password:"abcd1234"
@@ -43,30 +44,23 @@ describe('pinboard nodes', function() {
                       var inject = helper.getNode("inject");
                       var pinboard = helper.getNode("pinboard");
                       pinboard.should.have.property('id','pinboard');
+
+                      var stub = sinon.stub(pinboard, 'error').callsFake(function(msg){
+                          var expected = 'pinboard.error.no-url';
+                          should.deepEqual(msg, expected);
+                          stub.restore();
+                          done();
+                      });
+
                       inject.send({title:"test",description:"testdesc"});
-                      setTimeout(function() {
-                          try {
-                              helper.log().called.should.be.true;
-                              var logEvents = helper.log().args.filter(function(evt) {
-                                      return evt[0].type == "pinboard out";
-                              });
-                              logEvents.should.have.length(1);
-                              logEvents[0][0].should.have.a.property("id",pinboard.id);
-                              logEvents[0][0].should.have.a.property("type",pinboard.type);
-                              logEvents[0][0].should.have.a.property("msg","pinboard.error.no-url");
-                              done();
-                          } catch(err) {
-                              done(err);
-                          }
-                      },200);
                   });
         });
-        
+
         it(' logs a warning if msg.title is not set', function(done) {
-            helper.load(pinboardNode, 
+            helper.load(pinboardNode,
                 [ {id:"inject", type:"helper", wires:[["pinboard"]]},
                   {id:"del-user", type:"pinboard-user", username:"Bob Jones"},
-                  {id:"pinboard", type:"pinboard out", user:"del-user", private:true, tags:"testtag"}], 
+                  {id:"pinboard", type:"pinboard out", user:"del-user", private:true, tags:"testtag"}],
                   {
                     "del-user": {
                         password:"abcd1234"
@@ -76,23 +70,17 @@ describe('pinboard nodes', function() {
                       var inject = helper.getNode("inject");
                       var pinboard = helper.getNode("pinboard");
                       pinboard.should.have.property('id','pinboard');
+
+                      var stub = sinon.stub(pinboard, 'error').callsFake(function(msg){
+                          var expected = 'pinboard.error.no-title';
+                          should.deepEqual(msg, expected);
+                          stub.restore();
+                          done();
+                      });
+
                       inject.send({payload:"foobar",description:"testdesc"});
-                      setTimeout(function() {
-                          try {
-                              helper.log().called.should.be.true;
-                              var logEvents = helper.log().args.filter(function(evt) {
-                                      return evt[0].type == "pinboard out";
-                              });
-                              logEvents.should.have.length(1);
-                              logEvents[0][0].should.have.a.property("id",pinboard.id);
-                              logEvents[0][0].should.have.a.property("type",pinboard.type);
-                              logEvents[0][0].should.have.a.property("msg","pinboard.error.no-title");
-                              done();
-                          } catch(err) {
-                              done(err);
-                          }
-                      },200);
                   });
         });
+
     });
 });
