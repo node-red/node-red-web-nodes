@@ -47,6 +47,7 @@ module.exports = function(RED) {
                     return;
                 }
                 var options = {
+                    method: 'GET',
                     protocol: "https:",
                     hostname: "api.pinboard.in",
                     path: "/v1/posts/add?"+
@@ -70,23 +71,24 @@ module.exports = function(RED) {
 
                 node.status({fill:"blue",shape:"dot",text:"pinboard.status.saving"});
 
-                https.get(options, function(res) {
+                var req = https.request(options, function(res) {
                     var m = "";
                     res.on('data',function(chunk) {
                         m += chunk;
                     });
                     res.on('end',function() {
-                        var result;
+                        var httpStatusMessage, result;
                         if (res.statusCode < 200 || res.statusCode > 299) {
-                            node.error(res.statusMessage);
-                            node.status({fill:"red",shape:"ring",text:res.statusMessage});
+                            httpStatusMessage = res.statusMessage || ('Server Error, Status ' + res.statusCode );
+                            node.error(httpStatusMessage);
+                            node.status({fill:"red",shape:"ring",text:RED._("pinboard.error.server-error")});
                             return;
                         }
                         try {
                             result = JSON.parse(m);
                         } catch (e) {
-                            node.error(e,msg);
-                            node.status({fill:"red",shape:"ring",text:e});
+                            node.error(e.message, msg);
+                            node.status({fill:"red",shape:"ring",text:RED._("pinboard.error.invalid.json")});
                             return;
                         }
 
@@ -97,10 +99,12 @@ module.exports = function(RED) {
                             node.status({fill:"red",shape:"ring",text:result.result_code});
                         }
                     });
-                }).on('error',function(err) {
+                });
+                req.on('error',function(err) {
                     node.error(err,msg);
                     node.status({fill:"red",shape:"ring",text:err.code});
                 });
+                req.end();
 
             });
         } else {
