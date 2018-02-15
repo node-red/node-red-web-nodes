@@ -22,7 +22,9 @@
         "error": {
             "no-url": "url must be provided in msg.payload",
             "no-title": "msg.title must be provided",
-            "no-apitoken": "missing api token"
+            "no-apitoken": "missing api token",
+            "server-error": "server returned error response",
+            "invalid-json": "server returned invalid json"
         }
     }
 }
