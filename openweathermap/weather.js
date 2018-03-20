@@ -95,6 +95,7 @@ module.exports = function(RED) {
                             if (jsun.main.hasOwnProperty("temp_max")) { msg.payload.temp_maxc = parseInt(10 * (Number(jsun.main.temp_max) - 273.15))/10; }
                             if (jsun.main.hasOwnProperty("temp_min")) { msg.payload.temp_minc = parseInt(10 * (Number(jsun.main.temp_min) - 273.15))/10; }
                             msg.payload.humidity = jsun.main.humidity;
+                            msg.payload.pressure = jsun.main.pressure;
                             msg.payload.maxtemp = jsun.main.temp_max;
                             msg.payload.mintemp = jsun.main.temp_min;
                             msg.payload.windspeed = jsun.wind.speed;
