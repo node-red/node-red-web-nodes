@@ -208,7 +208,7 @@ module.exports = function(RED) {
                     time = epoch.toISOString().substring(11,16);
                 }
                 else {
-                    if (msg.time.toISOstring) {
+                    if (msg.time.toISOString) {
                         date = msg.time.toISOString().substring(0,10);
                         time = msg.time.toISOString().substring(11,16);
                     }
