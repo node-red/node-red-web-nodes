@@ -1,18 +1,8 @@
 sudo: false
 language: node_js
-env:
-  - CXX="g++-4.8"
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - g++-4.8
-    - gcc-4.8
 node_js:
   - "8"
   - "6"
-  - "4"
 before_script:
   # Remove the './node_modules/.bin:' entry, see https://github.com/travis-ci/travis-ci/issues/8813
   - export PATH=`echo ${PATH} | sed -re 's,(^|:)(./)?node_modules/.bin($|:),\1,'`
