@@ -11,9 +11,10 @@
     "scripts": {
         "test": "grunt"
     },
-    "dependencies": {},
     "keywords": [
         "node-red",
+        "nodes",
+        "flow",
         "flickr",
         "pinboard",
         "dropbox",
@@ -21,38 +22,13 @@
         "s3",
         "swarm",
         "foursquare",
-        " instagram",
+        "instagram",
         "google",
         "tfl",
         "strava",
         "forecastio",
         "jawbone"
     ],
-    "node-red": {
-        "nodes": {
-            "aws": "aws/aws.js",
-            "box": "box/box.js",
-            "s3": "aws/s3.js",
-            "delicious": "delicious/delicious.js",
-            "pinboard": "pinboard/pinboard.js",
-            "fitbit": "fitbit/fitbit.js",
-            "flickr": "flickr/flickr.js",
-            "dropbox": "dropbox/dropbox.js",
-            "foursquare": "foursquare/foursquare.js",
-            "swarm": "foursquare/swarm.js",
-            "instagram": "instagram/instagram.js",
-            "jawboneup": "jawboneup/jawboneup.js",
-            "google": "google/google.js",
-            "googlecalendar": "google/calendar.js",
-            "googleplaces": "google/places.js",
-            "openweathermap": "openweathermap/weather.js",
-            "tfl-bus": "tfl/tfl-bus.js",
-            "tfl-underground": "tfl/tfl-underground.js",
-            "forecastio": "forecast/forecastio.js",
-            "strava": "strava/strava.js",
-            "weatherunderground": "weatherundergroud/wunder.js"
-        }
-    },
     "devDependencies": {
         "aws-sdk": "^2.145.0",
         "backoff": "^2.5.0",
@@ -81,5 +57,8 @@
     },
     "peerDependencies": {
         "node-red": "0.*"
+    },
+    "engines": {
+        "node": ">=6.0.0"
     }
 }
