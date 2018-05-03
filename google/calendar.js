@@ -140,6 +140,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
         this.google = RED.nodes.getNode(n.google);
         this.calendar = n.calendar || 'primary';
+        this.ongoing = n.ongoing || false;
 
         if (!this.google || !this.google.credentials.accessToken) {
             this.warn(RED._("calendar.warn.no-credentials"));
@@ -259,7 +260,7 @@ module.exports = function(RED) {
                 for (var i = 0; i<data.items.length; i++) {
                     ev = data.items[i];
                     var start = getEventDate(ev);
-                    if (start && start.getTime() > after.getTime()) {
+                    if (node.ongoing || (start && start.getTime() > after.getTime())) {
                         break;
                     }
                     ev = undefined;

@@ -144,6 +144,10 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="calendar.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
+    <div class="form-row">
+        <input type="checkbox" id="node-input-ongoing" placeholder="" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-ongoing" style="width: 70%;">Include ongoing events</label>
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="google calendar">
@@ -183,7 +187,8 @@
         defaults: {
             google: {type:"google-credentials",required:true},
             name: {value:""},
-            calendar: {value:""}
+            calendar: {value:""},
+            ongoing: {value: false}
         },
         inputs:1,
         outputs:1,
