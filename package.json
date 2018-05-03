@@ -1,6 +1,6 @@
 {
     "name": "node-red-node-web-nodes",
-    "version": "0.3.5",
+    "version": "0.4.0",
     "description": "A collection of Node-RED nodes for popular web services.",
     "homepage": "http://nodered.org",
     "license": "Apache-2.0",
@@ -8,19 +8,10 @@
         "type": "git",
         "url": "https://github.com/node-red/node-red-web-nodes.git"
     },
-    "dependencies": {
-        "aws-sdk": "^2.145.0",
-        "backoff": "^2.5.0",
-        "clone": "0.1.11",
-        "dropbox": "^0.10.3",
-        "instagram-node": "0.5.1",
-        "is-utf8": "0.2.*",
-        "minimatch": "^1.0.0",
-        "oauth": "~0.9.11",
-        "request": "~2.74.0",
-        "should-sinon": "0.0.6",
-        "xml2js": "0.4.*"
+    "scripts": {
+        "test": "grunt"
     },
+    "dependencies": {},
     "keywords": [
         "node-red",
         "flickr",
@@ -63,16 +54,31 @@
         }
     },
     "devDependencies": {
-        "fs-extra": "^0.11.1",
-        "grunt": "^0.4.5",
+        "aws-sdk": "^2.145.0",
+        "backoff": "^2.5.0",
+        "clone": "^2.1.1",
+        "dropbox": "^0.10.3",
+        "instagram-node": "^0.5.8",
+        "is-utf8": "^0.2.0",
+        "minimatch": "^3.0.4",
+        "oauth": "~0.9.11",
+        "request": "~2.85.0",
+        "should-sinon": "^0.0.6",
+        "xml2js": "^0.4.0",
+        "fs-extra": "^6.0.0",
+        "grunt": "^1.0.2",
         "grunt-contrib-jshint": "^1.0.*",
-		"grunt-jscs": "^2.8.*",
-        "grunt-lint-inline": "^0.4.4",
-        "grunt-simple-mocha": "^0.4.*", 
-        "mocha": "^2.4.5",
-		"nock": "^0.48.0",
-        "should": "^8.3.1",
-        "sinon": "^3.2.1",
-        "supertest": "^1.2.0"
+        "grunt-jscs": "^3.0.1",
+        "grunt-lint-inline": "^1.0.0",
+        "grunt-simple-mocha": "^0.4.*",
+        "mocha": "^5.1.1",
+        "nock": "^9.2.5",
+        "node-red-node-test-helper": "^0.1.6",
+        "should": "^13.2.1",
+        "sinon": "^5.0.3",
+        "supertest": "^3.0.0"
+    },
+    "peerDependencies": {
+        "node-red": "0.*"
     }
 }
