@@ -235,7 +235,7 @@ describe('box nodes', function() {
                     });
                 });
         });
-        
+
         // TODO: finish below tests
 
         it.skip('should report no event when filepattern does not match', function(done) {
