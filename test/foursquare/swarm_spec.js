@@ -17,33 +17,30 @@
 var should = require("should");
 var swarmNode = require("../../foursquare/swarm.js");
 var foursquareNode = require("../../foursquare/foursquare.js");
-var helper = require('../helper.js');
 var sinon = require('sinon');
-var nock = helper.nock;
+var helper = require("node-red-node-test-helper");
+var nock = require("nock");
 
 describe('swarm nodes', function() {
 
-    before(function(done) {
-        helper.startServer(done);
-    });
+    beforeEach(function (done) { helper.startServer(done); });
 
-    afterEach(function() {
-        if(nock) {
-            nock.cleanAll();
-        }
+    afterEach(function(done) {
+        if (nock) { nock.cleanAll(); }
         helper.unload();
+        helper.stopServer(done);
     });
 
     describe('query node', function() {
-        
+
         if (nock) {
-            
+
             it(' can fetch check-in information', function(done) {
-                    helper.load([foursquareNode, swarmNode], 
+                    helper.load([foursquareNode, swarmNode],
                         [ {id:"n1", type:"helper", wires:[["n2"]]},
                           {id:"n4", type:"foursquare-credentials"},
                           {id:"n2", type:"swarm", foursquare: "n4", wires:[["n3"]]},
-                          {id:"n3", type:"helper"}], 
+                          {id:"n3", type:"helper"}],
                           {
                             "n4": {
                                 displayname : "John",
@@ -56,12 +53,12 @@ describe('swarm nodes', function() {
                               var scope = nock('https://api.foursquare.com:443')
                                   .filteringPath(/afterTimestamp=[^&]*/g, 'afterTimestamp=foo')
                                   .get('/v2/users/self/checkins?oauth_token=abcd1234&sort=newestfirst&m=swarm&v=20141016')
-                                  .reply(200, {"meta":{"code":200},"response":{"checkins":{"count":1, 
+                                  .reply(200, {"meta":{"code":200},"response":{"checkins":{"count":1,
                                       "items":[{"id":"b695edf5ewc2","createdAt":1412861751,"type":"checkin","timeZoneOffset":60,
-                                          "venue":{"id":"49a8b774","name":"Bobs House", 
+                                          "venue":{"id":"49a8b774","name":"Bobs House",
                                               "location":{"lat":"1234", "lng":"-1234","name":"Bobs House", "city":"Winchester", "country":"England"}}
                                       }]}}});
-                              
+
                             var n1 = helper.getNode("n1");
                               var n2 = helper.getNode("n2");
                               var n3 = helper.getNode("n3");
@@ -70,7 +67,7 @@ describe('swarm nodes', function() {
                               n3.on('input', function(msg){
                                   msg.payload.venue.should.have.property('name', "Bobs House");
                                   msg.should.have.property('name', "Bobs House");
-                                  msg.should.have.property('location');                                  
+                                  msg.should.have.property('location');
                                   msg.location.should.have.property('lat', "1234");
                                   msg.location.should.have.property('lon', "-1234");
                                   msg.location.should.have.property('city', "Winchester");
@@ -80,13 +77,13 @@ describe('swarm nodes', function() {
                               });
                           });
             });
-            
+
             it(' fails if error fetching check-in information', function(done) {
-                helper.load([foursquareNode, swarmNode], 
+                helper.load([foursquareNode, swarmNode],
                         [ {id:"n1", type:"helper", wires:[["n2"]]},
                           {id:"n4", type:"foursquare-credentials"},
                           {id:"n2", type:"swarm", foursquare: "n4", wires:[["n3"]]},
-                          {id:"n3", type:"helper"}], 
+                          {id:"n3", type:"helper"}],
                           {
                             "n4": {
                                 displayname : "John",
@@ -100,12 +97,12 @@ describe('swarm nodes', function() {
                                   .filteringPath(/afterTimestamp=[^&]*/g, 'afterTimestamp=foo')
                                   .get('/v2/users/self/checkins?oauth_token=abcd1234&sort=newestfirst&m=swarm&v=20141016')
                                   .reply(200, {"meta":{"code":400, "errorDetail":'test forced failure'}});
-                              
+
                               var n1 = helper.getNode("n1");
                               var n2 = helper.getNode("n2");
                               var n3 = helper.getNode("n3");
                               n2.should.have.property('id','n2');
-                              
+
                               sinon.stub(n2, 'status').callsFake(function(status){
                                   var expected = {fill:"red",shape:"ring",text:"swarm.status.failed"};
                                   should.deepEqual(status, expected);
@@ -117,11 +114,11 @@ describe('swarm nodes', function() {
                 });
 
             it('passes on null msg.payload if no results from query', function(done) {
-                helper.load([foursquareNode, swarmNode], 
+                helper.load([foursquareNode, swarmNode],
                     [ {id:"n1", type:"helper", wires:[["n2"]]},
                       {id:"n4", type:"foursquare-credentials"},
                       {id:"n2", type:"swarm", foursquare: "n4", wires:[["n3"]]},
-                      {id:"n3", type:"helper"}], 
+                      {id:"n3", type:"helper"}],
                       {
                         "n4": {
                             displayname : "John",
@@ -134,9 +131,9 @@ describe('swarm nodes', function() {
                           var scope = nock('https://api.foursquare.com:443')
                               .filteringPath(/afterTimestamp=[^&]*/g, 'afterTimestamp=foo')
                               .get('/v2/users/self/checkins?oauth_token=abcd1234&sort=newestfirst&m=swarm&v=20141016')
-                              .reply(200, {"meta":{"code":200},"response":{"checkins":{"count":1, 
+                              .reply(200, {"meta":{"code":200},"response":{"checkins":{"count":1,
                                   "items":[]}}});
-                          
+
                         var n1 = helper.getNode("n1");
                           var n2 = helper.getNode("n2");
                           var n3 = helper.getNode("n3");
@@ -147,22 +144,22 @@ describe('swarm nodes', function() {
                               done();
                           });
                       });
-            });                
-            
+            });
+
         }}
     );
 
-    
+
     describe('in node', function() {
-        
+
         if (nock) {
 
             it(' can fetch check-in information', function(done) {
-                helper.load([foursquareNode, swarmNode], 
+                helper.load([foursquareNode, swarmNode],
                         [ {id:"n1", type:"helper", wires:[["n2"]]},
                           {id:"n4", type:"foursquare-credentials"},
                           {id:"n2", type:"swarm in", foursquare: "n4", wires:[["n3"]]},
-                          {id:"n3", type:"helper"}], 
+                          {id:"n3", type:"helper"}],
                           {
                             "n4": {
                                 displayname : "John",
@@ -175,10 +172,10 @@ describe('swarm nodes', function() {
                               var scope = nock('https://api.foursquare.com:443')
                                   .filteringPath(/afterTimestamp=[^&]*/g, 'afterTimestamp=foo')
                                   .get('/v2/users/self/checkins?oauth_token=abcd1234&sort=newestfirst&m=swarm&v=20141016&afterTimestamp=foo')
-                                  .reply(200, {"meta":{"code":200},"response":{"checkins":{"count":1, 
+                                  .reply(200, {"meta":{"code":200},"response":{"checkins":{"count":1,
                                       "items":[{"id":"b695edf5ewc2","createdAt":1412861751,"type":"checkin","timeZoneOffset":60,
                                           "location":{"lat":"1234", "lng":"-1234","name":"Bobs House"}}]}}});
-                              
+
                               var n1 = helper.getNode("n1");
                               var n2 = helper.getNode("n2");
                               var n3 = helper.getNode("n3");
@@ -186,7 +183,7 @@ describe('swarm nodes', function() {
                               n2.emit("input", {});
                               n3.on('input', function(msg){
                                   msg.should.have.property('name', "Bobs House");
-                                  msg.should.have.property('location');                                  
+                                  msg.should.have.property('location');
                                   msg.location.should.have.property('lat', "1234");
                                   msg.location.should.have.property('lon', "-1234");
                                   msg.location.should.not.have.property('city');
@@ -196,9 +193,9 @@ describe('swarm nodes', function() {
                               });
                           });
                 });
-            
+
         }
-       
+
     });
-    
+
 });

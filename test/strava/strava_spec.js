@@ -16,11 +16,9 @@
 
 var should = require("should");
 var sinon = require('sinon');
-
 var stravaNode = require("../../strava/strava.js");
-
-var helper = require('../helper.js');
-var nock = helper.nock;
+var helper = require("node-red-node-test-helper");
+var nock = require("nock");
 
 describe('Strava node', function() {
     beforeEach(function(done) {

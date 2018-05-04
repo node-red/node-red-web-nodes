@@ -18,8 +18,8 @@ var should = require("should");
 var sinon = require('sinon');
 var calendarNode = require("../../google/calendar.js");
 var googleNode = require("../../google/google.js");
-var helper = require('../helper.js');
-var nock = helper.nock;
+var helper = require("node-red-node-test-helper");
+var nock = require("nock");
 
 function TimeOffset(offsetSeconds) {
     if (!offsetSeconds) {
@@ -34,15 +34,12 @@ function ISOTimeString(offsetSeconds) {
 
 describe('google calendar nodes', function() {
 
-    before(function(done) {
-        helper.startServer(done);
-    });
+    beforeEach(function (done) { helper.startServer(done); });
 
-    afterEach(function() {
-        if(nock) {
-            nock.cleanAll();
-        }
+    afterEach(function(done) {
+        if (nock) { nock.cleanAll(); }
         helper.unload();
+        helper.stopServer(done);
     });
 
     describe('input node', function() {

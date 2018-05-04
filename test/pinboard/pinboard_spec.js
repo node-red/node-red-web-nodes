@@ -17,17 +17,17 @@
 var should = require("should");
 var sinon = require('sinon');
 var pinboardNode = require("../../pinboard/pinboard.js");
-var helper = require('../helper.js');
-var nock = helper.nock;
+var helper = require("node-red-node-test-helper");
+var nock = require("nock");
 
 describe('pinboard nodes', function() {
 
-    before(function(done) {
-        helper.startServer(done);
-    });
+    beforeEach(function (done) { helper.startServer(done); });
 
-    afterEach(function() {
+    afterEach(function(done) {
+        if (nock) { nock.cleanAll(); }
         helper.unload();
+        helper.stopServer(done);
     });
 
     describe('out node', function() {

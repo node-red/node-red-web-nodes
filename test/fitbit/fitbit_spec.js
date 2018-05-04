@@ -17,8 +17,8 @@
 var should = require("should");
 var sinon = require('sinon');
 var fitbitNode = require("../../fitbit/fitbit.js");
-var helper = require('../helper.js');
-var nock = helper.nock;
+var helper = require("node-red-node-test-helper");
+var nock = require("nock");
 
 function today() {
     var d = new Date();
@@ -40,16 +40,13 @@ function yesterday() {
 }
 
 describe('fitbit nodes', function() {
+    
+    beforeEach(function (done) { helper.startServer(done); });
 
-    before(function(done) {
-        helper.startServer(done);
-    });
-
-    afterEach(function() {
-        if(nock) {
-            nock.cleanAll();
-        }
+    afterEach(function(done) {
+        if (nock) { nock.cleanAll(); }
         helper.unload();
+        helper.stopServer(done);
     });
 
     describe('in node', function() {
@@ -718,7 +715,7 @@ describe('fitbit nodes', function() {
                         input.send({ date: "2014-09-29" });
                     });
             });
-            
+
             it('fails oauth dance if client key is invalid', function(done) {
                 helper.load(fitbitNode, [
                     {id:"input", type:"helper", wires:[["fitbit-node"]]},

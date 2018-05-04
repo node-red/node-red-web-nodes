@@ -15,11 +15,9 @@
  **/
 
 var busNode = require("../../tfl/tfl-bus.js");
-var helper = require('../helper.js');
-
 var should = require("should");
-
-var nock = helper.nock;
+var helper = require("node-red-node-test-helper");
+var nock = require("nock");
 
 describe('TfL Bus Node', function() {
     beforeEach(function(done) {

@@ -16,11 +16,9 @@
 
 var should = require("should");
 var sinon = require('sinon');
-
 var instagramNode = require("../../instagram/instagram.js");
-
-var helper = require('../helper.js');
-var nock = helper.nock;
+var helper = require("node-red-node-test-helper");
+var nock = require("nock");
 
 var testInterval;
 

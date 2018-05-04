@@ -17,23 +17,19 @@
 
 var should = require("should");
 var awsNode = require("../../aws/aws.js");
-var helper = require('../helper.js');
 var sinon = require('sinon');
-var nock = helper.nock;
+var helper = require("node-red-node-test-helper");
+var nock = require("nock");
 
 describe('aws nodes', function() {
 
-    before(function(done) {
-        helper.startServer(done);
-    });
+    beforeEach(function (done) { helper.startServer(done); });
 
-    afterEach(function() {
-        if(nock) {
-            nock.cleanAll();
-        }
+    afterEach(function(done) {
+        if (nock) { nock.cleanAll(); }
         helper.unload();
+        helper.stopServer(done);
     });
-
 
     it('can be loaded without credentials', function(done) {
         helper.load(awsNode,

@@ -17,8 +17,8 @@
 var should = require("should");
 var sinon = require("sinon");
 var dropboxNode = require("../../dropbox/dropbox.js");
-var helper = require('../helper.js');
-var nock = helper.nock;
+var helper = require("node-red-node-test-helper");
+var nock = require("nock");
 
 // Force dropbox api server name to be api.dropboxapi.com
 var Dropbox = require('dropbox');
@@ -27,18 +27,13 @@ Dropbox.Client.prototype._defaultMaxApiServer = function() {
 };
 
 describe('dropbox nodes', function() {
-    it.skip("tests need updating for Dropbox API v2");
-    return;
 
-    before(function(done) {
-        helper.startServer(done);
-    });
+    beforeEach(function (done) { helper.startServer(done); });
 
-    afterEach(function() {
-        if(nock) {
-            nock.cleanAll();
-        }
+    afterEach(function(done) {
+        if (nock) { nock.cleanAll(); }
         helper.unload();
+        helper.stopServer(done);
     });
 
     describe("watch node", function() {

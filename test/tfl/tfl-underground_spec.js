@@ -16,29 +16,27 @@
 
 var should = require("should");
 var tubeNode = require("../../tfl/tfl-underground.js");
-var helper = require('../helper.js');
+var helper = require("node-red-node-test-helper");
+var nock = require("nock");
 var sinon = require('sinon');
 var path = require("path");
 var fs = require('fs-extra');
-var nock = helper.nock;
 
 describe('tfl-underground nodes', function() {
 
     var file = path.join(__dirname, "tfl-underground-response.xml");
-    
-    before(function(done) {
+
+    beforeEach(function(done) {
+        fs.existsSync(file).should.be.true;
         helper.startServer(done);
     });
 
-    beforeEach(function() {
-        fs.existsSync(file).should.be.true;
-    });
-    
-    afterEach(function() {
+    afterEach(function(done) {
         if(nock) {
             nock.cleanAll();
         }
         helper.unload();
+        helper.stopServer(done);
     });
 
     describe('query node', function() {
@@ -90,7 +88,7 @@ describe('tfl-underground nodes', function() {
                 helper.load(tubeNode,
                     [ {id:"n1", type:"helper", wires:[["n2"]]},
                       {id:"n2", type:"tfl underground", wires:[["n3"]], line:"Input Defined"},
-                      {id:"n3", type:"helper"}], 
+                      {id:"n3", type:"helper"}],
                       function() {
                         var scope = nock('http://cloud.tfl.gov.uk').get('/TrackerNet/LineStatus').reply(200, data);
 
@@ -113,17 +111,17 @@ describe('tfl-underground nodes', function() {
                       }
                   );
                });
-            }); 
+            });
 
             it(' can fetch Good Service information', function(done) {
                 fs.readFile(file, 'utf8', function(err, data) {
-                    helper.load(tubeNode, 
+                    helper.load(tubeNode,
                             [ {id:"n1", type:"helper", wires:[["n2"]]},
                               {id:"n2", type:"tfl underground", wires:[["n3"]], line:"Bakerloo"},
-                              {id:"n3", type:"helper"}], 
+                              {id:"n3", type:"helper"}],
                               function() {
                                   var scope = nock('http://cloud.tfl.gov.uk').get('/TrackerNet/LineStatus').reply(200, data);
-                                  
+
                                   var n1 = helper.getNode("n1");
                                   var n2 = helper.getNode("n2");
                                   var n3 = helper.getNode("n3");
@@ -147,13 +145,13 @@ describe('tfl-underground nodes', function() {
 
                 it(' can fetch Minor Delays information', function(done) {
                     fs.readFile(file, 'utf8', function(err, data) {
-                        helper.load(tubeNode, 
+                        helper.load(tubeNode,
                                 [ {id:"n1", type:"helper", wires:[["n2"]]},
                                   {id:"n2", type:"tfl underground", wires:[["n3"]], line:"District"},
-                                  {id:"n3", type:"helper"}], 
+                                  {id:"n3", type:"helper"}],
                                   function() {
                                       var scope = nock('http://cloud.tfl.gov.uk').get('/TrackerNet/LineStatus').reply(200, data);
-                                      
+
                                       var n1 = helper.getNode("n1");
                                       var n2 = helper.getNode("n2");
                                       var n3 = helper.getNode("n3");
@@ -171,16 +169,16 @@ describe('tfl-underground nodes', function() {
                         );
                     });
                 });
- 
+
                     it(' can fetch Severe Delays information', function(done) {
                         fs.readFile(file, 'utf8', function(err, data) {
-                            helper.load(tubeNode, 
+                            helper.load(tubeNode,
                                     [ {id:"n1", type:"helper", wires:[["n2"]]},
                                       {id:"n2", type:"tfl underground", wires:[["n3"]], line:"Jubilee"},
-                                      {id:"n3", type:"helper"}], 
+                                      {id:"n3", type:"helper"}],
                                       function() {
                                           var scope = nock('http://cloud.tfl.gov.uk').get('/TrackerNet/LineStatus').reply(200, data);
-                                          
+
                                           var n1 = helper.getNode("n1");
                                           var n2 = helper.getNode("n2");
                                           var n3 = helper.getNode("n3");
@@ -198,17 +196,17 @@ describe('tfl-underground nodes', function() {
                             );
                         });
                     });
-                    
-                    
+
+
                     it(' can fetch branch disruption information', function(done) {
                         fs.readFile(file, 'utf8', function(err, data) {
-                            helper.load(tubeNode, 
+                            helper.load(tubeNode,
                                     [ {id:"n1", type:"helper", wires:[["n2"]]},
                                       {id:"n2", type:"tfl underground", wires:[["n3"]], line:"Piccadilly"},
-                                      {id:"n3", type:"helper"}], 
+                                      {id:"n3", type:"helper"}],
                                       function() {
                                           var scope = nock('http://cloud.tfl.gov.uk').get('/TrackerNet/LineStatus').reply(200, data);
-                                          
+
                                           var n1 = helper.getNode("n1");
                                           var n2 = helper.getNode("n2");
                                           var n3 = helper.getNode("n3");
@@ -226,16 +224,16 @@ describe('tfl-underground nodes', function() {
                                               var disruption = msg.payload.branchdisruptions[0];
                                               disruption.StationFrom[0].$.Name.should.equal("Acton Town");
                                               disruption.StationTo[0].$.Name.should.equal("Uxbridge");
-                                              disruption.Status[0].$.Description.should.equal("Part Suspended");                                              
+                                              disruption.Status[0].$.Description.should.equal("Part Suspended");
                                               done();
                                           });
                                       }
                             );
                         });
                     });
-                    
-            
+
+
         }}
     );
-    
+
 });

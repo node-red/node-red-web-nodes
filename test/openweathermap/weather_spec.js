@@ -16,8 +16,8 @@
 
 var should = require("should");
 var weatherNode = require("../../openweathermap/weather.js");
-var helper = require("../helper.js");
-var nock = helper.nock;
+var helper = require("node-red-node-test-helper");
+var nock = require("nock");
 var sinon = require("sinon");
 
 describe('weather nodes', function() {

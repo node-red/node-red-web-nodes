@@ -19,18 +19,18 @@ var sinon = require("sinon");
 var url = require('url');
 var googleNode = require("../../google/google.js");
 var geocodingNode = require("../../google/geocoding.js");
-var helper = require('../helper.js');
-var nock = helper.nock;
+var helper = require("node-red-node-test-helper");
+var nock = require("nock");
 
 describe('google geocoding', function () {
 
-	before(function (done) {
-		helper.startServer(done);
-	});
+    beforeEach(function (done) { helper.startServer(done); });
 
-	afterEach(function () {
-		helper.unload();
-	});
+    afterEach(function(done) {
+        if (nock) { nock.cleanAll(); }
+        helper.unload();
+        helper.stopServer(done);
+    });
 
 	describe("query node", function () {
 
@@ -907,7 +907,7 @@ describe('google geocoding', function () {
 				});
 			});
 		});
-		
+
 	});
 
 });

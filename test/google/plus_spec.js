@@ -19,17 +19,17 @@ var sinon = require("sinon");
 var url = require('url');
 var googleNode = require("../../google/google.js");
 var plusNode = require("../../google/plus.js");
-var helper = require('../helper.js');
-var nock = helper.nock;
+var helper = require("node-red-node-test-helper");
+var nock = require("nock");
 
 describe('google plus', function () {
 
-    before(function (done) {
-        helper.startServer(done);
-    });
+    beforeEach(function (done) { helper.startServer(done); });
 
-    afterEach(function () {
+    afterEach(function(done) {
+        if (nock) { nock.cleanAll(); }
         helper.unload();
+        helper.stopServer(done);
     });
 
     it('can be loaded without credentials', function (done) {

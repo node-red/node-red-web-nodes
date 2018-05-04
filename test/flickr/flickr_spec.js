@@ -16,16 +16,15 @@
 
 var should = require("should");
 var flickrNode = require("../../flickr/flickr.js");
-var helper = require('../helper.js');
+var helper = require("node-red-node-test-helper");
 
 describe('flickr nodes', function() {
 
-    before(function(done) {
-        helper.startServer(done);
-    });
+    beforeEach(function (done) { helper.startServer(done); });
 
-    afterEach(function() {
+    afterEach(function(done) {
         helper.unload();
+        helper.stopServer(done);
     });
 
     describe('out node', function() {
