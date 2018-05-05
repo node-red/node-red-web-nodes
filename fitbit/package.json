@@ -1,9 +1,9 @@
 {
     "name"          : "node-red-node-fitbit",
-    "version"       : "0.1.0",
+    "version"       : "0.1.1",
     "description"   : "Node-RED nodes that get information from a Fitbit",
     "dependencies"  : {
-        "oauth":"~0.9.11"
+        "oauth":"~0.9.15"
     },
     "repository" : {
         "type":"git",

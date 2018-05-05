@@ -76,7 +76,7 @@ module.exports = function(RED) {
         }
         return "Error "+ err.statusCode + ": " + errors.join(", ");
     }
-    
+
     function FitbitInNode(n) {
         RED.nodes.createNode(this,n);
         this.fitbitConfig = RED.nodes.getNode(n.fitbit);
@@ -330,7 +330,7 @@ module.exports = function(RED) {
     RED.httpAdmin.get('/fitbit-credentials/:id/auth', function(req, res){
         if (!req.query.client_key || !req.query.client_secret ||
             !req.query.callback) {
-            res.send(400);
+            res.sendStatus(400);
             return;
         }
 
