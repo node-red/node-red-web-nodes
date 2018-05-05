@@ -196,6 +196,7 @@ module.exports = function(RED) {
     }
     RED.nodes.registerType("dropbox in",DropboxInNode);
 
+
     function DropboxQueryNode(n) {
         RED.nodes.createNode(this,n);
         this.filename = n.filename || "";

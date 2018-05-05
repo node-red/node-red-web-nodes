@@ -21,10 +21,10 @@ var helper = require("node-red-node-test-helper");
 var nock = require("nock");
 
 // Force dropbox api server name to be api.dropboxapi.com
-var Dropbox = require('dropbox');
-Dropbox.Client.prototype._defaultMaxApiServer = function() {
-    return 0;
-};
+// var Dropbox = require('dropbox');
+// Dropbox.Client.prototype._defaultMaxApiServer = function() {
+//     return 0;
+// };
 
 describe('dropbox nodes', function() {
 
@@ -39,6 +39,7 @@ describe('dropbox nodes', function() {
     describe("watch node", function() {
         it.skip("Test needs to be fixed"); return;
         if (!nock) {
+            it.skip("Nock not available");
         	return;
         }
         it('should report file add event', function(done) {
@@ -70,15 +71,14 @@ describe('dropbox nodes', function() {
                     connection: 'keep-alive',
                 });
             helper.load(dropboxNode,
-                [{id:"dropbox-config", type: "dropbox-config"},
-                 {id:"dropbox", type:"dropbox in",
-                  dropbox: "dropbox-config", wires: [["output"]] },
+                [{id:"dropbox-conf", type:"dropbox-config"},
+                 {id:"dropbo", type:"dropbox in", dropbox:"dropbox-conf", wires:[["output"]] },
                  {id:"output", type: "helper" },
                 ], {
-                    "dropbox-config": {
-                        "appkey":"FADE",
-                        "appsecret":"DEAD",
-                        "accesstoken":"BEEF"
+                    "dropbox-conf": {
+                        appkey:"FADE",
+                        appsecret:"DEAD",
+                        accesstoken:"BEEF"
                     },
                 }, function() {
                     var dropbox = helper.getNode("dropbox");
@@ -94,7 +94,7 @@ describe('dropbox nodes', function() {
 
                     // wait for s3.on("input", ...) to be called
                     var onFunction = dropbox.on;
-                    var onStub = sinon.stub(dropbox, 'on', function(event, cb) {
+                    var onStub = sinon.stub(dropbox,'on').callsFake(function(event, cb) {
                         var res = onFunction.apply(dropbox, arguments);
                         onStub.restore();
                         dropbox.emit('input', {}); // trigger poll
@@ -102,6 +102,8 @@ describe('dropbox nodes', function() {
                     });
                 });
         });
+
+        it.skip("Test needs to be fixed"); return;
 
         it('should report file delete event', function(done) {
             nock('https://api.dropboxapi.com:443')
@@ -156,7 +158,7 @@ describe('dropbox nodes', function() {
 
                     // wait for s3.on("input", ...) to be called
                     var onFunction = dropbox.on;
-                    var onStub = sinon.stub(dropbox, 'on', function(event, cb) {
+                    var onStub = sinon.stub(dropbox,'on').callsFake(function(event, cb) {
                         var res = onFunction.apply(dropbox, arguments);
                         onStub.restore();
                         dropbox.emit('input', {}); // trigger poll
@@ -216,7 +218,7 @@ describe('dropbox nodes', function() {
 
                     // wait for s3.on("input", ...) to be called
                     var onFunction = dropbox.on;
-                    var onStub = sinon.stub(dropbox, 'on', function(event, cb) {
+                    var onStub = sinon.stub(dropbox,'on').callsFake(function(event, cb) {
                         var res = onFunction.apply(dropbox, arguments);
                         onStub.restore();
                         dropbox.emit('input', {}); // trigger poll
@@ -282,7 +284,7 @@ describe('dropbox nodes', function() {
 
                     // wait for s3.on("input", ...) to be called
                     var onFunction = dropbox.on;
-                    var onStub = sinon.stub(dropbox, 'on', function(event, cb) {
+                    var onStub = sinon.stub(dropbox,'on').callsFake(function(event, cb) {
                         var res = onFunction.apply(dropbox, arguments);
                         onStub.restore();
                         dropbox.emit('input', {}); // trigger poll
@@ -342,7 +344,7 @@ describe('dropbox nodes', function() {
 
                     // wait for s3.on("input", ...) to be called
                     var onFunction = dropbox.on;
-                    var onStub = sinon.stub(dropbox, 'on', function(event, cb) {
+                    var onStub = sinon.stub(dropbox,'on').callsFake(function(event, cb) {
                         var res = onFunction.apply(dropbox, arguments);
                         onStub.restore();
                         dropbox.emit('input', {}); // trigger poll
@@ -359,6 +361,7 @@ describe('dropbox nodes', function() {
     describe("query node", function() {
         it.skip("Test needs to be fixed"); return;
         if (!nock) {
+            it.skip("Nock not available");
         	return;
         }
         it('should fetch file', function(done) {
@@ -404,6 +407,7 @@ describe('dropbox nodes', function() {
     describe('out node', function() {
         it.skip("Test needs to be fixed"); return;
         if (!nock) {
+            it.skip("Nock not available");
         	return;
         }
         it('should upload msg.payload', function(done) {
@@ -440,11 +444,11 @@ describe('dropbox nodes', function() {
 
                      // wait for dropbox.on("input", ...) to be called
                      var onFunction = dropbox.on;
-                     var onStub = sinon.stub(dropbox, 'on', function(event, cb) {
+                     var onStub = sinon.stub(dropbox,'on').callsFake(function(event, cb) {
                          var res = onFunction.apply(dropbox, arguments);
                          onStub.restore();
                          // stub status call to wait for successful upload
-                         var stub = sinon.stub(dropbox, 'status', function(status) {
+                         var stub = sinon.stub(dropbox, 'status').callsFake(function(status) {
                              if (Object.getOwnPropertyNames(status).length === 0) {
                                  stub.restore();
                                  done();

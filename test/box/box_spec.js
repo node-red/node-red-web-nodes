@@ -39,8 +39,7 @@ describe('box nodes', function() {
             helper.load(boxNode, [
                 {id:"input", type:"helper", wires:[["input"]]},
                 {id:"box-config", type:"box-credentials"},
-                {id:"box", type:"box out", box: "box-config",
-                    wires:[["output"]]},
+                {id:"box", type:"box out", box:"box-config", wires:[["output"]]},
                 {id:"output", type:"helper"}], function() {
                 var scope = nock('https://app.box.com:443')
                     .post('/api/oauth2/token',
@@ -121,10 +120,9 @@ describe('box nodes', function() {
                         'content-type': 'application/json',
                     });
             helper.load(boxNode,
-                [{id:"box-config", type: "box-credentials"},
-                 {id:"box", type:"box in",
-                  box: "box-config", wires: [["output"]] },
-                 {id:"output", type: "helper" },
+                [{id:"box-config", type:"box-credentials"},
+                 {id:"box", type:"box in", box:"box-config", wires:[["output"]]},
+                 {id:"output", type:"helper"},
                 ], {
                     "box-config": {
                         clientId: "ID",
@@ -139,8 +137,7 @@ describe('box nodes', function() {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     output.on("input", function(msg) {
-                        msg.should.have.property('payload',
-                            "node-red/foobar.txt");
+                        msg.should.have.property('payload', "node-red/foobar.txt");
                         msg.should.have.property('file', "foobar.txt");
                         msg.should.have.property('event', 'add');
                         done();
@@ -148,7 +145,7 @@ describe('box nodes', function() {
 
                     // wait for s3.on("input", ...) to be called
                     var onFunction = box.on;
-                    var onStub = sinon.stub(box, 'on').callsFake(function(event, cb) {
+                    var onStub = sinon.stub(box,'on').callsFake(function(event, cb) {
                         var res = onFunction.apply(box, arguments);
                         onStub.restore();
                         box.emit('input', {}); // trigger poll
