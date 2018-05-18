@@ -34,7 +34,7 @@
         "backoff": "^2.5.0",
         "clone": "~2.1.2",
         "dropbox": "^2.5.10",
-        "fs-extra": "^6.0.0",
+        "fs-extra": "~6.0.1",
         "grunt": "^1.0.2",
         "grunt-cli": "^1.2.0",
         "grunt-contrib-jshint": "^1.1.0",
@@ -52,7 +52,7 @@
         "request": "^2.85.0",
         "should": "^13.2.1",
         "should-sinon": "^0.0.6",
-        "sinon": "^5.0.3",
+        "sinon": "~5.0.7",
         "supertest": "^3.0.0",
         "xml2js": "^0.4.0"
     },
