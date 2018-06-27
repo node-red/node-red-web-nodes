@@ -62,7 +62,7 @@ module.exports = function(RED) {
                 return;
             }
             if (data.error) {
-                node.error(RED._("box.error.refresh-token-error",{message:data.error.message}));
+                node.error(RED._("box.error.refresh-token-error",{message:data.error}));
                 return;
             }
             // console.log("refreshed: " + require('util').inspect(data));
