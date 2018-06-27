@@ -11,7 +11,9 @@
             "clientid": "Client Id",
             "secret": "Secret",
             "authenticate": "Authenticate with Box",
-            "boxuser": "Box User"
+            "boxuser": "Box User",
+            "interval": "Polling Interval (seconds)",
+            "longpolling": "Real-Time Updates?"
         },
         "placeholder": {
             "pattern": "Filepattern",
@@ -30,7 +32,8 @@
             "resolving-path": "resolving path",
             "downloading": "downloading",
             "uploading": "uploading",
-            "overwriting": "overwriting"
+            "overwriting": "overwriting",
+            "waiting": "waiting"
         },
         "warn": {
             "refresh-token": "trying to refresh token due to expiry",
@@ -55,7 +58,9 @@
             "no-filename-specified": "No filename specified",
             "path-resolve-failed": "failed to resolve path: __err__",
             "download-failed": "download failed: __err__",
-            "upload-failed": "failed upload: __err__"
+            "upload-failed": "failed upload: __err__",
+            "long-polling-failed": "long-polling request failed: __err__",
+            "invalid-response": "invalid response from Box when polling: __err__"
         }
     }
 }

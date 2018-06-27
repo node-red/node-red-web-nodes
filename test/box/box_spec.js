@@ -148,8 +148,71 @@ describe('box nodes', function() {
                     var onStub = sinon.stub(box,'on').callsFake(function(event, cb) {
                         var res = onFunction.apply(box, arguments);
                         onStub.restore();
-                        box.emit('input', {}); // trigger poll
+                        box.emit('check-events', {}); // trigger poll
                         return res;
+                    });
+                });
+        });
+
+        it('should support long-polling', function(done) {
+            nock('https://api.box.com:443')
+                .get('/2.0/events?stream_position=now&stream_type=changes')
+                .reply(200, {
+                    "chunk_size":0,"next_stream_position":1000,
+                    "entries":[]
+                }, { 'content-type': 'application/json' })
+                .options('/2.0/events')
+                .reply(200, {
+                    chunk_size: 1,
+                    entries: [{
+                        type: 'realtime_server',
+                        // actually some other domain entirely
+                        url: "https://api.box.com:443/2.0/some-long-polling-endpoint",
+                        retry_timeout: 610,
+                        max_retries: '10' // this is a string for some reason
+                    }]
+                })
+                .get('/2.0/some-long-polling-endpoint')
+                .reply(200, {
+                    message: 'new_change'
+                })
+                .get('/2.0/events?stream_position=1000&stream_type=changes')
+                .reply(200, {"entries":[{
+                    "type":"event","event_id":"1234",
+                    "event_type":"ITEM_UPLOAD",
+                    "session_id":"1234567",
+                    "source":{
+                        "type":"file","id":"7","name":"foobar.txt",
+                        "path_collection":{"total_count":2,"entries":[
+                            {"type":"folder","id":"0","name":"All Files"},
+                            {"type":"folder","id":"2","name":"node-red"}
+                        ]},
+                        "parent":{"type":"folder","id":"2","name":"node-red"},
+                    }}],"chunk_size":1,"next_stream_position":2000}, {
+                        'content-type': 'application/json',
+                    });
+            helper.load(boxNode,
+                [{id:"box-config", type:"box-credentials"},
+                 {id:"box", type:"box in", box:"box-config", longpolling: true, wires:[["output"]]},
+                 {id:"output", type:"helper"},
+                ], {
+                    "box-config": {
+                        clientId: "ID",
+                        clientSecret: "SECRET",
+                        accessToken: "ACCESS",
+                        refreshToken: "REFRESH",
+                        expireTime: 1000+(new Date().getTime()/1000)
+                    },
+                }, function() {
+                    var box = helper.getNode("box");
+                    box.should.have.property('id', 'box');
+                    var output = helper.getNode("output");
+                    output.should.have.property('id', 'output');
+                    output.on("input", function(msg) {
+                        msg.should.have.property('payload', "node-red/foobar.txt");
+                        msg.should.have.property('file', "foobar.txt");
+                        msg.should.have.property('event', 'add');
+                        done();
                     });
                 });
         });
@@ -224,7 +287,7 @@ describe('box nodes', function() {
                     var onStub = sinon.stub(box, 'on').callsFake(function(event, cb) {
                         var res = onFunction.apply(box, arguments);
                         onStub.restore();
-                        box.emit('input', {}); // trigger poll
+                        box.emit('check-events', {}); // trigger poll
                         return res;
                     });
                 });

@@ -152,6 +152,14 @@
          <input type="text" id="node-input-filepattern" data-i18n="[placeholder]box.placeholder.pattern">
     </div>
     <div class="form-row">
+        <label for="node-input-interval"><i class="fa fa-clock"></i> <span data-i18n="box.label.interval"></span></label>
+        <input type="number" id="node-input-interval"/>
+    </div>
+    <div class="form-row">
+        <label for="node-input-longpolling"><i class="fa fa-rocket"></i> <span data-i18n="box.label.longpolling"></span></label>
+        <input type="checkbox" id="node-input-longpolling"/>
+    </div>    
+    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="box.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]box.placeholder.name">
     </div>
@@ -176,13 +184,20 @@
         defaults: {
             box: {type:"box-credentials",required:true},
             filepattern: {value:""},
-            name: {value:""}
+            name: {value:""},
+            longpolling: {value: false},
+            interval: {value: 600}
         },
         inputs:0,
         outputs:1,
         icon: "box.png",
         label: function() {
             return this.name||this.filepattern||'Box';
+        },
+        oneditprepare: function() {
+            $('#node-input-longpolling').change(function () {
+                $('#node-input-interval').prop('disabled', $(this).prop('checked'));
+            });
         }
     });
 </script>
