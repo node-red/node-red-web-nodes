@@ -87,6 +87,7 @@ module.exports = function(RED) {
                     if (jsun) {
                         msg.data = jsun;
                         if (jsun.hasOwnProperty("weather") && jsun.hasOwnProperty("main")) {
+                            msg.payload.id = jsun.weather[0].id;
                             msg.payload.weather = jsun.weather[0].main;
                             msg.payload.detail = jsun.weather[0].description;
                             msg.payload.icon = jsun.weather[0].icon;
