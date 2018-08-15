@@ -1,12 +1,16 @@
 sudo: false
 language: node_js
-node_js:
-  - "8"
-  - "10"
-  - "6"
+matrix:
+  include:
+    - node_js: 8
+    - node_js: 10
+    - node_js: 6
+  allow_failures:
+    - node_js: 10
+before_install:
+  - npm i -g npm
 before_script:
   # Remove the './node_modules/.bin:' entry, see https://github.com/travis-ci/travis-ci/issues/8813
-  - npm i -g npm
   - export PATH=`echo ${PATH} | sed -re 's,(^|:)(./)?node_modules/.bin($|:),\1,'`
   - npm install -g istanbul grunt-cli coveralls
   - npm install node-red
