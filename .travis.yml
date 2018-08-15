@@ -1,9 +1,9 @@
 sudo: false
 language: node_js
 node_js:
-  - "6"
   - "8"
   - "10"
+  - "6"
 before_script:
   # Remove the './node_modules/.bin:' entry, see https://github.com/travis-ci/travis-ci/issues/8813
   - npm i -g npm
