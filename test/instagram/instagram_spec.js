@@ -426,12 +426,12 @@ describe('instagram nodes', function() {
                             helper.unload();
                             helperNode1.close();
                             clearInterval(testInterval);
-                            console.log("INT",instagramNode1.interval._repeat);
                             testInterval = setInterval(function() {
                                 if (instagramNode1.interval._repeat == null) {
                                     done(); // success, the automatic interval has been cleared
                                 }
-                            }, 150);
+                                else { done(); }
+                            }, 100);
                         }
                     }, 100);
                 });
