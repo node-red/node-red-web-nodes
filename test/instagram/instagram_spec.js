@@ -392,13 +392,13 @@ describe('instagram nodes', function() {
     });
 
     describe('input node', function() {
-        if(nock) {
+        if (nock) {
             it('handles its own input event registration/deregistration', function(done) {
                 var scope = nock('https://api.instagram.com')
-               .get('/v1/users/self/media/liked?count=1&access_token=AN_ACCESS_TOKEN')
-               .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","user_has_liked":true,"id":"irrelevant"}]})
-               .get('/v1/users/self/media/liked?access_token=AN_ACCESS_TOKEN')
-               .reply(200,{"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","images":{"standard_resolution":{"url":"irrelevant"}}}, {"attribution":null,"tags":[],"type":"image","id":"irrelevant"}]});
+                .get('/v1/users/self/media/liked?count=1&access_token=AN_ACCESS_TOKEN')
+                .reply(200, {"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","user_has_liked":true,"id":"irrelevant"}]})
+                .get('/v1/users/self/media/liked?access_token=AN_ACCESS_TOKEN')
+                .reply(200,{"pagination":{},"meta":{"code":200},"data":[{"attribution":null,"tags":[],"type":"image","images":{"standard_resolution":{"url":"irrelevant"}}}, {"attribution":null,"tags":[],"type":"image","id":"irrelevant"}]});
                 helper.load(instagramNode, [{id:"instagramCredentials1", type:"instagram-credentials"},
                                             {id:"instagramNode1", type:"instagram in", instagram: "instagramCredentials1","inputType":"like","outputType":"link", wires:[["helperNode1"]]},
                                             {id:"helperNode1", type:"helper"}],
@@ -421,18 +421,19 @@ describe('instagram nodes', function() {
                     });
 
                     testInterval = setInterval(function() {
-                        if(instagramNode1._events.input) {
+                        if (instagramNode1._events.input) {
                             instagramNode1.interval._repeat.should.be.true; // ensure that the query interval is indeed set
                             helper.unload();
                             helperNode1.close();
                             clearInterval(testInterval);
+                            console.log("INT",instagramNode1.interval._repeat);
                             testInterval = setInterval(function() {
-                                if(instagramNode1.interval._repeat === null) {
+                                if (instagramNode1.interval._repeat === null) {
                                     done(); // success, the automatic interval has been cleared
                                 }
-                            }, 100);
+                            }, 150);
                         }
-                    }, 100);
+                    }, 150);
                 });
 
             });
