@@ -422,18 +422,18 @@ describe('instagram nodes', function() {
 
                     testInterval = setInterval(function() {
                         if (instagramNode1._events.input) {
-                            instagramNode1.interval._repeat.should.be.true; // ensure that the query interval is indeed set
+                            instagramNode1.interval._repeat.should.exist; // ensure that the query interval is indeed set
                             helper.unload();
                             helperNode1.close();
                             clearInterval(testInterval);
                             console.log("INT",instagramNode1.interval._repeat);
                             testInterval = setInterval(function() {
-                                if (instagramNode1.interval._repeat === null) {
+                                if (instagramNode1.interval._repeat == null) {
                                     done(); // success, the automatic interval has been cleared
                                 }
                             }, 150);
                         }
-                    }, 150);
+                    }, 100);
                 });
 
             });
