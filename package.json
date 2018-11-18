@@ -32,6 +32,7 @@
     "devDependencies": {
         "aws-sdk": "~2.293.0",
         "backoff": "^2.5.0",
+        "box-node-sdk": "^1.21.0",
         "clone": "~2.1.2",
         "dropbox": "^2.5.10",
         "fs-extra": "~7.0.0",

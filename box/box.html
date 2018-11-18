@@ -17,24 +17,50 @@
 <script type="text/x-red" data-template-name="box-credentials">
     <div id="node-config-box-client-keys">
         <div class="form-row">
+            <label for="node-config-input-authMode"><i class="fa fa-wrench"></i> <span data-i18n="box.label.authMode"/></label>
+            <select id="node-config-input-authMode"/>
+        </div>
+        <div class="form-row node-box-auth-mode-oauth2">
             <p style="margin-top: 10px;"><b>1.</b> <span data-i18n="box.label.create"></span> <a href="https://app.box.com/developers/" target="_blank" style="text-decoration:underline;">Box</a></p>
         </div>
-        <div class="form-tips" id="node-config-box-tooltip">
+        <div class="form-tips node-box-auth-mode-oauth2" id="node-config-box-tooltip">
         </div>
-        <div class="form-row">
+        <div class="form-row node-box-auth-mode-oauth2">
             <p style="margin-top: 10px;"><b>2.</b> <span data-i18n="box.label.copy"></span>:</p>
         </div>
-        <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientId"><i class="fa fa-user"></i> <span data-i18n="box.label.clientid"></span></label>
-            <input type="password" id="node-config-input-clientId">
+        <div class="form-row node-box-auth-mode-app node-box-auth-mode-oauth2">
+            <label for="node-config-input-clientId"><i class="fa fa-user"></i> <span data-i18n="box.label.clientid"></span></label>
+            <input type="text" id="node-config-input-clientId" data-i18n="[placeholder]box.placeholder.clientId"/>
         </div>
-        <div class="form-row">
-            <label style="margin-left: 10px; margin-right: -10px;" for="node-config-input-clientSecret"><i class="fa fa-key"></i> <span data-i18n="box.label.secret"></span></label>
-            <input type="password" id="node-config-input-clientSecret">
+        <div class="form-row node-box-auth-mode-app node-box-auth-mode-oauth2">
+            <label for="node-config-input-clientSecret"><i class="fa fa-key"></i> <span data-i18n="box.label.secret"></span></label>
+            <input type="password" id="node-config-input-clientSecret"/>
         </div>
-        <div class="form-row">
+        <div class="form-row node-box-auth-mode-oauth2">
            <label>&nbsp;</label>
            <a class="btn" id="node-config-start-auth" href="#" target="_blank"><span data-i18n="box.label.authenticate"></span></a>
+        </div>
+        <div class="form-row node-box-auth-mode-app">
+            <label for="node-config-input-appEnterpriseId"><i class="fa fa-user"></i> <span data-i18n="box.label.appEnterpriseId"/></label>
+            <input type="text" id="node-config-input-appEnterpriseId" data-i18n="[placeholder]box.placeholder.appEnterpriseId"/>
+        </div>
+        <div class="form-row node-box-auth-mode-app">
+            <label for="node-config-input-appUserId"><i class="fa fa-user"></i> <span data-i18n="box.label.appUserId"/></label>
+            <input type="text" id="node-config-input-appUserId" data-i18n="[placeholder]box.placeholder.appUserId"/>
+        </div>
+        <div class="form-row node-box-auth-mode-app">
+            <label for="node-config-input-publicKeyId"><i class="fa fa-user"></i> <span data-i18n="box.label.publicKeyId"/></label>
+            <input type="text" id="node-config-input-publicKeyId" data-i18n="[placeholder]box.placeholder.publicKeyId"/>
+        </div>
+        <div class="form-row node-box-auth-mode-app">
+            <label for="node-config-input-privateKeyArea"><i class="fa fa-key"></i> <span data-i18n="box.label.privateKey"/></label>
+            <textarea id="node-config-input-privateKeyArea" data-i18n="[placeholder]box.placeholder.privateKey"/>
+            <input type="hidden" id="node-config-input-privateKey"/>
+        </div>
+        <div class="form-row node-box-auth-mode-app">
+            <label for="node-config-input-passphrase"><i class="fa fa-key"></i> <span data-i18n="box.label.passphrase"/></label>
+            <input type="password" id="node-config-input-passphrase"/>
+
         </div>
     </div>
     <div id="node-config-box">
@@ -45,24 +71,49 @@
     </div>
 </script>
 
+<script type="text/x-red" data-help-name="box-credentials">
+<p>To use a traditional OAuth2 authentication flow, select the <strong>OAuth2</strong> authentication mode.</p>
+
+<p>For OAuth2 + JWT authentication, suitable for M2M communication, choose <strong>App (JWT)</strong> authentication mode.</p>
+
+<p><em>Either authentication mode will require an appropriate app configuration on Box.</em></p>
+
+<p>Note: In the <strong>App (JWT)</strong> mode, if the app user ID is omitted, the "Box Events" Node will use an "enterprise" event stream. See the Box API documentation for more information.</p>
+
+</script>
+
 <script type="text/javascript">
 (function() {
+    'use strict';
+
+    var AUTH_MODES = {
+        OAUTH2: 'OAuth2',
+        APP: 'App (JWT)'
+    };
+
     RED.nodes.registerType('box-credentials',{
         category: 'config',
         defaults: {
-            displayName: {value:""}
+            displayName: {value:""},
+            authMode: {value: 'OAUTH2'}
         },
         credentials: {
             displayName: {type:"text"},
-            clientId: { type: "password"},
-            clientSecret: { type: "password"}
+            clientId: { type: "text"},
+            clientSecret: { type: "password"},
+            publicKeyId: {type: 'text'},
+            privateKey: {type: 'password'},
+            passphrase: {type: 'password'},
+            appEnterpriseId: {type: 'text'},
+            appUserId: {type: 'text'}
         },
         label: function() {
-            return this.displayName || 'Box';
+            return this.displayName || 'Box Credentials';
         },
         exportable: false,
         oneditprepare: function() {
             var id = this.id;
+            var node = this;
             var pathname = document.location.pathname;
             if (pathname.slice(-1) != "/") {
                 pathname += "/";
@@ -83,7 +134,6 @@
             $("#node-config-input-clientSecret").on('change keydown paste input',updateBoxAuthButton);
 
             function updateBoxDisplayName(dn) {
-                $("#node-config-box-client-keys").hide();
                 $("#node-config-box").show();
                 $("#node-config-input-displayName").val(dn);
                 $("#node-config-box-displayName").html(dn);
@@ -99,16 +149,42 @@
                         window.boxConfigNodeIntervalId = window.setTimeout(pollBoxCredentials,2000);
                     }
                 });
-             }
+            }
+
+            function setupAuthMode () {
+                $('#node-config-input-authMode').append(
+                    Object.keys(AUTH_MODES).map(function(value) {
+                        return '<option value="' + value + '">' + AUTH_MODES[value] + '</option>';
+                    })
+                )
+                    .val(node.authMode)
+                    .on('change', updateAuthMode);
+            }
+
+            function updateAuthMode() {
+                switch ($('#node-config-input-authMode').val()) {
+                    case 'OAUTH2':
+                        $('.node-box-auth-mode-app:not(.node-box-auth-mode-oauth2)').hide();
+                        $('.node-box-auth-mode-oauth2:not(.node-box-auth-mode-app)').show();
+                        console.log('was OAUTH2');
+                        break;
+                    case 'APP':
+                        $('.node-box-auth-mode-app:not(.node-box-auth-mode-oauth2)').show();
+                        $('.node-box-auth-mode-oauth2:not(.node-box-auth-mode-app)').hide();
+                        break;
+                }
+            }
+
+            // we can't get this from the backend safely; if user needs
+            // to re-auth, it must be entered again.
+            $('#node-config-input-clientSecret').val('');
 
             updateBoxAuthButton();
 
             if (this.displayName) {
                 updateBoxDisplayName(this.displayName);
             } else {
-                $("#node-config-box-client-keys").show();
                 $("#node-config-box").hide();
-                $("#node-config-dialog-ok").button("disable");
             }
 
             $("#node-config-start-auth").mousedown(function() {
@@ -124,6 +200,18 @@
                 if (clientId === "" || clientSecret === "") {
                     e.preventDefault();
                 }
+            });
+
+            setupAuthMode();
+            updateAuthMode();
+
+            var pkArea$ = $('#node-config-input-privateKeyArea');
+            var pkData$ = $('#node-config-input-privateKey');
+            if (pkData.val() === '__PWRD__') {
+                pkArea$.val('');
+            }
+            pkArea$.change(function() {
+                pkData$.val(pkArea$.val());
             });
         },
         oneditsave: function() {
@@ -152,6 +240,10 @@
          <input type="text" id="node-input-filepattern" data-i18n="[placeholder]box.placeholder.pattern">
     </div>
     <div class="form-row">
+        <label for="node-input-interval"><i class="fa fa-clock"></i> <span data-i18n="box.label.interval"></span></label>
+        <input type="number" id="node-input-interval"/>
+    </div>
+    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="box.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]box.placeholder.name">
     </div>
@@ -167,23 +259,30 @@
     returned by
     the <a href="https://developers.box.com/docs/#events">event
     API</a> in <b>msg.data</b>.</p>
+
+    The stream used will either be a "user" stream or an "enterprise"
+    stream, depending on the authentication mode used.  "Enterprise" streams
+    have a default polling interval of 60 seconds; "user" streams can emit
+    events at most once per second.  "User" streams are automatically deduped.
 </script>
 
 <script type="text/javascript">
     RED.nodes.registerType('box in',{
-        category: 'storage-input',
+        category: 'Box',
         color:"#C0DEED",
         defaults: {
             box: {type:"box-credentials",required:true},
             filepattern: {value:""},
-            name: {value:""}
+            name: {value:""},
+            interval: {value: ""}
         },
         inputs:0,
         outputs:1,
         icon: "box.png",
         label: function() {
-            return this.name||this.filepattern||'Box';
-        }
+            return this.name||this.filepattern||'Box Events';
+        },
+        paletteLabel: 'box events'
     });
 </script>
 
@@ -192,9 +291,18 @@
         <label for="node-input-box"><i class="fa fa-user"></i> <span data-i18n="box.label.box"></span></label>
         <input type="text" id="node-input-box">
     </div>
-    <div class="form-row node-input-filename">
+    <div class="form-row">
          <label for="node-input-filename"><i class="fa fa-file"></i> <span data-i18n="box.label.filename"></span></label>
          <input type="text" id="node-input-filename" data-i18n="[placeholder]box.placeholder.filename">
+    </div>
+    <div class="form-row">
+        <label for="node-input-fileId"><i class="fa fa-file"></i> <span data-i18n="box.label.fileId"></span></label>
+        <input type="number" id="node-input-fileId" data-i18n="[placeholder]box.placeholder.fileId">
+   </div>
+    <div class="form-row">
+        <label for="node-input-downloadAs"><i class="fa fa-download"></i> <span>Download As</span></label>
+        <select id="node-input-downloadAs">
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="box.label.name"></span></label>
@@ -203,25 +311,119 @@
 </script>
 
 <script type="text/x-red" data-help-name="box">
-    <p>Box input node. Downloads content from Box. The filename on Box is taken from the node <b>filename</b> property or the <b>msg.filename</b> property. The content is sent as <b>msg.payload</b> property.</p>
+    <p>Box input node. Downloads content from Box. The filename on Box is taken from the node <b>Filename</b> property or the <code>msg.filename</code> property.</p>
+
+    <p><strong>File ID</strong> (<code>msg.fileId</code>) is preferred over <strong>Filename</strong> (<code>msg.filename</code>), as it's faster to retrieve.</p>
+
+    The <strong>Download As</strong> value (<code>msg.downloadAs</code>) is a string, and can be one of:
+    <ul>
+        <li><code>RAW</code>: raw file; likely a <code>Buffer</code> or </code>string</code>.  This is the default.</li>
+        <li><code>EXTRACTED_TEXT</code>: text extracted from file; a <code>string</code></li>
+        <li><code>PDF</code>: the file converted into PDF format (if possible); a <code>Buffer</code></li>
+        <li><code>THUMBNAIL</code>: A thumbnail-sized image, if applicable; <code>Buffer</code></li>
+        <li><code>IMAGE_MEDIUM</code>: A medium-sized image, if applicable; <code>Buffer</code></li>
+        <li><code>IMAGE_LARGE</code>: A large-sized image, if applicable; <code>Buffer</code></li>
+    </ul>
+    <p>The resulting content is sent in <code>msg.payload</code>.</p>
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('box',{
-        category: 'storage-input',
-        color:"#C0DEED",
-        defaults: {
-            box: {type:"box-credentials",required:true},
-            filename: {value:""},
-            name: {value:""}
-        },
-        inputs:1,
-        outputs:1,
-        icon: "box.png",
-        label: function() {
-            return this.name||this.filename||'Box';
-        }
-    });
+    (function() {
+        'use strict';
+
+        var DOWNLOAD_TYPES = {
+            RAW: 'Raw',
+            EXTRACTED_TEXT: 'Text',
+            PDF: 'PDF',
+            THUMBNAIL: 'Thumbnail Image',
+            IMAGE_MEDIUM: 'Medium Image',
+            IMAGE_LARGE: 'Large Image'
+        };
+
+        RED.nodes.registerType('box',{
+            category: 'Box',
+            color:"#C0DEED",
+            defaults: {
+                box: {type:"box-credentials",required:true},
+                filename: {value:""},
+                fileId: {value:""},
+                name: {value:""},
+                downloadAs: {value: 'RAW'}
+            },
+            inputs:1,
+            outputs:1,
+            icon: "box.png",
+            label: function() {
+                return this.name||this.filename||'Box Download';
+            },
+            oneditprepare: function() {
+                $('#node-input-downloadAs').append(
+                    Object.keys(DOWNLOAD_TYPES).map(function(value) {
+                        return '<option value="' + value + '">' + DOWNLOAD_TYPES[value] + '</option>';
+                    })
+                )
+                    .val(this.downloadAs);
+            },
+            paletteLabel: 'box download'
+        });
+    }());
+</script>
+
+
+<script type="text/x-red" data-template-name="box-items">
+    <div class="form-row">
+        <label for="node-input-box"><i class="fa fa-user"></i> <span data-i18n="box.label.box"></span></label>
+        <input type="text" id="node-input-box">
+    </div>
+    <div class="form-row node-input-folderId">
+         <label for="node-input-folderId"><i class="fa fa-folder"></i> <span data-i18n="box.label.folderId"></span></label>
+         <input type="number" id="node-input-folderId" data-i18n="[placeholder]box.placeholder.folderId">
+    </div>
+    <div class="form-row node-input-limit">
+        <label for="node-input-limit"><i class="fa fa-weight"></i> <span data-i18n="box.label.limit"></span></label>
+        <input type="number" id="node-input-limit" data-i18n="[placeholder]box.placeholder.limit">
+    </div>
+    <div class="form-row node-input-offset">
+        <label for="node-input-offset"><i class="fa fa-hashtag"></i> <span data-i18n="box.label.offset"></span></label>
+        <input type="number" id="node-input-offset" data-i18n="[placeholder]box.placeholder.offset">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="box.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]box.placeholder.name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="box-items">
+    <p>Box folder listing Node. Returns a payload containing information about the items in the folder as specified by the <strong>Folder ID</strong>.  It can be provided via the <code>msg.folderId</code> property of an incoming message.</p>
+
+    <p>The <strong>Limit</strong> property (<code>msg.limit</code>) determines the maximum count of items to return at once.  The <strong>Offset</strong> property (<code>msg.offset</code>) determines at which index to begin.  Use these for pagination.</p>
+
+    <p>The default <strong>Folder ID</strong> is <code>0</code>, which corresponds to the root "All Files" folder.</p>
+</script>
+
+<script type="text/javascript">
+    (function() {
+        'use strict';
+
+        RED.nodes.registerType('box-items',{
+            category: 'Box',
+            color:"#C0DEED",
+            defaults: {
+                box: {type:"box-credentials",required:true},
+                folderId: {value:""},
+                limit: {value: ""},
+                offset: {value: ""},
+                name: {value: ''}
+            },
+            inputs:1,
+            outputs:1,
+            icon: "box.png",
+            label: function() {
+                return this.name||this.filename||'Box Folder Items';
+            },
+            paletteLabel: 'box folder items'
+        });
+    }());
 </script>
 
 <script type="text/x-red" data-template-name="box out">
@@ -252,7 +454,7 @@
 
 <script type="text/javascript">
     RED.nodes.registerType('box out',{
-        category: 'storage-output',
+        category: 'Box',
         color:"#C0DEED",
         defaults: {
             box: {type:"box-credentials",required:true},
@@ -261,11 +463,84 @@
             name: {value:""}
         },
         inputs:1,
-        outputs:0,
+        outputs:1,
         icon: "box.png",
         align: "right",
         label: function() {
-            return this.name||this.filename||this.localFilename||'Box';
-        }
+            return this.name||this.filename||this.localFilename||'Box Upload';
+        },
+        paletteLabel: 'box upload'
     });
+</script>
+
+<script type="text/x-red" data-template-name="box-set-file-info">
+    <div class="form-row">
+        <label for="node-input-box"><i class="fa fa-user"></i> <span data-i18n="box.label.box"></span></label>
+        <input type="text" id="node-input-box">
+    </div>
+    <div class="form-row node-input-fileId">
+         <label for="node-input-fileId"><i class="fa fa-file"></i> <span data-i18n="box.label.fileId"></span></label>
+         <input type="number" id="node-input-fileId" data-i18n="[placeholder]box.placeholder.fileId">
+    </div>
+    <div class="form-row node-input-data" style="margin-bottom: 0">
+        <label for="node-input-data"><i class="fa fa-info"></i> <span data-i18n="box.label.data"></span></label>
+        <input type="hidden" id="node-input-data"/>
+    </div>
+    <div class="form-row node-text-editor-row">
+        <div style="height: 250px; min-height:150px;" class="node-text-editor" id="node-input-data-editor"></div>
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="box.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]box.placeholder.name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="box-set-file-info">
+    <p>Updates a file's "info" in Box.  Accepts a <strong>File ID</strong> (<code>msg.fileId</code>).</p>
+    <p>The file info should be a JavaScript object.  Any properties therein are applied to the file, as supported.  This may be passed as <code>msg.data</code>, <code>msg.payload</code>, or hardcoded within the Node properties as valid JSON.</p>
+    <p>See the <a href="https://developer.box.com/v2.0/reference" target="_blank">Box API documentation</a> for more information about the format of this object.</p>
+</script>
+
+<script type="text/javascript">
+    (function() {
+        'use strict';
+
+        RED.nodes.registerType("box-set-file-info",{
+            category: 'Box',
+            color:"#C0DEED",
+            defaults: {
+                box: {type:"box-credentials",required:true},
+                data: {value: ""},
+                fileId: {value: ""}
+            },
+            inputs:1,
+            outputs:1,
+            align: 'right',
+            icon: "box.png",
+            label: function() {
+                return this.name||this.filename||'Box File Info';
+            },
+            oneditprepare: function () {
+                this.editor = RED.editor.createEditor({
+                    id: 'node-input-data-editor',
+                    mode: 'ace/mode/json',
+                    value: $("#node-input-data").val()
+                });
+                this.editor.focus();
+            },
+            oneditsave: function () {
+                $('#node-input-data').val(this.editor.getValue());
+                this.editor.destroy();
+                delete this.editor;
+            },
+            oneditcancel: function () {
+                this.editor.destroy();
+                delete this.editor;
+            },
+            oneditresize: function () {
+                this.editor.resize();
+            },
+            paletteLabel: 'box set file info'
+        });
+    }());
 </script>
