@@ -1,6 +1,6 @@
 {
     "name": "node-red-node-web-nodes",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "description": "A collection of Node-RED nodes for popular web services.",
     "homepage": "http://nodered.org",
     "license": "Apache-2.0",
@@ -12,7 +12,7 @@
         "test": "grunt"
     },
     "keywords": [
-        "node-red",
+        "node-red-web",
         "nodes",
         "flow",
         "flickr",
