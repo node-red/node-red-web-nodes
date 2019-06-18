@@ -67,7 +67,6 @@ module.exports = function(RED) {
             cb(RED._("google.error.too-many-refresh-attempts"));
         });
         exponentialBackoff.on('ready', function() {
-            node.warn(RED._("google.warn.token-expired"));
             request.post(
                 {
                     url: 'https://accounts.google.com/o/oauth2/token',
