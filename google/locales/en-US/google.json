@@ -20,7 +20,6 @@
             "api3": "<p>The subsequent app page will contain the new API key to be copied here.</p>"
         },
         "warn": {
-            "token-expired": "trying to refresh token due to expiry",
             "refreshing-accesstoken": "refreshing access token after 401 error",
             "retry-request": "__number__. failed attempts. Waiting __delay__ ms before next attempt."
         },
