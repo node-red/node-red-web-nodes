@@ -333,7 +333,7 @@ describe('aws nodes', function() {
                             var output = helper.getNode("output");
                             output.should.have.property('id', 'output');
                             output.on("input", function(msg) {
-                                msg.should.have.property('payload', new Buffer("hello\n"));
+                                msg.should.have.property('payload', new Buffer.from("hello\n"));
                                 msg.should.have.property('bucket', 'foobar');
                                 msg.should.have.property('filename', 'foobar.txt');
                                 done();
@@ -373,6 +373,7 @@ describe('aws nodes', function() {
                  }, function() {
                      var s3 = helper.getNode("s3");
                      s3.should.have.property('id', 's3');
+                     s3.status.restore();
                      var inject = helper.getNode("inject");
                      inject.should.have.property('id', 'inject');
 

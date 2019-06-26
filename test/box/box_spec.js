@@ -505,7 +505,7 @@ describe('box nodes', function() {
                     output.should.have.property('id', 'output');
                     output.on("input", function(msg) {
                         msg.should.have.property('payload',
-                            new Buffer("hello world"));
+                            new Buffer.from("hello world"));
                         msg.should.have.property('filename',
                             'node-red/foobar.txt');
                         done();
@@ -586,6 +586,7 @@ describe('box nodes', function() {
                 } }, function() {
                     var box = helper.getNode("box");
                     box.should.have.property('id', 'box');
+                    box.status.restore();
                     var inject = helper.getNode("inject");
                     inject.should.have.property('id', 'inject');
 

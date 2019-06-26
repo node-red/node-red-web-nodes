@@ -45,7 +45,7 @@ describe('pinboard nodes', function() {
                       var inject = helper.getNode("inject");
                       var pinboard = helper.getNode("pinboard");
                       pinboard.should.have.property('id','pinboard');
-
+                      pinboard.error.restore();
                       var stub = sinon.stub(pinboard, 'error').callsFake(function(msg){
                           var expected = 'pinboard.error.no-url';
                           should.deepEqual(msg, expected);
@@ -71,7 +71,7 @@ describe('pinboard nodes', function() {
                       var inject = helper.getNode("inject");
                       var pinboard = helper.getNode("pinboard");
                       pinboard.should.have.property('id','pinboard');
-
+                      pinboard.error.restore();
                       var stub = sinon.stub(pinboard, 'error').callsFake(function(msg){
                           var expected = 'pinboard.error.no-title';
                           should.deepEqual(msg, expected);
@@ -103,7 +103,7 @@ describe('pinboard nodes', function() {
                       var inject = helper.getNode("inject");
                       var pinboard = helper.getNode("pinboard");
                       pinboard.should.have.property('id','pinboard');
-
+                      pinboard.error.restore();
                       var stub = sinon.stub(pinboard, 'error').callsFake(function(msg){
                           var expected = 'Server Error, Status 401';
                           should.deepEqual(msg, expected);
@@ -136,7 +136,7 @@ describe('pinboard nodes', function() {
                       var inject = helper.getNode("inject");
                       var pinboard = helper.getNode("pinboard");
                       pinboard.should.have.property('id','pinboard');
-
+                      pinboard.error.restore();
                       var stub = sinon.stub(pinboard, 'error').callsFake(function(msg){
                           msg.should.containEql('Unexpected token }');
                           stub.restore();
@@ -168,7 +168,7 @@ describe('pinboard nodes', function() {
                       var inject = helper.getNode("inject");
                       var pinboard = helper.getNode("pinboard");
                       pinboard.should.have.property('id','pinboard');
-
+                      pinboard.error.restore();
                       var stub = sinon.stub(pinboard, 'error').callsFake(function(msg){
                           var expected = 'internal error (testing)';
                           should.deepEqual(msg, expected);
@@ -201,7 +201,7 @@ describe('pinboard nodes', function() {
                       var inject = helper.getNode("inject");
                       var pinboard = helper.getNode("pinboard");
                       pinboard.should.have.property('id','pinboard');
-
+                      pinboard.status.restore();
                       var stub = sinon.stub(pinboard, 'status').callsFake(function(status){
                           switch (stub.callCount) {
                               case 1:

@@ -47,6 +47,7 @@ describe('tfl-underground nodes', function() {
                 function() {
                   var n1 = helper.getNode("n1");
                   var n2 = helper.getNode("n2");
+                  n2.error.restore();
                   var stub = sinon.stub(n2, 'error').callsFake(function(msg) {
                     msg.should.equal("tfl-underground.error.no-station");
                     stub.restore();
@@ -70,6 +71,7 @@ describe('tfl-underground nodes', function() {
 
                         var n1 = helper.getNode("n1");
                         var n2 = helper.getNode("n2");
+                        n2.error.restore();
                         var stub = sinon.stub(n2, 'error').callsFake(function(msg) {
                           msg.should.equal("tfl-underground.error.invalid-tubeline");
                           stub.restore();

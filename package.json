@@ -30,7 +30,7 @@
         "jawbone"
     ],
     "devDependencies": {
-        "aws-sdk": "^2.482.0",
+        "aws-sdk": "^2.483.0",
         "backoff": "^2.5.0",
         "clone": "^2.1.2",
         "dropbox": "^2.5.10",

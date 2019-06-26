@@ -479,8 +479,8 @@ describe('instagram nodes', function() {
                                         }, function() {
                 var instagramNode1 = helper.getNode("instagramNode1");
                 var helperNode1 = helper.getNode("helperNode1");
-
-                if(workingSubsequentRequest === false) {
+                instagramNode1.warn.restore();
+                if (workingSubsequentRequest === false) {
                     var sinon = require("sinon");
                     var stub = sinon.stub(instagramNode1, 'warn').callsFake(function() {
                         stub.restore();

@@ -181,6 +181,7 @@ describe('google calendar nodes', function() {
             }, function() {
                 var calendar = helper.getNode("calendar");
                 calendar.should.have.property('id', 'calendar');
+                calendar.status.restore();
                 var output = helper.getNode("output");
                 output.should.have.property('id', 'output');
                 output.on("input", function(msg) {
@@ -344,6 +345,7 @@ describe('google calendar nodes', function() {
             }, function() {
                 var calendar = helper.getNode("calendar");
                 calendar.should.have.property('id', 'calendar');
+                calendar.status.restore();
                 var output = helper.getNode("output");
                 output.should.have.property('id', 'output');
                 output.on("input", function(msg) {
@@ -541,7 +543,7 @@ describe('google calendar nodes', function() {
             }, function() {
                 var calendar = helper.getNode("calendar");
                 calendar.should.have.property('id', 'calendar');
-
+                calendar.status.restore();
                 var stub = sinon.stub(calendar, 'status').callsFake(function(status) {
                     if (Object.getOwnPropertyNames(status).length === 0) {
                         stub.restore();
@@ -620,7 +622,7 @@ describe('google calendar nodes', function() {
             }, function() {
                 var calendar = helper.getNode("calendar");
                 calendar.should.have.property('id', 'calendar');
-
+                calendar.status.restore();
                 var stub = sinon.stub(calendar, 'status').callsFake(function(status) {
                     if (Object.getOwnPropertyNames(status).length === 0) {
                         stub.restore();

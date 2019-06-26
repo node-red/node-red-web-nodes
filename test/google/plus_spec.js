@@ -1321,6 +1321,7 @@ describe('google plus', function () {
                 plus.should.have.property('id', 'plus');
                 var output = helper.getNode("output");
                 output.should.have.property('id', 'output');
+                plus.error.restore();
                 var stub = sinon.stub(plus, 'error').callsFake(function (error) {
                     stub.restore();
                     stub = null;

@@ -40,7 +40,7 @@ function yesterday() {
 }
 
 describe('fitbit nodes', function() {
-    
+
     beforeEach(function (done) { helper.startServer(done); });
 
     afterEach(function(done) {
@@ -701,6 +701,7 @@ describe('fitbit nodes', function() {
                             .reply(404, '{"errors":[ { "errorType":"foo", "fieldName":"bar", "message":"oops" } ] }');
                         var input = helper.getNode("input");
                         var fitbit = helper.getNode("fitbit-node");
+                        fitbit.status.restore();
                         var output = helper.getNode("output");
                         var expected = [
                             {"fill":"blue","shape":"dot","text":"fitbit.status.querying"},

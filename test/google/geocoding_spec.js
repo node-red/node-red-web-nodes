@@ -839,6 +839,7 @@ describe('google geocoding', function () {
 				geocoding.should.have.property('id', 'geocoding');
 				var output = helper.getNode("output");
 				output.should.have.property('id', 'output');
+                geocoding.error.restore();
 				var stub = sinon.stub(geocoding, 'error').callsFake(function (error) {
 						stub.restore();
 						stub = null;
@@ -893,6 +894,7 @@ describe('google geocoding', function () {
 				geocoding.should.have.property('id', 'geocoding');
 				var output = helper.getNode("output");
 				output.should.have.property('id', 'output');
+                geocoding.error.restore();
 				var stub = sinon.stub(geocoding, 'error').callsFake(function (error) {
 						stub.restore();
 						stub = null;

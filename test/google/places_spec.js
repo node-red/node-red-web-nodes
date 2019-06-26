@@ -256,6 +256,7 @@ describe('google places', function () {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     var sinon = require("sinon");
+                    places.error.restore();
                     var stub = sinon.stub(places, 'error').callsFake(function (err) {
                             stub.restore();
                             stub = null;
@@ -1366,6 +1367,7 @@ describe('google places', function () {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     var sinon = require("sinon");
+                    places.error.restore();
                     var stub = sinon.stub(places, 'error').callsFake(function (err) {
                             stub.restore();
                             stub = null;
@@ -1640,6 +1642,7 @@ describe('google places', function () {
                     var output = helper.getNode("output");
                     output.should.have.property('id', 'output');
                     var sinon = require("sinon");
+                    places.error.restore();
                     var stub = sinon.stub(places, 'error').callsFake(function (err) {
                             stub.restore();
                             stub = null;

@@ -165,6 +165,7 @@ describe('weather nodes', function() {
                 var n1 = helper.getNode("n1");
                 var weatherNode1 = helper.getNode("weatherNode1");
                 var n3 = helper.getNode("n3");
+                weatherNode1.error.restore();
                 var stub = sinon.stub(weatherNode1, 'error').callsFake(function(msg) {
                     msg.should.equal("weather.error.invalid-lat");
                     stub.restore();
@@ -184,6 +185,7 @@ describe('weather nodes', function() {
                 var n1 = helper.getNode("n1");
                 var weatherNode1 = helper.getNode("weatherNode1");
                 var n3 = helper.getNode("n3");
+                weatherNode1.error.restore();
                 var stub = sinon.stub(weatherNode1, 'error').callsFake(function(msg) {
                     msg.should.equal("weather.error.invalid-lon");
                     stub.restore();
@@ -206,6 +208,7 @@ describe('weather nodes', function() {
                                 var weatherNode1 = helper.getNode("weatherNode1");
                                 //weatherNode1.credentials = {apikey:"12345"}; <- this is the test
                                 var n3 = helper.getNode("n3");
+                                weatherNode1.error.restore();
                                 var stub = sinon.stub(weatherNode1, 'error').callsFake(function(msg) {
                                     msg.should.equal("weather.error.no-api-key");
                                     stub.restore();
@@ -341,6 +344,7 @@ describe('weather nodes', function() {
                     var weatherNode1 = helper.getNode("weatherNode1");
                     var n3 = helper.getNode("n3");
                     weatherNode1.credentials = {apikey:"12345"};
+                    weatherNode1.error.restore();
                     var stub = sinon.stub(weatherNode1, 'error').callsFake(function(msg) {
                             msg.should.equal("weather.error.invalid-city_country");
                             stub.restore();
@@ -362,6 +366,7 @@ describe('weather nodes', function() {
                     var weatherNode1 = helper.getNode("weatherNode1");
                     var n3 = helper.getNode("n3");
                     weatherNode1.credentials = {apikey:"12345"};
+                    weatherNode1.error.restore();
                     var stub = sinon.stub(weatherNode1, 'error').callsFake(function(msg) {
                             msg.should.equal("weather.error.invalid-city_country");
                             stub.restore();
