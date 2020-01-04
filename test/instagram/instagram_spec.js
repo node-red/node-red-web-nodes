@@ -318,7 +318,7 @@ describe('instagram nodes', function() {
                     });
 
                     testInterval = setInterval(function() { // self trigger
-                        if(instagramNode1._events.input) {
+                        if (instagramNode1) {
                             instagramNode1.receive({payload:""});
                         }
                     }, 100);
@@ -382,7 +382,7 @@ describe('instagram nodes', function() {
                     });
 
                     testInterval = setInterval(function() { // self trigger
-                        if(instagramNode1._events.input) {
+                        if(instagramNode1) {
                             instagramNode1.receive({payload:""});
                         }
                     }, 100);
@@ -421,7 +421,7 @@ describe('instagram nodes', function() {
                     });
 
                     testInterval = setInterval(function() {
-                        if (instagramNode1._events.input) {
+                        if (instagramNode1) {
                             instagramNode1.interval._repeat.should.exist; // ensure that the query interval is indeed set
                             helper.unload();
                             helperNode1.close();
@@ -506,7 +506,7 @@ describe('instagram nodes', function() {
                     });
 
                     var testInterval = setInterval(function() { // self trigger
-                        if(instagramNode1._events.input) {
+                        if (instagramNode1) {
                             instagramNode1.receive({payload:""});
                         }
                     }, 100);
@@ -584,7 +584,7 @@ describe('instagram nodes', function() {
                 });
 
                 testInterval = setInterval(function() { // self trigger
-                    if(instagramNode1._events.input) {
+                    if (instagramNode1) {
                         instagramNode1.receive({payload:""});
                     }
                 }, 100);
@@ -650,7 +650,7 @@ describe('instagram nodes', function() {
                 });
 
                 testInterval = setInterval(function() { // self trigger
-                    if(instagramNode1._events.input) {
+                    if (instagramNode1) {
                         instagramNode1.receive({payload:""});
                     }
                 }, 100);

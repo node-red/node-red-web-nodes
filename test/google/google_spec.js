@@ -48,7 +48,7 @@ describe('google nodes', function() {
                         'transfer-encoding': 'chunked'
                     });
                 nock('https://www.googleapis.com:443')
-                    .get('/plus/v1/people/me')
+                    .get('/userinfo/v2/me')
                     .reply(200, {
                         "displayName" : "Foo Bar"
                     }, {
