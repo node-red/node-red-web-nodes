@@ -250,7 +250,7 @@ module.exports = function(RED) {
             delete credentials.callback;
             RED.nodes.addCredentials(node_id, credentials);
             request.get({
-                url: 'https://www.googleapis.com/plus/v1/people/me',
+                url: 'https://www.googleapis.com/userinfo/v2/me',
                 json: true,
                 auth: { bearer: credentials.accessToken },
             }, function(err, result, data) {
