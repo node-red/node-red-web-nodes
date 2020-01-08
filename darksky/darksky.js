@@ -93,6 +93,9 @@ module.exports = function(RED) {
                         } catch (err) {
                             return callback(RED._("darksky.error.api-response", { response:weather }));
                         }
+                        if (!jsun.daily) {
+                            return callback(RED._("darksky.error.api-response", { response:weather }));
+                        }
                         msg.data = jsun;
                         msg.payload.weather = jsun.daily.data[when].icon;
                         msg.payload.detail = jsun.daily.data[when].summary;
