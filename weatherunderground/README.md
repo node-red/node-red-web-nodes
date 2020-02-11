@@ -4,6 +4,11 @@ node-red-node-weather-underground
 A <a href="http://nodered.org" target="_new">Node-RED</a> node that gets the
 weather report and forecast from The Weather Underground
 
+## Weather Underground Node Sunset / Migration
+In 1Q 2019, the [Weather Underground API was sunset](https://apicommunity.wunderground.com/weatherapi/topics/end-of-service-for-the-weather-underground-api). As a result, this Node-RED node no longer works. 
+
+Replacement Node-RED nodes are now available that can retrieve Personal Weather Station data using a different API from the Weather Underground. PWS owners can register and receive a new API Key.  This new API key can be used with the [node-red-contrib-twc-weather](https://flows.nodered.org/node/node-red-contrib-twc-weather) nodes.   Please migrate to **node-red-contrib-twc-weather**
+
 Pre-requisites
 --------------
 
