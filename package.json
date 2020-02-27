@@ -30,7 +30,7 @@
         "jawbone"
     ],
     "devDependencies": {
-        "aws-sdk": "^2.597.0",
+        "aws-sdk": "^2.628.0",
         "backoff": "^2.5.0",
         "clone": "^2.1.2",
         "dropbox": "^2.5.10",
@@ -45,14 +45,14 @@
         "is-utf8": "^0.2.1",
         "minimatch": "^3.0.4",
         "mocha": "^6.2.2",
-        "nock": "^11.7.1",
-        "node-red": "~1.0.3",
+        "nock": "^11.9.1",
+        "node-red": "~1.0.4",
         "node-red-node-test-helper": "~0.2.3",
         "oauth": "~0.9.11",
-        "request": "^2.88.0",
+        "request": "^2.88.2",
         "should": "^13.2.3",
         "should-sinon": "^0.0.6",
-        "sinon": "~8.0.2",
+        "sinon": "~8.0.4",
         "supertest": "^4.0.2",
         "xml2js": "^0.4.0"
     },
