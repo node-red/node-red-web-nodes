@@ -55,11 +55,15 @@ module.exports = function(RED) {
                 } else if (node.city && node.country) {
                     url = "http://api.openweathermap.org/data/2.5/forecast?lang=" + node.language + "&cnt=40&units=metric&q=" + node.city + "," + node.country + "&APPID=" + node.credentials.apikey;
                 }
-            } else {
+            } else if (node.wtype === "current") {
                 if (node.lat && node.lon) {
                     url = "http://api.openweathermap.org/data/2.5/weather?lang=" + node.language + "&lat=" + node.lat + "&lon=" + node.lon + "&APPID=" + node.credentials.apikey;
                 } else if (node.city && node.country) {
                     url = "http://api.openweathermap.org/data/2.5/weather?lang=" + node.language + "&q=" + node.city + "," + node.country + "&APPID=" + node.credentials.apikey;
+                }
+            } else if (node.wtype === "onecall") {
+                if (node.lat && node.lon) {
+                    url = "https://api.openweathermap.org/data/2.5/onecall?lang=" + node.language + "&lat=" + node.lat + "&lon=" + node.lon + "&units=metric&APPID=" + node.credentials.apikey;
                 }
             }
 
@@ -127,6 +131,14 @@ module.exports = function(RED) {
                                 }
                             }
                             msg.title = RED._("weather.message.forecast");
+                            callback();
+                        } else if(jsun.hasOwnProperty("current") && jsun.hasOwnProperty("hourly") && jsun.hasOwnProperty("daily")) {
+                            msg.payload.current = jsun.current;
+                            msg.payload.hourly = jsun.hourly;
+                            msg.payload.daily = jsun.daily;
+                            if(jsun.hasOwnProperty('minutely')) msg.payload.minuetly = jsun.minutely;
+                            msg.location.lat = jsun.lat;
+                            msg.location.lon = jsun.lon;
                             callback();
                         } else {
                             if (jsun.message === "Error: Not found city") {
