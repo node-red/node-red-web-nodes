@@ -136,7 +136,9 @@ module.exports = function(RED) {
                             msg.payload.current = jsun.current;
                             msg.payload.hourly = jsun.hourly;
                             msg.payload.daily = jsun.daily;
-                            if(jsun.hasOwnProperty('minutely')) msg.payload.minuetly = jsun.minutely;
+                            if(jsun.hasOwnProperty('minutely')) {
+                                msg.payload.minuetly = jsun.minutely;
+                            }
                             msg.location.lat = jsun.lat;
                             msg.location.lon = jsun.lon;
                             callback();

@@ -115,7 +115,7 @@
         },
         oneditprepare: function() {
             $("#node-input-wtype").change(function() {
-                let type = $("#node-input-wtype option:selected").val();
+                var type = $("#node-input-wtype option:selected").val();
                 if(type === "onecall") {
                     $("#weather-location-type-select").val("coordinates");
                     $("#weather-location-type-select-row").hide();
