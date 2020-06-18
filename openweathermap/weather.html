@@ -63,9 +63,10 @@
         <select id="node-input-wtype" style="width:300px">
             <option value="current" data-i18n="weather.label.option_current"></option>
             <option value="forecast" data-i18n="weather.label.option_5dayforecast"></option>
+            <option value="onecall" data-i18n="weather.label.option_onecall"></option>
         </select>
     </div>
-    <div class="form-row">
+    <div class="form-row" id="weather-location-type-select-row">
         <label for="weather-location-type-select"><i class="fa fa-globe"></i> <span data-i18n="weather.label.location"></span></label>
         <select id="weather-location-type-select" style="width:300px">
             <option value="city" data-i18n="weather.label.option_city"></option>
@@ -113,19 +114,31 @@
             return this.name||this._("weather.label.weather");
         },
         oneditprepare: function() {
-            $("#weather-location-type-select").change(function() {
-                var id = $("#weather-location-type-select option:selected").val();
-                $(".weather-location-type").hide();
-                $("#weather-location-type-"+id).show();
-            });
-            if (this.lon !== ""||this.lat !== "") {
-                $("#weather-location-type-select").val("coordinates");
-            } else {
-                $("#weather-location-type-select").val("city");
-            }
-            var id = $("#weather-location-type-select option:selected").val();
-            $(".weather-location-type").hide();
-            $("#weather-location-type-"+id).show();
+            $("#node-input-wtype").change(function() {
+                var type = $("#node-input-wtype option:selected").val();
+                if(type === "onecall") {
+                    $("#weather-location-type-select").val("coordinates");
+                    $("#weather-location-type-select-row").hide();
+                    $(".weather-location-type").hide();
+                    $("#weather-location-type-coordinates").show();
+                } else {
+                    $("#weather-location-type-select-row").show();
+                    $("#weather-location-type-select").change(function() {
+                        var id = $("#weather-location-type-select option:selected").val();
+                        $(".weather-location-type").hide();
+                        $("#weather-location-type-"+id).show();
+                    });
+                    if (this.lon !== ""||this.lat !== "") {
+                        $("#weather-location-type-select").val("coordinates");
+                    } else {
+                        $("#weather-location-type-select").val("city");
+                    }
+                    var id = $("#weather-location-type-select option:selected").val();
+                    $(".weather-location-type").hide();
+                    $("#weather-location-type-"+id).show();
+                }
+            }.bind(this));
+
         },
         oneditsave: function() {
             var type = $("#weather-location-type-select option:selected").val();
@@ -191,6 +204,14 @@
         <li><code>weather</code> - an object with some miscellaneous data,
         <ul><li>description, icon, main, id</li></ul>
     </ul>
+    <p>The combined current weather/forecast creates three properties in <code>msg.payload</code>:</p>
+    <ul>
+        <li><code>current</code> - the current weather
+        <li><code>hourly</code> - an hourly forecast for the next 48 hours
+        <li><code>daily</code> - the daily forecast for 7 days
+    </ul>
+    <p>In case it is available, also an minutely forecast is provided</p>
+    <p>Note that in this case, the coordinates have to be provided</p>
     <p>The node also sets the following properties of <code>msg.location</code>.</p>
     <ul>
         <li><code>lat</code> - the latitude of the location from which the data was sourced.</li>

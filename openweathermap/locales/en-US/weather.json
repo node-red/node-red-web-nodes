@@ -6,6 +6,7 @@
             "location": "Location",
             "option_current": "Current weather for",
             "option_5dayforecast": "5 day forecast for",
+            "option_onecall": "combined current weather/forecast for",
             "option_city": "City, Country",
             "option_coordinates": "Coordinates",
             "city": "City",
