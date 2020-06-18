@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014,2016 IBM Corp.
+  Copyright 2014,2020 IBM Corp.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
   limitations under the License.
 -->
 
-<script type="text/x-red" data-template-name="openweathermap">
+<script type="text/html" data-template-name="openweathermap">
     <div class="form-row">
         <label for="node-input-apikey"><i class="fa fa-key"></i> <span data-i18n="weather.label.apikey"></span></label>
         <input type="password" id="node-input-apikey">
@@ -156,7 +156,7 @@
     });
 </script>
 
-<script type="text/x-red" data-help-name="openweathermap">
+<script type="text/html" data-help-name="openweathermap">
     <p>A node which polls openweathermap.org for current weather data when an input is received.</p>
     <p>An API Key required to use this node can be obtained from <a href="http://openweathermap.org/appid" target="_new">OpenWeatherMap</a>.</p>
     <p> This is done using either:</p>
@@ -228,7 +228,7 @@
 </script>
 
 
-<script type="text/x-red" data-template-name="openweathermap in">
+<script type="text/html" data-template-name="openweathermap in">
     <div class="form-row">
         <label for="node-input-apikey"><i class="fa fa-key"></i> <span data-i18n="weather.label.apikey"></span></label>
         <input type="password" id="node-input-apikey">
@@ -357,7 +357,7 @@
     });
 </script>
 
-<script type="text/x-red" data-help-name="openweathermap in">
+<script type="text/html" data-help-name="openweathermap in">
     <p>A node which polls openweathermap.org for current weather data periodically and returns when a change is detected.</p>
     <p>An API Key required to use this node can be obtained from <a href="http://openweathermap.org/appid" target="_new">OpenWeatherMap</a>.</p>
     <p> This is done using either:</p>

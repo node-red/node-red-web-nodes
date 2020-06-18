@@ -1,5 +1,5 @@
 /**
- * Copyright 2014.2015 IBM Corp.
+ * Copyright 2014,2020 IBM Corp.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -164,7 +164,7 @@ module.exports = function(RED) {
 
     function OpenWeatherMapInputNode(n) {
         RED.nodes.createNode(this, n);
-        this.wtype = n.wtype;
+        this.wtype = n.wtype || "current";
         this.repeat = 600000;  // every 10 minutes
         this.interval_id = null;
         var node = this;
@@ -218,7 +218,7 @@ module.exports = function(RED) {
 
     function OpenWeatherMapQueryNode(n) {
         RED.nodes.createNode(this,n);
-        this.wtype = n.wtype;
+        this.wtype = n.wtype || "current";
         var node = this;
         var city;
         var country;
