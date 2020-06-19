@@ -13,7 +13,7 @@ module.exports = function(grunt) {
                 ui: 'bdd',
                 reporter: 'spec'
             },
-            all: { src: ['test/*/*_spec.js'] },
+            all: { src: ['test/**/*_spec.js'] },
         },
         jshint: {
             options: {
