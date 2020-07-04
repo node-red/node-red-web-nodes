@@ -1,6 +1,6 @@
 {
     "name": "node-red-node-web-nodes",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "description": "A collection of Node-RED nodes for popular web services.",
     "homepage": "http://nodered.org",
     "license": "Apache-2.0",
@@ -30,12 +30,12 @@
         "jawbone"
     ],
     "devDependencies": {
-        "aws-sdk": "^2.628.0",
+        "aws-sdk": "^2.709.0",
         "backoff": "^2.5.0",
         "clone": "^2.1.2",
         "dropbox": "^2.5.10",
-        "fs-extra": "^9.0.0",
-        "grunt": "^1.1.0",
+        "fs-extra": "^9.0.1",
+        "grunt": "^1.2.0",
         "grunt-cli": "^1.3.2",
         "grunt-contrib-jshint": "^2.1.0",
         "grunt-jscs": "^3.0.1",
@@ -47,7 +47,7 @@
         "mocha": "^6.2.3",
         "nock": "^11.9.1",
         "node-red": "~1.0.4",
-        "node-red-node-test-helper": "~0.2.3",
+        "node-red-node-test-helper": "~0.2.5",
         "oauth": "~0.9.11",
         "request": "^2.88.2",
         "should": "^13.2.3",
