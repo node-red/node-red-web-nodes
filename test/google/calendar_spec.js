@@ -392,7 +392,7 @@ describe('google calendar nodes', function() {
                     'content-type': 'application/json; charset=UTF-8'
                 })
                 .filteringPath(/timeMin=\d[^&]*/g, 'timeMin=now')
-                .get('/calendar/v3/calendars/bob/events?maxResults=10&orderBy=startTime&singleEvents=true&showDeleted=false&timeMin=now')
+                .get('/calendar/v3/calendars/bob/events?maxResults=1&orderBy=startTime&singleEvents=true&showDeleted=false&timeMin=now')
                 .reply(200, {
                     kind: "calendar#events",
                     items: [
@@ -473,6 +473,146 @@ describe('google calendar nodes', function() {
                 output.should.have.property('id', 'output');
                 output.on("input", function(msg) {
                     msg.should.have.property('title', 'Meeting');
+                    done();
+                });
+
+                // wait for calendar.on("input", ...) to be called
+                var onFunction = calendar.on;
+                var onStub = sinon.stub(calendar, 'on').callsFake(function() {
+                    var res = onFunction.apply(calendar, arguments);
+                    onStub.restore();
+                    calendar.emit('input', {}); // trigger poll
+                    return res;
+                });
+            });
+        });
+        it('returns multiple calendar entries', function(done) {
+            var oneHourAgo = new TimeOffset(-3600);
+            var oneHourFromNow = new TimeOffset(3600);
+            var twoHoursFromNow = new TimeOffset(7200);
+            var threeHoursFromNow = new TimeOffset(10800);
+            nock('https://www.googleapis.com:443')
+                .get('/calendar/v3/users/me/calendarList')
+                .reply(200, {
+                    kind : "calendar#calendarList",
+                    items : [
+                        { id: "bob", summary: "Bob", primary: true },
+                        { id: "work", summary: "Work" },
+                        { id: "home", summary: "Home" }
+                    ]
+                }, {
+                    date: 'Tue, 11 Nov 2014 10:53:24 GMT',
+                    'content-type': 'application/json; charset=UTF-8'
+                })
+                .filteringPath(/timeMin=\d[^&]*/g, 'timeMin=now')
+                .get('/calendar/v3/calendars/bob/events?maxResults=2&orderBy=startTime&singleEvents=true&showDeleted=false&timeMin=now')
+                .reply(200, {
+                    kind: "calendar#events",
+                    items: [
+                        {
+                            creator: {
+                                email: "foo@example.com",
+                                self: true,
+                                displayName: "Bob Foo"
+                            },
+                            status: "confirmed",
+                            kind: "calendar#event",
+                            summary: "Coffee",
+                            attendees: [
+                                {
+                                    email: "foo@example.com",
+                                    responseStatus: "needsAction",
+                                    organizer: true,
+                                    self: true,
+                                    displayName: "Bob Foo"
+                                }
+                            ],
+                            start: {
+                                dateTime: oneHourAgo.toISOString()
+                            },
+                            end: {
+                                dateTime: oneHourFromNow.toISOString()
+                            }
+                        },
+                        {
+                            creator: {
+                                email: "foo@example.com",
+                                self: true,
+                                displayName: "Bob Foo"
+                            },
+                            status: "tentative",
+                            kind: "calendar#event",
+                            summary: "Meeting",
+                            attendees: [
+                                {
+                                    email: "foo@example.com",
+                                    responseStatus: "accepted",
+                                    organizer: true,
+                                    self: true,
+                                    displayName: "Bob Foo"
+                                }
+                            ],
+                            start: {
+                                dateTime: oneHourFromNow.toISOString()
+                            },
+                            end: {
+                                dateTime: twoHoursFromNow.toISOString()
+                            }
+                        },
+                        {
+                            creator: {
+                                email: "foo@example.com",
+                                self: true,
+                                displayName: "Bob Foo"
+                            },
+                            status: "confirmed",
+                            kind: "calendar#event",
+                            summary: "Yet another meeting",
+                            attendees: [
+                                {
+                                    email: "foo@example.com",
+                                    responseStatus: "accepted",
+                                    organizer: true,
+                                    self: true,
+                                    displayName: "Bob Foo"
+                                }
+                            ],
+                            start: {
+                                dateTime: twoHoursFromNow.toISOString()
+                            },
+                            end: {
+                                dateTime: threeHoursFromNow.toISOString()
+                            }
+                        }
+                    ]
+                }, {
+                    date: 'Tue, 11 Nov 2014 10:53:24 GMT',
+                    'content-type': 'application/json; charset=UTF-8'
+                });
+            helper.load([googleNode, calendarNode], [
+                {id:"google-config", type:"google-credentials",
+                    displayName: "Bob"},
+                {id:"calendar", type:"google calendar",
+                    google: "google-config", count: 2, wires:[["output"]]},
+                {id:"output", type:"helper"}
+            ], {
+                "google-config": {
+                    clientId: "id",
+                    clientSecret: "secret",
+                    accessToken: "access",
+                    refreshToken: "refresh",
+                    expireTime: 1000+(new Date().getTime()/1000),
+                    displayName: "Bob"
+                },
+            }, function() {
+                var calendar = helper.getNode("calendar");
+                calendar.should.have.property('id', 'calendar');
+                var output = helper.getNode("output");
+                output.should.have.property('id', 'output');
+                output.on("input", function(msg) {
+                    msg.payload.should.have.length(2);
+                    msg.payload[0].should.have.property('title', 'Meeting');
+                    msg.payload[1].should.have.property('title', 'Yet another meeting');
                     done();
                 });
 
