@@ -21,7 +21,7 @@
     </div>
     <div class="form-row">
         <label for="node-input-calendar"><i class="fa fa-tag"></i> <span data-i18n="calendar.label.calendar"></span></label>
-        <input type="text" id="node-input-calendar">
+        <select id="node-input-calendar" style="width: 70%"></select>
     </div>
     <div class="form-row">
         <span data-i18n="calendar.label.inject-message"></span>
@@ -80,40 +80,51 @@
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('google calendar in',{
+    RED.nodes.registerType('google calendar in', {
         category: 'Google',
-        color:"#C0DEED",
+        color: "#C0DEED",
         defaults: {
-            google: {type:"google-credentials",required:true},
-            name: {value:""},
-            calendar: {value:""},
-            offsetType: {value:"at"},
-            offsetFrom: {value:"start"},
-            offset: {value:"10"},
-            offsetUnits: {value:"minutes"}
+            google: { type: "google-credentials", required: true },
+            name: { value: "" },
+            calendar: { value: "" },
+            offsetType: { value: "at" },
+            offsetFrom: { value: "start" },
+            offset: { value: "10" },
+            offsetUnits: { value: "minutes" }
         },
-        inputs:0,
-        outputs:1,
+        inputs: 0,
+        outputs: 1,
         icon: "google-calendar.png",
-        label: function() {
-            return this.name||this._("calendar.label.google-calendar");
+        label: function () {
+            return this.name || this._("calendar.label.google-calendar");
         },
-        oneditprepare: function() {
+        oneditprepare: function () {
             var type = this.offsetType || "at";
-            $("#node-input-offsetType option").filter(function() {
+            var node = this;
+            $("#node-input-offsetType option").filter(function () {
                 return $(this).val() == type;
             }).attr('selected', true);
             var from = this.offsetFrom || "start";
-            $("#node-input-offsetFrom option").filter(function() {
+            $("#node-input-offsetFrom option").filter(function () {
                 return $(this).val() == from;
             }).attr('selected', true);
             $("#node-input-offset").val(this.offset || "0");
             var units = this.offsetUnits || "minutes";
-            $("#node-input-offsetUnits option").filter(function() {
+            $("#node-input-offsetUnits option").filter(function () {
                 return $(this).val() == units;
             }).attr('selected', true);
 
-            var updateOptions = function() {
+            var google = $("#node-input-google").val() || ""
+            $.getJSON('cal?id=' + google, function (data) {
+                data.forEach(function (el) {
+                    $("#node-input-calendar").append('<option value=' + el.id + '>' + el.summary + '</option>');
+                    if (node.calendar == el) {
+                        $('#node-input-calendar option[value="' + node.calendar + '"]').prop('selected', true)
+                    }
+                })
+            })
+
+            var updateOptions = function () {
                 var type = $("#node-input-offsetType option:selected").val();
                 var from = $("#node-input-offsetFrom option:selected").val();
                 if (type === "at") {
@@ -123,10 +134,10 @@
                     $("#node-input-from").html(from);
                     $("#node-row-offset").show();
                 }
-             };
-             updateOptions();
-             $("#node-input-offsetType").change(updateOptions);
-             $("#node-input-offsetFrom").change(updateOptions);
+            };
+            updateOptions();
+            $("#node-input-offsetType").change(updateOptions);
+            $("#node-input-offsetFrom").change(updateOptions);
         },
     });
 </script>
@@ -138,7 +149,7 @@
     </div>
     <div class="form-row">
         <label for="node-input-calendar"><i class="fa fa-tag"></i> <span data-i18n="calendar.label.calendar"></span></label>
-        <input type="text" id="node-input-calendar">
+        <select id="node-input-calendar" style="width: 70%"></select>
     </div>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="calendar.label.name"></span></label>
@@ -156,6 +167,7 @@
     <ul>
       <li><b>payload</b> - a text search string used to select relevant events</li>
       <li><b>calendar</b> - the calendar to retrieve the event from (optional, defaults to the node calendar property or the users primary calendar)</li>
+      <li><b>list</b> - string used to filter list of existing calendars (if used the node will return only the list)</li>
     </ul>
   </p>
   <p>The message sent from the node will have properties:
@@ -176,27 +188,40 @@
           <li><b>attendees</b> - list of objects containing name and email properties</li>
         </ul>
       </li>
+    <li><b>calendars</b> - list of existing calendars</li>
     </ul>
   </p>
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('google calendar',{
+    RED.nodes.registerType('google calendar', {
         category: 'social',
-        color:"#C0DEED",
+        color: "#C0DEED",
         defaults: {
-            google: {type:"google-credentials",required:true},
-            name: {value:""},
-            calendar: {value:""},
-            ongoing: {value: false}
+            google: { type: "google-credentials", required: true },
+            name: { value: "" },
+            calendar: { value: "" },
+            ongoing: { value: false }
         },
-        inputs:1,
-        outputs:1,
+        inputs: 1,
+        outputs: 1,
         icon: "google-calendar.png",
         align: "right",
-        label: function() {
-            return this.name||this._("calendar.label.google-calendar");
-        }
+        label: function () {
+            return this.name || this._("calendar.label.google-calendar");
+        },
+        oneditprepare: function () {
+            var node = this;
+            var google = $("#node-input-google").val() || ""
+            $.getJSON('cal?id=' + google, function (data) {
+                data.forEach(function (el) {
+                    $("#node-input-calendar").append('<option value=' + el.id + '>' + el.summary + '</option>');
+                    if (node.calendar == el) {
+                        $('#node-input-calendar option[value="' + node.calendar + '"]').prop('selected', true)
+                    }
+                })
+            })
+        },
     });
 </script>
 
@@ -207,7 +232,7 @@
     </div>
     <div class="form-row">
         <label for="node-input-calendar"><i class="fa fa-tag"></i> <span data-i18n="calendar.label.calendar"></span></label>
-        <input type="text" id="node-input-calendar">
+        <select id="node-input-calendar" style="width: 70%"></select>
     </div>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="calendar.label.name"></span></label>
@@ -227,20 +252,32 @@
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('google calendar out',{
+    RED.nodes.registerType('google calendar out', {
         category: 'Google',
-        color:"#C0DEED",
+        color: "#C0DEED",
         defaults: {
-            google: {type:"google-credentials",required:true},
-            name: {value:""},
-            calendar: {value:""}
+            google: { type: "google-credentials", required: true },
+            name: { value: "" },
+            calendar: { value: "" }
         },
-        inputs:1,
-        outputs:0,
+        inputs: 1,
+        outputs: 0,
         icon: "google-calendar.png",
         align: "right",
-        label: function() {
-            return this.name||this._("calendar.label.google-calendar");
-        }
+        label: function () {
+            return this.name || this._("calendar.label.google-calendar");
+        },
+        oneditprepare: function () {
+            var node = this;
+            var google = $("#node-input-google").val() || ""
+            $.getJSON('cal?id=' + google, function (data) {
+                data.forEach(function (el) {
+                    $("#node-input-calendar").append('<option value=' + el.id + '>' + el.summary + '</option>');
+                    if (node.calendar == el) {
+                        $('#node-input-calendar option[value="' + node.calendar + '"]').prop('selected', true)
+                    }
+                })
+            })
+        },
     });
 </script>
