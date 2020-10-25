@@ -89,6 +89,10 @@
         <label for="node-input-name"><i class="icon-tag"></i> <span data-i18n="weather.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]weather.placeholder.name">
     </div>
+    <div class="form-tips">
+        <p><b>Tip</b>: you may want to manually <a href="https://openweathermap.org/find?q=" target="_new">search for the location</a>
+        first to check it can be found. Often two character country codes work best.
+    </div>
 </script>
 
 <script type="text/javascript">
@@ -111,7 +115,7 @@
         outputs:1,
         icon: "weather.png",
         label: function() {
-            return this.name||this._("weather.label.weather");
+            return this.name||this.city||this._("weather.label.weather");
         },
         oneditprepare: function() {
             $("#node-input-wtype").change(function() {
@@ -324,7 +328,7 @@
         outputs:1,
         icon: "weather.png",
         label: function() {
-            return this.name||this._("weather.label.weather");
+            return this.name||this.city||this._("weather.label.weather");
         },
         oneditprepare: function() {
             $("#weather-location-type-select").change(function() {
