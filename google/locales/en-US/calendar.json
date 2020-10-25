@@ -18,7 +18,8 @@
             "days": "days",
             "before": "before",
             "start": "start",
-            "name": "Name"
+            "name": "Name",
+            "count": "Events"
         },
         "status": {
             "querying": "querying",
@@ -37,6 +38,9 @@
             "no-event": "Error: no event found",
             "fetch-failed": "failed to fetch calendar list: __message__",
             "error-details": "Error __code__: __message__"
+        },
+        "helptext": {
+            "count": "Number of events to return [1-10]"
         }
     }
 }
