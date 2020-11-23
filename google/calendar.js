@@ -141,6 +141,10 @@ module.exports = function (RED) {
         this.google = RED.nodes.getNode(n.google);
         this.calendar = n.calendar || 'primary';
         this.ongoing = n.ongoing || false;
+        this.count = +n.count;
+        if (!Number.isInteger(this.count)) { this.count = 1; }
+        else if (this.count < 1) { this.count = 1; }
+        else if (this.count > 10) { this.count = 10; }
 
         if (!this.google || !this.google.credentials.accessToken) {
             this.warn(RED._("calendar.warn.no-credentials"));
@@ -197,6 +201,26 @@ module.exports = function (RED) {
                         }
                     });
                 }
+                
+                nextStartingEvents(node, cal, msg, function(err, ev) {
+                    if (err) {
+                        node.error(RED._("calendar.error.error", {error:err.toString()}),msg);
+                        node.status({fill:"red",shape:"ring",text:"calendar.status.failed"});
+                        return;
+                    }
+                    if (!ev[0]) {
+                        node.error(RED._("calendar.error.no-event"),msg);
+                        node.status({fill:"red",shape:"ring",text:"calendar.status.no-event"});
+                    } else {
+                        // If count is 1, then don't send as an array
+                        if (node.count === 1) {
+                            sendEvent(node, ev[0], msg);
+                        } else {
+                            sendEvents(node, ev.slice(0, node.count), msg);
+                        }
+                        node.status({});
+                    }
+                });
             });
         });
     }
@@ -244,7 +268,7 @@ module.exports = function (RED) {
         });
     }
 
-    function nextStartingEvent(node, cal, msg, after, cb) {
+    function nextStartingEvents(node, cal, msg, after, cb) {
         if (typeof after === 'function') {
             cb = after;
             after = new Date();
@@ -254,7 +278,7 @@ module.exports = function (RED) {
             url: 'https://www.googleapis.com/calendar/v3/calendars/' + cal.id + '/events'
         };
         request.qs = {
-            maxResults: 10,
+            maxResults: node.count || 10,
             orderBy: 'startTime',
             singleEvents: true,
             showDeleted: false,
@@ -263,34 +287,42 @@ module.exports = function (RED) {
         if (msg.payload) {
             request.qs.q = RED.util.ensureString(msg.payload);
         }
-        var handle_response = function (err, data) {
+        var events = [];
+        var handle_response = function(err, data) {
             if (err) {
                 cb(RED._("calendar.error.error", { error: err.toString() }), null);
             } else if (data.error) {
                 cb(RED._("calendar.error.error-details", { code: data.error.code, message: JSON.stringify(data.error.message) }), null);
             } else {
-                var ev;
                 /* 0 - 10 events ending after now ordered by startTime
                  * so we find the first that starts after now to
                  * give us the "next" event
                  */
-                for (var i = 0; i < data.items.length; i++) {
-                    ev = data.items[i];
+                for (var i = 0; i<data.items.length; i++) {
+                    var ev = data.items[i];
                     var start = getEventDate(ev);
                     if (node.ongoing || (start && start.getTime() > after.getTime())) {
-                        break;
+                        events.push(ev);
                     }
-                    ev = undefined;
                 }
-                if (!ev && data.hasOwnProperty('nextPageToken')) {
+                // If we don't yet have node.count events, fetch next page
+                if (events.length < (node.count || 10) && data.hasOwnProperty('nextPageToken')) {
                     request.qs.pageToken = data.nextPageToken;
                     node.google.request(request, handle_response);
                 } else {
-                    cb(null, ev);
+                    cb(null, events);
                 }
             }
         };
         node.google.request(request, handle_response);
+    }
+
+    function nextStartingEvent(node, cal, msg, after, cb) {
+        // gets the first item of the events array
+        function _cb(err, events) {
+            cb(err, events[0]);
+        }
+        nextStartingEvents(node, cal, msg, after, _cb);
     }
 
     function nextEndingEvent(node, cal, msg, after, cb) {
@@ -467,17 +499,59 @@ module.exports = function (RED) {
         });
     }
 
-    function sendEvent(node, ev, msg) {
+    function prepareEventData(ev) {
+        var data = {};
+        if (ev.summary) {
+            data.title = ev.summary;
+        }
+        if (ev.description) {
+            data.description = ev.description;
+        }
+        if (ev.location) {
+            data.location = {
+                description: ev.location
+            };
+        }
+        var start = getEventDate(ev);
+        if (start) {
+            data.start = start;
+        }
+        if (ev.start && ev.start.date) {
+            data.allDayEvent = true;
+        }
+        var end = getEventDate(ev, 'end');
+        if (end) {
+            data.end = end;
+        }
+        if (ev.creator) {
+            data.creator = {
+                name: ev.creator.displayName,
+                email: ev.creator.email,
+            };
+        }
+        if (ev.attendees) {
+            data.attendees = [];
+            ev.attendees.forEach(function (a) {
+                data.attendees.push({
+                    name: a.displayName,
+                    email: a.email
+                });
+            });
+        }
+        return data;
+    }
+
+    function prepareEventMessage(ev, msg) {
         if (typeof msg === 'undefined') {
             msg = {};
         }
         delete msg.error;
-        var payload = msg.payload = {};
-        if (ev.summary) {
-            payload.title = msg.title = ev.summary;
+        var payload = msg.payload = prepareEventData(ev);
+        if (payload.title) {
+            msg.title = payload.title;
         }
-        if (ev.description) {
-            payload.description = msg.description = ev.description;
+        if (payload.description) {
+            msg.description = payload.description;
         } else {
             delete msg.description;
         }
@@ -489,39 +563,20 @@ module.exports = function (RED) {
              * msg.location.{lat,lon} then both copies
              * will be updated.
              */
-            payload.location = msg.location = {
-                description: ev.location
-            };
+            msg.location = payload.location;
         } else {
             delete msg.location;
         }
-        var start = getEventDate(ev);
-        if (start) {
-            payload.start = start;
-        }
-        if (ev.start && ev.start.date) {
-            payload.allDayEvent = true;
-        }
-        var end = getEventDate(ev, 'end');
-        if (end) {
-            payload.end = end;
-        }
-        if (ev.creator) {
-            payload.creator = {
-                name: ev.creator.displayName,
-                email: ev.creator.email,
-            };
-        }
-        if (ev.attendees) {
-            payload.attendees = [];
-            ev.attendees.forEach(function (a) {
-                payload.attendees.push({
-                    name: a.displayName,
-                    email: a.email
-                });
-            });
-        }
         msg.data = ev;
+    }
+
+    function sendEvent(node, ev, msg) {
+        prepareEventMessage(ev, msg);
+        node.send(msg);
+    }
+
+    function sendEvents(node, ev, msg) {
+        msg.payload = ev.map(prepareEventData);
         node.send(msg);
     }
 

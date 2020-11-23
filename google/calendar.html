@@ -156,6 +156,10 @@
         <input type="text" id="node-input-name">
     </div>
     <div class="form-row">
+        <label for="node-input-count"><i class="fa fa-hashtag"></i> <span data-i18n="[title]calendar.helptext.count;calendar.label.count"></span></label>
+        <input type="number" min="1" max="10" id="node-input-count" style="display: inline-block; width: auto;">
+    </div>
+    <div class="form-row">
         <input type="checkbox" id="node-input-ongoing" placeholder="" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="node-input-ongoing" style="width: 70%;">Include ongoing events</label>
     </div>
@@ -168,6 +172,7 @@
       <li><b>payload</b> - a text search string used to select relevant events</li>
       <li><b>calendar</b> - the calendar to retrieve the event from (optional, defaults to the node calendar property or the users primary calendar)</li>
       <li><b>list</b> - string used to filter list of existing calendars (if used the node will return only the list)</li>
+      <li><b>count</b> - the number of events to retrieve (Accepted values are [1-10]. If larger than 1, an array will be returned)</li>
     </ul>
   </p>
   <p>The message sent from the node will have properties:
@@ -201,7 +206,10 @@
             google: { type: "google-credentials", required: true },
             name: { value: "" },
             calendar: { value: "" },
-            ongoing: { value: false }
+            ongoing: { value: false },
+            count: {value: 1, validate: function(n) {
+                return +n >= 1 && +n <= 10;
+            }}
         },
         inputs: 1,
         outputs: 1,
