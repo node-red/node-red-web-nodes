@@ -54,25 +54,27 @@ module.exports = function(RED) {
         }
         var s3 = new AWS.S3({"region": node.region});
         node.status({fill:"blue",shape:"dot",text:"aws.status.initializing"});
-        s3.listObjects({ Bucket: node.bucket }, function(err, data) {
+        var contents = [];
+        node.listAllObjects(s3, { Bucket: node.bucket },contents, function(err, data) {
             if (err) {
                 node.error(RED._("aws.error.failed-to-fetch", {err:err}));
                 node.status({fill:"red",shape:"ring",text:"aws.status.error"});
                 return;
             }
-            var contents = node.filterContents(data.Contents);
+            var contents = node.filterContents(data);
             node.state = contents.map(function (e) { return e.Key; });
             node.status({});
             node.on("input", function(msg) {
                 node.status({fill:"blue",shape:"dot",text:"aws.status.checking-for-changes"});
-                s3.listObjects({ Bucket: node.bucket }, function(err, data) {
+                var contents = [];
+                node.listAllObjects(s3, { Bucket: node.bucket }, contents, function(err, data) {
                     if (err) {
                         node.error(RED._("aws.error.failed-to-fetch", {err:err}),msg);
                         node.status({});
                         return;
                     }
                     node.status({});
-                    var newContents = node.filterContents(data.Contents);
+                    var newContents = node.filterContents(data);
                     var seen = {};
                     var i;
                     msg.bucket = node.bucket;
@@ -114,6 +116,24 @@ module.exports = function(RED) {
         });
     }
     RED.nodes.registerType("amazon s3 in", AmazonS3InNode);
+
+    AmazonS3InNode.prototype.listAllObjects = function(s3, params, contents, cb) {
+        var node = this;
+        s3.listObjects(params, function(err, data) {
+            if (err) {
+                cb(err, contents);
+            } else {
+                contents = contents.concat(data.Contents);
+                if (data.IsTruncated) {
+                    // Set Marker to last returned key
+                    params.Marker = contents[contents.length-1].Key;
+                    node.listAllObjects(s3, params, contents, cb);
+                } else {
+                    cb(err, contents);
+                }
+            }
+        });
+    };
 
     AmazonS3InNode.prototype.filterContents = function(contents) {
         var node = this;
