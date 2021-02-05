@@ -154,6 +154,7 @@
         <select id="node-input-dataType" style="width:125px !important">
             <option value="goals" data-i18n="fitbit.label.goals"></option>
             <option value="sleep" data-i18n="fitbit.label.sleep"></option>
+            <option value="weight" data-i18n="fitbit.label.weight"></option>
             <option value="badges" data-i18n="fitbit.label.badges"></option>
         </select>
     </div>
@@ -169,15 +170,19 @@
        as follows:</p>
       <dl>
         <dt>goals<dt>
-        <dd>Messages are sent when a daily goal is reached. The message payload contains an achievement message and the message <b>data</b> property contains the current <a href="https://wiki.fitbit.com/display/API/API-Get-Activities"
+        <dd>Messages are sent when a daily goal is reached. The message payload contains an achievement message and the message <b>data</b> property contains the current <a href="https://dev.fitbit.com/docs/activity/#get-daily-activity-summary"
             >activities</a> data.</dd>
         <dt>sleep</dt>
         <dd>Messages are sent when a new daily sleep record becomes available. The message payload contains <a
-            href="https://wiki.fitbit.com/display/API/API-Get-Sleep"
+            href="https://dev.fitbit.com/docs/sleep/#get-sleep-logs"
             >sleep log</a> data.</dd>
+        <dt>Weight</dt>
+        <dd>Messages are sent when a new weight record becomes available. The message payload contains the latest entry in the days <a
+            href="https://dev.fitbit.com/docs/body/#get-weight-logs"
+            >weight log</a>.</dd>
         <dt>badges</dt>
         <dd>Messages are sent when a new badge is earned. The message payload contains the badge message and the message <b>data</b> property contains a single badge entry from the list returned by the <a
-            href="https://wiki.fitbit.com/display/API/API-Get-Badges"
+            href="https://dev.fitbit.com/docs/user/#get-badges"
             >badges API call</a>.</dd>
       </dl>
 </script>
@@ -213,6 +218,7 @@
         <select id="node-input-dataType" style="width:125px !important">
             <option value="activities" data-i18n="fitbit.label.activities"></option>
             <option value="sleep" data-i18n="fitbit.label.sleep"></option>
+            <option value="weight" data-i18n="fitbit.label.weight"></option>
             <option value="badges" data-i18n="fitbit.label.badges"></option>
         </select>
     </div>
@@ -229,16 +235,21 @@
       <dl>
         <dt>activities<dt>
         <dd>the message payload contains <a
-            href="https://wiki.fitbit.com/display/API/API-Get-Activities"
+            href="https://dev.fitbit.com/docs/activity/#get-daily-activity-summary"
             >daily activities</a> data.</dd>
         <dt>sleep</dt>
         <dd>the message payload contains <a
-            href="https://wiki.fitbit.com/display/API/API-Get-Sleep"
+            href="https://dev.fitbit.com/docs/sleep/#get-sleep-logs"
             >sleep log</a> data for the main sleep and the message
             <b>data</b> property contains the complete sleep data result.</dd>
+        <dt>weight</dt>
+        <dd>the message payload contains the latest entry in the days <a
+            href="https://dev.fitbit.com/docs/body/#get-weight-logs"
+            >weight log</a> and the message
+            <b>data</b> property contains the complete days weight entry.</dd>
         <dt>badges</dt>
         <dd>the message payload contains data about <a
-            href="https://wiki.fitbit.com/display/API/API-Get-Badges"
+            href="https://dev.fitbit.com/docs/user/#get-badges"
             >badges</a> awarded.</dd>
       </dl>
       <p>The <b>msg.date</b> property may be set to an ISO 8601 format
