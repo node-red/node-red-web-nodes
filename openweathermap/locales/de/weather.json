@@ -1,0 +1,81 @@
+{
+    "weather": {
+        "label": {
+            "weather": "openweathermap",
+            "name": "Name",
+            "location": "Ort",
+            "option_current": "Aktuelles Wetter für",
+            "option_5dayforecast": "5-Tage-Vorhersage für",
+            "option_onecall": "Kombiniertes Aktual-/Vorhersage-Wetter für",
+            "option_city": "Stadt, Land",
+            "option_coordinates": "Koordinaten",
+            "city": "Stadt",
+            "country": "Land",
+            "latitude": "Breitengrad",
+            "longitude": "Längengrad",
+            "apikey": "API Key",
+            "language": "Sprache",
+            "option_lang_en": "Englisch",
+            "option_lang_ru": "Russisch",
+            "option_lang_it": "Italienisch",
+            "option_lang_es": "Spanisch",
+            "option_lang_uk": "Ukrainisch",
+            "option_lang_de": "Deutsch",
+            "option_lang_pt": "Portugiesisch",
+            "option_lang_ro": "Rumänisch",
+            "option_lang_pl": "Polnisch",
+            "option_lang_fi": "Finnisch",
+            "option_lang_nl": "Niederländisch",
+            "option_lang_fr": "Französisch",
+            "option_lang_bg": "Bulgarisch",
+            "option_lang_sv": "Schwedisch",
+            "option_lang_zh_tw": "Chinesisch traditionell",
+            "option_lang_zh": "Chinesisch vereinfacht",
+            "option_lang_tr": "Türkisch",
+            "option_lang_hr": "Kroatisch",
+            "option_lang_ca": "Katalanisch",
+            "option_lang_hu": "Ungarisch",
+            "option_lang_ar": "Arabisch",
+            "option_lang_cz": "Tschechisch",
+            "option_lang_el": "Griechisch",
+            "option_lang_fa": "Persisch (Farsi)",
+            "option_lang_gl": "Galizisch",
+            "option_lang_ja": "Japanisch",
+            "option_lang_kr": "Koreanisch",
+            "option_lang_la": "Lettisch",
+            "option_lang_lt": "Lithauisch",
+            "option_lang_mk": "Mazedonisch",
+            "option_lang_sk": "Slovakisch",
+            "option_lang_sl": "Slovenisch",
+            "option_lang_vi": "Vietnamesisch",
+            "option_lang_xx": "Gesetzt via msg.language"
+        },
+        "placeholder": {
+            "name": "Name",
+            "city": "Stadt",
+            "country": "Land",
+            "latitude": "Breitengrad",
+            "longitude": "Längengrad"
+        },
+        "status": {
+            "requesting": "Anfragend"
+        },
+        "error": {
+            "invalid-lat": "Ungültiger Breitengrad (lat) vorgegeben",
+            "invalid-lon": "Ungültiger Längengrad (lon) vorgegeben",
+            "invalid-json": "Der API-Abruf lieferte ungültigen JSON",
+            "invalid-key": "Ungültiger API-Key vorgegeben",
+            "invalid-city_country": "Ungültige(s) Stadt/Land",
+            "invalid-location": "Ungültige Ortsinformation vorgegeben",
+            "no-api-key": "Kein API-Key vorgegeben"
+        },
+        "message": {
+            "title": "Aktuelle Wetter-Information",
+            "forecast": "5-Tage-Vorhersage",
+            "description": "Aktuelle Wetter-Information bei Koordinaten: __lat__, __lon__",
+            "payload": "Das Wetter in __name__ bei Koordinaten: __lat__, __lon__ ist __main__ (__description__)."
+        },
+        "tip": "<b>Tip:</b> Es empfiehlt sich, vorab manuell <a href=\"https://openweathermap.org/find?q=\" target=\"_new\">den (in Englisch geschriebenen) Ort</a> zu suchen, um zu prüfen, dass er auch gefunden wird. Oftmals funktioniert auch der 2-Zeichen-Ländercode am besten.",
+        "note": "<b>Notiz:</b> Der API-Key ist möglicherweise nicht sofort einsatzbereit nach der Erzeugung. Die <a href=\"https://openweathermap.org/faq\" target=\"_new\">FAQ</a> sagen dazu: <i>Your API key will be activated automatically, between 10 minutes and 2 hours after your successful registration.</i> Einfach etwas warten."
+    }
+}

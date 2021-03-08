@@ -74,6 +74,8 @@
             "forecast": "5 day Forecast",
             "description": "Current weather information at coordinates: __lat__, __lon__",
             "payload": "The weather in __name__ at coordinates: __lat__, __lon__ is __main__ (__description__)."
-        }
+        },
+        "tip": "<b>Tip</b>: you may want to manually <a href=\"https://openweathermap.org/find?q=\" target=\"_new\">search for the location</a> first to check it can be found. Often two character country codes work best.",
+        "note": "<b>Note</b>: The API Key may not immediately ready to use after creation. As <a href=\"https://openweathermap.org/faq\" target=\"_new\">FAQ</a> said: <i>Your API key will be activated automatically, between 10 minutes and 2 hours after your successful registration.</i> Just wait a little bit."
     }
 }
