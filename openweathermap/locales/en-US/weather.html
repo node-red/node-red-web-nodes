@@ -1,0 +1,125 @@
+
+<script type="text/html" data-help-name="openweathermap">
+    <p>A node which polls openweathermap.org for current weather data when an input is received.</p>
+    <p>An API Key required to use this node can be obtained from <a href="http://openweathermap.org/appid" target="_new">OpenWeatherMap</a>.</p>
+    <p> This is done using either:</p>
+    <ul>
+        <li> a city and the country in which that city lies</li>
+        <li> a latitude and longitude set of coordinates </li>
+    </ul>
+    <p>These can be passed in as settings on the node, or as the:</p>
+    <ul>
+       <li> <code>msg.location.lat</code> and <code>msg.location.lon</code>, or </li>
+       <li> <code>msg.location.city</code> and <code>msg.location.country</code> </li>
+    </ul>
+    <p>of the message input. </p>
+    <p>The node will always prioritise its settings over the msg properties.</p>
+    <p>The language of the report can be set by choosing from the drop down menu. The node supports all languages currently provided by OpenWeatherMap.</p>
+    <p>The current weather report sets the following properties of <code>msg.payload</code>:</p>
+    <ul>
+        <li><code>description</code> - a brief verbal description of the current weather for human reading.</li>
+        <li><code>weather</code> - a short description of the current weather.</li>
+        <li><code>detail</code> - a more detailed version of <code>weather</code>.</li>
+        <li><code>icon</code> - the weather icon code for the current conditions.</li>
+        <li><code>id</code> - the id given to the current weather by OpenWeatherMap.</li>
+        <li><code>tempk</code> - the current ground temperature at that location in Kelvin.</li>
+        <li><code>tempc</code> - the current ground temperature at that location in Celsius.</li>
+        <li><code>humidity</code> - the current humidity at the location in percent.</li>
+        <li><code>maxtemp</code> - the current maximum temperature at the location in Kelvin.</li>
+        <li><code>mintemp</code> - the current minimum temperature at the location in Kelvin.</li>
+        <li><code>windspeed</code> - the current wind speed at the location in metres per second.</li>
+        <li><code>winddirection</code> - the current wind direction at the location in meteorological degrees.</li>
+        <li><code>location</code> - the name of the location from which the data was sourced.</li>
+        <li><code>sunrise</code> - the time at which the sun rose in Unix UTC format.</li>
+        <li><code>sunset</code> - the time at which the sun will set in Unix UTC format.</li>
+        <li><code>clouds</code> - the current cloud coverage of the location in percent.</li>
+    </ul>
+    <p>The 5 day forecast creates a 40 part array (5 days x 8, 3 hour intervals) in <code>msg.payload</code> of objects with the following properties:</p>
+    <ul>
+        <li><code>dt</code> - epoch timestamp
+        <li><code>pressure</code> - in hPa
+        <li><code>humidity</code> - in %
+        <li><code>speed</code> - wind speed in metres per second
+        <li><code>deg</code> - wind direction in degrees
+        <li><code>clouds</code> - cloudiness in %
+        <li><code>temp</code> - an object with various temperatures in degC,
+        <ul><li>day, min, max, night, eve, morn</li></ul>
+        <li><code>weather</code> - an object with some miscellaneous data,
+        <ul><li>description, icon, main, id</li></ul>
+    </ul>
+    <p>The combined current weather/forecast creates three properties in <code>msg.payload</code>:</p>
+    <ul>
+        <li><code>current</code> - the current weather
+        <li><code>hourly</code> - an hourly forecast for the next 48 hours
+        <li><code>daily</code> - the daily forecast for 7 days
+    </ul>
+    <p>In case it is available, also an minutely forecast is provided</p>
+    <p>Note that in this case, the coordinates have to be provided</p>
+    <p>The node also sets the following properties of <code>msg.location</code>.</p>
+    <ul>
+        <li><code>lat</code> - the latitude of the location from which the data was sourced.</li>
+        <li><code>lon</code> - the longitude of the location from which the data was sourced.</li>
+        <li><code>city</code> - the city from which the data was sourced.</li>
+        <li><code>country</code> - the country from which the data was sourced.</li>
+    </ul>
+    <p>Finally, the node sets:</p>
+    <ul>
+        <li><code>msg.time</code> - the time at which the weather data was received by openweathermap.org.</li>
+        <li><code>msg.data</code> - the full JSON returned by the API. </li>
+    </ul>
+    <p>Weather data provided by <a href="http://openweathermap.org/" target="_blank">openweathermap.org/</a></p>
+</script>
+
+<script type="text/html" data-help-name="openweathermap in">
+    <p>A node which polls openweathermap.org for current weather data periodically and returns when a change is detected.</p>
+    <p>An API Key required to use this node can be obtained from <a href="http://openweathermap.org/appid" target="_new">OpenWeatherMap</a>.</p>
+    <p> This is done using either:</p>
+    <ul>
+        <li> a city and the country in which that city lies</li>
+        <li> a latitude and longitude set of coordinates </li>
+    </ul>
+    <p>The report's language can be set by choosing from the drop down menu. The node supports all languages currently provided by OpenWeatherMap.</p>
+    <p>The current report sets the following properties of <code>msg.payload</code>:</p>
+    <ul>
+        <li><code>description</code> - a brief verbal description of the current weather for human reading.</li>
+        <li><code>weather</code> - a short description of the current weather.</li>
+        <li><code>detail</code> - a more detailed version of <code>weather</code>.</li>
+        <li><code>tempk</code> - the current ground temperature at that location in Kelvin.</li>
+        <li><code>tempc</code> - the current ground temperature at that location in Celsius.</li>
+        <li><code>humidity</code> - the current humidity at the location in percent.</li>
+        <li><code>maxtemp</code> - the current maximum temperature at the location in Kelvin.</li>
+        <li><code>mintemp</code> - the current minimum temperature at the location in Kelvin.</li>
+        <li><code>windspeed</code> - the current wind speed at the location in metres per second.</li>
+        <li><code>winddirection</code> - the current wind direction at the location in meteorological degrees.</li>
+        <li><code>location</code> - the name of the location from which the data was sourced.</li>
+        <li><code>sunrise</code> - the time at which the sun rose in Unix UTC format.</li>
+        <li><code>sunset</code> - the time at which the sun will set in Unix UTC format.</li>
+        <li><code>clouds</code> - the current cloud coverage of the location in percent.</li>
+    </ul>
+    <p>The 5 day forecast creates a 40 part (5 days x 8, 3 hour intervals) array in <code>msg.payload</code> of objects with the following properties:</p>
+    <ul>
+        <li><code>dt</code> - epoch timestamp
+        <li><code>pressure</code> - in hPa
+        <li><code>hunidity</code> - in %
+        <li><code>speed</code> - wind speed in metres per second
+        <li><code>deg</code> - wind direction in degrees
+        <li><code>clouds</code> - cloudiness in %
+        <li><code>temp</code> - an object with various temperatures in degC,
+        <ul><li>day, min, max, night, eve, morn</li></ul>
+        <li><code>weather</code> - an object with some miscellaneous data,
+        <ul><li>description, icon, main, id</li></ul>
+    </ul>
+    <p>The node also sets the following properties of <code>msg.location</code>.</p>
+    <ul>
+        <li><code>lat</code> - the latitude of the location from which the data was sourced.</li>
+        <li><code>lon</code> - the longitude of the location from which the data was sourced.</li>
+        <li><code>city</code> - the city from which the data was sourced.</li>
+        <li><code>country</code> - the country from which the data was sourced.</li>
+    </ul>
+    <p>Finally, the node sets:</p>
+    <ul>
+        <li><code>msg.time</code> - the time at which the weather data was received by openweathermap.org.</li>
+        <li><code>msg.data</code> - the full JSON returned by the API. </li>
+    </ul>
+    <p>Weather data provided by <a href="http://openweathermap.org/" target="_blank">openweathermap.org/</a></p>
+</script>

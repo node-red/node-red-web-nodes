@@ -1,0 +1,17 @@
+
+<script type="text/x-red" data-help-name="amazon s3 in">
+    <p>Amazon S3 watch node. Watches for file events on Box. By default all
+    file events are reported, but the filename pattern can be supplied
+    to limit the events to files which have full filenames that match
+    the glob pattern. The event messages consist of the full filename
+    in <b>msg.payload</b> property, the filename in <b>msg.file</b>,
+    the event type in <b>msg.event</b>.</p>
+</script>
+
+<script type="text/x-red" data-help-name="amazon s3">
+    <p>Amazon S3 input node. Downloads content from an Amazon S3 bucket. The bucket name can be specified in the node <b>bucket</b> property or in the <b>msg.bucket</b> property. The name of the file to download is taken from the node <b>filename</b> property or the <b>msg.filename</b> property. The downloaded content is sent as <b>msg.payload</b> property. If the download fails <b>msg.error</b> will contain an error object.</p>
+</script>
+
+<script type="text/x-red" data-help-name="amazon s3 out">
+    <p>Amazon S3 out node. Uploads content to an Amazon S3 bucket. The bucket name can be specified in the node <b>bucket</b> property or in the <b>msg.bucket</b> property. The filename on Amazon S3 is taken from the node <b>filename</b> property or the <b>msg.filename</b> property. The content is taken from either the node <b>localFilename</b> property, the <b>msg.localFilename</b> property or the <b>msg.payload</b> property.</p>
+</script>

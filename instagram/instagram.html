@@ -76,22 +76,6 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="instagram">
-    <p>Get photos from Instagram.</p>
-    
-    <p>This node checks for new content in a user's account whenever it receives a
-    message.</p>
-    
-    <p>It can be configured to either retrieve new photos uploaded by the user, or
-    photos the user has liked. Each message sent by the node contains a single
-    photo in its payload, either as a Buffer containing the photo or its URL.</p>
-    
-    <p>When the metadata is available within Instagram's service, the photo's capture time and location
-    are also forwarded in the form of msg.time, msg.lat and msg.lon.</p>
-    
-    <p>Videos are currently not supported and are ignored.</p>
-</script>
-
 <script type="text/x-red" data-template-name="instagram in">
     <div class="form-row">
         <label for="node-input-instagram"><i class="fa fa-user"></i> <span data-i18n="instagram.label.user"></span></label>
@@ -117,21 +101,6 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="instagram in">
-    <p>Get photos from Instagram.</p>
-    
-    <p>This node automatically checks for new content in a user's account every 15 minutes.</p>
-    
-    <p>It can be configured to either retrieve new photos uploaded by the user, or
-    photos the user has liked. Each message sent by the node contains a single
-    photo in its payload, either as a Buffer containing the photo or its URL.</p>
-    
-    <p>When the metadata is available within Instagram's service, the photo's capture time and location
-    are also forwarded in the form of msg.time, msg.lat and msg.lon.</p>
-    
-    <p>Videos are currently not supported and are ignored.</p>
-</script>
-
 <script type="text/javascript">
 (function() {
 
@@ -139,7 +108,7 @@
         category: 'config',
         defaults: {
             username: {value:""}
-        },  
+        },
         credentials: {
             username: {type:"text"},
             clientID: {type:"text"},
@@ -158,23 +127,23 @@
             }
             var constructedURI = location.protocol + '//' + location.hostname + (location.port ? ":"+location.port : "") + pathname + 'instagram-credentials/auth/callback';
             var tip = this._("instagram.tip.redirect", {constructedURI: constructedURI});
-                    
+
             function updateInstagramAuthButton() {
                 var v1 = $("#node-config-input-clientID").val();
                 var v2 = $("#node-config-input-clientSecret").val();
-                
+
                 $("#node-config-start-auth").toggleClass("disabled",(v1.length === 0 || v2.length === 0));
             }
             $("#node-config-input-clientID").on('change keydown paste input',updateInstagramAuthButton);
             $("#node-config-input-clientSecret").on('change keydown paste input',updateInstagramAuthButton);
-            
+
             function updateInstagramScreenName(sn) {
                 $("#node-config-instagram-app-keys").hide();
                 $("#node-config-instagram-user").show();
                 $("#node-config-input-username").val(sn);
                 $("#node-config-instagram-username").html(sn);
             }
-            
+
             function pollInstagramCredentials() {
                 $.getJSON('credentials/instagram-credentials/'+id,function(data) {
                     if (data.username) {
@@ -186,9 +155,9 @@
                     }
                 });
             }
-            
+
             updateInstagramAuthButton();
-            
+
             if (this.username) {
                 updateInstagramScreenName(this.username);
             } else {
@@ -196,27 +165,27 @@
                 $("#node-config-instagram-user").hide();
                 $("#node-config-dialog-ok").button("disable");
             }
-            
+
             function updateRedirectURI() {
                 $("#node-config-tooltip").html(tip);
                 $("#node-config-input-redirectURI").val(constructedURI);
                 $("#node-config-input-redirectURI").hide();
                 $("#node-config-redirectURI").hide();
             }
-            
+
             updateRedirectURI();
-            
+
             $("#node-config-start-auth").mousedown(function() {
                 var clientID = $("#node-config-input-clientID").val();
                 var clientSecret = $("#node-config-input-clientSecret").val();
                 var redirectURI = $("#node-config-input-redirectURI").val();
-                
+
                 var query = "node_id=" + id + "&client_id=" + clientID + "&client_secret=" + clientSecret + "&redirect_uri=" + redirectURI;
                 var url = 'instagram-credentials/auth/?' + query;
                 $(this).attr("href",url);
                 window.instagramConfigNodeIntervalId = window.setTimeout(pollInstagramCredentials,2000);
             });
-            
+
             $("#node-config-start-auth").click(function(e) {
                 var clientID = $("#node-config-input-clientID").val();
                 var redirectURI = $("#node-config-input-redirectURI").val();

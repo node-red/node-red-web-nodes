@@ -64,36 +64,36 @@
         exportable: false,
         oneditprepare: function() {
             var id = this.id;
-            
+
             var pathname = document.location.pathname;
             if (pathname.slice(-1) != "/") {
                 pathname += "/";
             }
             var callback = location.protocol + "//" +
-                                  location.hostname + 
+                                  location.hostname +
                                   (location.port?":"+location.port:"")+
                                   pathname + "foursquare-credentials";
             var redirect = this._("foursquare.tip.redirect", {callback:callback});
             $("#node-config-foursquare-tooltip").html(redirect);
-            
+
             function updateFoursquareAuthButton() {
                 var v1 = $("#node-config-input-client_id").val();
                 var v2 = $("#node-config-input-client_secret").val();
-                $("#node-config-start-auth").toggleClass("disabled",(v1.length === 0 || v2.length === 0));                    
+                $("#node-config-start-auth").toggleClass("disabled",(v1.length === 0 || v2.length === 0));
             }
             $("#node-config-input-client_id").on('change keydown paste input',updateFoursquareAuthButton);
             $("#node-config-input-client_secret").on('change keydown paste input',updateFoursquareAuthButton);
-            
+
             function updateFoursquareScreenName(sn) {
                 $("#node-config-foursquare-app-keys").hide();
                 $("#node-config-foursquare-user").show();
                 $("#node-config-input-displayname").val(sn);
                 $("#node-config-foursquare-displayname").html(sn);
             }
-            
+
             function pollFoursquareCredentials(e) {
                 $.getJSON('credentials/foursquare-credentials/'+id,function(data) {
-                    if (data.displayname) {                     
+                    if (data.displayname) {
                         $("#node-config-dialog-ok").button("enable");
                         updateFoursquareScreenName(data.displayname);
                         delete window.foursquareConfigNodeIntervalId;
@@ -102,9 +102,9 @@
                     }
                 });
             }
-            
+
             updateFoursquareAuthButton();
-            
+
             if (this.displayname) {
                 updateFoursquareScreenName(this.displayname);
             } else {
@@ -112,7 +112,7 @@
                 $("#node-config-foursquare-user").hide();
                 $("#node-config-dialog-ok").button("disable");
             }
-            
+
             $("#node-config-start-auth").mousedown(function(e) {
                 var client_id = $("#node-config-input-client_id").val();
                 var client_secret = $("#node-config-input-client_secret").val();
@@ -136,7 +136,7 @@
             });
 
         },
-        
+
         oneditsave: function() {
             if (window.foursquareConfigNodeIntervalId) {
                 window.clearTimeout(window.foursquareConfigNodeIntervalId);
@@ -149,7 +149,7 @@
                 delete window.foursquareConfigNodeIntervalId;
             }
         }
-        
+
     });
 })();
 </script>
@@ -163,7 +163,7 @@
     <div class="form-row">
         <label for="node-input-section">&nbsp;<i class="fa fa-filter"></i> <span data-i18n="foursquare.label.explore"></span></label>
         <span data-i18n="foursquare.label.recommended"></span> <select id="node-input-section" style="width:30% !important">
-             <option value="empty"></option>             
+             <option value="empty"></option>
              <option value="food" data-i18n="foursquare.label.food"></option>
              <option value="drinks" data-i18n="foursquare.label.drinks"></option>
              <option value="coffee" data-i18n="foursquare.label.coffee"></option>
@@ -191,7 +191,7 @@
     <div class="form-row">
         <label for="node-input-outputnumber"><i class="fa fa-sign-out"></i> <span data-i18n="foursquare.label.output"></span></label>
         <select id="node-input-outputnumber" style="width:15% !important">
-             <option value="1">1</option>             
+             <option value="1">1</option>
              <option value="10">10</option>
              <option value="20">20</option>
              <option value="30">30</option>
@@ -208,61 +208,6 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="foursquare.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
-</script>
-
-<script type="text/x-red" data-help-name="foursquare">
-    <p>Foursquare query node.</p>
-    <p>Can be used to
-    <ul>
-        <li>explore recommended venues of a particular type near a given latitude and longitude </li>
-    </ul></p>
-    <p>The type of venue to explore can be passed in as settings on the node or as the 
-    <b>msg.payload.section</b> of the message input. Valid entries are:
-    <ul>
-       <li>food</li>
-       <li>drinks</li>
-       <li>coffee</li>
-       <li>shops</li>
-       <li>arts</li>
-       <li>outdoors</li>
-       <li>sights</li>
-       <li>all</li>
-    </ul>
-    The value set on the node will take precedence over the contents of <b>msg.payload.section</b>.
-    </p>
-    <p>The number of results to return from the query and how to return them (either as a single message
-    or as multiple messages) are settings on the node.</p>
-   <p>The node sets the following properties
-     <ul>
-       <li><b>payload</b> - the JSON of the recommended venue</li>
-       <li><b>title</b> - the name of the recommended venue</li>
-       <li><b>location.lat</b> - the latitude of the recommended venue</li>
-       <li><b>location.lon</b> - the longitude of the recommended venue</li>
-       <li><b>location.city</b> - the city where the recommended venue is</li>
-       <li><b>location.country</b> - the country where the recommended venue is</li>
-       <li><b>location.name</b> - the name of the recommended venue</li>
-    </ul>
-    The exact location of these properties depends on the number of results chosen to be returned along 
-    with how to return them:
-    <ul>
-    <li>If the node output value is set to one then for both returning as a single message and as multiple
-    messages, the node returns a msg for the first in an ordered list of recommended venues near the provided 
-    latitude and longitude. The returned msg has the payload, location and name properties.
-    </li>
-    <li>If the node output value is set to more than one to be returned as a single message
-    the node sets <b>msg.payload</b> 
-    to be an array of <b>msg</b>'s, each one corresponding to a recommended venue and ordered according to the 
-    <a href="https://foursquare.com/">Foursquare</a> venues explore API.  The first element in the array is  
-    the most highly recommended venue and the length of the array is the output value set on the node or the 
-    number of venues found, whichever is smaller. Each element in this array has the payload, 
-   title, location and name properties.
-    </li>
-    <li>If the node output value is set to more than one but to be returned as a multiple then the node sends
-    multiple msgs, each one representing a recommended venue.
-    </ul>
-    For further information about the Foursquare API see  
-    <a href="https://developer.foursquare.com/docs/venues/explore">Explore Recommended and Popular Venues</a>.</p>
-    <p>Data provided by <a href="https://foursquare.com/">Foursquare</a>.</p>
 </script>
 
 <script type="text/javascript">

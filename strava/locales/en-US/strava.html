@@ -1,0 +1,19 @@
+
+<script type="text/x-red" data-help-name="strava">
+    <p>Get your most recent activity on Strava.</p>
+
+    <p>This node returns the most recent activity in the authenticated user's account
+    whenever it receives a message.</p>
+
+    <p>Should an activity be available, the following is set on the message:</p>
+        <ul>
+            <li>msg.payload is being set to the JavaScript Activity object as served by Strava.</li>
+            <li>msg.location.lat and msg.location.lon is being set to the activity's start location if such location is available</li>
+            <li>msg.time is a JavaScript date object representing the start of the activity, if such data is available. The date is set in UTC (zulu) time.</li>
+        </ul>
+    </p>
+
+    <p>If there are no available activities or if an error occurs, the node simply forwards the incoming message.</p>
+
+    <p>Data provided by <a href ="http://www.strava.com">Strava</a>.</p>
+</script>

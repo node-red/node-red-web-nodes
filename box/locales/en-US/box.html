@@ -1,0 +1,23 @@
+
+<script type="text/x-red" data-help-name="box in">
+    <p>Box watch node. Watches for file events on Box. By default all
+    file events are reported, but the filename pattern can be supplied
+    to limit the events to files which have full filenames that match
+    the glob pattern. The event messages consist of the full filename
+    in <b>msg.payload</b> property, the filename in <b>msg.file</b>,
+    the event type in <b>msg.event</b> and the full event entry as
+    returned by
+    the <a href="https://developers.box.com/docs/#events">event
+    API</a> in <b>msg.data</b>.</p>
+</script>
+
+<script type="text/x-red" data-help-name="box">
+    <p>Box input node. Downloads content from Box. The filename on Box is taken from the node <b>filename</b> property or the <b>msg.filename</b> property. The content is sent as <b>msg.payload</b> property.</p>
+</script>
+
+<script type="text/x-red" data-help-name="box out">
+    <p>Box out node. Uploads content to Box.</p>
+    <p>The filename on Box is taken from the node <b>filename</b> property or the <code>msg.filename</code> property.</p>
+    <p>The content is taken from either the file pointed at by the node <b>localFilename</b> property, the
+    <code>msg.localFilename</code> property, or the actual contents of the <code>msg.payload</code> property.</p>
+</script>

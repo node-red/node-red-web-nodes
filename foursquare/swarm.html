@@ -26,16 +26,6 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="swarm in">
-    <p>Swarm input node.</p>
-    <p>Polls every 15 minutes for the latest Swarm check-ins that have been registered by the authenticated 
-    user since the node was registered. If a new check-in has been made within the polling interval
-    then <b>msg.payload</b> is set to be the JSON of the most recent new check-in. 
-    The properties of the  <a href="https://foursquare.com/">Swarm</a> check-in are documented at  
-    <a href="https://developer.foursquare.com/docs/responses/checkin">Checkin Response</a>.</p>
-    <p>Data provided by <a href="https://foursquare.com/">Foursquare</a>.</p>
-</script>
-
 <script type="text/javascript">
     RED.nodes.registerType('swarm in',{
         category: 'social',
@@ -71,19 +61,6 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="swarm">
-    <p>Swarm query node.</p>
-    <p>Can be used to search
-    <ul>
-        <li>all Swarm check-ins by the authenticated user.</li>
-    </ul></p>
-    <p>The node sets <b>msg.payload</b> to be the JSON of the most recent check-in. If no check-ins
-    are found then the returned msg will have a null payload. The properties of the 
-    <a href="https://swarm.com/">Swarm</a> check-in are documented at  
-    <a href="https://developer.foursquare.com/docs/responses/checkin">Checkin Response</a>.</p>
-    <p>Data provided by <a href="https://foursquare.com/">Foursquare</a>.</p>
-</script>
-
 <script type="text/javascript">
     RED.nodes.registerType('swarm',{
         category: 'social',
@@ -101,7 +78,3 @@
         }
     });
 </script>
-
-
-
-
