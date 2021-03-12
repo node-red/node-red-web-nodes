@@ -31,7 +31,7 @@
             <input type="password" id="node-config-input-client_secret">
         </div>
         <div class="form-row">
-           <label>&nbsp;</label> 
+           <label>&nbsp;</label>
            <a class="btn" id="node-config-start-auth" href="#" target="_blank"><span data-i18n="flickr.label.authenticate"></span></a>
         </div>
     </div>
@@ -59,31 +59,31 @@
             access_token: {type: "password"},
             access_token_secret: {type:"password"}
         },
-            
+
         label: function() {
             return this.username;
         },
         exportable: false,
         oneditprepare: function() {
             var id = this.id;
-            
+
             function updateFlickrAuthButton() {
                 var v1 = $("#node-config-input-client_key").val();
                 var v2 = $("#node-config-input-client_secret").val();
-                
+
                 $("#node-config-start-auth").toggleClass("disabled",(v1.length === 0 || v2.length === 0));
-                    
+
             }
             $("#node-config-input-client_key").on('change keydown paste input',updateFlickrAuthButton);
             $("#node-config-input-client_secret").on('change keydown paste input',updateFlickrAuthButton);
-            
+
             function updateFlickrScreenName(sn) {
                 $("#node-config-flickr-app-keys").hide();
                 $("#node-config-flickr-user").show();
                 $("#node-config-input-username").val(sn);
                 $("#node-config-flickr-username").html(sn);
             }
-            
+
             function pollFlickrCredentials(e) {
                 $.getJSON('credentials/flickr-credentials/'+id,function(data) {
                     if (data.username) {
@@ -95,9 +95,9 @@
                     }
                 });
             }
-            
+
             updateFlickrAuthButton();
-            
+
             if (this.username) {
                 updateFlickrScreenName(this.username);
             } else {
@@ -105,7 +105,7 @@
                 $("#node-config-flickr-user").hide();
                 $("#node-config-dialog-ok").button("disable");
             }
-            
+
             $("#node-config-start-auth").mousedown(function(e) {
                 var key = $("#node-config-input-client_key").val();
                 var secret = $("#node-config-input-client_secret").val();
@@ -127,7 +127,7 @@
                     e.preventDefault();
                 }
             });
-        
+
         },
         oneditsave: function() {
             if (window.flickrConfigNodeIntervalId) {
@@ -144,7 +144,6 @@
     });
 })();
 </script>
-
 
 <script type="text/x-red" data-template-name="flickr out">
     <div class="form-row">
@@ -166,25 +165,10 @@
             <option value="frfa" data-i18n="flickr.label.frfa"></option>
         </select>
     </div>
-    
-    
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="flickr.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
-</script>
-
-<script type="text/x-red" data-help-name="flickr out">
-    <p>Saves photos to <a href="http://www.flickr.com">Flickr</a>.</p>
-    <p>The incoming message can provide the following properties:
-        <ul>
-          <li><b>payload</b> - a Buffer containing the image (required)</li>
-          <li><b>title</b> - the title for the photo (optional)</li>
-          <li><b>description</b> - the description for the photo (optional)</li>
-          <li><b>tags</b> - tags to be applied to the photo. Can be either a string
-                            containing space-separated tags, or an array of tags. (optional)</li>
-        </ul>
-    </p>
 </script>
 
 <script type="text/javascript">

@@ -1,0 +1,45 @@
+
+<script type="text/x-red" data-help-name="fitbit in">
+    <p>Polls <a href="http://www.fitbit.com">Fitbit</a> for new data.</p>
+    <p>The generated messages are determined by the node <b>type</b> property
+       as follows:</p>
+      <dl>
+        <dt>goals<dt>
+        <dd>Messages are sent when a daily goal is reached. The message payload contains an achievement message and the message <b>data</b> property contains the current <a href="https://wiki.fitbit.com/display/API/API-Get-Activities"
+            >activities</a> data.</dd>
+        <dt>sleep</dt>
+        <dd>Messages are sent when a new daily sleep record becomes available. The message payload contains <a
+            href="https://wiki.fitbit.com/display/API/API-Get-Sleep"
+            >sleep log</a> data.</dd>
+        <dt>badges</dt>
+        <dd>Messages are sent when a new badge is earned. The message payload contains the badge message and the message <b>data</b> property contains a single badge entry from the list returned by the <a
+            href="https://wiki.fitbit.com/display/API/API-Get-Badges"
+            >badges API call</a>.</dd>
+      </dl>
+</script>
+
+<script type="text/x-red" data-help-name="fitbit">
+    <p>Retrieves user data from <a href="http://www.fitbit.com">Fitbit</a>.</p>
+    <p>The message payload is determined by the node <b>type</b> property as
+       follows:</p>
+      <dl>
+        <dt>activities<dt>
+        <dd>the message payload contains <a
+            href="https://wiki.fitbit.com/display/API/API-Get-Activities"
+            >daily activities</a> data.</dd>
+        <dt>sleep</dt>
+        <dd>the message payload contains <a
+            href="https://wiki.fitbit.com/display/API/API-Get-Sleep"
+            >sleep log</a> data for the main sleep and the message
+            <b>data</b> property contains the complete sleep data result.</dd>
+        <dt>badges</dt>
+        <dd>the message payload contains data about <a
+            href="https://wiki.fitbit.com/display/API/API-Get-Badges"
+            >badges</a> awarded.</dd>
+      </dl>
+      <p>The <b>msg.date</b> property may be set to an ISO 8601 format
+      date (e.g. 2014-09-25) to retrieve historical data for
+      activities and sleep log. If no date is supplied, then data for
+      today will be retrieved. In the case of sleep, this is the data
+      for the preceding sleep.</p>
+</script>

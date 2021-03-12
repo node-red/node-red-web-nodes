@@ -1,0 +1,123 @@
+
+<script type="text/x-red" data-help-name="google directions">
+    <p>Utilizes the Google Direcions API to provide directions between the supplied origin and destination.</p>
+    <br>
+    <p>Input Parameters:</p>
+    <p><code>Name</code> - Name of the node</p>
+    <p>All of the following parameters can be supplied as part of the top level <code>msg</code> object.</p>
+    <p><code>msg.key</code> - Your application's API key. This key identifies your application for purposes of quota management.</p>
+    <p><code>msg.origin</code> - The address or textual latitude/longitude value from which you wish to calculate directions. If you pass an address as a string, the Directions service will geocode the string and convert it to a latitude/longitude coordinate to calculate directions. If you pass coordinates, ensure that no space exists between the latitude and longitude values.</p>
+    <p><code>msg.destination</code> - The address or textual latitude/longitude value from which you wish to calculate directions. If you pass an address as a string, the Directions service will geocode the string and convert it to a latitude/longitude coordinate to calculate directions. If you pass coordinates, ensure that no space exists between the latitude and longitude values.</p>
+    <p><code>msg.mode</code> - (Defaults to driving). Specifies the mode of transport to use when calculating directions. Valid values and other request details are specified in <a href="https://developers.google.com/maps/documentation/directions/?csw=1#TravelModes">Travel Modes</a>.</p>
+    <p><code>msg.waypoints</code> - Specifies an array of waypoints. Waypoints alter a route by routing it through the specified location(s). A waypoint is specified as either a latitude/longitude coordinate or as an address which will be geocoded. Waypoints are only supported for driving, walking and bicycling directions. (For more information on waypoints, see <a href="https://developers.google.com/maps/documentation/directions/?csw=1#Waypoints">Using Waypoints in Routes</a>.)</p>
+    <p><code>msg.alternatives</code> - If set to true, specifies that the Directions service may provide more than one route alternative in the response. Note that providing route alternatives may increase the response time from the server.</p>
+    <p><code>msg.avoid</code> -  Indicates that the calculated route(s) should avoid the indicated features. This parameter supports the following arguments:
+        <ul>
+            <li><i>tolls</i> indicates that the calculated route should avoid toll roads/bridges.</li>
+            <li><i>highways</i> indicates that the calculated route should avoid highways.</li>
+            <li><i>ferries</i> indicates that the calculated route should avoid ferries.</li>
+        </ul>
+    </p>
+    <p><code>msg.language</code> - Specifies the language in which to return results. See the list of <a href="https://developers.google.com/maps/faq#languagesupport">supported domain languages</a>. </p>
+    <p><code>msg.units</code> - Specifies the unit system to use when displaying results. Valid values are specified in <a href="https://developers.google.com/maps/documentation/directions/?csw=1#UnitSystems">Unit Systems</a>.</p>
+    <p><code>msg.region</code> - Specifies the region code, specified as a ccTLD ("top-level domain") two-character value. (For more information see <a href="https://developers.google.com/maps/documentation/directions/?csw=1#RegionBiasing">Region Biasing</a>.)</p>
+    <p><code>msg.departure_time</code> - Specifies the desired time of departure. You can specify the time as an integer in seconds since midnight, January 1, 1970 UTC.</p>
+    <p><code>msg.arrival_time</code> - pecifies the desired time of arrival for transit directions, in seconds since midnight, January 1, 1970 UTC. You can specify either departure_time or arrival_time, but not both.</p>
+    <p><code>msg.transit_mode</code> - Specifies one or more preferred modes of transit. This parameter may only be specified for transit directions, and only if the request includes an API key or a Google Maps API for Work client ID. The parameter supports the following arguments:
+        <ul>
+            <li><i>bus</i> indicates that the calculated route should prefer travel by bus.</li>
+            <li><i>subway</i> indicates that the calculated route should prefer travel by subway.</li>
+            <li><i>train</i> indicates that the calculated route should prefer travel by train.</li>
+            <li><i>tram</i> indicates that the calculated route should prefer travel by tram and light rail.</li>
+            <li><i>rail</i> indicates that the calculated route should prefer travel by train, tram, light rail, and subway. This is equivalent to transit_mode=<i>train|tram|subway</i>.</li>
+        </ul>
+    </p>
+    <p><code>msg.transit_routing_preferences</code> - </p>
+    <br>
+    <p>Return values:</p>
+    <p><code>msg.status</code> - Will either be 'OK' or provide an error state.</p>
+    <p><code>msg.distance</code> - The distance of the trip, provided in meters</p>
+    <p><code>msg.duration</code> - The duration of the trip, provided in seconds.</p>
+    <p><code>msg.location</code> - Will contain to address objects, start and end, which will each contain a lon, lat, and address.</p>
+    <p><code>msg.payload</code> - <br />
+    <code>
+        {
+            routes: [
+                {
+                    copyrights,
+                    summary,
+                    bounds: {
+                        northeast:{
+                            lat,
+                            lon
+                        },
+                        southwest: {
+                            lat,
+                            lon
+                        }
+                    },
+                    warnings: [],
+                    waypoint_order: [],
+                    fare: {
+                        currency,
+                        value
+                    },
+                    legs: [
+                        {
+                            distance: {
+                                value,
+                                text
+                            },
+                            duration: {
+                                value,
+                                text
+                            },
+                            duration_in_traffic: {
+                                value,
+                                text
+                            },
+                            departure_time,
+                            arrival_time,
+                            start_location: {
+                                address,
+                                lat,
+                                lon
+                            },
+                            end_location: {
+                                address,
+                                lat,
+                                lon
+                            },
+                            steps: [
+                                {
+                                    distance:{
+                                        value,
+                                        text
+                                    },
+                                    duration:{
+                                        value,
+                                        text
+                                    },
+                                    start_location:{
+                                        lat,
+                                        lon
+                                    },
+                                    end_location:{
+                                        lat,
+                                        lon
+                                    },
+                                    html_instructions,
+                                    maneuver,
+                                    travel_mode,
+                                    transit_details
+                                }
+                            ]
+                        }]
+                }
+            ],
+            status
+        }
+    </code>
+    <br><br>
+    <p>For more information, please visit the <a href="https://developers.google.com/maps/documentation/directions/">Google Directions API Developer Docs</a>
+</script>

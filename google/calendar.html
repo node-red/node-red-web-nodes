@@ -55,30 +55,6 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="google calendar in">
-  <p>Send a message every time an event occurs in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
-  <p>The message sent from the node will have properties:
-    <ul>
-      <li><b>title</b> - the summary string from the calendar entry</li>
-      <li><b>description</b> - the description from the calendar entry</li>
-      <li><b>location.description</b> - the location string from the calendar entry</li>
-      <li><b>data</b> - the raw event from the google calendar query as described in the <a href="https://developers.google.com/google-apps/calendar/v3/reference/events/list">event list API documentation</a></li>
-      <li><b>payload</b> - an object containing:
-        <ul>
-          <li><b>title</b> - the summary string from the calendar entry</li>
-          <li><b>description</b> - the description from the calendar entry</li>
-          <li><b>location.description</b> - the location string from the calendar entry</li>
-          <li><b>start</b> - Javascript Date of start time - midnight for all day event</li>
-          <li><b>end</b> - Javascript Date of end time - midnight for all day event</li>
-          <li><b>allDayEvent</b> - true if event is an all day event</li>
-          <li><b>creator</b> - object containing name and email properties</li>
-          <li><b>attendees</b> - list of objects containing name and email properties</li>
-        </ul>
-      </li>
-    </ul>
-  </p>
-</script>
-
 <script type="text/javascript">
     RED.nodes.registerType('google calendar in',{
         category: 'Google',
@@ -154,37 +130,6 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="google calendar">
-  <p>Return the next event in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
-  <p>The incoming message can provide the following properties:
-    <ul>
-      <li><b>payload</b> - a text search string used to select relevant events</li>
-      <li><b>calendar</b> - the calendar to retrieve the event from (optional, defaults to the node calendar property or the users primary calendar)</li>
-      <li><b>count</b> - the number of events to retrieve (Accepted values are [1-10]. If larger than 1, an array will be returned)</li>
-    </ul>
-  </p>
-  <p>The message sent from the node will have properties:
-    <ul>
-      <li><b>title</b> - the summary string from the calendar entry</li>
-      <li><b>description</b> - the description from the calendar entry</li>
-      <li><b>location.description</b> - the location string from the calendar entry</li>
-      <li><b>data</b> - the raw event from the google calendar query as described in the <a href="https://developers.google.com/google-apps/calendar/v3/reference/events/list">event list API documentation</a></li>
-      <li><b>payload</b> - an object containing:
-        <ul>
-          <li><b>title</b> - the summary string from the calendar entry</li>
-          <li><b>description</b> - the description from the calendar entry</li>
-          <li><b>location.description</b> - the location string from the calendar entry</li>
-          <li><b>start</b> - Javascript Date of start time - midnight for all day event</li>
-          <li><b>end</b> - Javascript Date of end time - midnight for all day event</li>
-          <li><b>allDayEvent</b> - true if event is an all day event</li>
-          <li><b>creator</b> - object containing name and email properties</li>
-          <li><b>attendees</b> - list of objects containing name and email properties</li>
-        </ul>
-      </li>
-    </ul>
-  </p>
-</script>
-
 <script type="text/javascript">
     RED.nodes.registerType('google calendar',{
         category: 'social',
@@ -221,17 +166,6 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="calendar.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
-</script>
-
-<script type="text/x-red" data-help-name="google calendar out">
-  <p>Create an entry in a <a href="https://www.google.com/calendar">Google Calendar</a>.</p>
-  <p>The incoming message can provide the following properties:
-    <ul>
-      <li><b>payload</b> - either a string to describe the event using <a href="https://support.google.com/calendar/answer/36604?hl=en">quick add format</a> or an object representing the request body for an <a href="https://developers.google.com/google-apps/calendar/v3/reference/events/insert">insert request</a></li>
-      <li><b>calendar</b> - the calendar to add the event to (optional, defaults to the node calendar property or the users primary calendar)</li>
-      <li><b>sendNotifications</b> - a boolean to determine if notifications should be sent to attendees (optional, defaults to false)</li>
-    </ul>
-  </p>
 </script>
 
 <script type="text/javascript">

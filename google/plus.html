@@ -86,25 +86,6 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="google plus">
-  <p>Interact with the Google+ API to get information about people, activities, and comments.</p>
-  <p>Request Types:</p>
-  <p><b>People</b> - Allows you to interact with Google+ profiles. You are able to <i>get</i> a particular profile, <i>search</i> for a profile, or gather a <i>list</i> of people that have +1'd or reshared an activity.</p>
-  <p><b>Activities</b> - Allows you to interact with Google+ activities. You are able to <i>get</i> a particular activity, <i>search</i> for an activitiy, or gather a <i>list</i> of activities directly related to a person.</p>
-  <p><b>Comments</b> - Allows you to interact with Google+ comments. You are able to <i>get</i> a particular comment, or gather a <i>list</i> of comments attached to an activity.</p>
-  <br>
-  <p>Inputs:</p>
-  <p><b>User Id</b> - The ID of the person to get the profile for. The special value "me" can be used to indicate the authenticated user.</p>
-  <p><b>Activity Id</b> - The ID of the activity to get.</p>
-  <p><b>Comment Id</b> - The ID of the comment to get.</p>
-  <p><b>Collection</b> - The collection of activities to list. Acceptable values are: <i>public</i>: All public activities created by the specified user.</p>
-  <p><b>Language</b> - Specify the preferred language to search with. See <a href="https://developers.google.com/+/api/search.html#available-languages">search language codes</a> for available values.</p>
-  <p><b>Max Results</b> - The maximum number of activities to include in the response, which is used for paging.</p>
-  <p><b>Sort Order</b> - The order in which to sort the list of comments. Acceptable values are: <i>ascending</i>: Sort oldest comments first. (default); <i>descending</i>: Sort newest comments first.</p>
-  <p><b>Order by</b> - Specifies how to order search results. Acceptable values are: <i>best</i>: Sort activities by relevance to the user, most relevant first; <i>recent</i>: Sort activities by published date, most recent first. (default)</p>
-  <p><b>Page Token</b> - The continuation token, which is used to page through large result sets. To get the next page of results, set this parameter to the value of "nextPageToken" from the previous response.</p>
-</script>
-
 <script type="text/javascript">
     RED.nodes.registerType('google plus',{
         category: 'social',

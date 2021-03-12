@@ -1,0 +1,55 @@
+
+<script type="text/x-red" data-help-name="foursquare">
+    <p>Foursquare query node.</p>
+    <p>Can be used to
+    <ul>
+        <li>explore recommended venues of a particular type near a given latitude and longitude </li>
+    </ul></p>
+    <p>The type of venue to explore can be passed in as settings on the node or as the
+    <b>msg.payload.section</b> of the message input. Valid entries are:
+    <ul>
+       <li>food</li>
+       <li>drinks</li>
+       <li>coffee</li>
+       <li>shops</li>
+       <li>arts</li>
+       <li>outdoors</li>
+       <li>sights</li>
+       <li>all</li>
+    </ul>
+    The value set on the node will take precedence over the contents of <b>msg.payload.section</b>.
+    </p>
+    <p>The number of results to return from the query and how to return them (either as a single message
+    or as multiple messages) are settings on the node.</p>
+   <p>The node sets the following properties
+     <ul>
+       <li><b>payload</b> - the JSON of the recommended venue</li>
+       <li><b>title</b> - the name of the recommended venue</li>
+       <li><b>location.lat</b> - the latitude of the recommended venue</li>
+       <li><b>location.lon</b> - the longitude of the recommended venue</li>
+       <li><b>location.city</b> - the city where the recommended venue is</li>
+       <li><b>location.country</b> - the country where the recommended venue is</li>
+       <li><b>location.name</b> - the name of the recommended venue</li>
+    </ul>
+    The exact location of these properties depends on the number of results chosen to be returned along
+    with how to return them:
+    <ul>
+    <li>If the node output value is set to one then for both returning as a single message and as multiple
+    messages, the node returns a msg for the first in an ordered list of recommended venues near the provided
+    latitude and longitude. The returned msg has the payload, location and name properties.
+    </li>
+    <li>If the node output value is set to more than one to be returned as a single message
+    the node sets <b>msg.payload</b>
+    to be an array of <b>msg</b>'s, each one corresponding to a recommended venue and ordered according to the
+    <a href="https://foursquare.com/">Foursquare</a> venues explore API.  The first element in the array is
+    the most highly recommended venue and the length of the array is the output value set on the node or the
+    number of venues found, whichever is smaller. Each element in this array has the payload,
+   title, location and name properties.
+    </li>
+    <li>If the node output value is set to more than one but to be returned as a multiple then the node sends
+    multiple msgs, each one representing a recommended venue.
+    </ul>
+    For further information about the Foursquare API see
+    <a href="https://developer.foursquare.com/docs/venues/explore">Explore Recommended and Popular Venues</a>.</p>
+    <p>Data provided by <a href="https://foursquare.com/">Foursquare</a>.</p>
+</script>

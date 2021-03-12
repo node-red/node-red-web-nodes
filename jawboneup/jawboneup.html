@@ -69,36 +69,36 @@
         exportable: false,
         oneditprepare: function() {
             var id = this.id;
-            
+
             var pathname = document.location.pathname;
             if (pathname.slice(-1) != "/") {
                 pathname += "/";
             }
             var callback = location.protocol + "//" +
-                                  location.hostname + 
+                                  location.hostname +
                                   (location.port?":"+location.port:"")+
                                   pathname + "jawboneup-credentials";
             var tip = this._("jawboneup.tip.redirect", {callback: callback});
             $("#node-config-jawboneup-tooltip").html(tip);
-            
+
             function updateJawboneupAuthButton() {
                 var v1 = $("#node-config-input-client_id").val();
                 var v2 = $("#node-config-input-app_secret").val();
-                $("#node-config-start-auth").toggleClass("disabled",(v1.length === 0 || v2.length === 0));                    
+                $("#node-config-start-auth").toggleClass("disabled",(v1.length === 0 || v2.length === 0));
             }
             $("#node-config-input-client_id").on('change keydown paste input',updateJawboneupAuthButton);
             $("#node-config-input-app_secret").on('change keydown paste input',updateJawboneupAuthButton);
-            
+
             function updateJawboneupScreenName(sn) {
                 $("#node-config-jawboneup-app-keys").hide();
                 $("#node-config-jawboneup-user").show();
                 $("#node-config-input-displayname").val(sn);
                 $("#node-config-jawboneup-displayname").html(sn);
             }
-            
+
             function pollJawboneupCredentials(e) {
                 $.getJSON('credentials/jawboneup-credentials/'+id,function(data) {
-                    if (data.displayname) {                     
+                    if (data.displayname) {
                         $("#node-config-dialog-ok").button("enable");
                         updateJawboneupScreenName(data.displayname);
                         delete window.jawboneupConfigNodeIntervalId;
@@ -107,9 +107,9 @@
                     }
                 });
             }
-            
+
             updateJawboneupAuthButton();
-            
+
             if (this.displayname) {
                 updateJawboneupScreenName(this.displayname);
             } else {
@@ -117,7 +117,7 @@
                 $("#node-config-jawboneup-user").hide();
                 $("#node-config-dialog-ok").button("disable");
             }
-            
+
             $("#node-config-start-auth").mousedown(function(e) {
                 var client_id = $("#node-config-input-client_id").val();
                 var app_secret = $("#node-config-input-app_secret").val();
@@ -141,7 +141,7 @@
             });
 
         },
-        
+
         oneditsave: function() {
             if (window.jawboneupConfigNodeIntervalId) {
                 window.clearTimeout(window.jawboneupConfigNodeIntervalId);
@@ -154,11 +154,10 @@
                 delete window.jawboneupConfigNodeIntervalId;
             }
         }
-        
+
     });
 })();
 </script>
-
 
 <script type="text/x-red" data-template-name="jawboneup">
     <div class="form-row">
@@ -176,7 +175,7 @@
     <div class="form-row">
         <label for="node-input-outputnumber"><i class="fa fa-sign-out"></i> <span data-i18n="jawboneup.label.output"></span></label>
         <select id="node-input-outputnumber" style="width:15% !important">
-             <option value="1">1</option>             
+             <option value="1">1</option>
              <option value="10">10</option>
         </select>
         <span data-i18n="jawboneup.label.resultas"></span> <select id="node-input-outputas" style='width:40% !important'>
@@ -188,47 +187,6 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="jawboneup.label.name"></span></label>
         <input type="text" id="node-input-name">
     </div>
-</script>
-
-<script type="text/x-red" data-help-name="jawboneup">
-    <p>Jawbone Up node.</p>
-   <p>Can be used to retrieve the workouts completed since the provided time (given as Epoch). This 
- time can be passed in as settings on the node or as the <b>msg.starttime</b> section of the message input.
-The value set on the node will take precedence over the contents of incoming message.
-   </p>
-    <p>The number of results to return from the query and how to return them (either as a single message
-    or as multiple messages) are settings on the node.</p>
-   <p>The node sets the following properties, if available,
-     <ul>
-       <li><b>payload</b> - the JSON of the workout</li>
-       <li><b>title</b> - the type of workout</li>
-       <li><b>id</b> - the unique id for the workout</li>
-       <li><b>location.lat</b> - the latitude of where the workout took place</li>
-       <li><b>location.lon</b> - the longitude of where the workout took place</li>
-       <li><b>payload.type</b> - the type of workout</li>
-       <li><b>payload.starttime</b> - the start time of the workout as a Javascript Date object</li>
-       <li><b>payload.duration</b> - the duration of the workout in seconds</li>
-       <li><b>payload.distance</b> - the distance of the workout in meters</li>
-       <li><b>payload.calories</b> - the total calories burned during the workout</li>
-       <li><b>data</b> - the JSON of the workout</li>
-    </ul>
-    The exact location of these properties depends on the number of results chosen to be returned along 
-    with how to return them:
-    <ul>
-    <li>If the node output value is set to one then for both returning as a single message and as multiple
-    messages, the node returns a msg for the latest workout since the provided start time. The returned msg 
-    has the properties set on it.
-    </li>
-    <li>If the node output value is set to more than one to be returned as a single message
-    the node sets <b>msg.payload</b> 
-    to be an array of <b>msg</b>'s, each one corresponding to a workout.  The first element in the array is  
-    the latest workout and the length of the array is the output value set on the node or the 
-    number of workouts found, whichever is smaller. Each element in this array has the properties on them.
-    </li>
-    <li>If the node output value is set to more than one but to be returned as a multiple then the node sends
-    multiple msgs, each one representing a workout found.
-    </ul>
-    <p>Jawbone and Up are trademarks of Jawbone.</p>
 </script>
 
 <script type="text/javascript">

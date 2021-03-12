@@ -1,0 +1,78 @@
+
+<script type="text/x-red" data-help-name="darksky">
+    <p>A node which polls the DarkSky API for weather forecast data when an input is received.</p>
+    <p>This is done using a latitude and longitude set of coordinates and an optional date/time combination.</p>
+    <p>These can be passed in as settings on the node, or as:</p>
+    <ul>
+       <li> <code>msg.location.lat</code>, <code>msg.location.lon</code> and optionally <code>msg.time</code></li>
+    </ul>
+    <p>if using <code>msg.time</code> it can either be a javascript Date object or a
+    string or number of milliseconds since 1970 (epoch time in mS).
+    If neither is specified the forecast defaults to tomorrow.</p>
+    <p>The user also has the option of providing a date instead of returning data for the next day.</p>
+    <p>The node will always prioritise the node settings if they are present.</p>
+    <p>The node sets the following properties of <code>msg.payload</code>:</p>
+    <ul>
+        <li><code>weather</code> - a single word representation of the current weather forecast.</li>
+        <li><code>detail</code> - a more detailed explanation of what the weather is forecast to be.</li>
+        <li><code>humidity</code> - a current humidity forecast in decimal (0-1).</li>
+        <li><code>maxtemp</code> - the current forecast max temperature for the location in Fahrenheit.</li>
+        <li><code>mintemp</code> - the current forecast minimum temperature for the location in Fahrenheit.</li>
+        <li><code>windspeed</code> - the current forecast windspeed at the location in metres per second</li>
+        <li><code>winddirection</code> - the current forecast wind direction for the location in degrees.</li>
+        <li><code>lon</code> - the longitude of the location from which the forecast was sourced.</li>
+        <li><code>lat</code> - the latitude of the location from which the forecast was sourced.</li>
+        <li><code>clouds</code> - the current forecast cloud coverage of the location in percent.</li>
+        <li><code>precipitation</code> - the current forecast precipitation chance</li>
+        <li><code>sunrise</code> - the time at which the is forecast to rise in Unix UTC format.</li>
+        <li><code>sunset</code> - the time at which the sun is forecast to set in Unix UTC format.</li>
+ 	<li><code>lang</code> - the language of the results as requested.</li>
+ 	<li><code>units</code> - the units of the results as requested.</li>
+    </ul>
+    <p>The node also sets:</p>
+    <ul>
+        <li><code>msg.location.lat</code> - the latitude of the location from which the data was sourced.</li>
+        <li><code>msg.location.lon</code> - the longitude of the location from which the data was sourced.</li>
+    </ul>
+    <p>Finally, the node sets: <code>msg.title</code>, <code>msg.description</code> and</p>
+    <ul>
+        <li><code>msg.time</code> - the time at which the weather data was received by DarkSky.</li>
+        <li><code>msg.data</code> - the full JSON returned by the API. </li>
+    </ul>
+    <p>Powered by the <a href="https://darksky.net/poweredby/" target="_blank">Dark Sky Forecast API</a>.</p>
+</script>
+
+<script type="text/x-red" data-help-name="darksky in">
+    <p>A node which polls DarkSky every 15 minutes for weather forecast data and outputs when a change is detected.</p>
+    <p>This is done using a latitude and longitude set of coordinates and an optional date/time combination.</p>
+    <p>The user also has the option of providing a date instead of returning data for the next day.</p>
+    <p>The node sets the following properties of <code>msg.payload</code>:</p>
+    <ul>
+        <li><code>weather</code> - a single word representation of the current weather forecast.</li>
+        <li><code>detail</code> - a more detailed explanation of what the weather is forecast to be.</li>
+        <li><code>humidity</code> - a current humidity forecast in decimal (0-1).</li>
+        <li><code>maxtemp</code> - the current forecast max temperature for the location in Fahrenheit.</li>
+        <li><code>mintemp</code> - the current forecast minimum temperature for the location in Fahrenheit.</li>
+        <li><code>windspeed</code> - the current forecast windspeed at the location in metres per second</li>
+        <li><code>winddirection</code> - the current forecast wind direction for the location in degrees.</li>
+        <li><code>lon</code> - the longitude of the location from which the forecast was sourced.</li>
+        <li><code>lat</code> - the latitude of the location from which the forecast was sourced.</li>
+        <li><code>clouds</code> - the current forecast cloud coverage of the location in percent.</li>
+        <li><code>precipitation</code> - the current forecast precipitation chance</li>
+        <li><code>sunrise</code> - the time at which the is forecast to rise in Unix UTC format.</li>
+        <li><code>sunset</code> - the time at which the sun is forecast to set in Unix UTC format.</li>
+        <li><code>lang</code> - the language of the results as requested.</li>
+        <li><code>units</code> - the units of the results as requested.</li>
+    </ul>
+    <p>The node also sets:</p>
+    <ul>
+        <li><code>msg.location.lat</code> - the latitude of the location from which the data was sourced.</li>
+        <li><code>msg.location.lon</code> - the longitude of the location from which the data was sourced.</li>
+    </ul>
+    <p>Finally, the node sets: <code>msg.title</code>, <code>msg.description</code> and</p>
+    <ul>
+        <li><code>msg.time</code> - the time at which the weather data was received by DarkSky.</li>
+        <li><code>msg.data</code> - the full JSON returned by the API. </li>
+    </ul>
+    <p>Powered by the <a href="https://darksky.net/poweredby/" target="_blank">Dark Sky Forecast API</a>.</p>
+</script>
