@@ -46,7 +46,7 @@
             <option value="hours" data-i18n="calendar.label.hours"></option>
             <option value="days" data-i18n="calendar.label.days"></option>
         </select>
-        <span id="node-input-type"><span data-i18n="calendar.label.before"></span></span> <span data-i18n="calendar.label.the"></span> <span id="node-input-from"><span data-i18n="calendar.label.start"></span></span> <span data-i18n="calendar.label.each-event"></span>
+        <span id="node-input-type"><span data-i18n="calendar.label.option_before"></span></span> <span data-i18n="calendar.label.the"></span> <span id="node-input-from"><span data-i18n="calendar.label.option_start"></span></span> <span data-i18n="calendar.label.each-event"></span>
     </div>
 
     <div class="form-row">
@@ -76,6 +76,10 @@
         },
         oneditprepare: function() {
             var type = this.offsetType || "at";
+            var type_before = this._("calendar.label.option_before");
+            var type_after = this._("calendar.label.option_after");
+            var from_start = this._("calendar.label.option_start");
+            var from_end = this._("calendar.label.option_end");
             $("#node-input-offsetType option").filter(function() {
                 return $(this).val() == type;
             }).attr('selected', true);
@@ -95,8 +99,16 @@
                 if (type === "at") {
                     $("#node-row-offset").hide();
                 } else {
-                    $("#node-input-type").html(type);
-                    $("#node-input-from").html(from);
+                    if (type === "before") {
+                        $("#node-input-type").html(type_before);
+                    } else if (type === "after") {
+                        $("#node-input-type").html(type_after);
+                    }
+                    if (from === "start") {
+                        $("#node-input-from").html(from_start);
+                    } else if (from === "end") {
+                        $("#node-input-from").html(from_end);
+                    }
                     $("#node-row-offset").show();
                 }
              };
