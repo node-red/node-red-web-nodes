@@ -16,8 +16,6 @@
             "minutes": "minutes",
             "hours": "hours",
             "days": "days",
-            "before": "before",
-            "start": "start",
             "name": "Name",
             "count": "Events"
         },
