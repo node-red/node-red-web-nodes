@@ -1,0 +1,34 @@
+{
+    "fitbit": {
+        "label": {
+            "fitbit": "Fitbit",
+            "type": "Typ",
+            "goals": "Ziele",
+            "sleep": "Schlaf",
+            "badges": "Abzeichen",
+            "activities": "Aktivitäten",
+            "name": "Name",
+            "create": "Eigene App erzeugen bei",
+            "copy": "App-Details hierher kopieren",
+            "key": "Key",
+            "secret": "Secret",
+            "authenticate": "Bei Fitbit authentifizieren",
+            "fitbitid": "Fitbit-ID"
+        },
+        "status": {
+            "initializing": "Initialisiere",
+            "failed": "Fehlgeschlagen",
+            "querying": "Frage ab"
+        },
+        "warn": {
+            "missing-credentials": "Fehlende Fitbit-Berechtigungen",
+            "no-sleep-record": "Keine Schlafaufzeichnung gefunden"
+        },
+        "error": {
+            "unsupported-data-type": "Nicht unterstützter Datentyp",
+            "missing-credentials": "Fehlende Fitbit-Berechtigungen",
+            "oautherror": "<p>Irgendetwas ist schief gelaufen beim Authentifizierungs-Prozess. Der folgende Fehler wurde rückgegeben:</p><p><b>__statusCode__</b>: __errorData__</p><p>Ein bekannter Grund für diesen Fehlertyp könnte sein, dass die Uhrzeit des Systems falsch ist, auf dem Node-RED läuft.</p>",
+            "authorized": "<html><head></head><body>Erfolgreich authorisiert bei Fitbit. Dieses Fenster kann jetzt geschlossen werden.</body></html>"
+        }
+    }
+}

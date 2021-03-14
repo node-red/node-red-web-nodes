@@ -1,0 +1,45 @@
+{
+    "calendar": {
+        "label": {
+            "google-calendar": "Google Kalender",
+            "google": "Google",
+            "calendar": "Kalender",
+            "inject-message": "Nachricht",
+            "the": "dem",
+            "each-event": "eines jeden Ereignisses",
+            "option_at": "bei",
+            "option_before": "vor",
+            "option_after": "nach",
+            "option_start": "Beginn",
+            "option_end": "Ende",
+            "seconds": "Sekunden",
+            "minutes": "Minuten",
+            "hours": "Stunden",
+            "days": "Tage",
+            "name": "Name",
+            "count": "Ereignisse",
+            "incl-og-events": "Laufende Ereignisse einschließen"
+        },
+        "status": {
+            "querying": "Abfrage",
+            "invalid-calendar": "Ungültiger Kalender",
+            "next-event": "Abfrage nächstes Ereignis",
+            "no-event": "Kein Ereignis",
+            "creating": "Erzeugung",
+            "failed": "Fehlgeschlagen"
+        },
+        "warn": {
+            "no-credentials": "Fehlende Google-Berechtigungen"
+        },
+        "error": {
+            "invalid-calendar": "Ungültiger Kalender",
+            "error": "FEHLER: __error__",
+            "no-event": "FEHLER: Kein Ereignis gefunden",
+            "fetch-failed": "Fehler bei Abfrage der Kalenderliste: __message__",
+            "error-details": "Fehler __code__: __message__"
+        },
+        "helptext": {
+            "count": "Anzahl der zurückzugebenden Ereignisse [1-10]"
+        }
+    }
+}

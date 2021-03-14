@@ -1,0 +1,47 @@
+{
+    "directions": {
+        "label": {
+            "directions": "Google Directions",
+            "name": "Name",
+            "apikey": "Google API Key",
+            "origin": "Startpunkt",
+            "destination": "Zielpunkt",
+            "mode": "Modus",
+            "driving": "Fahrend (z.B. Auto)",
+            "walking": "Gehend",
+            "bicycling": "Fahrrad fahrend",
+            "transit": "Transit",
+            "waypoints": "Wegpunkte",
+            "alternatives": "Alternativen",
+            "avoid": "Vermeiden",
+            "language": "Sprache",
+            "units": "Einheiten",
+            "metric": "Metrisch (Meter)",
+            "imperial": "Imperial (Meilen usw.)",
+            "region": "Region",
+            "departuretime": "Abfahrtszeit",
+            "arraivaltime": "Ankunftszeit",
+            "transitmode": "Transitmodus",
+            "transitpref": "Transit-Routen-Präferenzen"
+        },
+        "placeholder": {
+            "name": "Name"
+        },
+        "status": {
+            "failed": "Fehlgeschlagen"
+        },
+        "error": {
+            "no-origin": "Bitte Startpunkt angeben",
+            "no-destination": "Bitte Zielpunkt angeben",
+            "no-waypoint": "Startpunkt, Zielpunkt oder Wegpunkte nicht gefunden",
+            "too-many-waypoints": "Zu viele Wegpunkte vorgegeben. Es sind maximal 8 erlaubt.",
+            "invalid-request": "Ungültige Anfrage. Bitte auf ungültige Parameterangaben überprüfen.",
+            "too-many-requests": "Zu viele Anfragen über den vorgegebenen API Key",
+            "request-denied": "Anfrage abgelehnt von Google",
+            "unknown-error": "Unbekannter Fehler aufgetreten. Bitte erneut versuchen."
+        },
+        "message": {
+            "travel-directions": "Travel directions via"
+        }
+    }
+}

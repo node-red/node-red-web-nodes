@@ -75,7 +75,7 @@
             "description": "Aktuelle Wetter-Information bei Koordinaten: __lat__, __lon__",
             "payload": "Das Wetter in __name__ bei Koordinaten: __lat__, __lon__ ist __main__ (__description__)."
         },
-        "tip": "<b>Tip:</b> Es empfiehlt sich, vorab manuell <a href=\"https://openweathermap.org/find?q=\" target=\"_new\">den (in Englisch geschriebenen) Ort</a> zu suchen, um zu prüfen, dass er auch gefunden wird. Oftmals funktioniert auch der 2-Zeichen-Ländercode am besten.",
+        "tip": "<b>Tipp:</b> Es empfiehlt sich, vorab manuell <a href=\"https://openweathermap.org/find?q=\" target=\"_new\">den (in Englisch geschriebenen) Ort</a> zu suchen, um zu prüfen, dass er auch gefunden wird. Oftmals funktioniert auch der 2-Zeichen-Ländercode am besten.",
         "note": "<b>Notiz:</b> Der API-Key ist möglicherweise nicht sofort einsatzbereit nach der Erzeugung. Die <a href=\"https://openweathermap.org/faq\" target=\"_new\">FAQ</a> sagen dazu: <i>Your API key will be activated automatically, between 10 minutes and 2 hours after your successful registration.</i> Einfach etwas warten."
     }
 }

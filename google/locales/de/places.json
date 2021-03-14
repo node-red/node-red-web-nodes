@@ -1,0 +1,68 @@
+{
+    "places": {
+        "label": {
+            "places": "Google Places",
+            "nearbysearch": "Nahbereichssuche",
+            "textsearch": "Ortstextsuche",
+            "detailssearch": "Ortsdetailsuche",
+            "nodename": "Node Name",
+            "requesttype": "Anfragetyp",
+            "nearby": "Nahbereich (Places Nearby)",
+            "text": "Ortstext (Places Text)",
+            "details": "Ortsdetail (Places Details)",
+            "apikey": "Google API Key",
+            "query": "Abfrage",
+            "latitude": "Breitengrad",
+            "longitude": "Längengrad",
+            "placeid": "Orts-ID",
+            "radius": "Radius (m)",
+            "rankby": "Sortierung",
+            "prominence": "Bekanntheit",
+            "distance": "Entfernung",
+            "keyword": "Schlüsselwort",
+            "language": "Sprache",
+            "minprice": "Min. Preis",
+            "maxprice": "Max. Preis",
+            "name": "Name",
+            "types": "Typen",
+            "extensions": "Erweiterungen",
+            "opennow": "Jetzt geöffnet",
+            "output": "Ausgabe",
+            "resultas": "Ergebnis(se) als",
+            "multiple": "multiple Nachrichten",
+            "single": "eine einzige Nachrichten"
+        },
+        "placeholder": {
+            "nodename": "Node Name",
+            "query": "Abfrage (Query)",
+            "latitude": "Breitengrad",
+            "longitude": "Längengrad",
+            "placeid": "Orts-ID (Place Id)",
+            "radius": "Radius",
+            "keyword": "Schlüsselwort",
+            "language": "Sprache",
+            "minprice": "Min. Preis",
+            "maxprice": "Max. Preis",
+            "name": "Name",
+            "types": "Typen",
+            "extensions": "Erweiterungen (Extensions)"
+        },
+        "status": {
+            "querying": "Abfrage",
+            "failed": "Fehlgeschlagen"
+        },
+        "error": {
+            "no-apikey": "Bitte API Key angeben",
+            "no-lat_lon": "Bitte Längen- und Breitengrad angeben",
+            "radius-not-allowed": "Bei Sortierung nach Entfernung ist Radius bei der Anfrage nicht erlaubt. Stattdessen muss Schlüsselwort, Name und/oder Typ angegeben werden.",
+            "no-keyword_name_type": "Bei Sortierung nach Entfernung muss Schlüsselwort, Name und/oder Typ angegeben werden.",
+            "no-prominence_distance": "Die erlaubten Optionen bei der Sortierung sind 'Bekanntheit' (Standardwert) und 'Entfernung'",
+            "no-placeid": "Bitte eine Orts-ID (Place Id) angeben",
+            "no-text": "Bitte eine Abfrage (Query) für die Ort-Textsuche angeben",
+            "invalid-placeid": "Bitte eine gültige Orts-ID (Place Id) angeben"
+        },
+        "message": {
+            "results-returned": "Ergebnisse rückgegeben"
+        }
+    }
+}

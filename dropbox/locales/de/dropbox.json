@@ -1,0 +1,44 @@
+{
+    "dropbox": {
+        "label": {
+            "dropbox": "Dropbox",
+            "pattern": "Datei-Namensmuster",
+            "name": "Name",
+            "filename": "Dateiname",
+            "local": "Lokaler Dateiname",
+            "appkey": "App Key",
+            "appsecret": "App Secret",
+            "accesstoken": "Access Token"
+        },
+        "placeholder": {
+            "pattern": "Datei-Namensmuster (Pattern)",
+            "name": "Name",
+            "filename": "Dateiname",
+            "local": "Lokaler Dateiname"
+        },
+        "tip": {
+            "cred1": "<p>Zum Erhalt des Access-Tokens ist nach Anmeldung auf <a href='https://www.dropbox.com/developers/apps/create' target='_new'>Dropbox developer home</a>:",
+            "cred2": "<ol><li><i>Create app</i> klicken</li><li><i>Dropbox API app</i> auswählen</li><li>Auswahl entweder des App-Verzeichnisses oder der vollen Dropbox-Zugriff</li><li>App-Name auswählen</li><li><i>Create app</i> klicken</li></ol>",
+            "cred3": "Auf der Folgeseite den Button zur Generierung des Access-Tokens klicken und diesen oben hinkopieren."
+        },
+        "status": {
+            "initializing": "Initialisiere",
+            "failed": "Fehlgeschlagen",
+            "checking-for-changes": "Prüfe auf Änderungen",
+            "downloading": "Lade herunter",
+            "checking-credentials": "Prüfe Berechtigungen",
+            "access-denied": "Zugriff verweigert",
+            "uploading": "Lade hoch"
+        },
+        "warn": {
+            "missing-credentials": "Fehlende Dropbox-Berechtigugnen"
+        },
+        "error": {
+            "initialization-failed": "Initialisierung fehlgeschlagen: __err__",
+            "change-fetch-failed": "Fehler beim Abruf der Änderungen: __err__",
+            "no-filename": "Keinen Dateinamen angegeben",
+            "download-failed": "Download fehlgeschlagen: __err__",
+            "credentials-error": "Fehler beim Prüfen der Berechtigungen: __err__"
+        }
+    }
+}

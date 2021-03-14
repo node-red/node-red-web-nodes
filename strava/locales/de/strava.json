@@ -1,0 +1,43 @@
+{
+    "strava": {
+        "label": {
+            "strava": "Strava",
+            "user": "Benutzer",
+            "request": "Abfrage",
+            "activity": "Letzte Aktivitäten",
+            "name": "Name",
+            "create": "Eigene App erzeugen bei",
+            "copy": "App-Details hierher kopieren",
+            "clientid": "Client Id",
+            "clientsecret": "Client Secret",
+            "redirecturi": "Weiterleitungs-URI",
+            "authenticate": "Bei Strava authentifizieren",
+            "stravauser": "Strava-Benutzer"
+        },
+        "placeholder": {
+            "name": "Name"
+        },
+        "tip": {
+            "redirect": "<p>Bitte bei Strava einstellen, dass die folgende <b>Authorization Callback Domain</b> zur Authentifikation dieser App akzeptiert wird: </p>\n<code>__constructedURIToShow__</code>"
+        },
+        "warn": {
+            "no-accesstoken": "Fehlender Strava-Access-Token. Authorisierung war nicht abgeschlossen vor der Node-Initialisierung.",
+            "no-configuration": "Fehlende Strava-Konfiguration or -Berechtigung. Authorisierung war nicht abgeschlossen vor der Node-Initialisierung."
+        },
+        "error": {
+            "no-credentials-ui": "FEHLER: Abfrage von Benutzeroberfläche (UI) ohne die benötigten Berechtigungen empfangen",
+            "no-credentials": "FEHLER: Keine Berechtigungen - sollte niemals passieren",
+            "username-error": "FEHLER: Strava-Node ist fehlgeschlagen beim Abruf des Benutzernamens",
+            "accesstoken-error": "FEHLER: Strava-Node ist fehlgeschlagen beim Abruf eines gültigen Access-Tokens",
+            "no-id": "Keine Aktivitäts-ID",
+            "csrf-token-mismatch": "Keine Übereinstimmung des CSRF-Tokens, möglicherweise gefälschter Cross-Site-Anfrageversuch",
+            "no-code": "Die Rückfrage von Strava enthielt nicht den erforderlichen Code",
+            "request-error": "Anfragefehler:__err__",
+            "oauth-error": "OAuth-Fehler: __error__",
+            "unexpected-statuscode": "Strava antwortete mit einem unerwarteten HTTP-Status-Code von __statusCode__"
+        },
+        "message": {
+            "authorized": "<html><head></head><body>Erfolgreich authorisiert bei Strava. Dieses Fenster kann jetzt geschlossen werden.</body></html>"
+        }
+    }
+}
