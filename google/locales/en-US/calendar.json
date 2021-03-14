@@ -17,7 +17,8 @@
             "hours": "hours",
             "days": "days",
             "name": "Name",
-            "count": "Events"
+            "count": "Events",
+            "incl-og-events": "Include ongoing events"
         },
         "status": {
             "querying": "querying",
