@@ -1,0 +1,45 @@
+{
+    "plus": {
+        "label": {
+            "plus": "Google Plus",
+            "name": "Name",
+            "credentials": "Google-Berechtigungen",
+            "requesttype": "Anfragetyp",
+            "people": "Menschen",
+            "activities": "Aktivitäten",
+            "comments": "Kommentare",
+            "action": "Aktion",
+            "get": "Holen (Get)",
+            "search": "Suchen",
+            "list": "Auflisten",
+            "query": "Abfrage",
+            "collection": "Kollektion",
+            "userid": "Benutzer-ID",
+            "activityid": "Aktivitäts-ID",
+            "commentid": "Kommentar-ID",
+            "language": "Sprache",
+            "maxresults": "Max. Ergebnisse",
+            "orderby": "Sortierung",
+            "alphabetical": "Alphabetisch",
+            "best": "Beste",
+            "sortorder": "Sortierung",
+            "ascending": "Aufsteigend",
+            "descending": "Absteigend",
+            "pagetoken": "Seiten-Token"
+        },
+        "status": {
+            "failed": "Fehlgeschlagen"
+        },
+        "error": {
+            "no-query": "Bitte Abfrage angegeben",
+            "no-collection": "Bitte Kollektion angegeben",
+            "no-activityid": "Bitte Aktivitäts-ID angegeben",
+            "no-commentid": "Bitte Kommentar-ID angegeben",
+            "no-accesstoken": "Bitte Abfrage-Token bereitstellen"
+        },
+        "message": {
+            "ok": "OK",
+            "comment": "Kommentar"
+        }
+    }
+}

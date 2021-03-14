@@ -1,0 +1,43 @@
+{
+    "google": {
+        "label": {
+            "google": "Google",
+            "googleapi": "Google-API",
+            "create": "Zum Erzeugen eines eigenen Projekts siehe",
+            "instructions": "Anleitung",
+            "copy": "Projekt-Berechtigungen hierher kopieren",
+            "clientid": "Client Id",
+            "secret": "Secret",
+            "authenticate": "Bei Google authentifizieren",
+            "googleuser": "Google-Benutzer",
+            "apikey": "API Key"
+        },
+        "tip": {
+            "privateip": "<p>Es scheint so, dass Node-RED unter einer privaten IP-Adresse läuft, die der Google-Service nicht erreichen kann. Bitte die authorisierte <b>Weiterleitungs-URI (Redirect URIs)</b> der App so konfigurieren, dass die folgende URL enthalten ist:</p>\n<code>__callback__</code><p></p><p>Sie werden Ihre <u><a href=\"http://en.wikipedia.org/wiki/Hosts_(file)\">hosts file</a></u> so editieren und einen Eintrag __dummyDomain__ hinzufügen müssen, welcher auf __actualIP__ zeigt.</p><p>Sie müssen ebenfalls die Google+ API Ihres neuen Projekts in der Google Developers Console aktivieren.</p>",
+            "configure": "<p>Bitte die authorisierte <b>Weiterleitungs-URI (Redirect URIs)</b> der App so konfigurieren, dass die folgende URL enthalten ist:</p>\n<code>__callback__</code><p></p><p>Außerdem muss die Google+ API beim neuen Projekt in der Google Developers Console aktiviert sein.</p>",
+            "api1": "Diese Berechtigungen sind in der <a href=\"https://console.developers.google.com/\">Google Developer Console</a> abrufbar. Nach Anmeldung muss man:",
+            "api2": "<ol><li>\"Projekt erstellen\" klicken</li><li>\"API & Dienste\" auswählen</li><li>\"Anmeldedaten\" auswählen</li><li>\"Anmeldedaten erstellen\" klicken</li><li>\"API-Schlüssel erstellen\" klicken</li></ol>",
+            "api3": "<p>Zuletzt den neuen API Key oben hinkopieren.</p>"
+        },
+        "warn": {
+            "refreshing-accesstoken": "Aktualisiere Zugriff-Token nach 401-Fehler",
+            "retry-request": "__number__ fehlgeschlagene Versuche. Warte __delay__ ms vor nächsten Versuch."
+        },
+        "error": {
+            "no-refresh-token": "Kein Aktualisierungs-Token, um den Google-Zugriff wiederherzustellen",
+            "token-request-error": "Aktualisierungs-Token-Anfragefehler: __err__",
+            "refresh-token-error": "Aktualisierungs-Token-Fehler: __message__",
+            "too-many-refresh-attempts": "Zu viele Aktualisierungsversuche. Abgebrochen.",
+            "error": "FEHLER: __error__: __description__",
+            "no-credentials": "FEHLER: Keine Berechtigungen - sollte niemals passieren",
+            "something-broke": "Bei der Authentifizierung ist ein Fehler aufgetreten. Bitte erneut versuchen.",
+            "profile-fetch-failed": "Die Authentifizierung funktioniert, aber der Profilabruf ist fehlgeschlagen",
+            "httperror": "HTTP-Fehler __statusCode__",
+            "apierror": "API-Fehler, __status__",
+            "token-mismatch": "Keine Übereinstimmung des CSRF-Tokens, möglicherweise gefälschter Cross-Site-Anfrageversuch"
+        },
+        "message": {
+            "authorized": "<html><head></head><body>Erfolgreich authorisiert bei Google. Dieses Fenster kann jetzt geschlossen werden.</body></html>"
+        }
+    }
+}
