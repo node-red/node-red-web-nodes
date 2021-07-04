@@ -48,6 +48,7 @@ Current conditions will return
   - **windspeed** - the current wind speed at the location in metres per second.
   - **winddirection** - the current wind direction at the location in meteorological degrees.
   - **location** - the name of the location from which the data was sourced.
+  - **rain** - the precipitation amount in mm/h (only present if it is raining).
 
 5 day Forecast will return a 5 part array, each with
 
