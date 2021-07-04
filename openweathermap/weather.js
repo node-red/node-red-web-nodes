@@ -109,6 +109,7 @@ module.exports = function(RED) {
                             msg.payload.sunrise = jsun.sys.sunrise;
                             msg.payload.sunset = jsun.sys.sunset;
                             msg.payload.clouds = jsun.clouds.all;
+                            if (jsun.hasOwnProperty("rain")) { msg.payload.rain = jsun.rain["1h"]; }
                             if (jsun.hasOwnProperty("coord")) {
                                 msg.location.lon = jsun.coord.lon;
                                 msg.location.lat = jsun.coord.lat;
