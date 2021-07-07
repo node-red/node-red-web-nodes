@@ -1,0 +1,333 @@
+<!--
+  Copyright 2014 IBM Corp.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<script type="text/x-red" data-help-name="tfl cyclehire">
+    <p>A node which polls the Transport for London open data API feed for the current state of Barclays Cycle Hire stations.</p> 
+
+    <p> This is done using either:</p>
+    <ul>
+        <li> a specified station</li>
+        <li> a latitude and longitude set of coordinates </li>
+        <li> a numerical station ID </li>
+    </ul>
+    <p>The station and coordinates can be passed in as settings on the node, or the lat/lon can be passed in as the:</p>
+    <ul>
+       <li> <b>msg.location.lat</b> and <b>msg.location.lon</b>, or </li>
+    </ul>
+    <p>and the station ID can be passed in as the:</p>
+    <ul>
+       <li> <b>msg.payload.stationid</b>
+    </ul>
+    <p>of the message input. You can find out the specific ID of a station by specifying it as a station in the node settings and checking the payload output.</p>
+
+    <p>When given a specific station or ID, the node will return information on only that single station.</p>
+
+    <p>When given a set of coordinates, the node will return an array of information on the nearest 10 stations. Each array entry will follow the format specified below.</p>
+
+    <p>The node sets the following properties of <b>msg.payload</b>:</p>
+
+    <ul>
+        <li><b>area</b> - the street name and area of London in which the station is located.</li><br>
+        <li><b>lat</b> - the latitude of the station.</li><br>
+        <li><b>lon</b> - the longitude of the station.<b>weather</b>.</li><br>
+        <li><b>locked</b> - a boolean showing whether or not the station is in locked mode (will accept bike returns, but wont allow bicycle removal.) </li><br>
+        <li><b>bikes</b> - the amount of bikes currently at the station.</li><br>
+        <li><b>spaces</b> - the amount of open spaces currently at the station.</li><br>
+        <li><b>stationid</b> - a unique numerical identifier for each station.</li><br>
+    </ul>
+
+    <p>The node also sets the following properties of <b>msg.location</b>.</p>
+    <ul>
+        <li><b>lat</b> - the longitude of the location from which the data was sourced.</li><br>
+        <li><b>lon</b> - the latitude of the location from which the data was sourced.</li><br>
+    </ul>
+    <p>Before using this node, please sign up to  
+    <a href="https://api-portal.tfl.gov.uk/login" target="_blank" style="text-decoration:underline;">Transport for London</a> and accept the terms and conditions to gain access to the live feeds.
+    </p>
+
+    <p>Powered by TfL Open Data.</p>
+</script>
+
+<script type="text/x-red" data-template-name="tfl cyclehire">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <i class="fa fa-globe"></i> Send info for </label>
+        <select id="cyclehire-location-type-select"  style="width: 300px"><option value="station">a specific station</option><option value="criteria">10 stations near these coordinates</option></select>
+    </div>    
+    <div class="form-row cyclehire-location-type" id="cyclehire-location-type-station">
+        <label for="node-input-station"><i class="fa fa-crosshairs"></i> Station</label> 
+        <input type="text" class="cyclehire-location-input" style="margin-bottom:7px" id="node-input-station" placeholder="Enter a street name or area"></input>
+        </br>
+    </div>    
+    <div class="form-row cyclehire-location-type hidden" id="cyclehire-location-type-criteria">
+        <label for="node-input-lat"><i class="fa fa-compass"></i> Latitude</label><input type="text" class="cyclehire-location-input" id="node-input-lat" style="width: 180px; margin-bottom:7px" placeholder="Latitude">
+        </br>
+        <label for="node-input-lon"><i class="fa fa-compass"></i> Longitude</label><input type="text" class="cyclehire-location-input" id="node-input-lon" style="width: 180px; margin-bottom:7px" placeholder="Longitude">
+    </div>
+    <div class="form-tips" id="node-config-tfl-tooltip"/>
+    <div class="form-tips form-errors" id="node-config-errortip">
+        #
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('tfl cyclehire',{
+        category: 'transport',
+        color: '#00A2CE',
+        defaults: {
+            name: {value:""},
+            station: {value:""},
+            lon: {value:"", validate:function(v) {return ((v>=-180) && (v<=180));} },
+            lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
+            acceptedtcs: {value:false}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "bicycle.png",
+        label: function() {
+            return this.name||"Barclays Cycle Hire";
+        },
+        oneditprepare: function() {
+            function setWarningInUI(warningMessage) {
+                $("#node-config-errortip").text(warningMessage);
+                $("#node-config-errortip").show();
+            }
+
+            function getTags() {
+                $.ajax({
+                    type: "GET",
+                    url:  "/cyclehire/data",
+                    dataType: "JSON"
+                }).done (function (data) {
+                    if(data.error){
+                        setWarningInUI("An error occurred when connecting to TfL. The node might not work correctly. For more details, please check the console.");
+                    } else if (data.statuscode){
+                        setWarningInUI("TfL's servers have returned a " + data.statuscode + " error to us. The node might not work correctly. For more details, please check the console.");
+                    } else {
+                        var availableTags = [];
+                        for (var i=0 ; i < data.stations.station.length; i++) {
+                            availableTags.push(data.stations.station[i].name[0]);
+                        }
+                        $( "#node-input-station" ).autocomplete({
+                            source: availableTags
+                        });
+                    }
+                });
+            }
+
+            $("#node-config-errortip").hide();
+            getTags();
+
+            $("#cyclehire-location-type-select").change(function() {
+                var id = $("#cyclehire-location-type-select option:selected").val();
+                $(".cyclehire-location-type").hide();
+                $("#cyclehire-location-type-"+id).show();
+            });  
+
+            if(this.lon||this.lat){
+                $("#cyclehire-location-type-select").val("criteria");
+            } else {
+                $("#cyclehire-location-type-select").val("station");
+            }
+            var id = $("#cyclehire-location-type-select option:selected").val();
+            $(".cyclehire-location-type").hide();
+            $("#cyclehire-location-type-"+id).show();
+
+            $("#node-config-tfl-tooltip").html("<p>Before using this node please sign up to <code><a href=https://api-portal.tfl.gov.uk/login target=\"_blank\" style=\"text-decoration:underline;\">Transport for London</a></code>\n and accept the terms and conditions to gain access to the live feeds.</p>");
+        },
+        oneditsave: function() {
+          var type = $("#cyclehire-location-type-select option:selected").val();        
+            if(type == "criteria"){
+                $("#node-input-station").val("");
+            } else if (type == "station") {
+                $("#node-input-spaces").val("");
+                $("#node-input-bikes").val("");
+                $("#node-input-lon").val("");
+                $("#node-input-lat").val("");
+                $("#node-input-radius").val("");
+                $("#node-input-locked").val("");
+            }
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-help-name="tfl cyclehire in">
+    <p>A node which polls the Transport for London open data API feed every 5 minutes for the current state of Barclays Cycle Hire stations and outputs if a change compared to previous data is detected.</p> 
+
+    <p> This is done using either:</p>
+    <ul>
+        <li> a specified station</li>
+        <li> a latitude and longitude set of coordinates </li>
+        <li> a numerical station ID </li>
+    </ul>
+    <p>The station and coordinates can be passed in as settings on the node, or the lat/lon can be passed in as the:</p>
+    <ul>
+       <li> <b>msg.location.lat</b> and <b>msg.location.lon</b>, or </li>
+    </ul>
+    <p>and the station ID can be passed in as the:</p>
+    <ul>
+       <li> <b>msg.payload.stationid</b>
+    </ul>
+    <p>of the message input. You can find out the specific ID of a station by specifying it as a station in the node settings and checking the payload output.</p>
+
+    <p>When given a specific station or ID, the node will return information on only that single station.</p>
+
+    <p>When given a set of coordinates, the node will return an array of information on the nearest 10 stations. Each array entry will follow the format specified below.</p>
+
+    <p>The node sets the following properties of <b>msg.payload</b>:</p>
+
+    <ul>
+        <li><b>area</b> - the street name and area of London in which the station is located.</li><br>
+        <li><b>lat</b> - the latitude of the station.</li><br>
+        <li><b>lon</b> - the longitude of the station.<b>weather</b>.</li><br>
+        <li><b>locked</b> - a boolean showing whether or not the station is in locked mode (will accept bike returns, but wont allow bicycle removal.) </li><br>
+        <li><b>bikes</b> - the amount of bikes currently at the station.</li><br>
+        <li><b>spaces</b> - the amount of open spaces currently at the station.</li><br>
+        <li><b>stationid</b> - a unique numerical identifier for each station.</li><br>
+    </ul>
+
+    <p>The node also sets the following properties of <b>msg.location</b>.</p>
+    <ul>
+        <li><b>lat</b> - the longitude of the location from which the data was sourced.</li><br>
+        <li><b>lon</b> - the latitude of the location from which the data was sourced.</li><br>
+    </ul>
+
+     <p>Before using this node, please sign up to  
+    <a href="https://api-portal.tfl.gov.uk/login" target="_blank" style="text-decoration:underline;">Transport for London</a> and accept the terms and conditions to gain access to the live feeds.
+    </p>
+
+    <p>Powered by TfL Open Data.</p>
+</script>
+
+<script type="text/x-red" data-template-name="tfl cyclehire in">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <i class="fa fa-globe"></i> Send info for </label>
+        <select id="cyclehire-location-type-select"  style="width: 300px"><option value="station">a specific station</option><option value="criteria">10 stations near these coordinates</option></select>
+    </div>    
+    <div class="form-row cyclehire-location-type" id="cyclehire-location-type-station">
+        <label for="node-input-station"><i class="cyclehire-location-input"></i> Station</label> 
+        <input type="text" class="cyclehire-location-input" style="margin-bottom:7px" id="node-input-station" placeholder="Enter a street name or area"></input>
+        </br>
+    </div>    
+    <div class="form-row cyclehire-location-type hidden" id="cyclehire-location-type-criteria">
+        <label for="node-input-lat"><i class="cyclehire-location-type"></i> Latitude</label><input type="text" class="cyclehire-location-input" id="node-input-lat" style="width: 180px; margin-bottom:7px" placeholder="Latitude">
+        </br>
+        <label for="node-input-lon"><i class="cyclehire-location-type"></i> Longitude</label><input type="text" class="cyclehire-location-input" id="node-input-lon" style="width: 180px; margin-bottom:7px" placeholder="Longitude">
+    </div>
+    <div class="form-tips" id="node-config-tfl-tooltip"/>
+    <div class="form-tips form-errors" id="node-config-errortip">
+        #
+    </div>
+
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('tfl cyclehire in',{
+        category: 'transport',
+        color: '#00A2CE',
+        defaults: {
+            name: {value:""},
+            station: {value:""},
+            lon: {value:"", validate:function(v) {return ((v>=-180) && (v<=180));} },
+            lat: {value:"", validate:function(v) {return ((v>=-90) && (v<=90));} },
+            acceptedtcs: {value:false}
+        },
+        inputs:0,
+        outputs:1,
+        icon: "bicycle.png",
+        label: function() {
+            return this.name||"Barclays Cycle Hire";
+        },
+        oneditprepare: function() {
+            function setWarningInUI(warningMessage) {
+                $("#node-config-errortip").text(warningMessage);
+                $("#node-config-errortip").show();
+            }
+
+            function getTags() {
+                $.ajax({
+                    type: "GET",
+                    url:  "/cyclehire/data",
+                    dataType: "JSON"
+                }).done (function (data) {
+                    if(data.error){
+                        setWarningInUI("An error occurred when connecting to TfL. The node might not work correctly. For more details, please check the console.");
+                    } else if (data.statuscode){
+                        setWarningInUI("TfL's servers have returned a " + data.statuscode + " error to us. The node might not work correctly. For more details, please check the console.");
+                    } else {
+                        var availableTags = [];
+                        for (var i=0 ; i < data.stations.station.length; i++) {
+                            availableTags.push(data.stations.station[i].name[0]);
+                        }
+                        $( "#node-input-station" ).autocomplete({
+                            source: availableTags
+                        });
+                    }
+                });
+            }
+
+            $("#node-config-errortip").hide();
+            getTags();
+
+            $("#cyclehire-location-type-select").change(function() {
+                var id = $("#cyclehire-location-type-select option:selected").val();
+                $(".cyclehire-location-type").hide();
+                $("#cyclehire-location-type-"+id).show();
+            });  
+
+            if(this.lon||this.lat){
+                $("#cyclehire-location-type-select").val("criteria");
+            } else {
+                $("#cyclehire-location-type-select").val("station");
+            }
+            var id = $("#cyclehire-location-type-select option:selected").val();
+            $(".cyclehire-location-type").hide();
+            $("#cyclehire-location-type-"+id).show();
+
+            $("#node-config-tfl-tooltip").html("<p>Before using this node please sign up to <code><a href=https://api-portal.tfl.gov.uk/login target=\"_blank\" style=\"text-decoration:underline;\">Transport for London</a></code>\n and accept the terms and conditions to gain access to the live feeds.</p>");
+        },
+        oneditsave: function() {
+          var type = $("#cyclehire-location-type-select option:selected").val();        
+            if(type == "criteria"){
+                $("#node-input-station").val("");
+            } else if (type == "station") {
+                $("#node-input-spaces").val("");
+                $("#node-input-bikes").val("");
+                $("#node-input-lon").val("");
+                $("#node-input-lat").val("");
+                $("#node-input-radius").val("");
+                $("#node-input-locked").val("");
+            }
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
+</script>
+<style>
+    .cyclehire-location-type {
+        padding-left: 20px;
+    }
+</style>
