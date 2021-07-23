@@ -16,7 +16,7 @@
 
 module.exports = function(RED) {
     "use strict";
-    var Dropbox = require("dropbox");
+    var { Dropbox } = require("dropbox");
     var fs = require("fs");
     var minimatch = require("minimatch");
     var isUtf8 = require('is-utf8');
@@ -64,7 +64,7 @@ module.exports = function(RED) {
                 node.trace("get cursor");
             }
             node.status({fill:"blue",shape:"dot",text:"dropbox.status.initializing"});
-            return dropbox.filesListFolder({path: '',recursive:true}).then(function(response) { return response.cursor});
+            return dropbox.filesListFolder({path: '',recursive:true}).then(function(response) { return response.result.cursor })
         }
         node.drainCursor = function(cursor, emit) {
             if (closing) {
@@ -80,7 +80,7 @@ module.exports = function(RED) {
                 if (closing) {
                     return;
                 }
-                response.entries.forEach(function(entry) {
+                response.result.entries.forEach(function(entry) {
                     if (emit) {
                         if (node.filepattern && !minimatch(entry.path_display, node.filepattern)) {
                             return;
@@ -101,11 +101,11 @@ module.exports = function(RED) {
                     currentFiles[entry.path_display] = entry.server_modified;
                 });
                 if (response.has_more) {
-                    return node.drainCursor(response.cursor,emit);
+                    return node.drainCursor(response.result.cursor,emit);
                 } else {
                     node.status({});
                 }
-                return response.cursor;
+                return response.result.cursor;
             });
         }
 
@@ -126,7 +126,7 @@ module.exports = function(RED) {
                 if (closing) {
                     return;
                 }
-                if (response.changes) {
+                if (response.result.changes) {
                     node.drainCursor(cursor,true).then(function(c) {
                         if (closing) {
                             return;
@@ -146,7 +146,7 @@ module.exports = function(RED) {
                 if (node.trace) {
                     node.trace("Error polling:"+errorMessage);
                 }
-                if (error.error[".tag"] === 'reset') {
+                if (err.error[".tag"] === 'reset') {
                     startPolling();
                 } else {
                     longPollTimeout = setTimeout(function() {
@@ -226,8 +226,8 @@ module.exports = function(RED) {
             node.status({fill:"blue",shape:"dot",text:"dropbox.status.downloading"});
 
             dropbox.filesDownload({path: filename}).then(function(response) {
-                var data = response.fileBinary;
-                var dataBuffer = new Buffer(data,'binary');
+                var data = response.result.fileBinary;
+                var dataBuffer = Buffer.from(data,'binary');
                 if (!isUtf8(dataBuffer)) {
                     msg.payload = dataBuffer;
                 } else {

@@ -19,7 +19,7 @@
         "tip": {
             "cred1": "To obtain an access token, visit the <i><a href='https://www.dropbox.com/developers/apps/create' target='_new'>Dropbox developer home</a></i>.<br><br>Once signed up:",
             "cred2": "<ol><li>click 'Create app',</li><li>select 'Dropbox API app',</li><li>choose either App folder or Full Dropbox access,</li><li>choose an app name</li><li>click 'Create app'.</li></ol>",
-            "cred3": "On the subsequent page, click the button to generated an access token. Copy it into the box above."
+            "cred3": "On the subsequent page, click the button to ensure the token does not expire, then  generated an access token. Copy it into the box above."
         },
         "status": {
             "initializing": "initializing",
