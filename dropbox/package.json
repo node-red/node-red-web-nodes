@@ -1,20 +1,23 @@
 {
-    "name"          : "node-red-node-dropbox",
-    "version"       : "1.0.3",
-    "description"   : "Node-RED nodes to watch and download files from Dropbox",
-    "dependencies"  : {
-        "dropbox":"^2.5.10",
-        "minimatch":"^3.0.4",
-        "is-utf8":"^0.2.1"
+    "name": "node-red-node-dropbox",
+    "version": "1.1.0",
+    "description": "Node-RED nodes to watch and download files from Dropbox",
+    "dependencies": {
+        "dropbox": "^10.4.3",
+        "is-utf8": "^0.2.1",
+        "minimatch": "^3.0.4"
     },
-    "repository" : {
-        "type":"git",
-        "url":"https://github.com/node-red/node-red-web-nodes/tree/master/dropbox"
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/node-red/node-red-web-nodes/tree/master/dropbox"
     },
     "license": "Apache-2.0",
-    "keywords": [ "node-red", "dropbox" ],
-    "node-red"      : {
-        "nodes"     : {
+    "keywords": [
+        "node-red",
+        "dropbox"
+    ],
+    "node-red": {
+        "nodes": {
             "dropbox": "dropbox.js"
         }
     },
@@ -24,6 +27,11 @@
         "url": "http://nodered.org"
     },
     "contributors": [
-        {"name": "Nick O'Leary"}
+        {
+            "name": "Nick O'Leary"
+        },
+        {
+            "name": "Ben Hardill"
+        }
     ]
 }
