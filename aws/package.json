@@ -3,7 +3,7 @@
     "version": "0.2.0",
     "description": "A Node-RED node to watch, save and retreive files from an Amazon S3 bucket",
     "dependencies": {
-        "aws-sdk": "^2.838.0",
+        "aws-sdk": "^2.814.0",
         "minimatch": "^3.0.4"
     },
     "repository": {
