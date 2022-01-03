@@ -159,7 +159,7 @@ module.exports = function(RED) {
                 callback(RED._("weather.error.invalid-location"));
             }
         } else {
-            node.error(RED._("weather.error.no-api-key"));
+            node.error(RED._("weather.error.no-api-key"),msg);
         }
     }
 
