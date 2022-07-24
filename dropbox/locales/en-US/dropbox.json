@@ -39,12 +39,11 @@
             "failed": "failed",
             "checking-for-changes": "checking for changes",
             "downloading": "downloading",
-            "checking-credentials": "checking credentials",
             "access-denied": "access denied",
             "uploading": "uploading"
         },
         "warn": {
-            "missing-credentials": "Missing dropbox credentials"
+            "missing-refresh-token": "Missing dropbox refresh token"
         },
         "error": {
             "initialization-failed": "initialization failed __err__",
