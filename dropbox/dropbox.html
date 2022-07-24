@@ -16,17 +16,32 @@
 
 <script type="text/x-red" data-template-name="dropbox-config">
     <div class="form-row">
-        <label for="node-config-input-accesstoken"><span data-i18n="dropbox.label.accesstoken"></span></label>
-        <input class="input-append-left" type="password" id="node-config-input-accesstoken" >
+        <label for="node-config-input-clientid"><span data-i18n="dropbox.label.appkey"></span></label>
+        <input class="input-append-left" type="password" id="node-config-input-clientid" >
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-refreshtoken"><span data-i18n="dropbox.label.refreshtoken"></span></label>
+        <input class="input-append-left" type="password" id="node-config-input-refreshtoken" >
     </div>
     <div class="form-row">
         <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="dropbox.label.name"></span></label>
         <input type="text" id="node-config-input-name" data-i18n="[placeholder]dropbox.placeholder.name">
     </div>
     <div class="form-tips">
-        <span data-i18n="[html]dropbox.tip.cred1"></span>
-        <span data-i18n="[html]dropbox.tip.cred2"></span>
-        <span data-i18n="[html]dropbox.tip.cred3"></span>
+        <ol>
+            <li><span data-i18n="[html]dropbox.tip.cred1"></span></li>
+            <li><span data-i18n="[html]dropbox.tip.cred2"></span></li>
+            <li><span data-i18n="[html]dropbox.tip.cred3"></span></li>
+            <li><span data-i18n="[html]dropbox.tip.cred4"></span></li>
+            <li><span data-i18n="[html]dropbox.tip.cred5"></span></li>
+            <ul>
+                <li><span data-i18n="[html]dropbox.tip.cred6"></span></li>
+                <li><span data-i18n="[html]dropbox.tip.cred7"></span></li>
+                <li><span data-i18n="[html]dropbox.tip.cred8"></span></li>
+            </ul>
+            <li><span data-i18n="[html]dropbox.tip.cred9"></span></li>
+            <li><span data-i18n="[html]dropbox.tip.cred10"></span></li>
+        </ol>
     </div>
 </script>
 
@@ -38,12 +53,77 @@
             name: {value:""}
         },
         credentials: {
-            accesstoken: {type: "password",required:true},
+            clientid: {type: "password",required:true},
+            refreshtoken: {type: "password",required:true}
         },
         label: function() {
             return this.name||this._("dropbox.label.dropbox"); // TODO: get display_name from account info?
         },
         exportable: false,
+        oneditprepare: function() { 
+            var node = this;
+
+            // Use a (zero) timeout because the anchor id's in the data-i18n texts are not known yet at this moment
+            setTimeout(function() {
+                $.ajax({
+                    url: "dropbox/generate_redirect_url",
+                    type: "GET",
+                    datatype: 'json',
+                    success: function(data) {
+                        node.redirectUrl = data.redirectUrl;
+                        $("#node-dropbox-redirect-url").html("<b><i>" + data.redirectUrl + "</b></i>");
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseText);
+                    }
+                });
+            
+                $("#node-dropbox-app-link").click(function(e) {
+                    e.preventDefault();
+                    
+                    $.ajax({
+                        url: "dropbox/generate_authentication_url",
+                        type: "GET",
+                        data: { 
+                            nodeId: node.id,
+                            clientid: $("#node-config-input-clientid").val().trim(),
+                            redirectUrl: node.redirectUrl
+                        },
+                        datatype: 'json',
+                        success: function(data) {
+                            var authUrl = data.authUrl;
+                            // Don't use a redirect (http 302) in the 'generate_authentication_url' endpoint, because redirecting this
+                            // ajax call to a remote host (i.e. a non Node-RED host) will result in CORS issues.
+                            // Therefore the endpoint will return simply the url of the Dropbox authentication server, and the url
+                            // will be opened here in a popup window.  Note that the browser settings might to be adjusted to allow popups.
+                            var popup = window.open(authUrl, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+                            popup.document.title = node._("dropbox.text.auth-flow");
+                        },
+                        error: function(xhr) {
+                            alert(xhr.responseText);
+                        }
+                    });
+                });
+
+                $("#node-dropbox-refresh-access-token").click(function(e) {
+                    e.preventDefault();
+                    $.ajax({
+                        url: "dropbox/refresh_access_token",
+                        type: "GET",
+                        data: { 
+                            nodeId: node.id
+                        },
+                        datatype: 'json',
+                        success: function(data) {
+                            alert(node._("dropbox.text.access-token-refreshed"));
+                        },
+                        error: function(xhr) {
+                            alert(xhr.responseText);
+                        }
+                    });
+                });                
+            }, 0);
+        }
     });
 })();
 </script>
