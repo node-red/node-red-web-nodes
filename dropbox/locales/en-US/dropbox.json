@@ -21,7 +21,7 @@
             "cred1": "Sign up for an account on <i><a href='https://www.dropbox.com/' target='_blank'>Dropbox</a></i>.",
             "cred2": "Create a new app on <i><a href='https://www.dropbox.com/developers/apps/' target='_blank'>Dropbox developer home</a></i>.  On the subsequent page, select 'Dropbox API app' and choose App folder or Full Dropbox access. And set the required app permissions.",
             "cred3": "On the same page, the 'app key' is displayed.  Copy that key and paste it into the box above.",
-            "cred4": "And on the same page, add the redirect url <span id='node-dropbox-redirect-url'></span>.",
+            "cred4": "And on the same page, add the redirect url <span id='node-dropbox-redirect-url'></span>",
             "cred5": "To obtain a new refresh token, start the (OAuth2) <i><a id='node-dropbox-app-link' href='#' target='_blank'>authentication flow</a></i>.",
             "cred6": "If no popup window appears, it might be necessary to instruct the browser to allow popup windows for this website.",
             "cred7": "Since the refresh token doesn't expire, this step needs to be executed only once.  But if required, it can be repeated afterwards.",
