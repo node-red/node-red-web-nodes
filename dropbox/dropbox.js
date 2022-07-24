@@ -41,8 +41,8 @@ module.exports = function(RED) {
 
         var dropboxConfig = RED.nodes.getNode(n.dropbox);
         var credentials = dropboxConfig ? dropboxConfig.credentials : {};
-        if (!credentials.accesstoken) {
-            this.warn(RED._("dropbox.warn.missing-credentials"));
+        if (!credentials.refreshtoken) {
+            this.warn(RED._("dropbox.warn.missing-refresh-token"));
             return;
         }
 
@@ -205,8 +205,8 @@ module.exports = function(RED) {
 
         var dropboxConfig = RED.nodes.getNode(n.dropbox);
         var credentials = dropboxConfig ? dropboxConfig.credentials : {};
-        if (!credentials.accesstoken) {
-            this.warn(RED._("dropbox.warn.missing-credentials"));
+        if (!credentials.refreshtoken) {
+            this.warn(RED._("dropbox.warn.missing-refresh-token"));
             return;
         }
         var node = this;
@@ -258,8 +258,8 @@ module.exports = function(RED) {
 
         var dropboxConfig = RED.nodes.getNode(n.dropbox);
         var credentials = dropboxConfig ? dropboxConfig.credentials : {};
-        if (!credentials.accesstoken) {
-            this.warn(RED._("dropbox.warn.missing-credentials"));
+        if (!credentials.refreshtoken) {
+            this.warn(RED._("dropbox.warn.missing-refresh-token"));
             return;
         }
         var node = this;
