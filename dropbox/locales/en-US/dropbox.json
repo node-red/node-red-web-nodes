@@ -27,11 +27,10 @@
             "cred7": "Since the refresh token doesn't expire, this step needs to be executed only once.  But if required, it can be repeated afterwards.",
             "cred8": "The first time the authentication flow is executed, Dropbox will ask to confirm (via two subsequent pages) that this app has access to your Dropbox files.",
             "cred9": "After the authentication flow has ended, the refresh token will be displayed in the popup window.  Copy that token and paste it into the box above.",
-            "cred10": "After the config node has been deployed, it is always possible to <i><a id='node-dropbox-refresh-access-token' href='#' target='_blank'>refresh</a></i> the access token.  Eg. when the permissions of the app has changed, but the old access token still supports the old permissions."
+            "cred10": "If the permissions in the app are updated afterwards, it is required to repeat steps 5 and 6 again. Otherwise the refresh token will continue operating with the original permissions."
         },
-        "text": {
-            "auth-flow": "Dropbox authentication for Node-RED",
-            "access-token-refreshed": "The access token has been refreshed (based on the refresh token)"
+        "title": {
+            "auth-flow": "Dropbox authentication for Node-RED"
             
         },
         "status": {
@@ -52,9 +51,7 @@
             "no-app-key": "No app key specified",
             "auth-url-failed": "failed to determine redirect auth url",
             "download-failed": "download failed __err__",
-            "credentials-error": "Error verifying credentials: __err__",
-            "node-not-deployed": "Only the access token of a deployed config node can be refreshed",
-            "no-refresh-token": "The deployed config node has no refresh token"
+            "credentials-error": "Error verifying credentials: __err__"
         }
     }
 }

@@ -408,7 +408,7 @@ module.exports = function(RED) {
             // The response contains two tokens (but only the refresh token is relevant for our use case):
             // 1.- A (long-lived) refresh token which will never expire.
             // 2.- A (short-lived) access token which will expire after 4 hours.  Note such tokens start with "sl.".
-            var html = "<html><head><title>" +  RED._("dropbox.text.auth-flow") + "</title></head><body><h1>" + RED._("dropbox.label.refreshtoken") + "</h1>" + response.result.refresh_token + "</body></html>";
+            var html = "<html><head><title>" +  RED._("dropbox.title.auth-flow") + "</title></head><body><h1>" + RED._("dropbox.label.refreshtoken") + "</h1>" + response.result.refresh_token + "</body></html>";
             res.end(html);
             globalDropboxInstance = null;
         })
@@ -416,28 +416,5 @@ module.exports = function(RED) {
             res.writeHead(500);
             res.end(err.message);
         });
-    });
-    
-    RED.httpAdmin.get('/dropbox/refresh_access_token', function(req, res) {
-        var dropboxNode = RED.nodes.getNode(req.query.nodeId);
-        if (!dropboxNode) {
-            res.writeHead(400);
-            res.end(RED._("dropbox.error.node-not-deployed"));
-            return;
-        }
-        
-        var currentRefreshToken = dropboxNode.dropbox.auth.getRefreshToken();
-        
-        if (!currentRefreshToken || currentRefreshToken.trim() === "") {
-            res.writeHead(400);
-            res.end(RED._("dropbox.error.no-refresh-token"));
-            return;
-        }        
-        
-        // Get a new access token, based on the refresh token in the config node (even when the access token hasn't expired yet)
-        dropboxNode.dropbox.auth.refreshAccessToken();
-        
-        res.writeHead(200);
-        res.end();
     });
 };

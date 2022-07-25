@@ -97,31 +97,13 @@
                             // Therefore the endpoint will return simply the url of the Dropbox authentication server, and the url
                             // will be opened here in a popup window.  Note that the browser settings might to be adjusted to allow popups.
                             var popup = window.open(authUrl, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
-                            popup.document.title = node._("dropbox.text.auth-flow");
+                            popup.document.title = node._("dropbox.title.auth-flow");
                         },
                         error: function(xhr) {
                             alert(xhr.responseText);
                         }
                     });
-                });
-
-                $("#node-dropbox-refresh-access-token").click(function(e) {
-                    e.preventDefault();
-                    $.ajax({
-                        url: "dropbox/refresh_access_token",
-                        type: "GET",
-                        data: { 
-                            nodeId: node.id
-                        },
-                        datatype: 'json',
-                        success: function(data) {
-                            alert(node._("dropbox.text.access-token-refreshed"));
-                        },
-                        error: function(xhr) {
-                            alert(xhr.responseText);
-                        }
-                    });
-                });                
+                });               
             }, 0);
         }
     });
