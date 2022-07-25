@@ -27,7 +27,7 @@
             "cred7": "Since the refresh token doesn't expire, this step needs to be executed only once.  But if required, it can be repeated afterwards.",
             "cred8": "The first time the authentication flow is executed, Dropbox will ask to confirm (via two subsequent pages) that this app has access to your Dropbox files.",
             "cred9": "After the authentication flow has ended, the refresh token will be displayed in the popup window.  Copy that token and paste it into the box above.",
-            "cred10": "If the permissions in the app are updated afterwards, it is required to repeat steps 5 and 6 again. Otherwise the refresh token will continue operating with the original permissions."
+            "cred10": "Every time the app permissions are changed afterwards, it is required to revoke the refresh token and to repeat steps 5 and 6 again. Otherwise the refresh token will continue operating with the original permissions."
         },
         "title": {
             "auth-flow": "Dropbox authentication for Node-RED"
