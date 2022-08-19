@@ -86,20 +86,22 @@ module.exports = function(RED) {
                         if (seen[file]) {
                             delete seen[file];
                         } else {
-                            msg.payload = file;
-                            msg.file = file.substring(file.lastIndexOf('/')+1);
-                            msg.event = 'add';
-                            msg.data = newContents[i];
-                            node.send(msg);
+                            var newMessage = RED.util.cloneMessage(msg);
+                            newMessage.payload = file;
+                            newMessage.file = file.substring(file.lastIndexOf('/')+1);
+                            newMessage.event = 'add';
+                            newMessage.data = newContents[i];
+                            node.send(newMessage);
                         }
                     }
                     for (var f in seen) {
                         if (seen.hasOwnProperty(f)) {
-                            msg.payload = f;
-                            msg.file = f.substring(f.lastIndexOf('/')+1);
-                            msg.event = 'delete';
-                            // msg.data intentionally null
-                            node.send(msg);
+                            var newMessage = RED.util.cloneMessage(msg);
+                            newMessage.payload = f;
+                            newMessage.file = f.substring(f.lastIndexOf('/')+1);
+                            newMessage.event = 'delete';
+                            // newMessage.data intentionally null
+                            node.send(newMessage);
                         }
                     }
                     node.state = newContents.map(function (e) {return e.Key;});
