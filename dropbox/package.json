@@ -5,7 +5,7 @@
     "dependencies": {
         "dropbox": "^10.32.0",
         "is-utf8": "^0.2.1",
-        "minimatch": "^3.0.4"
+        "minimatch": "^3.1.2"
     },
     "repository": {
         "type": "git",
