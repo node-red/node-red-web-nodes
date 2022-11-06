@@ -54,7 +54,7 @@ Current conditions will return
 
  - **dt** - epoch timestamp
  - **pressure** - in hPa
- - **hunidity** - in %
+ - **humidity** - in %
  - **speed** - wind speed in metres per second
  - **deg** - wind direction in degrees
  - **clouds** - cloudiness in %
