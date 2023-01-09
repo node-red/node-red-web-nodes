@@ -16,34 +16,50 @@
 
 <script type="text/x-red" data-template-name="dropbox-config">
     <div class="form-row">
-        <label for="node-config-input-clientid"><span data-i18n="dropbox.label.appkey"></span></label>
-        <input class="input-append-left" type="password" id="node-config-input-clientid" >
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-refreshtoken"><span data-i18n="dropbox.label.refreshtoken"></span></label>
-        <input class="input-append-left" type="password" id="node-config-input-refreshtoken" >
-    </div>
-    <div class="form-row">
         <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="dropbox.label.name"></span></label>
         <input type="text" id="node-config-input-name" data-i18n="[placeholder]dropbox.placeholder.name">
     </div>
     <div class="form-tips">
+        <span data-i18n="[html]dropbox.tip.cred1"></span>
         <ol>
-            <li><span data-i18n="[html]dropbox.tip.cred1"></span></li>
             <li><span data-i18n="[html]dropbox.tip.cred2"></span></li>
             <li><span data-i18n="[html]dropbox.tip.cred3"></span></li>
-            <li><span data-i18n="[html]dropbox.tip.cred4"></span></li>
+            <li>
+                <span data-i18n="[html]dropbox.tip.cred4"></span>
+                <div class="form-row">
+                    <label for="node-config-input-clientid"><span data-i18n="dropbox.label.appkey"></span></label>
+                    <input class="input-append-left" type="password" id="node-config-input-clientid" >
+                </div>
+                <div class="form-row">
+                    <label for="node-config-input-clientsecret"><span data-i18n="dropbox.label.appsecret"></span></label>
+                    <input class="input-append-left" type="password" id="node-config-input-clientsecret" >
+                </div>
+            </li>
             <li><span data-i18n="[html]dropbox.tip.cred5"></span></li>
             <ul>
                 <li><span data-i18n="[html]dropbox.tip.cred6"></span></li>
                 <li><span data-i18n="[html]dropbox.tip.cred7"></span></li>
-                <li><span data-i18n="[html]dropbox.tip.cred8"></span></li>
             </ul>
-            <li><span data-i18n="[html]dropbox.tip.cred9"></span></li>
-            <li><span data-i18n="[html]dropbox.tip.cred10"></span></li>
+            <li>
+                <span data-i18n="[html]dropbox.tip.cred8"></span>
+                <div class="form-row">
+                    <label for="node-config-input-accesscode"><span data-i18n="dropbox.label.accesscode"></span></label>
+                    <input class="input-append-left" type="password" id="node-config-input-accesscode" >
+                </div>
+            </li>
+            <li>
+                <span data-i18n="[html]dropbox.tip.cred9"></span>
+                <div class="form-row">
+                    <label for="node-config-input-refreshtoken"><span data-i18n="dropbox.label.refreshtoken"></span></label>
+                    <input class="input-append-left" type="password" id="node-config-input-refreshtoken" >
+                </div>
+            </li>
         </ol>
+        <span data-i18n="[html]dropbox.tip.cred10"></span>
     </div>
 </script>
+
+<script src="https://unpkg.com/js-sha256@0.9.0/src/sha256.js"></script>
 
 <script type="text/javascript">
 (function() {
@@ -54,6 +70,7 @@
         },
         credentials: {
             clientid: {type: "password",required:true},
+            // For security issues, the client secret won't be stored in Node-RED
             refreshtoken: {type: "password",required:true}
         },
         label: function() {
@@ -63,47 +80,114 @@
         oneditprepare: function() { 
             var node = this;
 
+            function base64UrlEncode(str) {
+                var base64String = btoa(str);
+                var base64UrlEncodedString = base64String.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+                return base64UrlEncodedString;
+            }
+            
+            function createBrowserSafeString(str) {
+                var base64str = str.toString('base64')
+                return base64str.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+            }
+
             // Use a (zero) timeout because the anchor id's in the data-i18n texts are not known yet at this moment
             setTimeout(function() {
-                $.ajax({
-                    url: "dropbox/generate_redirect_url",
-                    type: "GET",
-                    datatype: 'json',
-                    success: function(data) {
-                        node.redirectUrl = data.redirectUrl;
-                        $("#node-dropbox-redirect-url").html("<b><i>" + data.redirectUrl + "</b></i>");
-                    },
-                    error: function(xhr) {
-                        alert(xhr.responseText);
-                    }
-                });
-            
-                $("#node-dropbox-app-link").click(function(e) {
+                $("#node-dropbox-app-link").click(async function(e) {
                     e.preventDefault();
+debugger;
+                    // The code verifier should be a high-entropy cryptographic random string with a minimum of 43 characters and a maximum of 128 characters. 
+                    // It should only use A-Z, a-z, 0–9, “-”(hyphen), “.” (period), “_”(underscore), “~”(tilde) characters.
+                    var PKCELength = 128;
+                    var array = new Uint8Array(PKCELength);
+                    var randomValueArray = crypto.getRandomValues(array);
+                    var base64RandomString = btoa(randomValueArray);
+                    node.codeVerifier = createBrowserSafeString(base64RandomString).substr(0, 128);
                     
+                    // Convert the code verifier string to an Uint8Array (which is required as input for the sha256 digest hash function)
+                    var encoder = new TextEncoder();
+                    var codeVerifierArray = encoder.encode(node.codeVerifier);
+                    
+                    // The code challenge is created by SHA256 hashing the code_verifier and base64 URL encoding the resulting hash.
+                    // Reason: since the code challenge is sent through the browser it is VERY important that the code challenge is not the same
+                    // as the code verifier.  Because an attacker could gain access to the HTTP request, e.g. via the browser HTTP logs.
+                    // It is advised to use the browser's SHA256 hash calculation (via the Crypto Web API), since these implementations are
+                    // reviewed by experts, and will likely be more secure and reliable than a custom implementation.  However this is only
+                    // available in Chrome in a secure context, which means when operating via an SSL connection (to Node-RED.  Because when the hash 
+                    // would be send over http, that is considered as unsecure.  But for users that have no SSL to Node-RED this is no security issue,
+                    // To solve the absence of the crypto digest function for httpthis we will use a custom SHA256 has function, when the browser doesn't offer it...
+                    // because we won't be sending the hash to Node-RED over http.  Instead we are sending it to Dropbox always via https.
+                    var sha256Hash;
+                    if (crypto && crypto.subtle && crypto.subtle.digest) {
+                        sha256Hash = await crypto.subtle.digest('SHA-256', codeVerifierArray);
+                    }
+                    else {
+                        sha256Obj = sha256.create();
+                        sha256Obj.update(codeVerifierArray);
+                        sha256Hash = sha256Obj.array();
+                    }
+
+                    var base64Sha256Hash = btoa(String.fromCharCode.apply(null, new Uint8Array(sha256Hash)));
+                    var codeChallenge = createBrowserSafeString(base64Sha256Hash).substr(0, 128);
+                    
+                    var clientId = $("#node-config-input-clientid").val();
+                    
+                    if (!clientId || clientId === '__PWRD__') {
+                        // Once the credential has been deployed, it will be replaced in the frontend by the string '__PWRD__'
+                        // Since this cannot be send to Dropbox, we will need to ask the user to enter not only the App Secret but also the App Key (= client id)
+                        RED.notify(node._("dropbox.error.no-app-key"), { type: "error", timeout: 15000 });
+                        return;
+                    }
+
+                    // Compose the Dropbox authentication url here in the frontend.  By adding the code challenge parameter, Dropbox will start an
+                    // authentication flow of type PKCE.  Such a flow is more trusted by Dropbox, and as a result later on the backend only needs to
+                    // pass the refresh token and the app key (= client id) to Dropbox.  So no app secret needs to be stored or send afterwards, thanks
+                    // to the secure PKCE flow we are initiating here...
+                    node.authUrl = "https://www.dropbox.com/oauth2/authorize?client_id=" + clientId + "&token_access_type=offline&response_type=code&code_challenge_method=S256&code_challenge=" + codeChallenge;
+
+                    // Contact the Dropbox authentication server via the authentication url, so that Dropbox can display some wizard screens in a popup window.
+                    // Note that the browser settings might to be adjusted to allow popups.
+                    var popup = window.open(node.authUrl, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+                    popup.document.title = node._("dropbox.title.auth-flow");
+                });
+                
+                $("#node-dropbox-generate-refresh-token").click(function(e) {
+                    e.preventDefault();
+
+                    var data = {
+                        code: $("#node-config-input-accesscode").val(),
+                        grant_type: "authorization_code",
+                        client_id: $("#node-config-input-clientid").val(),
+                        code_verifier: node.codeVerifier
+                    };
+                    
+                    // Get a refresh token (based on the generated access code) from Dropbox and store it in the "Refresh Token" field.
+                    // By passing the code verifier, Dropbox knows that this request is executed by the same client that started the
+                    // authentication flow above.  When requesting the refresh token we need to pass the code verifier, not the code 
+                    // challenge. Dropbox will calculate the challenge hash itself (based on the same code verifier that we have passed),
+                    // and compare it with the code challenge that it stored when the user granted access with the authorize request.
                     $.ajax({
-                        url: "dropbox/generate_authentication_url",
-                        type: "GET",
-                        data: { 
-                            nodeId: node.id,
-                            clientid: $("#node-config-input-clientid").val().trim(),
-                            redirectUrl: node.redirectUrl
+                        type: 'POST',
+                        url: 'https://api.dropboxapi.com/oauth2/token',
+                        data: $.param(data),
+                        dataType: "json",
+                        beforeSend: function(request) {
+                            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
                         },
-                        datatype: 'json',
                         success: function(data) {
-                            var authUrl = data.authUrl;
-                            // Don't use a redirect (http 302) in the 'generate_authentication_url' endpoint, because redirecting this
-                            // ajax call to a remote host (i.e. a non Node-RED host) will result in CORS issues.
-                            // Therefore the endpoint will return simply the url of the Dropbox authentication server, and the url
-                            // will be opened here in a popup window.  Note that the browser settings might to be adjusted to allow popups.
-                            var popup = window.open(authUrl, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
-                            popup.document.title = node._("dropbox.title.auth-flow");
+                            // Show the generated refresh token simply in an popup box, so the value optionally can be copied.
+                            // Moreover we don't want it to be stored somewhere in some logs...
+                            // Use a prompt box instead of an alert box, to make sure the user can copy the refresh token.
+                            prompt(node._("dropbox.info.refresh-token-generated"), data.refresh_token);
+                            
+                            // Store the new generated value automatically in the "Refresh token" input field
+                            $("#node-config-input-refreshtoken").val(data.refresh_token);
                         },
                         error: function(xhr) {
-                            alert(xhr.responseText);
+                            RED.notify(xhr.responseJSON.error_description || xhr.responseJSON.error, { type: "error", timeout: 15000 });
                         }
                     });
-                });               
+                });
             }, 0);
         }
     });

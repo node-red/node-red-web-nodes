@@ -9,6 +9,7 @@
             "appkey": "App Key",
             "appsecret": "App Secret",
             "accesstoken": "Access Token",
+            "accesscode": "Access Code",
             "refreshtoken": "Refresh Token"
         },
         "placeholder": {
@@ -18,16 +19,16 @@
             "local": "Local Filename"
         },
         "tip": {
-            "cred1": "Sign up for an account on <i><a href='https://www.dropbox.com/' target='_blank'>Dropbox</a></i>.",
-            "cred2": "Create a new app on <i><a href='https://www.dropbox.com/developers/apps/' target='_blank'>Dropbox developer home</a></i>.  On the subsequent page, select 'Dropbox API app' and choose App folder or Full Dropbox access. And set the required app permissions.",
-            "cred3": "On the same page, the 'app key' is displayed.  Copy that key and paste it into the box above.",
-            "cred4": "And on the same page, add the redirect url <span id='node-dropbox-redirect-url'></span>",
-            "cred5": "To obtain a new refresh token, start the (OAuth2) <i><a id='node-dropbox-app-link' href='#' target='_blank'>authentication flow</a></i>.",
+            "cred1": "Get a refresh token via the steps below.  Note that only the App Key and the Refresh Token will be stored in Node-RED, to minimize security issues.  It is highly advised to execute the below steps across an <b>SSL</b> connection to Node-RED!",
+            "cred2": "Sign up for an account on <i><a href='https://www.dropbox.com/' target='_blank'>Dropbox</a></i>.",
+            "cred3": "Create a new app on <i><a href='https://www.dropbox.com/developers/apps/' target='_blank'>Dropbox developer home</a></i>.  On the subsequent page, select 'Dropbox API app' and choose App folder or Full Dropbox access. And set the required app permissions.",
+            "cred4": "Copy both the 'app key' and 'app secret' from that page to here:",
+            "cred5": "Start an (OAuth2) <i><a id='node-dropbox-app-link' href='#' target='_blank'>authentication flow</a></i> to obtain an access code.",
             "cred6": "If no popup window appears, it might be necessary to instruct the browser to allow popup windows for this website.",
-            "cred7": "Since the refresh token doesn't expire, this step needs to be executed only once.  But if required, it can be repeated afterwards.",
-            "cred8": "The first time the authentication flow is executed, Dropbox will ask to confirm (via two subsequent pages) that this app has access to your Dropbox files.",
-            "cred9": "After the authentication flow has ended, the refresh token will be displayed in the popup window.  Copy that token and paste it into the box above.",
-            "cred10": "Every time the app permissions are changed afterwards, it is required to revoke the refresh token and to repeat steps 5 and 6 again. Otherwise the refresh token will continue operating with the original permissions."
+            "cred7": "The first time the authentication flow is executed, Dropbox will ask to confirm (via two subsequent pages) that this app has access to your Dropbox files.",
+            "cred8": "Copy the access code from the last popup window of the authentication flow to here:",
+            "cred9": "Use this access code to <i><a id='node-dropbox-generate-refresh-token' href='#' target='_blank'>request</a></i> a new refresh token.",
+            "cred10": "Every time the app permissions are changed afterwards, it is required to revoke the refresh token and to repeat steps 4 and 5 again. Otherwise the refresh token will continue operating with the original permissions."
         },
         "title": {
             "auth-flow": "Dropbox authentication for Node-RED"
@@ -40,6 +41,9 @@
             "downloading": "downloading",
             "access-denied": "access denied",
             "uploading": "uploading"
+        },
+        "info": {
+            "refresh-token-generated": "The refresh token has been generated and copied already automatically to the 'Refresh Token' input field."
         },
         "warn": {
             "missing-refresh-token": "Missing dropbox refresh token"
