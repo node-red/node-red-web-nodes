@@ -59,7 +59,7 @@
     </div>
 </script>
 
-<script src="https://unpkg.com/js-sha256@0.9.0/src/sha256.js"></script>
+<script src="resources/node-red-node-dropbox/sha256.js"></script>
 
 <script type="text/javascript">
 (function() {
@@ -95,7 +95,7 @@
             setTimeout(function() {
                 $("#node-dropbox-app-link").click(async function(e) {
                     e.preventDefault();
-debugger;
+
                     // The code verifier should be a high-entropy cryptographic random string with a minimum of 43 characters and a maximum of 128 characters. 
                     // It should only use A-Z, a-z, 0–9, “-”(hyphen), “.” (period), “_”(underscore), “~”(tilde) characters.
                     var PKCELength = 128;
