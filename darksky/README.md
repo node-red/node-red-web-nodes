@@ -4,6 +4,8 @@ node-red-node-darksky
 A <a href="http://nodered.org" target="_new">Node-RED</a> node that gets the
 weather forecast from the Dark Sky weather API.
 
+Now DEPRECATED as their [website](https://darksky.net/dev) says - "Support for the Dark Sky API will be ending on March 31st, 2023. Learn more about Apple’s new WeatherKit API."
+
 Pre-requisites
 --------------
 
