@@ -2,6 +2,7 @@
     "weather": {
         "label": {
             "weather": "openweathermap",
+            "category": "weather",
             "name": "Name",
             "location": "Location",
             "option_current": "Current weather for",
