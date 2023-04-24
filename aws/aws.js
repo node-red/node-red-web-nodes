@@ -44,6 +44,7 @@ module.exports = function(RED) {
         // eu-west-1||us-east-1||us-west-1||us-west-2||eu-central-1||ap-northeast-1||ap-northeast-2||ap-southeast-1||ap-southeast-2||sa-east-1
         this.region = n.region || "eu-west-1";
         this.bucket = n.bucket;
+        this.interval = n.interval || 900000;
         this.filepattern = n.filepattern || "";
         var node = this;
         var AWS = this.awsConfig ? this.awsConfig.AWS : null;
@@ -109,7 +110,7 @@ module.exports = function(RED) {
             });
             var interval = setInterval(function() {
                 node.emit("input", {});
-            }, 900000); // 15 minutes
+            }, node.interval); // 15 minutes
             node.on("close", function() {
                 if (interval !== null) {
                     clearInterval(interval);

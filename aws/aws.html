@@ -27,6 +27,10 @@
          <label for="node-input-filepattern"><i class="fa fa-file"></i> <span data-i18n="aws.label.pattern"></span></label>
          <input type="text" id="node-input-filepattern" data-i18n="[placeholder]aws.placeholder.pattern">
     </div>
+    <div class="form-row node-input-interval">
+         <label for="node-input-interval"><i class="fa fa-clock-o"></i> Interval between checks</label>
+         <input type="text" id="node-input-interval" placeholder="Interval">
+    </div>
     <div class="form-row">
         <label for="node-input-region"><i class="fa fa-tag"></i> <span data-i18n="aws.label.region"></span></label>
         <select type="text" id="node-input-region" style="width:72%;">
@@ -67,6 +71,7 @@
             region: {value:"", required:true},
             filepattern: {value:""},
             name: {value:""},
+            interval: {value: 900000}
         },
         inputs:0,
         outputs:1,
