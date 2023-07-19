@@ -21,6 +21,9 @@ module.exports = function(RED) {
 
     function AWSNode(n) {
         RED.nodes.createNode(this,n);
+        this.endpoint = n.endpoint;
+        this.forcepathstyle = n.forcepathstyle;
+        this.skiptlsverify = n.skiptlsverify;
         if (this.credentials &&
             this.credentials.accesskeyid && this.credentials.secretaccesskey) {
             this.AWS = require("aws-sdk");
@@ -52,7 +55,22 @@ module.exports = function(RED) {
             node.warn(RED._("aws.warn.missing-credentials"));
             return;
         }
-        var s3 = new AWS.S3({"region": node.region});
+        var options = {region: node.region};
+        if (this.awsConfig.endpoint) {
+            var endpoint = new AWS.Endpoint(this.awsConfig.endpoint);
+            options.endpoint = endpoint;
+            options.region = '';
+            if (this.awsConfig.forcepathstyle) {
+                options.s3ForcePathStyle = true;
+            }
+            if (this.awsConfig.skiptlsverify && options.endpoint.protocol === 'https:') {
+                var http = require('https');
+                options.httpOptions = {
+                    agent: new http.Agent({ rejectUnauthorized: false })
+                };
+            }
+        }
+        var s3 = new AWS.S3(options);
         node.status({fill:"blue",shape:"dot",text:"aws.status.initializing"});
         var contents = [];
         node.listAllObjects(s3, { Bucket: node.bucket },contents, function(err, data) {
@@ -157,7 +175,22 @@ module.exports = function(RED) {
             node.warn(RED._("aws.warn.missing-credentials"));
             return;
         }
-        var s3 = new AWS.S3({"region": node.region});
+        var options = {region: node.region};
+        if (this.awsConfig.endpoint) {
+            var endpoint = new AWS.Endpoint(this.awsConfig.endpoint);
+            options.endpoint = endpoint;
+            options.region = '';
+            if (this.awsConfig.forcepathstyle) {
+                options.s3ForcePathStyle = true;
+            }
+            if (this.awsConfig.skiptlsverify && options.endpoint.protocol === 'https:') {
+                var http = require('https');
+                options.httpOptions = {
+                    agent: new http.Agent({ rejectUnauthorized: false })
+                };
+            }
+        }
+        var s3 = new AWS.S3(options);
         node.on("input", function(msg) {
             var bucket = node.bucket || msg.bucket;
             if (bucket === "") {
@@ -205,63 +238,76 @@ module.exports = function(RED) {
             node.warn(RED._("aws.warn.missing-credentials"));
             return;
         }
-        if (AWS) {
-            var s3 = new AWS.S3({"region": node.region});
-            node.status({fill:"blue",shape:"dot",text:"aws.status.checking-credentials"});
-            s3.listObjects({ Bucket: node.bucket }, function(err) {
-                if (err) {
-                    node.warn(err);
-                    node.error(RED._("aws.error.aws-s3-error",{err:err}));
-                    node.status({fill:"red",shape:"ring",text:"aws.status.error"});
+        var options = {region: node.region};
+        if (this.awsConfig.endpoint) {
+            var endpoint = new AWS.Endpoint(this.awsConfig.endpoint);
+            options.endpoint = endpoint;
+            options.region = '';
+            if (this.awsConfig.forcepathstyle) {
+                options.s3ForcePathStyle = true;
+            }
+            if (this.awsConfig.skiptlsverify && options.endpoint.protocol === 'https:') {
+                var http = require('https');
+                options.httpOptions = {
+                    agent: new http.Agent({ rejectUnauthorized: false })
+                };
+            }
+        }
+        var s3 = new AWS.S3(options);
+        node.status({fill:"blue",shape:"dot",text:"aws.status.checking-credentials"});
+        s3.listObjects({ Bucket: node.bucket }, function(err) {
+            if (err) {
+                node.warn(err);
+                node.error(RED._("aws.error.aws-s3-error",{err:err}));
+                node.status({fill:"red",shape:"ring",text:"aws.status.error"});
+                return;
+            }
+            node.status({});
+            node.on("input", function(msg) {
+                var bucket = node.bucket || msg.bucket;
+                if (bucket === "") {
+                    node.error(RED._("aws.error.no-bucket-specified"),msg);
                     return;
                 }
-                node.status({});
-                node.on("input", function(msg) {
-                    var bucket = node.bucket || msg.bucket;
-                    if (bucket === "") {
-                        node.error(RED._("aws.error.no-bucket-specified"),msg);
-                        return;
-                    }
-                    var filename = node.filename || msg.filename;
-                    if (filename === "") {
-                        node.error(RED._("aws.error.no-filename-specified"),msg);
-                        return;
-                    }
-                    var localFilename = node.localFilename || msg.localFilename;
-                    if (localFilename) {
-                        // TODO: use chunked upload for large files
-                        node.status({fill:"blue",shape:"dot",text:"aws.status.uploading"});
-                        var stream = fs.createReadStream(localFilename);
-                        s3.putObject({
-                            Bucket: bucket,
-                            Body: stream,
-                            Key: filename,
-                        }, function(err) {
-                            if (err) {
-                                node.error(err.toString(),msg);
-                                node.status({fill:"red",shape:"ring",text:"aws.status.failed"});
-                                return;
-                            }
-                            node.status({});
-                        });
-                    } else if (typeof msg.payload !== "undefined") {
-                        node.status({fill:"blue",shape:"dot",text:"aws.status.uploading"});
-                        s3.putObject({
-                            Bucket: bucket,
-                            Body: RED.util.ensureBuffer(msg.payload),
-                            Key: filename,
-                        }, function(err) {
-                            if (err) {
-                                node.error(err.toString(),msg);
-                                node.status({fill:"red",shape:"ring",text:"aws.status.failed"});
-                                return;
-                            }
-                            node.status({});
-                        });
-                    }
-                });
+                var filename = node.filename || msg.filename;
+                if (filename === "") {
+                    node.error(RED._("aws.error.no-filename-specified"),msg);
+                    return;
+                }
+                var localFilename = node.localFilename || msg.localFilename;
+                if (localFilename) {
+                    // TODO: use chunked upload for large files
+                    node.status({fill:"blue",shape:"dot",text:"aws.status.uploading"});
+                    var stream = fs.createReadStream(localFilename);
+                    s3.putObject({
+                        Bucket: bucket,
+                        Body: stream,
+                        Key: filename,
+                    }, function(err) {
+                        if (err) {
+                            node.error(err.toString(),msg);
+                            node.status({fill:"red",shape:"ring",text:"aws.status.failed"});
+                            return;
+                        }
+                        node.status({});
+                    });
+                } else if (typeof msg.payload !== "undefined") {
+                    node.status({fill:"blue",shape:"dot",text:"aws.status.uploading"});
+                    s3.putObject({
+                        Bucket: bucket,
+                        Body: RED.util.ensureBuffer(msg.payload),
+                        Key: filename,
+                    }, function(err) {
+                        if (err) {
+                            node.error(err.toString(),msg);
+                            node.status({fill:"red",shape:"ring",text:"aws.status.failed"});
+                            return;
+                        }
+                        node.status({});
+                    });
+                }
             });
-        }
+        });
     }
     RED.nodes.registerType("amazon s3 out",AmazonS3OutNode);
 };

@@ -13,9 +13,13 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 
-<script type="text/x-red" data-template-name="amazon s3 in">
-    <div class="form-row">
+<html>
+<head>
+
+  <script type="text/x-red" data-template-name="amazon s3 in">
+  <div class="form-row">
         <label for="node-input-aws"><i class="fa fa-user"></i> <span data-i18n="aws.label.aws"></span></label>
         <input type="text" id="node-input-aws">
     </div>
@@ -55,10 +59,9 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="aws.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]aws.placeholder.name">
     </div>
-</script>
-
-<script type="text/javascript">
-    RED.nodes.registerType('amazon s3 in',{
+  </script>
+  <script type="text/javascript">
+  RED.nodes.registerType('amazon s3 in',{
         category: 'storage-input',
         color:"#C0DEED",
         defaults: {
@@ -75,10 +78,9 @@
             return this.bucket ? "s3 "+this.bucket : "s3";
         }
     });
-</script>
-
-<script type="text/x-red" data-template-name="amazon s3">
-    <div class="form-row">
+  </script>
+  <script type="text/x-red" data-template-name="amazon s3">
+  <div class="form-row">
         <label for="node-input-aws"><i class="fa fa-user"></i> <span data-i18n="aws.label.aws"></span></label>
         <input type="text" id="node-input-aws">
     </div>
@@ -118,10 +120,9 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="aws.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]aws.placeholder.name">
     </div>
-</script>
-
-<script type="text/javascript">
-    RED.nodes.registerType('amazon s3',{
+  </script>
+  <script type="text/javascript">
+  RED.nodes.registerType('amazon s3',{
         category: 'storage-output',
         color:"#C0DEED",
         defaults: {
@@ -139,10 +140,9 @@
             return this.bucket ? "s3 "+this.bucket : "s3";
         }
     });
-</script>
-
-<script type="text/x-red" data-template-name="amazon s3 out">
-    <div class="form-row">
+  </script>
+  <script type="text/x-red" data-template-name="amazon s3 out">
+  <div class="form-row">
         <label for="node-input-aws"><i class="fa fa-user"></i> <span data-i18n="aws.label.aws"></span></label>
         <input type="text" id="node-input-aws">
     </div>
@@ -186,10 +186,9 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="aws.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]aws.placeholder.name">
     </div>
-</script>
-
-<script type="text/javascript">
-    RED.nodes.registerType('amazon s3 out',{
+  </script>
+  <script type="text/javascript">
+  RED.nodes.registerType('amazon s3 out',{
         category: 'storage-output',
         color:"#C0DEED",
         defaults: {
@@ -208,10 +207,9 @@
             return this.name || this.bucket ? "s3 "+this.bucket : "s3";
         }
     });
-</script>
-
-<script type="text/x-red" data-template-name="aws-config">
-    <div class="form-row">
+  </script>
+  <script type="text/x-red" data-template-name="aws-config">
+  <div class="form-row">
         <label for="node-config-input-accesskeyid"><i class="fa fa-bookmark"></i> <span data-i18n="aws.label.keyid"></span></label>
         <input class="input-append-left" type="text" id="node-config-input-accesskeyid" style="width: 40%;" >
     </div>
@@ -223,13 +221,33 @@
         <span data-i18n="[html]aws.tip.config1"></span>
         <span data-i18n="[html]aws.tip.config2"></span>
     </div>
-</script>
-
-<script type="text/javascript">
+   <div class="form-row">
+        <label for="node-config-input-endpoint"><i class="fa fa-tag"></i> <span data-i18n="aws.label.endpoint"></span></label>
+        <input class="input-append-left" type="text" id="node-config-input-endpoint">
+    </div>
+   <div class="form-row">
+        <label for="node-config-input-forcepathstyle"><i class="fa fa-tag"></i> <span data-i18n="aws.label.forcepathstyle"></span></label>
+        <input class="input-append-left" type="checkbox" id="node-config-input-forcepathstyle">
+    </div>
+   <div class="form-row">
+        <label for="node-config-input-skiptlsverify"><i class="fa fa-tag"></i> <span data-i18n="aws.label.skiptlsverify"></span></label>
+        <input class="input-append-left" type="checkbox" id="node-config-input-skiptlsverify">
+    </div>
+    <div class="form-tips">
+        <span data-i18n="[html]aws.tip.config3"></span>
+        <span data-i18n="[html]aws.tip.config4"></span>
+    </div>
+  </script>
+  <script type="text/javascript">
 (function() {
+
     RED.nodes.registerType('aws-config',{
         category: 'config',
-        defaults: { },
+        defaults: {
+            endpoint: {value: "",required:false},
+            forcepathstyle: {value: false},
+            skiptlsverify: { value: false }
+        },
         credentials: {
             accesskeyid: {type:"text",required:true},
             secretaccesskey: {type: "password",required:true},
@@ -239,5 +257,12 @@
         },
         exportable: false,
     });
-})();
-</script>
+  })();
+  </script>
+
+  <title></title>
+</head>
+
+<body>
+</body>
+</html>
