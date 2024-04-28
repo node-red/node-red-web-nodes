@@ -1,6 +1,6 @@
 {
     "name": "node-red-node-openweathermap",
-    "version": "0.5.1",
+    "version": "1.0.0",
     "description": "A Node-RED node that gets the weather report from openweathermap",
     "dependencies": {
         "request": "~2.88.2"
@@ -16,7 +16,7 @@
         "openweathermap"
     ],
     "node-red": {
-        "version": ">=0.11.0",
+        "version": ">=0.14.0",
         "nodes": {
             "openweathermap": "weather.js"
         }
