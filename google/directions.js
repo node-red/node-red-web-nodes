@@ -156,6 +156,7 @@ module.exports = function(RED) {
                             lon: newMsg.payload.routes[0].legs[0].end_location.lon
                         }
                     };
+		    node.status({fill:"green",shape:"ring",text:"directions.status.success"});
                     cb(newMsg);
                 } else if (data.status == 'ZERO_RESULTS') {
                     newMsg = cloneMsg(msg);     //quick clone msg
@@ -187,21 +188,17 @@ module.exports = function(RED) {
                             break;
                         case 'REQUEST_DENIED':
                             error.code = 400;
-                            error.message = RED._("directions.error.request-denied");
+                 	    error.message = RED._("directions.error.request-denied");
                             break;
                         case 'UNKNOWN_ERROR':
-							error.code = 500;
+			    error.code = 500;
                             error.message = RED._("directions.error.unknown-error");
-							break;
+			    break;
                         default:
                             error.code = 500;
                             error.message = RED._("directions.error.unknown-error");
                     }
-                    throwNodeError({
-                        code: 400,
-                        message: RED._("directions.error.no-destination"),
-                        status: 'MISSING_VALUES'
-                    }, msg);
+                    throwNodeError(error, msg);
                     return;
                 }
             }
