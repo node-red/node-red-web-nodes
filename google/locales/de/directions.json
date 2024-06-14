@@ -28,7 +28,8 @@
             "name": "Name"
         },
         "status": {
-            "failed": "Fehlgeschlagen"
+            "failed": "Fehlgeschlagen",
+            "success": "Erfolgreich"
         },
         "error": {
             "no-origin": "Bitte Startpunkt angeben",

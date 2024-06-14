@@ -28,7 +28,8 @@
             "name": "Name"
         },
         "status": {
-            "failed": "failed"
+            "failed": "failed",
+            "success": "success"
         },
         "error": {
             "no-origin": "Please supply an origin value",
