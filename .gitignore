@@ -7,3 +7,5 @@ coverage
 node_modules
 npm_debug.log
 package-lock.json
+.DS_Store
+aws/node-red-node-aws-0.3.0.tgz
