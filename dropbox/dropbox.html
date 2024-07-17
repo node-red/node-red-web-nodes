@@ -77,7 +77,7 @@
             return this.name||this._("dropbox.label.dropbox"); // TODO: get display_name from account info?
         },
         exportable: false,
-        oneditprepare: function() { 
+        oneditprepare: function() {
             var node = this;
 
             function base64UrlEncode(str) {
@@ -85,9 +85,9 @@
                 var base64UrlEncodedString = base64String.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
                 return base64UrlEncodedString;
             }
-            
+
             function createBrowserSafeString(str) {
-                var base64str = str.toString('base64')
+                var base64str = str.toString('base64');
                 return base64str.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
             }
 
@@ -96,24 +96,24 @@
                 $("#node-dropbox-app-link").click(async function(e) {
                     e.preventDefault();
 
-                    // The code verifier should be a high-entropy cryptographic random string with a minimum of 43 characters and a maximum of 128 characters. 
+                    // The code verifier should be a high-entropy cryptographic random string with a minimum of 43 characters and a maximum of 128 characters.
                     // It should only use A-Z, a-z, 0–9, “-”(hyphen), “.” (period), “_”(underscore), “~”(tilde) characters.
                     var PKCELength = 128;
                     var array = new Uint8Array(PKCELength);
                     var randomValueArray = crypto.getRandomValues(array);
                     var base64RandomString = btoa(randomValueArray);
                     node.codeVerifier = createBrowserSafeString(base64RandomString).substr(0, 128);
-                    
+
                     // Convert the code verifier string to an Uint8Array (which is required as input for the sha256 digest hash function)
                     var encoder = new TextEncoder();
                     var codeVerifierArray = encoder.encode(node.codeVerifier);
-                    
+
                     // The code challenge is created by SHA256 hashing the code_verifier and base64 URL encoding the resulting hash.
                     // Reason: since the code challenge is sent through the browser it is VERY important that the code challenge is not the same
                     // as the code verifier.  Because an attacker could gain access to the HTTP request, e.g. via the browser HTTP logs.
                     // It is advised to use the browser's SHA256 hash calculation (via the Crypto Web API), since these implementations are
                     // reviewed by experts, and will likely be more secure and reliable than a custom implementation.  However this is only
-                    // available in Chrome in a secure context, which means when operating via an SSL connection (to Node-RED.  Because when the hash 
+                    // available in Chrome in a secure context, which means when operating via an SSL connection (to Node-RED.  Because when the hash
                     // would be send over http, that is considered as unsecure.  But for users that have no SSL to Node-RED this is no security issue,
                     // To solve the absence of the crypto digest function for httpthis we will use a custom SHA256 has function, when the browser doesn't offer it...
                     // because we won't be sending the hash to Node-RED over http.  Instead we are sending it to Dropbox always via https.
@@ -129,9 +129,9 @@
 
                     var base64Sha256Hash = btoa(String.fromCharCode.apply(null, new Uint8Array(sha256Hash)));
                     var codeChallenge = createBrowserSafeString(base64Sha256Hash).substr(0, 128);
-                    
+
                     var clientId = $("#node-config-input-clientid").val();
-                    
+
                     if (!clientId || clientId === '__PWRD__') {
                         // Once the credential has been deployed, it will be replaced in the frontend by the string '__PWRD__'
                         // Since this cannot be send to Dropbox, we will need to ask the user to enter not only the App Secret but also the App Key (= client id)
@@ -150,7 +150,7 @@
                     var popup = window.open(node.authUrl, '_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
                     popup.document.title = node._("dropbox.title.auth-flow");
                 });
-                
+
                 $("#node-dropbox-generate-refresh-token").click(function(e) {
                     e.preventDefault();
 
@@ -160,10 +160,10 @@
                         client_id: $("#node-config-input-clientid").val(),
                         code_verifier: node.codeVerifier
                     };
-                    
+
                     // Get a refresh token (based on the generated access code) from Dropbox and store it in the "Refresh Token" field.
                     // By passing the code verifier, Dropbox knows that this request is executed by the same client that started the
-                    // authentication flow above.  When requesting the refresh token we need to pass the code verifier, not the code 
+                    // authentication flow above.  When requesting the refresh token we need to pass the code verifier, not the code
                     // challenge. Dropbox will calculate the challenge hash itself (based on the same code verifier that we have passed),
                     // and compare it with the code challenge that it stored when the user granted access with the authorize request.
                     $.ajax({
@@ -179,7 +179,7 @@
                             // Moreover we don't want it to be stored somewhere in some logs...
                             // Use a prompt box instead of an alert box, to make sure the user can copy the refresh token.
                             prompt(node._("dropbox.info.refresh-token-generated"), data.refresh_token);
-                            
+
                             // Store the new generated value automatically in the "Refresh token" input field
                             $("#node-config-input-refreshtoken").val(data.refresh_token);
                         },

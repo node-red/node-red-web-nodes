@@ -30,7 +30,7 @@
         "jawbone"
     ],
     "devDependencies": {
-        "aws-sdk": "^2.709.0",
+        "aws-sdk": "^2.1659.0",
         "backoff": "^2.5.0",
         "clone": "^2.1.2",
         "dropbox": "^10.20.0",
@@ -43,11 +43,11 @@
         "grunt-simple-mocha": "^0.4.1",
         "instagram-node": "^0.5.8",
         "is-utf8": "^0.2.1",
-        "minimatch": "^3.0.4",
+        "minimatch": "^9.0.0",
         "mocha": "^6.2.3",
         "nock": "^11.9.1",
-        "node-red": "~1.1.0",
-        "node-red-node-test-helper": "~0.2.5",
+        "node-red": "^4.0.2",
+        "node-red-node-test-helper": "~0.3.4",
         "oauth": "~0.9.11",
         "request": "^2.88.2",
         "should": "^13.2.3",
