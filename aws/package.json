@@ -1,10 +1,10 @@
 {
     "name": "node-red-node-aws",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "description": "A Node-RED node to watch, save and retreive files from an Amazon S3 bucket",
     "dependencies": {
-        "aws-sdk": "^2.1659.0",
-        "minimatch": "^9.0.0"
+        "aws-sdk": "^2.1662.0",
+        "minimatch": "^9.0.5"
     },
     "bundledDependecies": [ "aws-sdk", "minimatch"],
     "repository": {
