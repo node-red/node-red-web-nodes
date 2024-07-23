@@ -9,7 +9,10 @@
             "region": "Region",
             "local": "Local Filename",
             "keyid": "AccessKeyID",
-            "secret": "Secret Access Key"
+            "secret": "Secret Access Key",
+            "endpoint": "Endpoint",
+            "forcepathstyle": "Force Path Style",
+            "skiptlsverify": "Skip tls verification"
         },
         "placeholder": {
             "bucket": "bucket name",
@@ -21,7 +24,9 @@
         },
         "tip": {
             "config1": "<p>To obtain these credentials, sign up to <a href='http://aws.amazon.com/'>Amazon Web Services</a>, Then either:</p>",
-            "config2": "<ul><li>click on your account name and select 'Security Credentials' then click 'Access Keys (Access Key ID and Secret Access Key)' or</li><li>select 'IAM' under 'Deployment & Management' from the AWS console and create an 'IAM' user with a suitable policy.</li></ul>"
+            "config2": "<ul><li>click on your account name and select 'Security Credentials' then click 'Access Keys (Access Key ID and Secret Access Key)' or</li><li>select 'IAM' under 'Deployment & Management' from the AWS console and create an 'IAM' user with a suitable policy.</li></ul>",
+            "config3": "<p>If you would like to use a s3 compatible storage solution, you can set a different endpoint here.</p>",
+            "config4": "<p>Regarding <b>Force Path Style</b>, some s3 compatible storage solution needs id (e.g. minio)."
         },
         "status": {
             "initializing": "initializing",
