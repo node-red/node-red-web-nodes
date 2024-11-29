@@ -2,6 +2,7 @@
     "geocoding": {
         "label": {
             "geocoding": "Google Geocoding",
+            "category": "location",
             "geocodeby-address": "Geocode by Address",
             "geocodeby-coordinates": "Geocode by Coordinates",
             "name": "Name",

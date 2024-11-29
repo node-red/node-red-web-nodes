@@ -2,6 +2,7 @@
     "directions": {
         "label": {
             "directions": "Google Directions",
+            "category": "location",
             "name": "Name",
             "apikey": "Google API Key",
             "origin": "Origin",
