@@ -70,6 +70,7 @@ module.exports = function(RED) {
             }
             node.status({fill:"blue",shape:"dot",text:"dropbox.status.initializing"});
             return dropbox.filesListFolder({path: '',recursive:true}).then(function(response) { return response.result.cursor })
+                .catch((e)=>this.error(e));
         }
         node.drainCursor = function(cursor, emit) {
             if (closing) {
